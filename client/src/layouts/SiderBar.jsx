@@ -25,7 +25,7 @@ const SiderBar = () => {
                 mode="inline"
                 defaultSelectedKeys={[currentKey]}
                 onSelect={({item}) => {
-                    navigate(item.props.path);
+                    navigate(item.props.link);
                 }}
                 items={routes.filter(item => item.mode === "main")} />
         </Layout.Sider>

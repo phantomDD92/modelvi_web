@@ -11,6 +11,7 @@ const routes = [
     {
         key: "dashboard",
         path: "/dashboard",
+        link: "/dashboard",
         label: "Dashboard",
         icon: <HomeOutlined />,
         component: <Home />,
@@ -19,6 +20,7 @@ const routes = [
     {
         key: "model",
         path: "/model",
+        link: "/model",
         label: "Model",
         icon: <SolutionOutlined />,
         component: <ModelList />,
@@ -34,7 +36,8 @@ const routes = [
     },
     {
         key: "account",
-        path: "/account",
+        path: "/account/:platform",
+        link: "/account/F2F",
         label: "Account",
         icon: <UserOutlined />,
         component: <AccountList />,
@@ -60,6 +63,7 @@ const routes = [
         key: "proxy",
         path: "/proxy",
         label: "Proxy",
+        link: "/proxy",
         icon: <EnvironmentOutlined />,
         component: <ProxyList />,
         mode: "main"
@@ -67,6 +71,7 @@ const routes = [
     {
         key: "discord",
         path: "/discord",
+        link: "/discord",
         label: "Discord",
         icon: <DiscordOutlined />,
         component: <DiscordList />,
@@ -84,6 +89,7 @@ const routes = [
         key: "manager",
         path: "/manager",
         label: "Manager",
+        link: "/manager",
         icon: <SettingOutlined />,
         component: <ManagerList />,
         mode: "main"

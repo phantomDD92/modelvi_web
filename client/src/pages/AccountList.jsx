@@ -2,23 +2,27 @@ import React, { useEffect, useState } from "react";
 import { Card, Table, Tooltip, Popconfirm, Button, Flex, Modal, Form, Input, Switch, InputNumber, Select, Radio, Tag } from "antd";
 import { DeleteOutlined, EditOutlined, UserAddOutlined, ReadOutlined, SolutionOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { createAccount, deleteAccount, loadAccounts, setAccountStatus, startAllAccount, stopAllAccount, updateAccount, updateAccountParams } from "@/redux/model/actions";
+import { createAccount, deleteAccount, loadAccounts, loadAllModels, setAccountStatus, startAllAccount, stopAllAccount, updateAccount, updateAccountParams } from "@/redux/model/actions";
 import { Platform } from "@/utils/const";
 import moment from "moment";
-import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
+import { createSearchParams, useLocation, useNavigate, useParams } from "react-router-dom";
 import qs from 'query-string';
 
 export const AccountList = () => {
   const dispatch = useDispatch()
   const modelProps = useSelector(state => state.model)
   const [visible, setVisible] = useState(false);
-  const [show, setShow] = useState(false);
+  const [f2fShow, setF2FShow] = useState(false);
+  const [fncShow, setFNCShow] = useState(false);
   const [account, setAccount] = useState();
-  const [platform, setPlatform] = useState(Platform.F2F)
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();
   const page = parseInt(qs.parse(location.search).page) || 1;
+  const { platform } = useParams()
+  useEffect(() => {
+    dispatch(loadAllModels())
+  }, [loadAllModels])
 
   useEffect(() => {
     dispatch(loadAccounts(platform, { page, pageSize: 10 }));
@@ -165,21 +169,35 @@ export const AccountList = () => {
 
   const handleParamsButtonClick = (account) => {
     setAccount(account);
-    const { commentInterval, notifyInterval, postOffsets, debug } = account.params;
-    form.setFieldsValue({
-      commentInterval: commentInterval || 3,
-      notifyInterval: notifyInterval || 3,
-      debug: debug || false,
-      postOffsets: postOffsets ? postOffsets.join(",") : "1, 21, 51"
-    });
-    setShow(true);
+    if (platform == Platform.F2F) {
+      const { commentInterval, notifyInterval, postOffsets, debug } = account.params;
+      form.setFieldsValue({
+        commentInterval: commentInterval || 3,
+        notifyInterval: notifyInterval || 3,
+        debug: debug || false,
+        postOffsets: postOffsets ? postOffsets.join(",") : "1, 21, 51"
+      });
+      setF2FShow(true);
+    } else if (platform == Platform.FNC) {
+      const { commentInterval, notifyInterval, postInterval, storyInterval, storyMaxCount, storyReplaceCount, debug } = account.params;
+      form.setFieldsValue({
+        commentInterval: commentInterval || 6,
+        notifyInterval: notifyInterval || 30,
+        debug: debug || false,
+        postInterval: postInterval || 60,
+        storyInterval: storyInterval || 10,
+        storyMaxCount: storyMaxCount || 6,
+        storyReplaceCount: storyReplaceCount || 1,
+      });
+      setFNCShow(true);
+    }
   }
 
   const handleUpdateParams = async () => {
     try {
       await form.validateFields();
       const params = form.getFieldsValue();
-      const postOffsets = params.postOffsets.split(",").map(str => parseInt(str.trim()))
+      const postOffsets = params.postOffsets ? params.postOffsets.split(",").map(str => parseInt(str.trim())) : "1, 21, 51";
       dispatch(updateAccountParams(platform, account, { ...params, postOffsets }, handleReloadData));
     } catch (error) {
 
@@ -187,7 +205,8 @@ export const AccountList = () => {
   }
 
   const handleReloadData = () => {
-    setShow(false);
+    setF2FShow(false);
+    setFNCShow(false);
     dispatch(loadAccounts(platform, { page, pageSize: 10 }))
   }
 
@@ -203,8 +222,14 @@ export const AccountList = () => {
     navigate({
       pathname: location.pathname,
       search: createSearchParams({
-        page: pg
+        page: pg,
       }).toString()
+    }, { replace: true });
+  }
+
+  const handleChangePlatform = (plat) => {
+    navigate({
+      pathname: `/account/${plat}`
     }, { replace: true });
   }
 
@@ -221,14 +246,14 @@ export const AccountList = () => {
             <div className="h-20 p-6 text-xl">
               Account List
             </div>
-            <Radio.Group onChange={(e) => setPlatform(e.target.value)} value={platform}>
+            <Radio.Group onChange={(e) => handleChangePlatform(e.target.value)} value={platform}>
               <Radio.Button value={Platform.F2F}>{Platform.F2F}</Radio.Button>
               <Radio.Button value={Platform.FNC}>{Platform.FNC}</Radio.Button>
             </Radio.Group>
           </Flex>
         }
         extra={
-          <Flex  gap="large">
+          <Flex gap="large">
             <Button
               icon={<UserAddOutlined />}
               onClick={handleCreateButtonClick}>
@@ -270,7 +295,7 @@ export const AccountList = () => {
         >
           <Form.Item name="actor" label="Model" rules={[{ required: true }]}>
             <Select
-              options={modelProps.models.map(model => ({
+              options={modelProps.allModels.map(model => ({
                 label: `${model.number}. ${model.name}`,
                 value: model._id
               }))}
@@ -291,9 +316,9 @@ export const AccountList = () => {
       </Modal>
       <Modal
         title={"Account Params"}
-        open={show}
+        open={f2fShow}
         onOk={handleUpdateParams}
-        onCancel={() => setShow(false)}>
+        onCancel={() => setF2FShow(false)}>
         <Form
           {...layout}
           form={form}
@@ -313,6 +338,40 @@ export const AccountList = () => {
           </Form.Item>
         </Form>
       </Modal>
+      <Modal
+        title={"Account Params"}
+        open={fncShow}
+        onOk={handleUpdateParams}
+        onCancel={() => setFNCShow(false)}>
+        <Form
+          {...layout}
+          form={form}
+          name="control-hooks"
+        >
+          <Form.Item name="commentInterval" label="Comment Interval" rules={[{ required: true }]}>
+            <InputNumber />
+          </Form.Item>
+          <Form.Item name="notifyInterval" label="Notify Interval" rules={[{ required: true }]}>
+            <InputNumber />
+          </Form.Item>
+          <Form.Item name="storyInterval" label="Story Interval" rules={[{ required: true }]}>
+            <InputNumber />
+          </Form.Item>
+          <Form.Item name="storyMaxCount" label="Story Max Count" rules={[{ required: true }]}>
+            <InputNumber />
+          </Form.Item>
+          <Form.Item name="storyReplaceCount" label="Story Replace Count" rules={[{ required: true }]}>
+            <InputNumber />
+          </Form.Item>
+          <Form.Item name="postInterval" label="Post Interval" rules={[{ required: true }]}>
+            <InputNumber />
+          </Form.Item>
+          <Form.Item name="debug" label="Debug Enabled" rules={[{ required: true }]}>
+            <Switch />
+          </Form.Item>
+        </Form>
+      </Modal>
+
     </div>
   );
 };
