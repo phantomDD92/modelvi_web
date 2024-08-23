@@ -6,11 +6,11 @@ const storage = multer.diskStorage({
     cb(null, "uploads");
   },
   filename: function (req, file, cb) {
+    console.log(req, file);
     const fileName = uuidv4();
     cb(null, fileName + '.jpg')
   }
 })
-
 const upload = multer({ storage: storage })
 
 const authenticate = require("../middleware/auth.js");
@@ -22,7 +22,7 @@ const ProxyCtrl = require("../controllers/proxy.js");
 const ManagerCtrl = require("../controllers/manager.js");
 const CommentCtrl = require("../controllers/comment.js");
 const HistoryCtrl = require("../controllers/history.js");
-const PostCtrl = require("../controllers/post.js");
+const ScheduleCtrl = require("../controllers/schedule.js");
 
 const router = express.Router();
 
@@ -142,14 +142,16 @@ router
   .all(authenticate)
   .get(HistoryCtrl.handleLoadHistories);
 
-router.route("/post")
+router.route("/schedule")
   .all(authenticate)
-  .get(PostCtrl.handleLoadPosts)
-  .post(PostCtrl.handleCreatePost)
+  .get(ScheduleCtrl.handleLoadSchedules)
+  .post(ScheduleCtrl.handleCreateSchedule)
 
-router.route("/post/:postId")
+router.route("/schedule/:id")
   .all(authenticate)
-  .put(PostCtrl.handleChangePost)
-  .delete(PostCtrl.handleDeletePost)
+  .put(ScheduleCtrl.handleCreateSchedule)
+  .delete(ScheduleCtrl.handleDeleteSchedule)
 
+router.route("/schedule")
+  .post(upload.single('file'))
 module.exports = router;
