@@ -16,8 +16,8 @@ const ScheduleSchema = new Schema({
     createdAt: { type: Date, default: Date.now },
 });
 
-ScheduleSchema.index({ account: 1, scheduleAt: 1 });
 ScheduleSchema.index({ actor: 1, scheduleAt: 1 });
+ScheduleSchema.index({ platform: 1, scheduleAt: 1 });
 
 const ScheduleModel = mongoose.model("Schedule", ScheduleSchema);
 module.exports = ScheduleModel;

@@ -1,16 +1,17 @@
 const express = require("express");
 const multer = require('multer')
+const path = require('path')
 const { v4: uuidv4 } = require("uuid")
 const storage = multer.diskStorage({
   destination: async function (req, file, cb) {
     cb(null, "uploads");
   },
   filename: function (req, file, cb) {
-    console.log(req, file);
     const fileName = uuidv4();
-    cb(null, fileName + '.jpg')
+    cb(null, fileName + path.extname(file.originalname))
   }
 })
+
 const upload = multer({ storage: storage })
 
 const authenticate = require("../middleware/auth.js");
@@ -149,9 +150,10 @@ router.route("/schedule")
 
 router.route("/schedule/:id")
   .all(authenticate)
-  .put(ScheduleCtrl.handleCreateSchedule)
+  .put(ScheduleCtrl.handleChangeSchedule)
   .delete(ScheduleCtrl.handleDeleteSchedule)
 
-router.route("/schedule")
-  .post(upload.single('file'))
+router.route("/upload")
+  .post(upload.single('file'), (req, res) => {res.json({file: req.file.filename})})
+
 module.exports = router;

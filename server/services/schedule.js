@@ -1,26 +1,21 @@
 const ScheduleModel = require("../models/schedule")
 
-const loadSchedules = (search, { page, pageSize }) =>
+const loadSchedules = (searchParams, { page, pageSize }) =>
     Promise.all([
-        ScheduleModel.find(search)
+        ScheduleModel.find(searchParams)
             .sort("-scheduledAt")
             .skip((parseInt(page) - 1) * parseInt(pageSize))
             .limit(parseInt(pageSize))
             .populate({
                 path: "actor",
                 select: "number name",
-            })
-            .populate({
-                path: "account",
-                select: "alias",
             }),
-        ScheduleModel.countDocuments(search)
+        ScheduleModel.countDocuments(searchParams)
     ]);
 
 const createSchedule = ({ actor, file, platform, type, title, folder, description, tags, price, scheduledAt }) =>
     ScheduleModel.create({
         actor,
-        account,
         file,
         platform,
         type,
@@ -38,11 +33,15 @@ const changeSchedule = (scheduleId, { actor, file, platform, type, title, folder
 const deleteSchedule = (scheduleId) =>
     ScheduleModel.findByIdAndDelete(scheduleId)
 
+const findById = (id) => 
+    ScheduleModel.findById(id)
+
 const ScheduleService = {
     loadSchedules,
     createSchedule,
     changeSchedule,
     deleteSchedule,
+    findById
 }
 
 module.exports = ScheduleService
