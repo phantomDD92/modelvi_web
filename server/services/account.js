@@ -88,6 +88,9 @@ const syncContents = (actorId) =>
 const setAllStatus = (platform, status) =>
   AccountModel.updateMany({ platform }, { $set: { status } })
 
+const findByActor = (platform, actorId) =>
+  AccountModel.findOne({ platform, actor: actorId });
+
 const AccountService = {
   loadAccounts,
   createAccount,
@@ -95,6 +98,7 @@ const AccountService = {
   setStatus,
   deleteAccount,
   findById,
+  findByActor,
   getCount,
   updateParams,
   syncContents,

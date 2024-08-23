@@ -6,8 +6,15 @@ const Status = {
 };
 
 const Platform = {
+    ALL: "ALL",
     FNC: "FNC",
     F2F: "F2F",
+}
+
+const PostType = {
+    FREE: 1,
+    FAN: 2,
+    PAID: 3,
 }
 
 const Protocol = {
@@ -16,7 +23,7 @@ const Protocol = {
 }
 
 const AdminRole = {
-    SUPER : 1,
+    SUPER: 1,
     NORMAL: 2,
 }
 

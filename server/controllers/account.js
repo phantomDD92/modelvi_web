@@ -1,4 +1,3 @@
-const { param } = require("../api");
 const AccountService = require("../services/account");
 const ActorService = require("../services/actor");
 const HistoryService = require("../services/history");

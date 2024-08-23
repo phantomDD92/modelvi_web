@@ -22,6 +22,7 @@ const ProxyCtrl = require("../controllers/proxy.js");
 const ManagerCtrl = require("../controllers/manager.js");
 const CommentCtrl = require("../controllers/comment.js");
 const HistoryCtrl = require("../controllers/history.js");
+const PostCtrl = require("../controllers/post.js");
 
 const router = express.Router();
 
@@ -43,6 +44,7 @@ router.route("/discord")
   .get(DiscordCtrl.handleLoadDiscords)
   .post(DiscordCtrl.handleCreateDiscord)
   .delete(DiscordCtrl.handleDeleteDiscord)
+
 router.route("/discord/:id")
   .all(authenticate)
   .post(DiscordCtrl.handleAppendActor)
@@ -139,5 +141,15 @@ router
   .route("/history/:accountId")
   .all(authenticate)
   .get(HistoryCtrl.handleLoadHistories);
+
+router.route("/post")
+  .all(authenticate)
+  .get(PostCtrl.handleLoadPosts)
+  .post(PostCtrl.handleCreatePost)
+
+router.route("/post/:postId")
+  .all(authenticate)
+  .put(PostCtrl.handleChangePost)
+  .delete(PostCtrl.handleDeletePost)
 
 module.exports = router;
