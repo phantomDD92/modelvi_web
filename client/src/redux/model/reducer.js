@@ -12,6 +12,8 @@ const initialState = {
   accountsCount: 0,
   history: [],
   historyCount: 0,
+  schedules: [],
+  schedulesCount: 0,
 }
 
 const modelReducer = (state = initialState, action) => {
@@ -50,6 +52,12 @@ const modelReducer = (state = initialState, action) => {
         ...state,
         history: action.payload.history,
         historyCount: action.payload.historyCount,
+      };
+    case ACTIONS.LOAD_SCHEDULES:
+      return {
+        ...state,
+        schedules: action.payload.schedules,
+        schedulesCount: action.payload.schedulesCount,
       };
     default:
       return state;

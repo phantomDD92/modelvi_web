@@ -246,3 +246,38 @@ export const stopAllAccount = (platform, callback) => async (dispatch) => {
     callback
   })
 }
+
+export const loadSchedules = ({platform, actor, page, pageSize}, callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/schedule`,
+    params: {platform, actor, page, pageSize},
+    action: ACTIONS.LOAD_SCHEDULES,
+    callback
+  })
+}
+
+export const createSchedule = (params, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/schedule`,
+    data: params,
+    inform: "successfully create schedule",
+    callback
+  });
+}
+
+export const changeSchedule = (schedule, params, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/schedule/${schedule._id}`,
+    params,
+    inform: "successfully change schedule",
+    callback
+  })
+}
+
+export const deleteSchedule = (schedule, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/schedule/${schedule._id}`,
+    inform: "successfully delete schedule",
+    callback
+  })
+}

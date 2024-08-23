@@ -6,6 +6,7 @@ import AccountList from "./pages/AccountList";
 import ModelContent from "./pages/ModelContent";
 import CommentList from "./pages/CommentList";
 import AccountHistory from "./pages/AccountHistory";
+import ScheduleList from "./pages/ScheduleList";
 
 const routes = [
     {
@@ -42,6 +43,15 @@ const routes = [
         icon: <UserOutlined />,
         component: <AccountList />,
         mode: "main"
+    },
+    {
+        key: "schedule",
+        path: "/schedule",
+        link: "/schedule",
+        label: "Schedules",
+        icon: <SolutionOutlined />,
+        component: <ScheduleList />,
+        mode: "main",
     },
     {
         key: "history",

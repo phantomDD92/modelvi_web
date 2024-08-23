@@ -31,5 +31,6 @@ module.exports = {
     Status,
     Platform,
     Protocol,
+    PostType,
     AdminRole
 }

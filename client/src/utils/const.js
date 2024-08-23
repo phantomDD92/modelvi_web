@@ -7,3 +7,9 @@ export const Platform = {
     F2F: "F2F",
     FNC: "FNC"
 }
+
+export const PostType = {
+    FREE: 1,
+    FAN: 2,
+    PAID: 3,
+}
