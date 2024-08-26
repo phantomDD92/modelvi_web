@@ -70,17 +70,8 @@ const getCount = () =>
     AccountModel.countDocuments({ platform: Platform.F2F })
   ]);
 
-const updateParams = async (accountId, { commentInterval, notifyInterval, debug, postOffsets }) => {
-  const res = await AccountModel.findByIdAndUpdate(accountId, {
-    $set: {
-      "params.commentInterval": commentInterval,
-      "params.notifyInterval": notifyInterval,
-      "params.debug": debug,
-      "params.postOffsets": postOffsets,
-    }
-  });
-  return res;
-}
+const updateParams = async (accountId, params) =>
+  AccountModel.findByIdAndUpdate(accountId, { $set: params });
 
 const syncContents = (actorId) =>
   AccountModel.updateMany({ actor: actorId }, { $set: { "params.uploaded": false, "params.recent": false } })

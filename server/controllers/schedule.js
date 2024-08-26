@@ -26,23 +26,23 @@ const handleLoadSchedules = async (req, res) => {
 
 const handleCreateSchedule = async (req, res) => {
     try {
-        const { actor, platform, ...params } = req.body;
+        const { actor, platform, scheduledAt, ...params } = req.body;
         const actorInst = await ActorService.findById(actor)
         if (!actorInst)
             throw new ApiError("Model does not exist");
         if (platform == Platform.ALL) {
             if (actorInst.accounts.length == 0)
                 throw new ApiError(`Account for ${actorInst.name} does not exist.`);
-            const schedule = await ScheduleService.createSchedule({ actor, platform, ...params })
+            const schedule = await ScheduleService.createSchedule({ actor, platform, scheduledAt, ...params })
             for (let account of actorInst.accounts) {
-                await DailyService.createTask(account, schedule._id);
+                await DailyService.createTask(account, schedule._id, scheduledAt);
             }
         } else {
             const account = await AccountService.findByActor(platform, actor)
             if (!account)
                 throw new ApiError(`Account for ${platform} ${actorInst.name} does not exist.`)
-            const schedule = await ScheduleService.createSchedule({ actor, platform, ...params })
-            await DailyService.createTask(account._id, schedule._id);
+            const schedule = await ScheduleService.createSchedule({ actor, platform, scheduledAt, ...params })
+            await DailyService.createTask(account._id, schedule._id, scheduledAt);
         }
         sendResult(res);
     } catch (error) {
@@ -54,8 +54,9 @@ const handleCreateSchedule = async (req, res) => {
 const handleChangeSchedule = async (req, res) => {
     try {
         const { id } = req.params;
-        const { actor, platform, ...params } = req.body;
-        await ScheduleService.changeSchedule(id, { actor, platform, ...params })
+        const { scheduledAt, ...params } = req.body;
+        await ScheduleService.changeSchedule(id, { scheduledAt, ...params });
+        await DailyService.changeScheduledAt(id, scheduledAt);
         sendResult(res);
     } catch (error) {
         console.error(error);

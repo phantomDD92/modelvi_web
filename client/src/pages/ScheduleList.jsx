@@ -223,8 +223,6 @@ export const ScheduleList = () => {
               </Button>
             </Upload>
           </Form.Item>}
-
-
           <Form.Item name="scheduledAt" label="Time" rules={[{ required: true }]}>
             <DatePicker showTime format="YYYY-MM-DD HH:mm" />
           </Form.Item>

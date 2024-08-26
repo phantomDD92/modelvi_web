@@ -1,3 +1,4 @@
+const { Platform } = require("../config/const");
 const AccountService = require("../services/account");
 const ActorService = require("../services/actor");
 const HistoryService = require("../services/history");
@@ -72,7 +73,24 @@ const handleUpdateParams = async (req, res) => {
   try {
     const { id } = req.params;
     const params = req.body;
-    await AccountService.updateParams(id, params);
+    const account = await AccountService.findById(id);
+    if (account.platform == Platform.F2F) {
+      const { commentInterval, notifyInterval, postOffsets, debug } = params;
+      await AccountService.updateParams(id, {
+        "params.debug": debug,
+        "params.commentInterval": commentInterval,
+        "params.notifyInterval": notifyInterval,
+        "params.postOffsets": postOffsets,
+      });
+    } else if (account.platform == Platform.FNC) {
+      const { commentInterval, notifyInterval, postOffsets, debug } = params;
+      await AccountService.updateParams(id, {
+        "params.debug": debug,
+        "params.commentInterval": commentInterval,
+        "params.notifyInterval": notifyInterval,
+        "params.postOffsets": postOffsets,
+      });
+    }
     sendResult(res);
   } catch (error) {
     sendError(res, error);
