@@ -48,7 +48,7 @@ const handleUpdateAccount = async (req, res) => {
   try {
     const { id } = req.params;
     const { actor, ...params } = req.body;
-    const currActor = await AccountService.findById(actor);
+    const currActor = await ActorService.findById(actor);
     if (!currActor) throw new ApiError("model is not existed.");
     const account = await AccountService.findById(id);
     if (!account) throw new ApiError("account is not existed.");
