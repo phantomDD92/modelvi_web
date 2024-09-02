@@ -178,6 +178,15 @@ export const appendModelContent = (model, params, callback) => async (dispatch) 
   });
 };
 
+export const updateModelContent = (model, content, params, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/actor/${model}`,
+    data: {contentId: content._id, ...params},
+    action: ACTIONS.GET_MODEL_CONTENT,
+    inform: "successfully update content",
+    callback
+  });
+};
 
 export const deleteModelContent = (model, content, callback) => async (dispatch) => {
   await ApiRequest.deleteAction(dispatch, {

@@ -100,6 +100,19 @@ const handleAppendContent = async (req, res) => {
   }
 }
 
+const handleUpdateContent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { contentId, folder, title, tags } = req.body;
+    await ActorService.updateContent(id, contentId, { folder, title, tags });
+    let actor = await ActorService.findById(id);
+    if (!actor)
+      throw new ApiError(`model is not existed.`);
+    sendResult(res, { actor });
+  } catch (error) {
+    sendError(res, error);
+  }
+}
 const handleDeleteContent = async (req, res) => {
   try {
     const { id } = req.params;
@@ -150,6 +163,7 @@ const ActorCtrl = {
   handleUpdateActor,
   handleGetContent,
   handleAppendContent,
+  handleUpdateContent,
   handleDeleteContent,
   handleClearContents,
   handleSyncContents

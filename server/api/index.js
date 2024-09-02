@@ -96,6 +96,7 @@ router
   .all(authenticate)
   .get(ActorCtrl.handleGetContent)
   .post(upload.single('image'), ActorCtrl.handleAppendContent)
+  .put(ActorCtrl.handleUpdateContent)
   .delete(ActorCtrl.handleDeleteContent)
   .put(ActorCtrl.handleClearContents)
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Card, Table, Tooltip, Popconfirm, Button, Upload, Modal, Form, Input, Flex, Image } from "antd";
-import { DeleteOutlined, PlusOutlined, UploadOutlined, RollbackOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined, UploadOutlined, RollbackOutlined, EditOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { appendModelContent, clearModelContents, deleteModelContent, getModelContent, syncModelContents } from "@/redux/model/actions";
+import { appendModelContent, clearModelContents, deleteModelContent, getModelContent, syncModelContents, updateModelContent } from "@/redux/model/actions";
 import { useNavigate, useParams } from "react-router-dom";
 import { SERVER_PATH } from "@/utils/const";
 
@@ -11,6 +11,7 @@ import { SERVER_PATH } from "@/utils/const";
 export const ModelContent = () => {
   const dispatch = useDispatch()
   const modelProps = useSelector(state => state.model)
+  const [content, setContent] = useState()
   const [visible, setVisible] = useState(false);
   const [form] = Form.useForm();
   const routeParams = useParams()
@@ -48,7 +49,10 @@ export const ModelContent = () => {
       title: 'Operation',
       width: 150,
       render: (_, record) => (
-        <Flex>
+        <Flex gap="small">
+          <Tooltip title="Edit content">
+            <Button icon={<EditOutlined />} onClick={() => handleEditButtonClick(record)} />
+          </Tooltip>
           <Popconfirm
             title="Confirm"
             description="Are you sure to remove this content?"
@@ -65,11 +69,15 @@ export const ModelContent = () => {
     },
   ]
 
-  const handleAppendContent = async () => {
+  const handleUpdateContent = async () => {
     try {
       await form.validateFields()
       const params = form.getFieldsValue();
-      dispatch(appendModelContent(routeParams.modelId, params, () => setVisible(false)));
+      if (content) {
+        dispatch(updateModelContent(routeParams.modelId, content, params, () => setVisible(false)));
+      } else {
+        dispatch(appendModelContent(routeParams.modelId, params, () => setVisible(false)));
+      }
     } catch (error) {
 
     }
@@ -80,7 +88,14 @@ export const ModelContent = () => {
   }
 
   const handleCreateButtonClick = () => {
+    setContent();
     form.resetFields()
+    setVisible(true)
+  }
+
+  const handleEditButtonClick = (content) => {
+    setContent(content);
+    form.setFieldsValue(content)
     setVisible(true)
   }
 
@@ -130,7 +145,7 @@ export const ModelContent = () => {
               </Button>
             </Popconfirm>
             {
-              modelProps.contentsUpdated && 
+              modelProps.contentsUpdated &&
               <Button
                 key="sync"
                 icon={<UploadOutlined />}
@@ -140,7 +155,7 @@ export const ModelContent = () => {
             }
             <Button
               key="return"
-              icon={<RollbackOutlined/>}
+              icon={<RollbackOutlined />}
               onClick={() => navigate(-1)}>
               Return
             </Button>
@@ -155,36 +170,38 @@ export const ModelContent = () => {
         />
       </Card>
       <Modal
-        title={"Append Content"}
+        title={content ? "Edit Content" : "Append Content"}
         open={visible}
-        onOk={() => handleAppendContent()}
+        onOk={() => handleUpdateContent()}
         onCancel={() => setVisible(false)}>
         <Form form={form}>
-          <Form.Item
-            label="Image"
-            name="images"
-            valuePropName="fileList"
-            rules={[{ required: true }]}
-            getValueFromEvent={normFile}>
-            <Upload
-              name="logo"
-              action="/upload.do"
-              listType="picture" maxCount={1}
-              beforeUpload={() => false}
-            >
-              <Button icon={<PlusOutlined />}>
-                Click to upload
-              </Button>
-            </Upload>
-          </Form.Item>
+          {!content &&
+            <Form.Item
+              label="Image"
+              name="images"
+              valuePropName="fileList"
+              rules={[{ required: true }]}
+              getValueFromEvent={normFile}>
+              <Upload
+                name="logo"
+                action="/upload.do"
+                listType="picture" maxCount={1}
+                beforeUpload={() => false}
+              >
+                <Button icon={<PlusOutlined />}>
+                  Click to upload
+                </Button>
+              </Upload>
+            </Form.Item>
+          }
           <Form.Item name="title" label="Title" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="tags" label="Tags" rules={[{ required: true }]}>
+          <Form.Item name="tags" label="Tags">
             <Input />
           </Form.Item>
           <Form.Item name="folder" label="Folder">
-            <Input />
+            <Input defaultValue="AAA" />
           </Form.Item>
         </Form>
       </Modal>

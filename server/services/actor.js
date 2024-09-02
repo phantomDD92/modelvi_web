@@ -84,6 +84,9 @@ const clearContents = (id) =>
 const syncContents = (id) =>
   ActorModel.findByIdAndUpdate(id, { $set: { updated: false } })
 
+const updateContent = (id, contentId, params) =>
+  ActorModel.findOneAndUpdate({_id: id, 'contents._id': contentId}, {$set: {'contents.$': params}})
+
 const ActorService = {
   createActor,
   updateActor,
@@ -100,6 +103,7 @@ const ActorService = {
   appendContent,
   deleteContent,
   clearContents,
+  updateContent,
   syncContents,
   loadAllActors,
 };

@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Card, Table, Tooltip, Popconfirm, Button, Flex, Modal, Form, Input, Tag, InputNumber, DatePicker, Row, Col } from "antd";
-import { DeleteOutlined, EditOutlined, UserAddOutlined, ReadOutlined } from "@ant-design/icons";
+import { Card, Table, Tooltip, Popconfirm, Button, Flex, Modal, Form, Input, Tag, InputNumber, DatePicker, Row, Col, Upload, Switch } from "antd";
+import { DeleteOutlined, EditOutlined, UserAddOutlined, ReadOutlined, PlusOutlined, SolutionOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { createModel, deleteModel, loadModels, updateModel } from "@/redux/model/actions";
 import moment from "moment";
 import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
 import qs from 'query-string';
+import { SERVER_PATH } from "@/utils/const";
 
 export const ModelList = () => {
   const dispatch = useDispatch()
   const modelProps = useSelector(state => state.model)
   const [visible, setVisible] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [model, setModel] = useState();
   const [form] = Form.useForm();
   const navigate = useNavigate();
@@ -47,20 +49,20 @@ export const ModelList = () => {
       width: 250,
       dataIndex: 'birthplace'
     },
-    {
-      key: 'width',
-      title: 'Width(kg)',
-      dataIndex: 'width',
-      width: 150,
-      render: value => value || '-'
-    },
-    {
-      key: 'height',
-      title: 'Height(cm)',
-      dataIndex: 'height',
-      width: 150,
-      render: value => value || '-'
-    },
+    // {
+    //   key: 'width',
+    //   title: 'Width(kg)',
+    //   dataIndex: 'width',
+    //   width: 150,
+    //   render: value => value || '-'
+    // },
+    // {
+    //   key: 'height',
+    //   title: 'Height(cm)',
+    //   dataIndex: 'height',
+    //   width: 150,
+    //   render: value => value || '-'
+    // },
     {
       key: 'discord',
       title: 'Discord',
@@ -93,6 +95,9 @@ export const ModelList = () => {
           <Tooltip title="Read contents">
             <Button icon={<ReadOutlined />} onClick={() => handleContentButtonClick(record)} />
           </Tooltip>
+          <Tooltip title="Profile">
+            <Button icon={<SolutionOutlined />} onClick={() => handleProfileClick(record)} />
+          </Tooltip>
           <Popconfirm
             title="Confirm"
             description="Are you sure to remove this model?"
@@ -108,6 +113,16 @@ export const ModelList = () => {
       )
     },
   ]
+
+  const handleProfileClick = (model) => {
+    const {avatar, banner, ...params} = model.profile;
+    form.setFieldsValue({ 
+      avatars: avatar ? [{ url: `${SERVER_PATH}/uploads/${avatar}` }]: [], 
+      banners: banner ? [{ url: `${SERVER_PATH}/uploads/${banner}` }]: [], 
+      ...params
+    });
+    setProfileOpen(true);
+  }
 
   const handleContentButtonClick = (model) => {
     navigate(`/model/${model._id}`);
@@ -151,12 +166,19 @@ export const ModelList = () => {
       search: createSearchParams({
         page: pg
       }).toString()
-    }, {replace: true});
+    }, { replace: true });
   }
 
   const layout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 18 },
+  };
+
+  const normFile = (e) => {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e?.fileList;
   };
 
   return (
@@ -254,6 +276,124 @@ export const ModelList = () => {
               <Form.Item labelCol={8} wrapperCol={16} name="description" label="Bio" >
                 <Input.TextArea autoSize={{ minRows: 5, maxRows: 20 }} />
               </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
+      <Modal
+        title={"Profile"}
+        width={1000}
+        open={profileOpen}
+        // onOk={handleUpdateModel}
+        onCancel={() => setProfileOpen(false)}>
+        <Form
+          layout="vertical"
+          form={form}
+          name="control-hooks"
+        >
+          <Row>
+            <Col span={12}>
+              <Form.Item
+                label="Avatar"
+                name="avatars"
+                valuePropName="fileList"
+                rules={[{ required: true }]}
+                getValueFromEvent={normFile}
+              >
+                <Upload
+                  name="file"
+                  action={`${SERVER_PATH}/api/upload`}
+                  headers={{ authorization: 'authorization-text' }}
+                  listType="picture-card"
+                  maxCount={1}
+                >
+                  <PlusOutlined />
+                </Upload>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item labelCol={8} wrapperCol={16} name="banner" label="Banner" >
+              <Form.Item
+                label="Banner"
+                name="banners"
+                valuePropName="fileList"
+                rules={[{ required: true }]}
+                getValueFromEvent={normFile}
+              >
+                <Upload
+                  name="file"
+                  action={`${SERVER_PATH}/api/upload`}
+                  headers={{ authorization: 'authorization-text' }}
+                  listType="picture-card"
+                  maxCount={1}
+                >
+                  <PlusOutlined />
+                </Upload>
+              </Form.Item>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+              <Form.Item labelCol={8} wrapperCol={16} name="description" label="Bio" >
+                <Input.TextArea autoSize={{ minRows: 10, maxRows: 20 }} />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={8}>
+              <Card title="Subscription Plan (1 Month)" actions={[<Switch />]}>
+                <Form.Item labelCol={8} wrapperCol={16} name="plan1Title" label="Title" >
+                  <Input />
+                </Form.Item>
+                <Form.Item labelCol={8} wrapperCol={16} name="plan1Desc" label="Description" >
+                  <Input.TextArea />
+                </Form.Item>
+                <Flex justify="space-between">
+                  <Form.Item labelCol={8} wrapperCol={16} name="plan1Price" label="Price" >
+                    <InputNumber />
+                  </Form.Item>
+                  <Form.Item labelCol={8} wrapperCol={16} name="plan1Discount" label="Discount" >
+                    <InputNumber />
+                  </Form.Item>
+                </Flex>
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card title="Subscription Plan (3 Months)" actions={[<Switch />]}>
+                <Form.Item labelCol={8} wrapperCol={16} name="plan2Title" label="Title" >
+                  <Input />
+                </Form.Item>
+                <Form.Item labelCol={8} wrapperCol={16} name="plan2Desc" label="Description" >
+                  <Input.TextArea />
+                </Form.Item>
+                <Flex justify="space-between">
+                  <Form.Item labelCol={8} wrapperCol={16} name="plan2Price" label="Price" >
+                    <InputNumber />
+                  </Form.Item>
+                  <Form.Item labelCol={8} wrapperCol={16} name="plan2Discount" label="Discount" >
+                    <InputNumber />
+                  </Form.Item>
+                </Flex>
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card title="Subscription Plan (Lifetime)" actions={[<Switch />]}>
+                <Form.Item labelCol={8} wrapperCol={16} name="plan3Title" label="Title" >
+                  <Input />
+                </Form.Item>
+                <Form.Item labelCol={8} wrapperCol={16} name="plan3Desc" label="Description" >
+                  <Input.TextArea />
+                </Form.Item>
+                <Flex justify="space-between">
+                  <Form.Item labelCol={8} wrapperCol={16} name="plan3Price" label="Price" >
+                    <InputNumber />
+                  </Form.Item>
+                  <Form.Item labelCol={8} wrapperCol={16} name="plan3Discount" label="Discount" >
+                    <InputNumber />
+                  </Form.Item>
+                </Flex>
+              </Card>
             </Col>
           </Row>
         </Form>
