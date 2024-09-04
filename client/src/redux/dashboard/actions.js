@@ -26,27 +26,46 @@ export const updateSetting = (params, callback) => async (dispatch) => {
   });
 };
 
-export const loadManagers = () => async (dispatch) => {
+
+export const loadAgencies = () => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/manager`,
     action: ACTIONS.LOAD_MANAGERS,
   })
 };
 
-export const createManager = (name, password, callback) => async (dispatch) => {
+export const createAgency = (params, callback) => async (dispatch) => {
   await ApiRequest.postAction(dispatch, {
     path: `/manager`,
-    data: { name, password },
-    inform: `manager(${name}) is successfully created.`,
+    data: params,
+    inform: `agency(${params.name}) is successfully created.`,
     callback
   })
 };
 
-export const deleteManager = (user, callback) => async (dispatch) => {
+export const deleteAgency = (agency, callback) => async (dispatch) => {
   await ApiRequest.deleteAction(dispatch, {
     path: `/manager`,
-    data: { name: user.name },
-    inform: `manager(${user.name}) is successfully deleted.`,
+    data: { name: agency.name },
+    inform: `agency(${agency.name}) is successfully deleted.`,
+    callback
+  })
+};
+
+export const changeAgencyStatus = (agency, status, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/manager/${agency._id}`,
+    data: {status},
+    inform: `Agency(${agency.name}) is ${status ? 'enabled': 'disabled'}`,
+    callback
+  })
+};
+
+export const updateAgency = (agency, params, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/manager/${agency._id}`,
+    data: params,
+    inform: `Agency(${agency.name}) info is changed.`,
     callback
   })
 };

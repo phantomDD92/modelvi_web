@@ -35,6 +35,7 @@ const ActorSchema = new Schema({
   updated: { type: Boolean, default: false },
   discord: { type: SchemaTypes.ObjectId, ref: "Discord" },
   createdAt: { type: Date, default: Date.now },
+  owner: { type: SchemaTypes.ObjectId, ref: "Manager" },
 });
 
 const ActorModel = mongoose.model("Actor", ActorSchema);

@@ -1,10 +1,10 @@
 import React from "react"
-import { UserOutlined, HomeOutlined, SolutionOutlined, SettingOutlined, MessageOutlined, EnvironmentOutlined, DiscordOutlined } from "@ant-design/icons";
+import { UserOutlined, HomeOutlined, SolutionOutlined, SettingOutlined, WomanOutlined, EnvironmentOutlined, DiscordOutlined } from "@ant-design/icons";
 import {Home, ProxyList, ModelList, DiscordList, Settings} from "@/pages";
 import ManagerList from "./pages/ManagerList";
 import AccountList from "./pages/AccountList";
 import ModelContent from "./pages/ModelContent";
-import CommentList from "./pages/CommentList";
+// import CommentList from "./pages/CommentList";
 import AccountHistory from "./pages/AccountHistory";
 import ScheduleList from "./pages/ScheduleList";
 
@@ -96,11 +96,11 @@ const routes = [
     //     mode: "main"
     // },
     {
-        key: "manager",
-        path: "/manager",
-        label: "Manager",
-        link: "/manager",
-        icon: <SettingOutlined />,
+        key: "agency",
+        path: "/agency",
+        label: "Agency",
+        link: "/agency",
+        icon: <UserOutlined />,
         component: <ManagerList />,
         mode: "main"
     },

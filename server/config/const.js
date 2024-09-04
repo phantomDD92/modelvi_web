@@ -23,8 +23,8 @@ const Protocol = {
 }
 
 const AdminRole = {
-    SUPER: 1,
-    NORMAL: 2,
+    MANAGER: 1,
+    AGENCY: 2,
 }
 
 module.exports = {

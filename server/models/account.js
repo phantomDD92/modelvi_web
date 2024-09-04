@@ -12,6 +12,7 @@ const AccountSchema = new Schema({
   lastError: { type: String, default: '' },
   description: { type: String, default: '' },
   params: {},
+  owner: { type: SchemaTypes.ObjectId, ref: "Manager" },
   updatedAt: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now },
 });

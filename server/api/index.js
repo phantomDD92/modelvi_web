@@ -24,6 +24,7 @@ const ManagerCtrl = require("../controllers/manager.js");
 const CommentCtrl = require("../controllers/comment.js");
 const HistoryCtrl = require("../controllers/history.js");
 const ScheduleCtrl = require("../controllers/schedule.js");
+const checkManager = require("../middleware/manager.js");
 
 const router = express.Router();
 
@@ -58,11 +59,15 @@ router.route("/discord/:id")
 //   .post(SettingCtrl.handleUpdateSetting)
 
 router.route("/manager")
-  .all(authenticate)
+  .all(authenticate, checkManager)
   .get(ManagerCtrl.handleLoadManagers)
   .post(ManagerCtrl.handleCreateManager)
   .put(ManagerCtrl.handleChangePassword)
   .delete(ManagerCtrl.handleDeleteManager)
+router.route("/manager/:id")
+  .all(authenticate, checkManager)
+  .put(ManagerCtrl.handleUpdateManager)
+  .post(ManagerCtrl.handleChangeStatus);
 
 router.route("/auth")
   .post(ManagerCtrl.handleLoginManager)
@@ -71,7 +76,7 @@ router.route("/auth")
 router.route("/stats")
   .all(authenticate)
   .get(DashboardCtrl.handleGetStats)
-  
+
 router
   .route("/all/:platform")
   .all(authenticate)
@@ -155,6 +160,6 @@ router.route("/schedule/:id")
   .delete(ScheduleCtrl.handleDeleteSchedule)
 
 router.route("/upload")
-  .post(upload.single('file'), (req, res) => {res.json({file: req.file.filename})})
+  .post(upload.single('file'), (req, res) => { res.json({ file: req.file.filename }) })
 
 module.exports = router;

@@ -2,20 +2,27 @@ const { AdminRole } = require("../config/const")
 const ManagerModel = require("../models/manager")
 const bcrypt = require('bcryptjs')
 
-const createManager = (name, password) => {
-    return ManagerModel.create({  name, password: bcrypt.hashSync(password, 12) })
-}
+const createManager = ({ name, password, maxActors, maxAccounts, email }) =>
+    ManagerModel.create({
+        name,
+        email,
+        password: bcrypt.hashSync(password, 12),
+        maxAccounts,
+        maxActors,
+        role: AdminRole.AGENCY,
+        status: true,
+    })
 
-const findByName = (name) => {
-    return ManagerModel.findOne({ name })
-}
 
-const loadManagers = () => {
-    return ManagerModel.find({role: AdminRole.NORMAL}, 'name createdAt');
-}
+const findByName = (name) =>
+    ManagerModel.findOne({ name })
+
+const loadManagers = () =>
+    ManagerModel.find({ role: AdminRole.AGENCY }, 'name email maxAccounts maxActors role status createdAt');
+
 
 const deleteManager = (id) => {
-    return ManagerModel.deleteOne({_id: id})
+    return ManagerModel.deleteOne({ _id: id })
 }
 
 const findById = (id) => {
@@ -23,15 +30,24 @@ const findById = (id) => {
 }
 
 const changePassword = (id, password) => {
-    return ManagerModel.findByIdAndUpdate(id, {$set : {password: bcrypt.hashSync(password, 12)}})
+    return ManagerModel.findByIdAndUpdate(id, { $set: { password: bcrypt.hashSync(password, 12) } })
 }
+
+const changeStatus = (id, status) =>
+    ManagerModel.findByIdAndUpdate(id, { $set: { status } })
+
+const updateManager = (id, params) =>
+    ManagerModel.findByIdAndUpdate(id, { $set: params })
+
 const ManagerService = {
     createManager,
     findByName,
     loadManagers,
     deleteManager,
     findById,
-    changePassword
+    changePassword,
+    changeStatus,
+    updateManager
 }
 
 module.exports = ManagerService
