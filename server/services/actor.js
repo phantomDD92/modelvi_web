@@ -34,7 +34,7 @@ const deleteActor = (id) => ActorModel.deleteOne({ _id: id });
 const appendAccount = (id, account) =>
   ActorModel.findByIdAndUpdate(id, { $push: { accounts: account._id } });
 
-const removeAccount = (id, account) => 
+const removeAccount = (id, account) =>
   ActorModel.findByIdAndUpdate(id, { $pull: { accounts: account._id } });
 
 const loadActors = ({ page, pageSize }) =>
