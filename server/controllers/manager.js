@@ -24,18 +24,17 @@ const handleCreateManager = async (req, res) => {
 const handleLoginManager = async (req, res) => {
   try {
     const { name, password } = req.body;
-    const user = await ManagerService.findByName(name)
-    if (!user)
-      throw new Error(`Manager(${name}) is not registered`)
-    const passwordCompare = await bcrypte.compare(password, user.password);
-    if (!passwordCompare) {
-      throw new Error("The password is incorrect");
-    }
-    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY || "SECRET_KEY_FNC", { expiresIn: "1h" });
-    res.json({ success: true, message: "Login Manager", payload: { name, token } })
+    const agency = await ManagerService.findByName(name)
+    if (!agency)
+      throw new ApiError(`Agency(${name}) is not registered`)
+    const passwordCompare = await bcrypte.compare(password, agency.password);
+    if (!passwordCompare)
+      throw new ApiError("The password is incorrect");
+
+    const token = jwt.sign({ id: agency._id }, process.env.SECRET_KEY || "SECRET_KEY_FNC", { expiresIn: "1h" });
+    sendResult(res, { token, auth: agency })
   } catch (error) {
-    console.error(error)
-    res.json({ success: false, message: error.message })
+    sendError(res, error)
   }
 };
 
@@ -84,17 +83,16 @@ const handleChangePassword = async (req, res) => {
 
 const handleReloadManager = async (req, res) => {
   try {
-    res.json({ success: true, message: "Reload Manager", payload: { name: req.manager.name } })
+    sendResult(res, { auth: req.manager })
   } catch (error) {
-    console.error(error)
-    res.json({ success: false, message: error.message })
+    sendError(error);
   }
 }
 
 const handleChangeStatus = async (req, res) => {
   try {
-    const {id} = req.params
-    const {status} = req.body;
+    const { id } = req.params
+    const { status } = req.body;
     await ManagerService.changeStatus(id, status)
     sendResult(res);
   } catch (error) {
@@ -105,7 +103,7 @@ const handleChangeStatus = async (req, res) => {
 
 const handleUpdateManager = async (req, res) => {
   try {
-    const {id} = req.params
+    const { id } = req.params
     const params = req.body;
     await ManagerService.updateManager(id, params)
     sendResult(res);

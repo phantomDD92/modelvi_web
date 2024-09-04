@@ -1,7 +1,7 @@
 import ACTIONS from "./types";
 
 const initialState = {
-  name: undefined,
+  auth: {},
   token: localStorage.getItem("token"),
   stats: {
     discordCount: 0,
@@ -42,19 +42,19 @@ const dashboardReducer = (state = initialState, action) => {
       return {
         ...state,
         token: action.payload.token,
-        name: action.payload.name,
+        auth: action.payload.auth,
       }
     case ACTIONS.LOGOUT_MANAGER:
       localStorage.setItem("token", undefined)
       return {
         ...state,
         token: undefined,
-        name: undefined,
+        auth: {},
       }
     case ACTIONS.RELOAD_MANAGER:
       return {
         ...state,
-        name: action.payload.name,
+        auth: action.payload.auth,
       }
     case ACTIONS.LOAD_COMMENTS:
       return {

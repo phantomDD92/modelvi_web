@@ -15,7 +15,7 @@ const createManager = ({ name, password, maxActors, maxAccounts, email }) =>
 
 
 const findByName = (name) =>
-    ManagerModel.findOne({ name })
+    ManagerModel.findOne({ name }, 'name email role status maxAccounts maxActors createdAt')
 
 const loadManagers = () =>
     ManagerModel.find({ role: AdminRole.AGENCY }, 'name email maxAccounts maxActors role status createdAt');
@@ -26,7 +26,7 @@ const deleteManager = (id) => {
 }
 
 const findById = (id) => {
-    return ManagerModel.findById(id, "name role createdAt");
+    return ManagerModel.findById(id, "name email role status maxAccounts maxActors createdAt");
 }
 
 const changePassword = (id, password) => {

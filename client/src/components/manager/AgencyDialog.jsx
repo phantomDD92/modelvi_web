@@ -1,8 +1,8 @@
 import { Modal, Form, Input, Row, Col, InputNumber } from "antd";
 import { useEffect } from "react";
 
-const AgencyModal = ({ visible, agency, onCancel, onCreate, onUpdate }) => {
-
+const AgencyDialog = ({ open, agency, onCancel, onCreate, onUpdate }) => {
+    
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -39,7 +39,7 @@ const AgencyModal = ({ visible, agency, onCancel, onCreate, onUpdate }) => {
     return (
         <Modal
             title={agency ? "Update agency" : "Create agency"}
-            open={visible}
+            open={open}
             width={700}
             onOk={handleOkClick}
             onCancel={onCancel}>
@@ -112,4 +112,4 @@ const AgencyModal = ({ visible, agency, onCancel, onCreate, onUpdate }) => {
     )
 }
 
-export default AgencyModal;
+export default AgencyDialog;

@@ -15,7 +15,7 @@ const authenticate = async (req, res, next) => {
         }
         const {id} = jwt.decode(tokens[1]);
         const manager = await ManagerService.findById(id);
-        if (!manager) {
+        if (!manager || !manager.status) {
             res.status(401).json();
             return
         }

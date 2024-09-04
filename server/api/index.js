@@ -2,7 +2,8 @@ const express = require("express");
 const multer = require('multer')
 const path = require('path')
 const { v4: uuidv4 } = require("uuid")
-const storage = multer.diskStorage({
+
+const imageStorage = multer.diskStorage({
   destination: async function (req, file, cb) {
     cb(null, "uploads");
   },
@@ -11,8 +12,7 @@ const storage = multer.diskStorage({
     cb(null, fileName + path.extname(file.originalname))
   }
 })
-
-const upload = multer({ storage: storage })
+const imageUpload = multer({ storage: imageStorage })
 
 const authenticate = require("../middleware/auth.js");
 const ActorCtrl = require("../controllers/actor.js");
@@ -29,26 +29,26 @@ const checkManager = require("../middleware/manager.js");
 const router = express.Router();
 
 router.route("/proxy")
-  .all(authenticate)
+  .all(authenticate, checkManager)
   .get(ProxyCtrl.handleLoadProxies)
   .post(ProxyCtrl.handleAddProxies)
   .put(ProxyCtrl.handleChangeProxyStatus)
   .delete(ProxyCtrl.handleClearProxies);
 
 router.route("/proxy/:id")
-  .all(authenticate)
+  .all(authenticate, checkManager)
   .put(ProxyCtrl.handleSetProxyStatus)
   .delete(ProxyCtrl.handleDeleteProxy);
 
 
 router.route("/discord")
-  .all(authenticate)
+  .all(authenticate, checkManager)
   .get(DiscordCtrl.handleLoadDiscords)
   .post(DiscordCtrl.handleCreateDiscord)
   .delete(DiscordCtrl.handleDeleteDiscord)
 
 router.route("/discord/:id")
-  .all(authenticate)
+  .all(authenticate, checkManager)
   .post(DiscordCtrl.handleAppendActor)
   .put(DiscordCtrl.handleUpdateDiscord)
   .delete(DiscordCtrl.handleRemoveActor)
@@ -63,7 +63,8 @@ router.route("/manager")
   .get(ManagerCtrl.handleLoadManagers)
   .post(ManagerCtrl.handleCreateManager)
   .put(ManagerCtrl.handleChangePassword)
-  .delete(ManagerCtrl.handleDeleteManager)
+  .delete(ManagerCtrl.handleDeleteManager);
+  
 router.route("/manager/:id")
   .all(authenticate, checkManager)
   .put(ManagerCtrl.handleUpdateManager)
@@ -100,7 +101,7 @@ router
   .route("/actor/:id")
   .all(authenticate)
   .get(ActorCtrl.handleGetContent)
-  .post(upload.single('image'), ActorCtrl.handleAppendContent)
+  .post(imageUpload.single('image'), ActorCtrl.handleAppendContent)
   .put(ActorCtrl.handleUpdateContent)
   .delete(ActorCtrl.handleDeleteContent)
   .put(ActorCtrl.handleClearContents)
@@ -160,6 +161,6 @@ router.route("/schedule/:id")
   .delete(ScheduleCtrl.handleDeleteSchedule)
 
 router.route("/upload")
-  .post(upload.single('file'), (req, res) => { res.json({ file: req.file.filename }) })
+  .post(imageUpload.single('file'), (req, res) => { res.json({ file: req.file.filename }) })
 
 module.exports = router;

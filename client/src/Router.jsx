@@ -12,17 +12,16 @@ const Router = () => {
     <BrowserRouter>
       <Routes>
         {homeProps.token ?
-          routes.map(route => (
+          routes.filter(route => !route.visible || route.visible(homeProps.auth)).map(route => (
             <Route
               key={route.key}
               exact
               element={route.component ? <Layouts>{route.component}</Layouts> : <Home />}
               path={route.path}
-            >
-            </Route>
+            />
           )) : []}
         {/* } */}
-        <Route key="login" element={<SignIn />} path="/auth/signin"></Route>
+        <Route key="login" element={<SignIn />} path="/auth/signin" />
         {homeProps.token ? <Route path="*" element={<Navigate to="/dashboard" />} /> : <Route path="*" element={<Navigate to="/auth/signin" />} />}
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>

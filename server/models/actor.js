@@ -5,6 +5,11 @@ require('./account');
 const ActorSchema = new Schema({
   number: { type: Number, required: true }, // model number
   name: { type: String, required: true }, // model name
+  birthday: { type: Date }, // model name
+  birthplace: { type: String }, // model name
+  discord: { type: SchemaTypes.ObjectId, ref: "Discord" },
+  owner: { type: SchemaTypes.ObjectId, ref: "Manager" },
+  accounts: [{ type: SchemaTypes.ObjectId, ref: "Account" }],
   profile: {
     avatar: { type: String },
     banner: { type: String },
@@ -25,7 +30,6 @@ const ActorSchema = new Schema({
     plan3Discount: { type: Number },
     plan3Enabled: { type: Boolean },
   },
-  accounts: [{ type: SchemaTypes.ObjectId, ref: "Account" }],
   contents: [{
     image: String,
     folder: String,
@@ -33,9 +37,8 @@ const ActorSchema = new Schema({
     tags: String,
   }],
   updated: { type: Boolean, default: false },
-  discord: { type: SchemaTypes.ObjectId, ref: "Discord" },
   createdAt: { type: Date, default: Date.now },
-  owner: { type: SchemaTypes.ObjectId, ref: "Manager" },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 const ActorModel = mongoose.model("Actor", ActorSchema);

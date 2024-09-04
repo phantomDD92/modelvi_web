@@ -20,6 +20,10 @@ export const ModelContent = () => {
     dispatch(getModelContent(routeParams.modelId))
   }, [getModelContent, routeParams.modelId])
 
+  const handleReloadData = () => {
+    dispatch(getModelContent(routeParams.modelId));
+    setVisible(false)
+  }
   const columns = [
     {
       key: 'image',
@@ -74,9 +78,9 @@ export const ModelContent = () => {
       await form.validateFields()
       const params = form.getFieldsValue();
       if (content) {
-        dispatch(updateModelContent(routeParams.modelId, content, params, () => setVisible(false)));
+        dispatch(updateModelContent(routeParams.modelId, content, params, handleReloadData));
       } else {
-        dispatch(appendModelContent(routeParams.modelId, params, () => setVisible(false)));
+        dispatch(appendModelContent(routeParams.modelId, params, handleReloadData));
       }
     } catch (error) {
 
@@ -174,13 +178,18 @@ export const ModelContent = () => {
         open={visible}
         onOk={() => handleUpdateContent()}
         onCancel={() => setVisible(false)}>
-        <Form form={form}>
+        <Form form={form}
+          initialValues={{
+            tags: "",
+            folder: 'AAA'
+          }}>
           {!content &&
             <Form.Item
               label="Image"
               name="images"
               valuePropName="fileList"
               rules={[{ required: true }]}
+
               getValueFromEvent={normFile}>
               <Upload
                 name="logo"
@@ -201,7 +210,7 @@ export const ModelContent = () => {
             <Input />
           </Form.Item>
           <Form.Item name="folder" label="Folder">
-            <Input defaultValue="AAA" />
+            <Input />
           </Form.Item>
         </Form>
       </Modal>

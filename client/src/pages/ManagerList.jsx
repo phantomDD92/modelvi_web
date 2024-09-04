@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeAgencyStatus, createAgency as createAgency, deleteAgency, loadAgencies, updateAgency } from "@/redux/dashboard/actions";
 import AgencyTable from "@/components/manager/AgencyTable";
-import AgencyModal from "@/components/manager/AgencyModal";
+import AgencyDialog from "@/components/manager/AgencyDialog";
 
 export const ManagerList = () => {
   const dispatch = useDispatch()
   const homeProps = useSelector(state => state.home)
   const [visible, setVisible] = useState(false);
   const [agency, setAgency] = useState();
+
   useEffect(() => {
     dispatch(loadAgencies());
   }, [loadAgencies])
@@ -51,9 +52,9 @@ export const ManagerList = () => {
         onEdit={handleEditClicked}
         onStatusChange={handleChangeStatus}
       />
-      <AgencyModal
+      <AgencyDialog
         agency={agency}
-        visible={visible}
+        open={visible}
         onCancel={() => setVisible(false)}
         onCreate={handleCreateAgency}
         onUpdate={handleUpdateAgency}

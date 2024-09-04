@@ -30,6 +30,8 @@ const handleCreateSchedule = async (req, res) => {
         const actorInst = await ActorService.findById(actor)
         if (!actorInst)
             throw new ApiError("Model does not exist");
+        if (req.manager.role != AdminRole.MANAGER && actorInst.owner != req.manager._id)
+            throw new ApiError(`The model schedule is able to create only by owner.`)
         if (platform == Platform.ALL) {
             if (actorInst.accounts.length == 0)
                 throw new ApiError(`Account for ${actorInst.name} does not exist.`);

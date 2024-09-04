@@ -7,6 +7,7 @@ const loadAccounts = (platform, { page, pageSize }) =>
       .sort("number")
       .skip((parseInt(page) - 1) * parseInt(pageSize))
       .limit(parseInt(pageSize))
+      .populate("owner", "name")
       .populate("actor", "name"),
     AccountModel.countDocuments({ platform })
   ])
@@ -15,7 +16,7 @@ const loadAccounts = (platform, { page, pageSize }) =>
 const createAccount = (
   platform,
   actor,
-  { alias, email, password, discord, description }
+  { alias, email, password, discord, description, owner, creator }
 ) =>
   AccountModel.create({
     platform,
@@ -26,6 +27,8 @@ const createAccount = (
     password,
     discord,
     description,
+    owner,
+    creator,
     params: platform == "F2F"
       ? {
         commentInterval: 10,
@@ -79,8 +82,14 @@ const syncContents = (actorId) =>
 const setAllStatus = (platform, status) =>
   AccountModel.updateMany({ platform }, { $set: { status } })
 
+const setAgencyStatus = (agency, platform, status) =>
+  AccountModel.updateMany({ platform, owner: agency._id }, { $set: { status } })
+
 const findByActor = (platform, actorId) =>
   AccountModel.findOne({ platform, actor: actorId });
+
+const getAgencyCount = (agencyId) =>
+  AccountModel.countDocuments({ creator: agencyId })
 
 const AccountService = {
   loadAccounts,
@@ -94,7 +103,9 @@ const AccountService = {
   updateParams,
   syncContents,
   clearError,
-  setAllStatus
+  setAllStatus,
+  setAgencyStatus,
+  getAgencyCount,
 };
 
 module.exports = AccountService;

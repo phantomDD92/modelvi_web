@@ -4,9 +4,9 @@ import {Home, ProxyList, ModelList, DiscordList, Settings} from "@/pages";
 import ManagerList from "./pages/ManagerList";
 import AccountList from "./pages/AccountList";
 import ModelContent from "./pages/ModelContent";
-// import CommentList from "./pages/CommentList";
 import AccountHistory from "./pages/AccountHistory";
 import ScheduleList from "./pages/ScheduleList";
+import { AdminRole } from "./utils/const";
 
 const routes = [
     {
@@ -16,7 +16,7 @@ const routes = [
         label: "Dashboard",
         icon: <HomeOutlined />,
         component: <Home />,
-        mode: "main"
+        mode: "main",
     },
     {
         key: "model",
@@ -76,7 +76,8 @@ const routes = [
         link: "/proxy",
         icon: <EnvironmentOutlined />,
         component: <ProxyList />,
-        mode: "main"
+        mode: "main",
+        visible: auth => auth.role == AdminRole.MANAGER,
     },
     {
         key: "discord",
@@ -85,7 +86,8 @@ const routes = [
         label: "Discord",
         icon: <DiscordOutlined />,
         component: <DiscordList />,
-        mode: "main"
+        mode: "main",
+        visible: auth => auth.role == AdminRole.MANAGER,
     },
     // {
     //     key: "settings",
@@ -102,7 +104,8 @@ const routes = [
         link: "/agency",
         icon: <UserOutlined />,
         component: <ManagerList />,
-        mode: "main"
+        mode: "main",
+        visible: auth => auth.role == AdminRole.MANAGER,
     },
 ]
 

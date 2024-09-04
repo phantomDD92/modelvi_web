@@ -4,37 +4,28 @@ const createActor = ({
   number,
   name,
   birthday,
-  height,
-  weight,
-  phone1,
-  phone2,
   birthplace,
+  owner
 }) => ActorModel.create({
   number,
   name,
   birthday,
-  height,
-  weight,
-  phone1,
-  phone2,
   birthplace,
+  owner
 });
 
 
 const updateActor = (
   id,
-  { number, name, birthday, height, weight, phone1, phone2, birthplace }
+  { number, name, birthday, birthplace, owner }
 ) =>
   ActorModel.findByIdAndUpdate(id, {
     $set: {
       number,
       name,
       birthday,
-      height,
-      weight,
-      phone1,
-      phone2,
       birthplace,
+      owner,
     },
   });
 
@@ -43,9 +34,8 @@ const deleteActor = (id) => ActorModel.deleteOne({ _id: id });
 const appendAccount = (id, account) =>
   ActorModel.findByIdAndUpdate(id, { $push: { accounts: account._id } });
 
-const removeAccount = (id, account) => {
-  ActorModel.findByIdAndUpdate(id, { $pullAll: { accounts: account._id } });
-};
+const removeAccount = (id, account) => 
+  ActorModel.findByIdAndUpdate(id, { $pull: { accounts: account._id } });
 
 const loadActors = ({ page, pageSize }) =>
   Promise.all([
@@ -53,6 +43,7 @@ const loadActors = ({ page, pageSize }) =>
       .sort("number")
       .skip((parseInt(page) - 1) * parseInt(pageSize))
       .limit(parseInt(pageSize))
+      .populate("owner", "name")
       .populate("accounts", "platform alias"),
     ActorModel.countDocuments()
   ])
@@ -85,7 +76,10 @@ const syncContents = (id) =>
   ActorModel.findByIdAndUpdate(id, { $set: { updated: false } })
 
 const updateContent = (id, contentId, params) =>
-  ActorModel.findOneAndUpdate({_id: id, 'contents._id': contentId}, {$set: {'contents.$': params}})
+  ActorModel.findOneAndUpdate({ _id: id, 'contents._id': contentId }, { $set: { 'contents.$': params } })
+
+const getActorCount = (agencyId) =>
+  ActorModel.countDocuments({ owner: agencyId });
 
 const ActorService = {
   createActor,
@@ -106,6 +100,7 @@ const ActorService = {
   updateContent,
   syncContents,
   loadAllActors,
+  getActorCount,
 };
 
 module.exports = ActorService;
