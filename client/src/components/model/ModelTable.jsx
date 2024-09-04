@@ -30,7 +30,7 @@ export const ModelTable = ({ auth, models, modelsCount, page, onPageChange, onDe
             title: 'Agency',
             width: 150,
             dataIndex: 'owner',
-            render: value => value && value.name ? <Flex gap="middle" align='center'><Avatar src="/img/agency.png" /><span>{value.name}</span></Flex> : "-"
+            render: value => value && value.name ? value.name : "-"
         },
         {
             key: 'age',

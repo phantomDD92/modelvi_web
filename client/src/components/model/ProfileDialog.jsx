@@ -1,10 +1,12 @@
-import { Card, Flex, Modal, Form, Input, InputNumber, DatePicker, Row, Col, Upload, Switch } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Card, Flex, Modal, Form, Input, InputNumber, Image, Button, Row, Col, Upload, Switch } from "antd";
+import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { SERVER_PATH } from "@/utils/const";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const ProfileDialog = ({ model, open, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
+    const [avatar, setAvatar] = useState()
+    const [banner, setBanner] = useState();
 
     const handleOkClick = async () => {
         try {
@@ -14,26 +16,21 @@ const ProfileDialog = ({ model, open, onCancel, onUpdate }) => {
 
         }
     }
-
     const normFile = (e) => {
         if (Array.isArray(e)) {
             return e;
         }
         return e?.fileList;
     };
-
     useEffect(() => {
         if (model && model.profile) {
             const { avatar, banner, ...params } = model.profile;
-            form.setFieldsValue({
-              avatars: avatar ? [{ url: `${SERVER_PATH}/uploads/${avatar}` }] : [],
-              banners: banner ? [{ url: `${SERVER_PATH}/uploads/${banner}` }] : [],
-              ...params
-            });    
+            setAvatar(avatar);
+            setBanner(banner);
         } else {
             form.resetFields();
         }
-    }, [model]);
+    }, [open]);
     return (
         <Modal
             title={"Profile"}
@@ -58,11 +55,12 @@ const ProfileDialog = ({ model, open, onCancel, onUpdate }) => {
                                 name="file"
                                 action={`${SERVER_PATH}/api/upload`}
                                 headers={{ authorization: 'authorization-text' }}
-                                listType="picture-card"
+                                showUploadList={false}
                                 maxCount={1}
                             >
-                                <PlusOutlined />
+                                <Button icon={<UploadOutlined />}>Click to Upload</Button>
                             </Upload>
+                            <Image width={400} height={400} fallback="/img/fallback.png"/>
                         </Form.Item>
                     </Col>
                     <Col span={12}>

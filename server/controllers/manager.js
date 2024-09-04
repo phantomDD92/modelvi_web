@@ -24,10 +24,10 @@ const handleCreateManager = async (req, res) => {
 const handleLoginManager = async (req, res) => {
   try {
     const { name, password } = req.body;
-    const agency = await ManagerService.findByName(name)
+    const {password: passwd, ...agency} = await ManagerService.findAllByName(name)
     if (!agency)
       throw new ApiError(`Agency(${name}) is not registered`)
-    const passwordCompare = await bcrypte.compare(password, agency.password);
+    const passwordCompare = await bcrypte.compare(password, passwd);
     if (!passwordCompare)
       throw new ApiError("The password is incorrect");
 
