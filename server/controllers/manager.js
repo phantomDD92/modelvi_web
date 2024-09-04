@@ -24,15 +24,15 @@ const handleCreateManager = async (req, res) => {
 const handleLoginManager = async (req, res) => {
   try {
     const { name, password } = req.body;
-    const {password: passwd, ...agency} = await ManagerService.findAllByName(name)
+    const agency = await ManagerService.findAllByName(name)
     if (!agency)
       throw new ApiError(`Agency(${name}) is not registered`)
-    const passwordCompare = await bcrypte.compare(password, passwd);
+    const passwordCompare = await bcrypte.compare(password, agency.password);
     if (!passwordCompare)
       throw new ApiError("The password is incorrect");
-
     const token = jwt.sign({ id: agency._id }, process.env.SECRET_KEY || "SECRET_KEY_FNC", { expiresIn: "1h" });
-    sendResult(res, { token, auth: agency })
+    const auth = await ManagerService.findByName(name);
+    sendResult(res, { token, auth })
   } catch (error) {
     sendError(res, error)
   }
