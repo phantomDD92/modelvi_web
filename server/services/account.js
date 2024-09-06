@@ -91,6 +91,10 @@ const findByActor = (platform, actorId) =>
 const getAgencyCount = (agencyId) =>
   AccountModel.countDocuments({ creator: agencyId })
 
+// update all account params belongs to actor
+const updateParamsForActor = (actorId, params) => 
+  AccountModel.updateMany({actor: actorId}, {$set: params});
+
 const AccountService = {
   loadAccounts,
   createAccount,
@@ -106,6 +110,7 @@ const AccountService = {
   setAllStatus,
   setAgencyStatus,
   getAgencyCount,
+  updateParamsForActor,
 };
 
 module.exports = AccountService;

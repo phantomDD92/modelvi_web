@@ -26,8 +26,7 @@ export const createModel = (params, callback) => async (dispatch) => {
 
 export const deleteModel = (model, callback) => async (dispatch) => {
   await ApiRequest.deleteAction(dispatch, {
-    path: `/actor`,
-    data: { id: model._id },
+    path: `/actor/${model._id}`,
     inform: "successfully delete model",
     callback
   })
@@ -35,22 +34,30 @@ export const deleteModel = (model, callback) => async (dispatch) => {
 
 export const updateModel = (model, params, callback) => async (dispatch) => {
   await ApiRequest.putAction(dispatch, {
-    path: `/actor`,
-    data: { id: model._id, ...params },
+    path: `/actor/${model._id}`,
+    data: params,
     inform: "successfully update model",
     callback
   })
 };
 
-
-export const setModelStatus = (model, status, callback) => async (dispatch) => {
-  await ApiRequest.putAction(dispatch, {
-    path: `/actor/${model._id}`,
-    data: { status },
-    inform: "successfully set model status",
+export const updateProfile = (actor, params, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/actor/${actor._id}`,
+    data: params,
+    inform: "The model's profile is updated",
     callback
   })
 };
+
+// export const setModelStatus = (model, status, callback) => async (dispatch) => {
+//   await ApiRequest.putAction(dispatch, {
+//     path: `/actor/${model._id}`,
+//     data: { status },
+//     inform: "successfully set model status",
+//     callback
+//   })
+// };
 
 export const loadDiscords = ({ page, pageSize }) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
@@ -157,20 +164,20 @@ export const deleteAccount = (platform, account, callback) => async (dispatch) =
   })
 };
 
-export const getModelContent = (model) => (dispatch) =>
+export const getModelContent = (actorId) => (dispatch) =>
   ApiRequest.getAction(dispatch, {
-    path: `/actor/${model}`,
+    path: `/contents/${actorId}`,
     action: ACTIONS.GET_MODEL_CONTENT,
   })
 
-export const appendModelContent = (model, params, callback) => async (dispatch) => {
+export const appendModelContent = (actorId, params, callback) => async (dispatch) => {
   const formData = new FormData()
   formData.append('title', params.title)
   formData.append('folder', params.folder)
   formData.append('tags', params.tags)
   formData.append('image', params.images[0].originFileObj);
   await ApiRequest.postAction(dispatch, {
-    path: `/actor/${model}`,
+    path: `/contents/${actorId}`,
     data: formData,
     action: ACTIONS.GET_MODEL_CONTENT,
     inform: "successfully append content",
@@ -178,40 +185,39 @@ export const appendModelContent = (model, params, callback) => async (dispatch) 
   });
 };
 
-export const updateModelContent = (model, content, params, callback) => async (dispatch) => {
-  await ApiRequest.putAction(dispatch, {
-    path: `/actor/${model}`,
-    data: {contentId: content._id, ...params},
-    action: ACTIONS.GET_MODEL_CONTENT,
-    inform: "successfully update content",
-    callback
-  });
-};
-
-export const deleteModelContent = (model, content, callback) => async (dispatch) => {
+export const clearModelContents = (actorId, callback) => async (dispatch) => {
   await ApiRequest.deleteAction(dispatch, {
-    path: `/actor/${model}`,
-    data: { content: content._id },
-    action: ACTIONS.GET_MODEL_CONTENT,
-    inform: "successfully delete content.",
-    callback
-  })
-};
-
-export const clearModelContents = (model, callback) => async (dispatch) => {
-  await ApiRequest.putAction(dispatch, {
-    path: `/actor/${model}`,
+    path: `/contents/${actorId}`,
     action: ACTIONS.GET_MODEL_CONTENT,
     inform: "successfully clear contents.",
     callback
   })
 };
 
-export const syncModelContents = (model, callback) => async (dispatch) => {
-  await ApiRequest.postAction(dispatch, {
-    path: `/content/${model}`,
+export const syncModelContents = (actorId, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/actor/${actorId}`,
     action: ACTIONS.GET_MODEL_CONTENT,
     inform: "successfully sync contents.",
+    callback
+  })
+};
+
+export const updateModelContent = (actorId, content, params, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/content/${actorId}/${content._id}`,
+    data: params,
+    action: ACTIONS.GET_MODEL_CONTENT,
+    inform: "successfully update content",
+    callback
+  });
+};
+
+export const deleteModelContent = (actorId, content, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/content/${actorId}/${content._id}`,
+    action: ACTIONS.GET_MODEL_CONTENT,
+    inform: "successfully delete content.",
     callback
   })
 };

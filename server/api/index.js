@@ -94,22 +94,27 @@ router
   .all(authenticate)
   .get(ActorCtrl.handleLoadActors)
   .post(ActorCtrl.handleCreateActor)
+
+router
+  .route("/actor/:actorId")
+  .all(authenticate)
   .put(ActorCtrl.handleUpdateActor)
+  .post(ActorCtrl.handleUpdateProfile)
   .delete(ActorCtrl.handleDeleteActor);
 
 router
-  .route("/actor/:id")
+  .route("/contents/:actorId")
   .all(authenticate)
   .get(ActorCtrl.handleGetContent)
   .post(imageUpload.single('image'), ActorCtrl.handleAppendContent)
-  .put(ActorCtrl.handleUpdateContent)
-  .delete(ActorCtrl.handleDeleteContent)
-  .put(ActorCtrl.handleClearContents)
+  .put(ActorCtrl.handleSyncContents)
+  .delete(ActorCtrl.handleClearContents);
 
 router
-  .route("/content/:id")
+  .route("/content/:actorId/:contentId")
   .all(authenticate)
-  .post(ActorCtrl.handleSyncContents)
+  .put(ActorCtrl.handleUpdateContent)
+  .delete(ActorCtrl.handleDeleteContent);
 
 router
   .route("/account/:platform")

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createModel, deleteModel, loadModels, updateModel } from "@/redux/model/actions";
+import { createModel, deleteModel, loadModels, updateModel, updateProfile } from "@/redux/model/actions";
 import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
 import qs from 'query-string';
 import ModelTable from "@/components/model/ModelTable";
@@ -60,6 +60,10 @@ export const ModelList = () => {
     setVisible(true);
   }
 
+  const handleProfileUpdate = (model, params) => {
+    dispatch(updateProfile(model, params, handleReloadData));
+  }
+
   const handlePageChange = (pg) => {
     navigate({
       pathname: location.pathname,
@@ -92,6 +96,7 @@ export const ModelList = () => {
         open={profileOpen}
         model={model}
         onCancel={() => setProfileOpen(false)}
+        onUpdate={handleProfileUpdate}
       />
     </div>
 

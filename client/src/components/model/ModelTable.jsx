@@ -1,5 +1,5 @@
-import { Card, Table, Tooltip, Popconfirm, Button, Flex, Tag, Avatar } from "antd";
-import { DeleteOutlined, EditOutlined, UserAddOutlined, ReadOutlined, SolutionOutlined } from "@ant-design/icons";
+import { Card, Table, Tooltip, Popconfirm, Button, Flex, Tag, Avatar, Dropdown } from "antd";
+import { DeleteOutlined, EditOutlined, UserOutlined, UserAddOutlined, ReadOutlined, SolutionOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { AdminRole } from "@/utils/const";
 
@@ -66,32 +66,49 @@ export const ModelTable = ({ auth, models, modelsCount, page, onPageChange, onDe
             render: value => value.length == 0 ? '-' : <Flex gap="small">{value.map(el => <Tag color="success">{el.platform}</Tag>)}</Flex>
         },
         {
-            key: 'operation',
-            title: 'Operation',
+            key: 'action',
+            title: 'Action',
             width: 150,
-            render: (_, record) =>  hasPermission(auth, record) ? (
-                <Flex gap="small">
-                    <Tooltip title="Edit Model Info">
-                        <Button icon={<EditOutlined />} onClick={() => onEdit(record)} />
-                    </Tooltip>
-                    <Tooltip title="Edit Contents">
-                        <Button icon={<ReadOutlined />} onClick={() => onContent(record)} />
-                    </Tooltip>
-                    <Tooltip title="Edit Profile">
-                        <Button icon={<SolutionOutlined />} onClick={() => onProfile(record)} />
-                    </Tooltip>
-                    <Popconfirm
-                        title="Confirm"
-                        description="Are you sure to delete this model?"
-                        okText="Yes"
-                        cancelText="No"
-                        onConfirm={() => onDelete(record)}
-                    >
-                        <Tooltip title="Delete Model">
-                            <Button icon={<DeleteOutlined />} danger />
-                        </Tooltip>
-                    </Popconfirm>
-                </Flex>
+            render: (_, record) => hasPermission(auth, record) ? (
+                <Dropdown.Button
+                    onClick={() => onEdit(record)}
+                    menu={{
+                        items: [
+                            {
+                                label: 'Edit Profile',
+                                key: 'profile',
+                                icon: <SolutionOutlined />,
+                            },
+                            {
+                                label: 'View Contents',
+                                key: 'content',
+                                icon: <ReadOutlined />,
+                            },
+                            {
+                                label: 'Delete Model',
+                                key: 'delete',
+                                icon: <DeleteOutlined />,
+                                danger: true,
+                            },
+                        ],
+                        onClick: (e) => {
+                            switch (e.key) {
+                                case "content":
+                                    onContent(record)
+                                    break;
+                                case "profile":
+                                    onProfile(record)
+                                    break;
+                                case "delete":
+                                    onDelete(record)
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }}>
+                    <EditOutlined /> Edit
+                </Dropdown.Button>
             ) : ""
         },
     ];

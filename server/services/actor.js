@@ -81,6 +81,9 @@ const updateContent = (id, contentId, params) =>
 const getActorCount = (agencyId) =>
   ActorModel.countDocuments({ owner: agencyId });
 
+const updateProfile = (id, params) =>
+  ActorModel.findByIdAndUpdate(id, { $set: { profile: params } })
+
 const ActorService = {
   createActor,
   updateActor,
@@ -101,6 +104,9 @@ const ActorService = {
   syncContents,
   loadAllActors,
   getActorCount,
+
+  // profile
+  updateProfile,
 };
 
 module.exports = ActorService;

@@ -44,8 +44,8 @@ const handleCreateActor = async (req, res) => {
 
 const handleDeleteActor = async (req, res) => {
   try {
-    const { id } = req.body;
-    const actor = await ActorService.findById(id);
+    const { actorId } = req.params;
+    const actor = await ActorService.findById(actorId);
     if (!actor)
       throw new ApiError("The model is not existed.")
     if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
@@ -57,7 +57,7 @@ const handleDeleteActor = async (req, res) => {
           "name"
         )}) still have some accounts.`
       );
-    await ActorService.deleteActor(id);
+    await ActorService.deleteActor(actorId);
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -66,17 +66,35 @@ const handleDeleteActor = async (req, res) => {
 
 const handleUpdateActor = async (req, res) => {
   try {
-    const { id, number, name, ...params } = req.body;
+    const {actorId} = req.params;
+    const { number, name, ...params } = req.body;
     let actor = await ActorService.findByName(name);
-    if (actor && actor._id != id)
+    if (actor && actor._id != actorId)
       throw new ApiError(`The model name(${name}) is already existed.`);
     actor = await ActorService.findByNumber(number);
-    if (actor && actor._id != id)
+    if (actor && actor._id != actorId)
       throw new ApiError(`The model number(${name}) is already existed.`);
-    actor = await ActorService.findById(id);
+    actor = await ActorService.findById(actorId);
     if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
-    await ActorService.updateActor(id, { number, name, owner: req.manager._id, ...params });
+    await ActorService.updateActor(actorId, { number, name, owner: req.manager._id, ...params });
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error);
+  }
+};
+
+const handleUpdateProfile = async (req, res) => {
+  try {
+    const {actorId} = req.params;
+    const params = req.body;
+    const actor = await ActorService.findById(actorId);
+    if (!actor)
+      throw new ApiError(`The model is not existed.`);
+    if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
+      throw new ApiError(`The model is able to update only by owner.`)
+    await ActorService.updateProfile(actorId, params);
+    await AccountService.updateParamsForActor(actorId, {"params.profileUpdated": true});
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -85,8 +103,8 @@ const handleUpdateActor = async (req, res) => {
 
 const handleGetContent = async (req, res) => {
   try {
-    const { id } = req.params;
-    let actor = await ActorService.findById(id);
+    const { actorId } = req.params;
+    let actor = await ActorService.findById(actorId);
     if (!actor)
       throw new ApiError(`model is not existed.`);
     sendResult(res, { actor });
@@ -97,15 +115,15 @@ const handleGetContent = async (req, res) => {
 
 const handleAppendContent = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { actorId } = req.params;
     const { filename } = req.file;
     const { folder, title, tags } = req.body;
-    let actor = await ActorService.findById(id);
+    let actor = await ActorService.findById(actorId);
     if (!actor)
       throw new ApiError(`The model is not existed.`);
     if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
       throw new ApiError(`The model content is able to update only by owner.`)
-    await ActorService.appendContent(id, { image: filename, folder, title, tags });
+    await ActorService.appendContent(actorId, { image: filename, folder, title, tags });
     sendResult(res, { actor });
   } catch (error) {
     sendError(res, error);
@@ -114,25 +132,25 @@ const handleAppendContent = async (req, res) => {
 
 const handleUpdateContent = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { contentId, folder, title, tags } = req.body;
-    let actor = await ActorService.findById(id);
+    const { actorId, contentId } = req.params;
+    const { folder, title, tags } = req.body;
+    let actor = await ActorService.findById(actorId, contentId);
     if (!actor)
       throw new ApiError(`The model is not existed.`);
     if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
       throw new ApiError(`The model content is able to update only by owner.`)
-    await ActorService.updateContent(id, contentId, { folder, title, tags });
+    await ActorService.updateContent(actorId, contentId, { folder, title, tags });
     sendResult(res, { actor });
   } catch (error) {
     sendError(res, error);
   }
 }
+
 const handleDeleteContent = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { content } = req.body;
-    await ActorService.deleteContent(id, content);
-    let actor = await ActorService.findById(id);
+    const { actorId, contentId } = req.params;
+    await ActorService.deleteContent(actorId, contentId);
+    let actor = await ActorService.findById(actorId);
     if (!actor)
       throw new ApiError(`The model is not existed.`);
     if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
@@ -145,13 +163,13 @@ const handleDeleteContent = async (req, res) => {
 
 const handleClearContents = async (req, res) => {
   try {
-    const { id } = req.params;
-    let actor = await ActorService.findById(id);
+    const { actorId } = req.params;
+    let actor = await ActorService.findById(actorId);
     if (!actor)
       throw new ApiError(`model is not existed.`);
     if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
       throw new ApiError(`The model is able to delete only by owner`)
-    await ActorService.clearContents(id);
+    await ActorService.clearContents(actorId);
     sendResult(res, { actor });
   } catch (error) {
     sendError(res, error);
@@ -160,13 +178,13 @@ const handleClearContents = async (req, res) => {
 
 const handleSyncContents = async (req, res) => {
   try {
-    const { id } = req.params;
-    let actor = await ActorService.findById(id);
+    const { actorId } = req.params;
+    let actor = await ActorService.findById(actorId);
     if (!actor)
-      throw new ApiError(`model is not existed.`);
-    await AccountService.syncContents(actor._id);
-    await ActorService.syncContents(actor._id);
-    actor = await ActorService.findById(id);
+      throw new ApiError(`The model is not existed.`);
+    await AccountService.syncContents(actorId);
+    await ActorService.syncContents(actorId);
+    actor = await ActorService.findById(actorId);
     sendResult(res, { actor });
   } catch (error) {
     sendError(res, error);
@@ -184,7 +202,8 @@ const ActorCtrl = {
   handleUpdateContent,
   handleDeleteContent,
   handleClearContents,
-  handleSyncContents
+  handleSyncContents,
+  handleUpdateProfile,
 };
 
 module.exports = ActorCtrl;
