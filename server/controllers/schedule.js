@@ -1,4 +1,4 @@
-const { Platform } = require("../config/const");
+const { Platform, AdminRole } = require("../config/const");
 const AccountService = require("../services/account");
 const ActorService = require("../services/actor");
 const DailyService = require("../services/daily");

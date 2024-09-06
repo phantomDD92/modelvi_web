@@ -4,3 +4,4 @@ dist
 /server/uploads
 /server/.env
 /server/client
+/temp

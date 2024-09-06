@@ -242,7 +242,7 @@ export const ScheduleList = () => {
           <Form.Item name="title" label="Title" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="tags" label="Tags" rules={[{ required: true }]}>
+          <Form.Item name="tags" label="Tags" >
             <Select mode="tags" />
           </Form.Item>
           <Form.Item name="folder" label="Folder">
