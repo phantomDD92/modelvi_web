@@ -1,15 +1,15 @@
-const { Platform } = require("../config/const");
+const { Platform, AdminRole } = require("../config/const");
 const AccountModel = require("../models/account");
 
-const loadAccounts = (platform, { page, pageSize }) =>
+const loadAccounts = (agency, platform, { page, pageSize }) =>
   Promise.all([
-    AccountModel.find({ platform })
+    AccountModel.find(agency.role == AdminRole.AGENCY ? { platform, owner: agency._id } : { platform })
       .sort("number")
       .skip((parseInt(page) - 1) * parseInt(pageSize))
       .limit(parseInt(pageSize))
       .populate("owner", "name")
       .populate("actor", "name"),
-    AccountModel.countDocuments({ platform })
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { platform, owner: agency._id } : { platform })
   ])
 
 
@@ -92,8 +92,8 @@ const getAgencyCount = (agencyId) =>
   AccountModel.countDocuments({ creator: agencyId })
 
 // update all account params belongs to actor
-const updateParamsForActor = (actorId, params) => 
-  AccountModel.updateMany({actor: actorId}, {$set: params});
+const updateParamsForActor = (actorId, params) =>
+  AccountModel.updateMany({ actor: actorId }, { $set: params });
 
 const AccountService = {
   loadAccounts,

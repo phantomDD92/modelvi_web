@@ -8,7 +8,7 @@ const handleLoadAccounts = async (req, res) => {
   try {
     const { platform } = req.params;
     const { page, pageSize } = req.query;
-    const [accounts, accountsCount] = await AccountService.loadAccounts(platform, { page, pageSize: pageSize || "10" });
+    const [accounts, accountsCount] = await AccountService.loadAccounts(req.manager, platform, { page, pageSize: pageSize || "10" });
     sendResult(res, { accounts, accountsCount });
   } catch (error) {
     console.error(error);

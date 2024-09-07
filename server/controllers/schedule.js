@@ -30,12 +30,12 @@ const handleCreateSchedule = async (req, res) => {
         const actorInst = await ActorService.findById(actor)
         if (!actorInst)
             throw new ApiError("Model does not exist");
-        if (req.manager.role != AdminRole.MANAGER && actorInst.owner != req.manager._id)
+        if (req.manager.role != AdminRole.MANAGER && actorInst.owner.toString() != req.manager._id.toString())
             throw new ApiError(`The model schedule is able to create only by owner.`)
         if (platform == Platform.ALL) {
             if (actorInst.accounts.length == 0)
                 throw new ApiError(`Account for ${actorInst.name} does not exist.`);
-            const schedule = await ScheduleService.createSchedule({ actor, platform, scheduledAt, ...params })
+            const schedule = await ScheduleService.createSchedule({ actor, owner: actorInst.owner, platform, scheduledAt, ...params })
             for (let account of actorInst.accounts) {
                 await DailyService.createTask(account, schedule._id, scheduledAt);
             }
@@ -43,7 +43,7 @@ const handleCreateSchedule = async (req, res) => {
             const account = await AccountService.findByActor(platform, actor)
             if (!account)
                 throw new ApiError(`Account for ${platform} ${actorInst.name} does not exist.`)
-            const schedule = await ScheduleService.createSchedule({ actor, platform, scheduledAt, ...params })
+            const schedule = await ScheduleService.createSchedule({ actor, owner: actorInst.owner, platform, scheduledAt, ...params })
             await DailyService.createTask(account._id, schedule._id, scheduledAt);
         }
         sendResult(res);

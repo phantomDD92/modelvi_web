@@ -1,3 +1,4 @@
+const { AdminRole } = require("../config/const");
 const ActorModel = require("../models/actor");
 
 const createActor = ({
@@ -37,19 +38,19 @@ const appendAccount = (id, account) =>
 const removeAccount = (id, account) =>
   ActorModel.findByIdAndUpdate(id, { $pull: { accounts: account._id } });
 
-const loadActors = ({ page, pageSize }) =>
+const loadActors = (agency, { page, pageSize }) =>
   Promise.all([
-    ActorModel.find({})
+    ActorModel.find(agency.role == AdminRole.AGENCY ? {owner: agency._id} : {})
       .sort("number")
       .skip((parseInt(page) - 1) * parseInt(pageSize))
       .limit(parseInt(pageSize))
       .populate("owner", "name")
       .populate("accounts", "platform alias"),
-    ActorModel.countDocuments()
+    ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? {owner: agency._id} : {})
   ])
 
-const loadAllActors = () =>
-  ActorModel.find({}, "number name");
+const loadAllActors = (agency) =>
+  ActorModel.find(agency.role == AdminRole.AGENCY ? {owner: agency._id} : {}, "number name");
 
 const findByNumber = (number) => ActorModel.findOne({ number });
 

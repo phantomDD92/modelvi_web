@@ -3,12 +3,13 @@ const { Schema, SchemaTypes } = mongoose;
 
 const ScheduleSchema = new Schema({
     actor: { type: SchemaTypes.ObjectId, ref: "Actor", required: true },    // model
+    owner: { type: SchemaTypes.ObjectId, ref: "Manager" },
     platform: { type: String, required: true },     // platform = "ALL" | "F2F" | "FNC"
-    file: { type: String, required: true },        
+    file: { type: String, required: true },
     type: { type: Number, required: true },
     price: { type: Number },
     title: { type: String, required: true },
-    folder: { type: String, required: true },
+    folder: { type: String },
     description: { type: String },
     tags: [{ type: String }],
     scheduledAt: { type: Date, required: true },

@@ -6,7 +6,7 @@ const { sendResult, sendError, ApiError } = require("../utils/resp");
 const handleLoadActors = async (req, res) => {
   try {
     const { page, pageSize } = req.query
-    const [actors, actorsCount] = await ActorService.loadActors({ page, pageSize: pageSize || "10" });
+    const [actors, actorsCount] = await ActorService.loadActors(req.manager, { page, pageSize: pageSize || "10" });
     sendResult(res, { actors, actorsCount });
   } catch (error) {
     sendError(res, error);
@@ -15,7 +15,7 @@ const handleLoadActors = async (req, res) => {
 
 const handleLoadAllModels = async (req, res) => {
   try {
-    const actors = await ActorService.loadAllActors();
+    const actors = await ActorService.loadAllActors(req.manager);
     sendResult(res, { actors });
   } catch (error) {
     sendError(res, error);
