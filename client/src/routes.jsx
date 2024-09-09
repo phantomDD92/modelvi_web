@@ -77,7 +77,6 @@ const routes = [
         icon: <EnvironmentOutlined />,
         component: <ProxyList />,
         mode: "main",
-        visible: auth => auth.role == AdminRole.MANAGER,
     },
     {
         key: "discord",

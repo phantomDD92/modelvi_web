@@ -6,11 +6,11 @@ const { sendError, sendResult } = require("../utils/resp")
 
 const handleGetStats = async (req, res) => {
     try {
-        const actorCount = await ActorService.getCount();
+        const actorCount = await ActorService.getCount(req.manager);
         const discordCount = await DiscordService.getCount();
-        const proxyCount = await ProxyService.getCount();
-        const [f2fCount] = await AccountService.getCount();
-        sendResult(res, { stats: { actorCount, discordCount, proxyCount, f2fCount } });
+        const proxyCount = await ProxyService.getCount(req.manager);
+        const [f2fCount, fncCount] = await AccountService.getCount(req.manager);
+        sendResult(res, { stats: { actorCount, discordCount, proxyCount, f2fCount, fncCount } });
     } catch (error) {
         sendError(res, error)
     }

@@ -29,14 +29,14 @@ const checkManager = require("../middleware/manager.js");
 const router = express.Router();
 
 router.route("/proxy")
-  .all(authenticate, checkManager)
+  .all(authenticate)
   .get(ProxyCtrl.handleLoadProxies)
   .post(ProxyCtrl.handleAddProxies)
   .put(ProxyCtrl.handleChangeProxyStatus)
   .delete(ProxyCtrl.handleClearProxies);
 
 router.route("/proxy/:id")
-  .all(authenticate, checkManager)
+  .all(authenticate)
   .put(ProxyCtrl.handleSetProxyStatus)
   .delete(ProxyCtrl.handleDeleteProxy);
 

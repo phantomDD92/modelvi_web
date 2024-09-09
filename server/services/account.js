@@ -68,9 +68,10 @@ const deleteAccount = (id) =>
 const findById = (id) =>
   AccountModel.findById(id);
 
-const getCount = () =>
+const getCount = (agency) =>
   Promise.all([
-    AccountModel.countDocuments({ platform: Platform.F2F })
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? {owner: agency._id, platform: Platform.F2F} : { platform: Platform.F2F }),
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? {owner: agency._id, platform: Platform.FNC} : { platform: Platform.FNC })
   ]);
 
 const updateParams = async (accountId, params) =>

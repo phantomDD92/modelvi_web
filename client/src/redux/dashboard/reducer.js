@@ -7,6 +7,7 @@ const initialState = {
     discordCount: 0,
     proxyCount: 0,
     f2fCount: 0,
+    fncCount: 0,
     actorCount: 0,
   },
   setting: {

@@ -1,38 +1,40 @@
-const { Status } = require("../config/const")
+const { Status, AdminRole } = require("../config/const")
 const ProxyModel = require("../models/proxy")
 const Proxy = require("../models/proxy")
 
-const loadProxies = ({ page, pageSize }) =>
+const loadProxies = (agency, { page, pageSize }) =>
     Promise.all([
-        Proxy.find({})
+        Proxy.find(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id })
             .skip((parseInt(page) - 1) * parseInt(pageSize))
-            .limit(parseInt(pageSize)),
-        ProxyModel.countDocuments()
+            .limit(parseInt(pageSize))
+            .populate('owner', 'name'),
+        ProxyModel.countDocuments(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id })
     ])
 
 
-const clearProxies = () => {
-    return Proxy.deleteMany({})
+const clearProxies = (agency) => {
+    return Proxy.deleteMany({ owner: agency._id })
 }
 
 const setProxyStatus = (id, status) => {
     return Proxy.findByIdAndUpdate(id, { $set: { status } })
 }
 
-const getProxyStats = () => {
+const getProxyStats = (agency) => {
     return Promise.all([
-        ProxyModel.count({}),
-        ProxyModel.count({ status: Status.ACTIVE })
+        ProxyModel.count(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id }),
+        ProxyModel.count(agency.role == AdminRole.MANAGER ? { status: Status.ACTIVE } : { owner: agency._id, status: Status.ACTIVE })
     ]);
 }
 
-const addProxies = (proxies, deadline) => {
+const addProxies = (agency, proxies, deadline) => {
     let ops = []
     for (proxy of proxies) {
         ops.push({
             insertOne: {
                 document: {
                     url: proxy,
+                    owner: agency._id, 
                     protocol: 'http',
                     status: true,
                     expiredAt: deadline,
@@ -47,7 +49,10 @@ const deleteProxy = (id) => {
     return ProxyModel.deleteOne({ _id: id })
 }
 
-const getCount = () => ProxyModel.countDocuments()
+const getCount = (agency) => ProxyModel.countDocuments(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id })
+
+const findById = (id) =>
+    ProxyModel.findById(id)
 
 const ProxyService = {
     loadProxies,
@@ -57,5 +62,6 @@ const ProxyService = {
     setProxyStatus,
     deleteProxy,
     getCount,
+    findById
 }
 module.exports = ProxyService

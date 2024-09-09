@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema, SchemaTypes } = mongoose;
 require('./actor');
-
+require('./manager');
 const AccountSchema = new Schema({
   actor: { type: SchemaTypes.ObjectId, ref: "Actor", required: true },
   number: { type: Number, required: true },

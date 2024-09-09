@@ -15,22 +15,27 @@ export const Home = () => {
       <Row gutter={16}>
         <Col md={6} sm={12} >
           <Card >
-            <Statistic title="Total Models" value={homeProps.stats.actorCount} />
+            <Statistic title="Models Count" value={homeProps.stats.actorCount} />
           </Card>
         </Col>
-        <Col md={6} sm={12}>
+        {/* <Col md={6} sm={12}>
           <Card >
             <Statistic title="Total Discord" value={homeProps.stats.discordCount} />
           </Card>
-        </Col>
+        </Col> */}
         <Col md={6} sm={12} >
           <Card >
-            <Statistic title="Total Proxies" value={homeProps.stats.proxyCount} />
+            <Statistic title="Proxies Count" value={homeProps.stats.proxyCount} />
           </Card>
         </Col>
         <Col md={6} sm={12}>
           <Card>
             <Statistic title="F2F Accounts" value={homeProps.stats.f2fCount} />
+          </Card>
+        </Col>
+        <Col md={6} sm={12}>
+          <Card>
+            <Statistic title="FNC Accounts" value={homeProps.stats.fncCount} />
           </Card>
         </Col>
       </Row>
