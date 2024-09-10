@@ -74,7 +74,7 @@ const getCount = (agency) =>
     AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? {owner: agency._id, platform: Platform.FNC} : { platform: Platform.FNC })
   ]);
 
-const updateParams = async (accountId, params) =>
+const updateParams = (accountId, params) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: params });
 
 const syncContents = (actorId) =>
