@@ -62,7 +62,7 @@ router.route("/manager")
   .all(authenticate, checkManager)
   .get(ManagerCtrl.handleLoadManagers)
   .post(ManagerCtrl.handleCreateManager)
-  .put(ManagerCtrl.handleChangePassword)
+  .put(ManagerCtrl.handleResetPassword)
   .delete(ManagerCtrl.handleDeleteManager);
   
 router.route("/manager/:id")
@@ -72,6 +72,7 @@ router.route("/manager/:id")
 
 router.route("/auth")
   .post(ManagerCtrl.handleLoginManager)
+  .put(ManagerCtrl.handleChangePassword)
   .get(authenticate, ManagerCtrl.handleReloadManager)
 
 router.route("/stats")

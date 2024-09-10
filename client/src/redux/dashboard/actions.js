@@ -70,9 +70,19 @@ export const updateAgency = (agency, params, callback) => async (dispatch) => {
   })
 };
 
-export const changePassword = (name, password, newPassword, callback) => async (dispatch) => {
+export const resetPassword = (agency, password, callback) => async (dispatch) => {
   await ApiRequest.putAction(dispatch, {
     path: `/manager`,
+    inform: `The agency(${agency.name})'s password is resetted.`,
+    data: { agency: agency._id, password },
+    callback
+  })
+};
+
+export const changePassword = (name, password, newPassword, callback) => async (dispatch) => {
+  console.log(name, password, newPassword);
+  await ApiRequest.putAction(dispatch, {
+    path: `/auth`,
     inform: `manager(${name})'s password is successfully changed.`,
     data: { name, password, newPassword },
     callback
@@ -91,7 +101,7 @@ export const loginManager = (name, password, callback) => async (dispatch) => {
 
 export const logoutManager = () => async (dispatch) => {
   dispatch({ type: ACTIONS.LOGOUT_MANAGER });
-  toast.success(`manager(${username}) is successfully logged out`)
+  toast.success(`successfully logged out`)
 };
 
 export const reloadManager = (token) => async (dispatch) => {

@@ -66,7 +66,7 @@ const handleLoadManagers = async (req, res) => {
 const handleChangePassword = async (req, res) => {
   try {
     const { name, password, newPassword } = req.body;
-    const user = await ManagerService.findByName(name)
+    const user = await ManagerService.findAllByName(name)
     if (!user)
       throw new Error(`Manager(${name}) is not registered`)
     const passwordCompare = await bcrypte.compare(password, user.password);
@@ -78,6 +78,19 @@ const handleChangePassword = async (req, res) => {
   } catch (error) {
     console.error(error)
     res.json({ success: false, message: error.message })
+  }
+}
+
+const handleResetPassword = async (req, res) => {
+  try {
+    const { agency:agencyId, password } = req.body;
+    const agency = await ManagerService.findById(agencyId)
+    if (!agency)
+      throw new Error(`The specified agency does not exist`)
+    await ManagerService.changePassword(agencyId, password);
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error);
   }
 }
 
@@ -121,6 +134,7 @@ const ManagerCtrl = {
   handleReloadManager,
   handleChangeStatus,
   handleUpdateManager,
+  handleResetPassword
 };
 
 module.exports = ManagerCtrl;
