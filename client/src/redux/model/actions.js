@@ -196,7 +196,7 @@ export const clearModelContents = (actorId, callback) => async (dispatch) => {
 
 export const syncModelContents = (actorId, callback) => async (dispatch) => {
   await ApiRequest.putAction(dispatch, {
-    path: `/actor/${actorId}`,
+    path: `/contents/${actorId}`,
     action: ACTIONS.GET_MODEL_CONTENT,
     inform: "successfully sync contents.",
     callback
