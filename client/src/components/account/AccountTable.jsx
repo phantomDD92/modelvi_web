@@ -1,4 +1,4 @@
-import { Card, Table, Tooltip, Popconfirm, Button, Flex, Switch, Radio, Tag, Avatar } from "antd";
+import { Card, Table, Tooltip, Popconfirm, Button, Flex, Switch, Radio, Tag, Avatar, Dropdown } from "antd";
 import { DeleteOutlined, EditOutlined, UserAddOutlined, ReadOutlined, SolutionOutlined } from "@ant-design/icons";
 import { AdminRole, Platform } from "@/utils/const"
 import moment from "moment";
@@ -82,47 +82,46 @@ const AccountTable = ({ auth, accounts, accountsCount, page, platform, onPageCha
             title: 'Action',
             width: 150,
             render: (_, record) => hasPermission(auth, record) ? (
-                <Flex gap="small">
-                    <Tooltip title="Account History">
-                        <Button
-                            icon={<ReadOutlined />}
-                            onClick={() => onHistory(record)}
-                        />
-                    </Tooltip>
-                    <Tooltip title="Account Params">
-                        <Button
-                            icon={<SolutionOutlined />}
-                            onClick={() => onParameter(record)}
-                        />
-                    </Tooltip>
-                    <Tooltip title="Edit Account">
-                        <Button
-                            icon={<EditOutlined />}
-                            onClick={() => onEdit(record)}
-                        />
-                    </Tooltip>
-                    <Popconfirm
-                        title="Confirm"
-                        description="Are you sure to delete this account?"
-                        okText="Yes"
-                        cancelText="No"
-                        onConfirm={() => onDelete(record)}
-                    >
-                        <Tooltip title="Delete Account">
-                            <Button icon={<DeleteOutlined />} danger />
-                        </Tooltip>
-                    </Popconfirm>
-                </Flex>
-            ) :
-                (<Flex gap="small">
-                    <Tooltip title="Account History">
-                        <Button
-                            icon={<ReadOutlined />}
-                            onClick={() => onHistory(record)}
-                        />
-                    </Tooltip>
-                </Flex>
-                )
+                <Dropdown.Button
+                onClick={() => onEdit(record)}
+                menu={{
+                    items: [
+                        {
+                            label: 'Edit Settings',
+                            key: 'settings',
+                            icon: <SolutionOutlined />,
+                        },
+                        {
+                            label: 'View History',
+                            key: 'history',
+                            icon: <ReadOutlined />,
+                        },
+                        {
+                            label: 'Delete Account',
+                            key: 'delete',
+                            icon: <DeleteOutlined />,
+                            danger: true,
+                        },
+                    ],
+                    onClick: (e) => {
+                        switch (e.key) {
+                            case "settings":
+                                onParameter(record)
+                                break;
+                            case "history":
+                                onHistory(record)
+                                break;
+                            case "delete":
+                                onDelete(record)
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }}>
+                <EditOutlined /> Edit
+            </Dropdown.Button>)
+            :""
         },
     ]
 
