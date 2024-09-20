@@ -23,6 +23,11 @@ const handleCreateAccount = async (req, res) => {
     let currActor = await ActorService.findById(actor);
     if (!currActor)
       throw new ApiError(`The model is not existed.`);
+    // check duplication
+    const {alias} = params;
+    const dupAccount = await AccountService.findByAlias(platform, alias);
+    if (dupAccount)
+      throw new ApiError("The account with the same alias is already existed.");
     if (req.manager.role != AdminRole.MANAGER && currActor.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`The account is able to create only by owner`);
     const count = await AccountService.getAgencyCount(req.manager._id)

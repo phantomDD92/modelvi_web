@@ -96,6 +96,8 @@ const getAgencyCount = (agencyId) =>
 const updateParamsForActor = (actorId, params) =>
   AccountModel.updateMany({ actor: actorId }, { $set: params });
 
+const findByAlias = (platform, alias) =>
+  AccountModel.findOne({platform, alias})
 const AccountService = {
   loadAccounts,
   createAccount,
@@ -112,6 +114,8 @@ const AccountService = {
   setAgencyStatus,
   getAgencyCount,
   updateParamsForActor,
+
+  findByAlias,
 };
 
 module.exports = AccountService;
