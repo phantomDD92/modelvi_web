@@ -37,7 +37,7 @@ export const ModelTable = ({ auth, models, modelsCount, page, onPageChange, onDe
             title: 'Age',
             width: 100,
             dataIndex: 'birthday',
-            render: value => moment(value).diff(moment(), 'year', false) || '-'
+            render: value => moment().diff(moment(value), 'year', false) || '-'
         },
         {
             key: 'birthplace',
