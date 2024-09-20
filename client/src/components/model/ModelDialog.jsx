@@ -1,4 +1,5 @@
 import { Modal, Form, Input, Row, Col, InputNumber, DatePicker } from "antd";
+import moment from "moment";
 import { useEffect } from "react";
 
 const ModelDialog = ({ open, model, onCancel, onCreate, onUpdate }) => {
@@ -28,7 +29,7 @@ const ModelDialog = ({ open, model, onCancel, onCreate, onUpdate }) => {
     }
     useEffect(() => {
         if (model) {
-            form.setFieldsValue(model)
+            form.setFieldsValue({...model, birthday: moment(model.birthday)})
         } else {
             form.resetFields();
         }
