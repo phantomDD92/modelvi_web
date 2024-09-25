@@ -107,7 +107,7 @@ router
   .route("/contents/:actorId")
   .all(authenticate)
   .get(ActorCtrl.handleGetContent)
-  .post(imageUpload.single('image'), ActorCtrl.handleAppendContent)
+  .post(ActorCtrl.handleAppendContent)
   .put(ActorCtrl.handleSyncContents)
   .delete(ActorCtrl.handleClearContents);
 

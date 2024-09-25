@@ -171,14 +171,9 @@ export const getModelContent = (actorId) => (dispatch) =>
   })
 
 export const appendModelContent = (actorId, params, callback) => async (dispatch) => {
-  const formData = new FormData()
-  formData.append('title', params.title)
-  formData.append('folder', params.folder)
-  formData.append('tags', params.tags)
-  formData.append('image', params.images[0].originFileObj);
   await ApiRequest.postAction(dispatch, {
     path: `/contents/${actorId}`,
-    data: formData,
+    data: params,
     action: ACTIONS.GET_MODEL_CONTENT,
     inform: "successfully append content",
     callback
