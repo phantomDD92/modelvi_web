@@ -2,16 +2,23 @@ import ACTIONS from "./types";
 
 const initialState = {
   allModels: [],
+  // For Model List Page
   models: [],
   modelsCount: 0,
+  // For Model Content Page
   contents: [],
   contentsUpdated: false,
+  contentModel: undefined,
+  // For Discord List Page
   discords: [],
   discordsCount: 0,
+  // For Account List Page
   accounts: [],
   accountsCount: 0,
+  // For Account History Page
   history: [],
   historyCount: 0,
+  // For Schedule List Page
   schedules: [],
   schedulesCount: 0,
 }
@@ -46,6 +53,7 @@ const modelReducer = (state = initialState, action) => {
         ...state,
         contents: action.payload.actor.contents,
         contentsUpdated: action.payload.actor.updated,
+        contentModel: action.payload.actor
       };
     case ACTIONS.LOAD_ACCOUNT_HISTORY:
       return {

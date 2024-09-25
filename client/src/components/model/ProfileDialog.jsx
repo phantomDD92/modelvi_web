@@ -1,5 +1,5 @@
 import { Card, Flex, Modal, Form, Input, InputNumber, Image, Button, Row, Col, Upload, Switch } from "antd";
-import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined } from "@ant-design/icons";
 import { SERVER_PATH } from "@/utils/const";
 import { useEffect, useState } from "react";
 
@@ -33,6 +33,7 @@ const ProfileDialog = ({ model, open, onCancel, onUpdate }) => {
         }
         return e?.fileList;
     };
+
     useEffect(() => {
         setAvatar();
         setBanner();

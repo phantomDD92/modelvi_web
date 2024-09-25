@@ -116,14 +116,13 @@ const handleGetContent = async (req, res) => {
 const handleAppendContent = async (req, res) => {
   try {
     const { actorId } = req.params;
-    const { filename } = req.file;
-    const { folder, title, tags } = req.body;
+    const params = req.body;
     let actor = await ActorService.findById(actorId);
     if (!actor)
       throw new ApiError(`The model is not existed.`);
     if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
       throw new ApiError(`The model content is able to update only by owner.`)
-    await ActorService.appendContent(actorId, { image: filename, folder, title, tags });
+    await ActorService.appendContent(actorId, params);
     sendResult(res, { actor });
   } catch (error) {
     sendError(res, error);
@@ -133,13 +132,13 @@ const handleAppendContent = async (req, res) => {
 const handleUpdateContent = async (req, res) => {
   try {
     const { actorId, contentId } = req.params;
-    const { folder, title, tags } = req.body;
+    const params = req.body;
     let actor = await ActorService.findById(actorId, contentId);
     if (!actor)
       throw new ApiError(`The model is not existed.`);
     if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
       throw new ApiError(`The model content is able to update only by owner.`)
-    await ActorService.updateContent(actorId, contentId, { folder, title, tags });
+    await ActorService.updateContent(actorId, contentId, params);
     sendResult(res, { actor });
   } catch (error) {
     sendError(res, error);
