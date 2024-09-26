@@ -77,7 +77,7 @@ const handleUpdateActor = async (req, res) => {
     actor = await ActorService.findById(actorId);
     if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
-    await ActorService.updateActor(actorId, { number, name, owner: req.manager._id, ...params });
+    await ActorService.updateActor(actorId, { number, name, ...params });
     sendResult(res);
   } catch (error) {
     sendError(res, error);
