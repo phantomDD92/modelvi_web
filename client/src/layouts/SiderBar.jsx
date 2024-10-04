@@ -19,7 +19,7 @@ const SiderBar = () => {
             // }}
         >
             <div className="h-16 flex items-center justify-center">
-                <span className="text-white text-3xl">CHAT BOTS</span>
+                <span className="text-white text-3xl">Model<b>VI</b></span>
             </div>
             <Menu
                 className="text-base"
