@@ -4,7 +4,6 @@ import { API_PATH } from "./const";
 
 const postAction = async (dispatch, {action, path, data, params, inform, callback}) => {
     try {
-        console.log("Location : ", window.location)
         const { data: { success, message, payload } } = await axios.post(
             `${API_PATH}${path}`,
             data,
