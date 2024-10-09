@@ -22,9 +22,13 @@ const loadHistories = (accountId, { page, pageSize }) =>
 const clearHistory = (accountId) =>
     HistoryModel.deleteMany({ account: accountId })
 
+const createHistory = (accountId, action) =>
+    HistoryModel.create({account: accountId, action})
+
 const HistoryService = {
     loadHistories,
     clearHistory,
+    createHistory,
 }
 
 module.exports = HistoryService

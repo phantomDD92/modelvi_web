@@ -12,6 +12,7 @@ const handleLoadHistories = async (req, res) => {
     }
 }
 
+
 const HistoryCtrl = {
     handleLoadHistories
 };

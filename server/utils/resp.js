@@ -13,7 +13,7 @@ const sendError = (res, error) => {
         res.json({success: false, message: error.message})
     } else {
         console.error(error)
-        res.json({success: false, message: "internal server error"})
+        res.json({success: false, message: "Internal server error"})
     }
 }
 

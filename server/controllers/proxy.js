@@ -5,7 +5,7 @@ const { sendResult, sendError, ApiError } = require("../utils/resp");
 const handleLoadProxies = async (req, res) => {
     try {
         const { page, pageSize } = req.query;
-        const [proxies, proxiesCount] = await ProxyService.loadProxies(req.manager, { page, pageSize: pageSize || "10" })
+        const [proxies, proxiesCount] = await ProxyService.loadProxiesWithPage(req.manager, { page, pageSize: pageSize || "10" })
         sendResult(res, { proxies, proxiesCount })
     } catch (error) {
         sendError(res, error)

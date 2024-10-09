@@ -2,7 +2,7 @@ const { Status, AdminRole } = require("../config/const")
 const ProxyModel = require("../models/proxy")
 const Proxy = require("../models/proxy")
 
-const loadProxies = (agency, { page, pageSize }) =>
+const loadProxiesWithPage = (agency, { page, pageSize }) =>
     Promise.all([
         Proxy.find(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id })
             .skip((parseInt(page) - 1) * parseInt(pageSize))
@@ -11,6 +11,8 @@ const loadProxies = (agency, { page, pageSize }) =>
         ProxyModel.countDocuments(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id })
     ])
 
+const loadProxiesForOwner = (owner) =>
+    Proxy.find({ owner })
 
 const clearProxies = (agency) => {
     return Proxy.deleteMany({ owner: agency._id })
@@ -34,7 +36,7 @@ const addProxies = (agency, proxies, deadline) => {
             insertOne: {
                 document: {
                     url: proxy,
-                    owner: agency._id, 
+                    owner: agency._id,
                     protocol: 'http',
                     status: true,
                     expiredAt: deadline,
@@ -49,19 +51,22 @@ const deleteProxy = (id) => {
     return ProxyModel.deleteOne({ _id: id })
 }
 
-const getCount = (agency) => ProxyModel.countDocuments(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id })
+const getCount = (agency) =>
+    ProxyModel.countDocuments(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id })
 
 const findById = (id) =>
     ProxyModel.findById(id)
 
+
 const ProxyService = {
-    loadProxies,
+    loadProxiesWithPage,
+    loadProxiesForOwner,
     clearProxies,
     addProxies,
     getProxyStats,
     setProxyStatus,
     deleteProxy,
     getCount,
-    findById
+    findById,
 }
 module.exports = ProxyService

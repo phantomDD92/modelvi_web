@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const db = require("./config/db");
 
 const apiRouter = require("./api");
+const botRouter = require("./bot/api");
 dotenv.config();
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 
 app.use("/api", apiRouter)
+app.use("/bot", botRouter)
 app.get('*', (req, res) => {
   res.sendFile(path.join(buildPath, 'index.html'))
 })

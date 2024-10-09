@@ -70,8 +70,8 @@ const findById = (id) =>
 
 const getCount = (agency) =>
   Promise.all([
-    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? {owner: agency._id, platform: Platform.F2F} : { platform: Platform.F2F }),
-    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? {owner: agency._id, platform: Platform.FNC} : { platform: Platform.FNC })
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.F2F } : { platform: Platform.F2F }),
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FNC } : { platform: Platform.FNC })
   ]);
 
 const updateParams = (accountId, params) =>
@@ -97,7 +97,14 @@ const updateParamsForActor = (actorId, params) =>
   AccountModel.updateMany({ actor: actorId }, { $set: params });
 
 const findByAlias = (platform, alias) =>
-  AccountModel.findOne({platform, alias})
+  AccountModel.findOne({ platform, alias })
+
+const getAccountNames = (platform) =>
+  AccountModel.find({ platform }, 'alias')
+
+const findByIdAndUpdateTime = (id) => 
+  AccountModel.findByIdAndUpdate(id, {$set: {updatedAt: new Date()}})
+
 const AccountService = {
   loadAccounts,
   createAccount,
@@ -114,8 +121,9 @@ const AccountService = {
   setAgencyStatus,
   getAgencyCount,
   updateParamsForActor,
-
+  findByIdAndUpdateTime,
   findByAlias,
+  getAccountNames,
 };
 
 module.exports = AccountService;
