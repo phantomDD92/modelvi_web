@@ -18,12 +18,10 @@ const FNCParamDialog = ({ open, account, onCancel, onUpdate }) => {
     }
     useEffect(() => {
         if (open && account && account.params) {
-            const { commentInterval, notifyInterval, postInterval, storyInterval, storyMaxCount, storyReplaceCount, debug } = account.params;
+            const { commentInterval,postInterval, storyInterval, storyMaxCount, storyReplaceCount } = account.params;
             form.setFieldsValue({
                 commentInterval: commentInterval || 6,
-                notifyInterval: notifyInterval || 30,
-                debug: debug || false,
-                postInterval: postInterval || 60,
+                postInterval: postInterval || 30,
                 storyInterval: storyInterval || 10,
                 storyMaxCount: storyMaxCount || 6,
                 storyReplaceCount: storyReplaceCount || 1,
@@ -42,26 +40,20 @@ const FNCParamDialog = ({ open, account, onCancel, onUpdate }) => {
                 form={form}
                 name="control-hooks"
             >
-                <Form.Item name="commentInterval" label="Comment Interval" rules={[{ required: true }]}>
-                    <InputNumber />
+                <Form.Item name="postInterval" label="Post Interval" rules={[{ required: true }]}>
+                    <InputNumber min={1} max={60} addonAfter="min"/>
                 </Form.Item>
-                <Form.Item name="notifyInterval" label="Notify Interval" rules={[{ required: true }]}>
-                    <InputNumber />
+                <Form.Item name="commentInterval" label="Comment Interval" rules={[{ required: true }]}>
+                    <InputNumber min={1} max={60} addonAfter="min"/>
                 </Form.Item>
                 <Form.Item name="storyInterval" label="Story Interval" rules={[{ required: true }]}>
-                    <InputNumber />
+                    <InputNumber min={1} max={60} addonAfter="min"/>
                 </Form.Item>
                 <Form.Item name="storyMaxCount" label="Story Max Count" rules={[{ required: true }]}>
-                    <InputNumber />
+                    <InputNumber min={1} max={20} addonAfter="stories"/>
                 </Form.Item>
                 <Form.Item name="storyReplaceCount" label="Story Replace Count" rules={[{ required: true }]}>
-                    <InputNumber />
-                </Form.Item>
-                <Form.Item name="postInterval" label="Post Interval" rules={[{ required: true }]}>
-                    <InputNumber />
-                </Form.Item>
-                <Form.Item name="debug" label="Debug Enabled" rules={[{ required: true }]}>
-                    <Switch />
+                    <InputNumber min={1} max={10} addonAfter="stories"/>
                 </Form.Item>
             </Form>
         </Modal>

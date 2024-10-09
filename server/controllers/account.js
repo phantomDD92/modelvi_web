@@ -100,19 +100,18 @@ const handleUpdateParams = async (req, res) => {
     if (req.manager.role != AdminRole.MANAGER && account.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
     if (account.platform == Platform.F2F) {
-      const { commentInterval, notifyInterval, postOffsets, debug } = params;
+      const { commentInterval, postInterval, postCount, postMode, postOffsets } = params;
       await AccountService.updateParams(id, {
-        "params.debug": debug,
+        "params.postInterval": postInterval || 10,
         "params.commentInterval": commentInterval,
-        "params.notifyInterval": notifyInterval,
-        "params.postOffsets": postOffsets,
+        "params.postCount": postCount || 3,
+        "params.postMode": postMode || "offset",
+        "params.postOffsets": postOffsets || [1, 21, 51],
       });
     } else if (account.platform == Platform.FNC) {
-      const { commentInterval, notifyInterval, postInterval, storyInterval, storyMaxCount, storyReplaceCount, debug } = params;
+      const { commentInterval, postInterval, storyInterval, storyMaxCount, storyReplaceCount } = params;
       await AccountService.updateParams(id, {
-        "params.debug": debug,
         "params.commentInterval": commentInterval,
-        "params.notifyInterval": notifyInterval,
         "params.postInterval": postInterval,
         "params.storyInterval": storyInterval,
         "params.storyMaxCount": storyMaxCount,
