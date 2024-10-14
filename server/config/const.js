@@ -9,6 +9,7 @@ const Platform = {
     ALL: "ALL",
     FNC: "FNC",
     F2F: "F2F",
+    FAN: "FAN",
 }
 
 const PostType = {

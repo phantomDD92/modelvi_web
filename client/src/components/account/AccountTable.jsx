@@ -133,8 +133,9 @@ const AccountTable = ({ auth, accounts, accountsCount, page, platform, onPageCha
                         Account List
                     </div>
                     <Radio.Group onChange={(e) => onPlatformChange(e.target.value)} value={platform}>
-                        <Radio.Button value={Platform.F2F}>{Platform.F2F}</Radio.Button>
-                        <Radio.Button value={Platform.FNC}>{Platform.FNC}</Radio.Button>
+                        <Radio.Button value={Platform.F2F}>F2F</Radio.Button>
+                        <Radio.Button value={Platform.FNC}>Fancentro</Radio.Button>
+                        <Radio.Button value={Platform.FAN}>Fansly</Radio.Button>
                     </Radio.Group>
                 </Flex>
             }

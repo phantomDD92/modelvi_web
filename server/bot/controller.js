@@ -51,8 +51,8 @@ const handleGetAccount = async (req, res) => {
     const account = await AccountService.findById(req.bot.id);
     if (!account)
       throw new ApiError("unknown account")
-    const { email, password, ...params } = account.toJSON()
-    sendResult(res, { account: params })
+    // const { ...params } = account.toJSON()
+    sendResult(res, { account: account.toJSON() })
   } catch (error) {
     sendError(res, error)
   }
