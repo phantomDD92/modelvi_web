@@ -67,7 +67,9 @@ const ProxyTable = ({ proxies, proxiesCount, page, onPageChange, onClear, onDele
             title={
                 <div className="h-20 p-6 text-xl">
                     Proxy List&nbsp;(
-                    <a href="https://proxy-seller.com/?partner=JRKRDS2FS7PGXQ" target="_blank">Buy proxy</a>    
+                    <a href="https://proxy-seller.com/?partner=JRKRDS2FS7PGXQ" target="_blank">Proxy Seller</a>
+                    &nbsp;-&nbsp;
+                    <a href="https://billing.rayobyte.com/hosting/aff.php?aff=2556&redirectTo=https://rayobyte.com" target="_blank">Rayobyte Proxy</a>    
                     )
                 </div>
             }
