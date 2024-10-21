@@ -8,6 +8,7 @@ const HistoryService = require('../services/history');
 const LogService = require('../services/log');
 const ActionService = require('../services/action');
 const moment = require('moment');
+const ActorService = require('../services/actor');
 
 const handleLoginAccount = async (req, res) => {
   try {
@@ -127,7 +128,80 @@ const handleCommentInterval = async (req, res) => {
   try {
     const account = await AccountService.findById(req.bot.id);
     const { params } = account.toJSON();
-    await AccountService.updateParams(req.bot.id, {"params.commentNextTime": moment().add(params.commentInterval || 10, "minute").toDate()})
+    await AccountService.updateParams(req.bot.id, { "params.commentNextTime": moment().add(params.commentInterval || 10, "minute").toDate() })
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
+/**
+ * Update account's contents from model
+ * @param {Request} req 
+ * @param {Response} res 
+ */
+const handleUpdateContents = async (req, res) => {
+  try {
+    const account = await AccountService.findById(req.bot.id);
+    if (!account)
+      throw new ApiError("unknown account")
+    const actor = await ActorService.findById(account.actor);
+    if (!actor)
+      throw new ApiError("unknown actor");
+    await AccountService.clearContents(req.bot.id);
+    await AccountService.setContents(req.bot.id, actor.contents);
+    sendResult(res, {count: actor.contents.length});
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
+const handleUpdateMedia = async (req, res) => {
+  try {
+    const { id, uuid } = req.body;
+    const account = await AccountService.findById(req.bot.id);
+    if (!account)
+      throw new ApiError("unknown account")
+    console.log(id, uuid);
+    field = `params.contents.${id}.uuid`
+    await AccountService.updateParams(account, { [field]: uuid });
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
+const handleUpdatePostSetting = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const account = await AccountService.findById(req.bot.id);
+    if (!account)
+      throw new ApiError("unknown account")
+    const accountJson = account.toJSON();
+    const { contents, postOffsets, postMode, postInterval } = accountJson.params;
+    if (contents.length == 0)
+      throw new ApiError("no contents");
+    let newPostIndex = (id + 1) % contents.length;
+    let postNextTime;
+    let offsets = postOffsets | [1, 21, 51];
+    if (postMode == "offsets") {
+      const currentTime = moment();
+      const currentMinute = currentTime.minute()
+      let postNextOffset = offsets[0];
+      for (let offset of offsets) {
+        if (offset > currentMinute) {
+          postNextOffset = offset;
+          break;
+        }
+      }
+      if (postNextOffset < currentMinute) {
+        postNextOffset += 60
+      }
+      postNextTime = currentTime.add(postNextOffset - currentMinute, "minute").toDate();
+    } else {
+      postNextTime = moment().add(postInterval || 10, "minute").toDate();
+    }
+    await AccountService.updateParams(account, { "params.postNextTime": postNextTime, "params.postContentIndex": newPostIndex });
     sendResult(res);
   } catch (error) {
     sendError(res, error)
@@ -142,8 +216,14 @@ const handleUpdateAccount = async (req, res) => {
       case 'commentInterval':
         handleCommentInterval(req, res);
         break
-        // case 'history':
-        //   handleCreateHistory(req, res);
+      case "update_contents":
+        handleUpdateContents(req, res);
+        break;
+      case "content_media":
+        handleUpdateMedia(req, res);
+        break;
+      case "post_setting":
+        handleUpdatePostSetting(req, res);
         break;
       default:
         throw new ApiError("Unknown Api Request")
@@ -199,7 +279,7 @@ const handlePickProxy = async (req, res) => {
 
 const handleFindCommentAction = async (req, res) => {
   try {
-    const {uuid, action} = req.body;
+    const { uuid, action } = req.body;
     const record = await ActionService.findAction(req.bot.id, uuid, action);
     let found = true;
     if (!record)
@@ -212,7 +292,7 @@ const handleFindCommentAction = async (req, res) => {
 
 const handleCreateCommentAction = async (req, res) => {
   try {
-    const {creator, uuid, action} = req.body;
+    const { creator, uuid, action } = req.body;
     await ActionService.createAction(req.bot.id, creator, uuid, action);
     await HistoryService.createHistory(req.bot.id, `bot followed ${creator}'s post`);
     sendResult(res);

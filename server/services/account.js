@@ -105,6 +105,16 @@ const getAccountNames = (platform) =>
 const findByIdAndUpdateTime = (id) => 
   AccountModel.findByIdAndUpdate(id, {$set: {updatedAt: new Date()}})
 
+const clearContents = (accountId) =>
+  AccountModel.findByIdAndUpdate(accountId, { $set: { "params.contents": [] } })
+
+const setContents = (accountId, contents) => {
+  const newContents = contents.map(({ image, folder, title, tags }) => ({ image, folder, title, tags }));
+  return AccountModel.findByIdAndUpdate(accountId, {
+      $push: { "params.contents": { $each: newContents } },
+      $set: { "params.recent": true, "params.uploaded": false }
+  });
+}
 const AccountService = {
   loadAccounts,
   createAccount,
@@ -116,6 +126,8 @@ const AccountService = {
   getCount,
   updateParams,
   syncContents,
+  clearContents,
+  setContents,
   clearError,
   setAllStatus,
   setAgencyStatus,
