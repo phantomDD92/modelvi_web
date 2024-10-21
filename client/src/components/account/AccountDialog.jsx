@@ -1,7 +1,8 @@
+import { Platform } from "@/utils/const";
 import { Modal, Form, Input, Select } from "antd";
 import { useEffect } from "react";
 
-const AccountDialog = ({ open, models, account, onCancel, onCreate, onUpdate }) => {
+const AccountDialog = ({ open, platform, models, account, onCancel, onCreate, onUpdate }) => {
     const [form] = Form.useForm();
 
     const handleOkClick = async () => {
@@ -47,7 +48,7 @@ const AccountDialog = ({ open, models, account, onCancel, onCreate, onUpdate }) 
                         options={models ? models.map(model => ({
                             label: `${model.number}. ${model.name}`,
                             value: model._id
-                        })): []}
+                        })) : []}
                         disabled={account}
                     />
                 </Form.Item>
@@ -69,6 +70,13 @@ const AccountDialog = ({ open, models, account, onCancel, onCreate, onUpdate }) 
                     rules={[{ required: true }]}>
                     <Input />
                 </Form.Item>
+                {platform == Platform.FAN &&
+                    <Form.Item
+                        name="device"
+                        label="Device Id" >
+                        <Input />
+                    </Form.Item>
+                }
             </Form>
         </Modal>
 

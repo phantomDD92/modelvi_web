@@ -19,6 +19,7 @@ router.route("/account")
 router.route("/proxy")
   .all(checkBot)
   .get(BotController.handlePickProxy)
+  .put(BotController.handleBlockProxy)
 
 router.route("/history")
   .all(checkBot)

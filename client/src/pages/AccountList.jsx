@@ -125,6 +125,7 @@ export const AccountList = () => {
       />
       <AccountDialog
         open={visible}
+        platform={platform}
         account={account}
         models={modelProps.allModels}
         onCancel={() => setVisible(false)}

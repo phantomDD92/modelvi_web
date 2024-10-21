@@ -35,6 +35,27 @@ const ProxyTable = ({ proxies, proxiesCount, page, onPageChange, onClear, onDele
             )
         },
         {
+            key: 'fan',
+            title: 'F2F',
+            width: 100,
+            dataIndex: 'usage',
+            render: value => value && value.F2F ? value.F2F : '-'
+        },
+        {
+            key: 'fan',
+            title: 'Fancentro',
+            width: 100,
+            dataIndex: 'usage',
+            render: value => value && value.FNC ? value.FNC : '-'
+        },
+        {
+            key: 'fan',
+            title: 'Fansly',
+            width: 100,
+            dataIndex: 'usage',
+            render: value => value && value.FAN ? value.FAN : '-'
+        },
+        {
             key: 'status',
             title: 'Status',
             width: 250,

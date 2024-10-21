@@ -16,7 +16,7 @@ const loadAccounts = (agency, platform, { page, pageSize }) =>
 const createAccount = (
   platform,
   actor,
-  { alias, email, password, discord, description, owner, creator }
+  { alias, email, password, discord, description, owner, creator, device }
 ) =>
   AccountModel.create({
     platform,
@@ -28,6 +28,7 @@ const createAccount = (
     discord,
     description,
     owner,
+    device,
     creator,
     params: platform == "F2F"
       ? {
@@ -43,7 +44,7 @@ const createAccount = (
 const updateAccount = (
   id,
   actor,
-  { alias, email, password, discord, description }
+  { alias, email, password, discord, description, device }
 ) =>
   AccountModel.findByIdAndUpdate(id, {
     $set: {
@@ -51,6 +52,7 @@ const updateAccount = (
       number: actor.number,
       alias,
       email,
+      device,
       password,
       discord,
       description,

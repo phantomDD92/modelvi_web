@@ -57,6 +57,15 @@ const getCount = (agency) =>
 const findById = (id) =>
     ProxyModel.findById(id)
 
+const findByAccount = (agencyId, platform, alias = undefined) => {
+    const field = `usage.${platform}`;
+    return ProxyModel.findOne({ [field]: alias, owner: agencyId });
+}
+
+const setProxyAccount = (proxyId, platform, alias) => {
+    const field = `usage.${platform}`;
+    return ProxyModel.findByIdAndUpdate(proxyId, { $set: { [field]: alias } });
+}
 
 const ProxyService = {
     loadProxiesWithPage,
@@ -68,5 +77,8 @@ const ProxyService = {
     deleteProxy,
     getCount,
     findById,
+    findByAccount,
+    setProxyAccount,
 }
+
 module.exports = ProxyService

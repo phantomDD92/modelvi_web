@@ -150,7 +150,7 @@ const handleUpdateContents = async (req, res) => {
       throw new ApiError("unknown actor");
     await AccountService.clearContents(req.bot.id);
     await AccountService.setContents(req.bot.id, actor.contents);
-    sendResult(res, {count: actor.contents.length});
+    sendResult(res, { count: actor.contents.length });
   } catch (error) {
     sendError(res, error)
   }
@@ -162,7 +162,6 @@ const handleUpdateMedia = async (req, res) => {
     const account = await AccountService.findById(req.bot.id);
     if (!account)
       throw new ApiError("unknown account")
-    console.log(id, uuid);
     field = `params.contents.${id}.uuid`
     await AccountService.updateParams(account, { [field]: uuid });
     sendResult(res);
@@ -211,7 +210,6 @@ const handleUpdatePostSetting = async (req, res) => {
 const handleUpdateAccount = async (req, res) => {
   try {
     const { subject } = req.body;
-    console.log("### : ", subject)
     switch (subject) {
       case 'commentInterval':
         handleCommentInterval(req, res);
@@ -256,22 +254,37 @@ const handleChangeAccount = async (req, res) => {
 }
 
 
+const handleBlockProxy = async (req, res) => {
+  try {
+    const account = await AccountService.findById(req.bot.id);
+    if (!account)
+      throw new ApiError("unknown account");
+    const { owner, platform, alias } = account.toJSON();
+    let proxy = await ProxyService.findByAccount(owner, platform, alias);
+    if (!proxy)
+      throw new ApiError("proxy not found");
+    await ProxyService.setProxyAccount(proxy._id, platform, "blocked");
+    sendResult(res)
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
 const handlePickProxy = async (req, res) => {
   try {
-    const proxies = await ProxyService.loadProxiesForOwner(req.bot.owner)
-    if (!proxies || proxies.length == 0)
-      throw new ApiError("no proxies")
-    const idx = random.integer(0, proxies.length - 1)
-    const [account, addr] = proxies[idx].url.split("@");
-    const scheme = proxies[idx].protocol;
-    const [user, pass] = account.split(":")
-    sendResult(res, {
-      proxy: {
-        server: `${scheme}://${addr}`,
-        username: user,
-        password: pass,
-      }
-    })
+    const account = await AccountService.findById(req.bot.id);
+    if (!account)
+      throw new ApiError("unknown account");
+    const { owner, platform, alias } = account.toJSON();
+    let proxy = await ProxyService.findByAccount(owner, platform, alias);
+    if (!proxy) {
+      proxy = await ProxyService.findByAccount(owner, platform);
+      if (!proxy)
+        throw new ApiError("no proxy");
+    }
+    await ProxyService.setProxyAccount(proxy._id, platform, alias);
+    const proxyJson = proxy.toJSON();
+    sendResult(res, { proxy: proxyJson.url });
   } catch (error) {
     sendError(res, error)
   }
@@ -309,6 +322,7 @@ const BotController = {
   handleGetCredential,
   handleUpdateAccount,
   handlePickProxy,
+  handleBlockProxy,
   handleCreateHistory,
   handleCreateLastError,
   handleClearLastError,

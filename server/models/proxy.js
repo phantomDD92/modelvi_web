@@ -8,6 +8,7 @@ const ProxySchema = new Schema({
   owner: { type: SchemaTypes.ObjectId, ref: "Manager" },
   protocol: { type: String, default: Protocol.HTTP },
   status: { type: Boolean, default: true },
+  usage : {},
   expiredAt: { type: Date },
 });
 

@@ -80,7 +80,6 @@ export const resetPassword = (agency, password, callback) => async (dispatch) =>
 };
 
 export const changePassword = (name, password, newPassword, callback) => async (dispatch) => {
-  console.log(name, password, newPassword);
   await ApiRequest.putAction(dispatch, {
     path: `/auth`,
     inform: `manager(${name})'s password is successfully changed.`,
