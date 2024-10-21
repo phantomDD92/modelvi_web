@@ -45,13 +45,13 @@ export const ModelTable = ({ auth, models, modelsCount, page, onPageChange, onDe
             width: 200,
             dataIndex: 'birthplace'
         },
-        {
-            key: 'discord',
-            title: 'Discord',
-            dataIndex: 'discord',
-            width: 150,
-            render: value => value ? <Tag color="success">Yes</Tag> : <Tag color="error">No</Tag>
-        },
+        // {
+        //     key: 'discord',
+        //     title: 'Discord',
+        //     dataIndex: 'discord',
+        //     width: 150,
+        //     render: value => value ? <Tag color="success">Yes</Tag> : <Tag color="error">No</Tag>
+        // },
         {
             key: 'contents',
             title: 'Contents',

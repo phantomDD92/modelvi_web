@@ -21,14 +21,14 @@ const AccountTable = ({ auth, accounts, accountsCount, page, platform, onPageCha
         {
             key: 'name',
             title: 'Name',
-            width: 200,
+            width: 150,
             dataIndex: 'actor',
             render: value => <Flex gap="middle" align='center'><Avatar src="/img/actor.png" /><span>{value.name}</span></Flex>
         },
         {
             key: 'owner',
             title: 'Agency',
-            width: 150,
+            width: 120,
             dataIndex: 'owner',
             render: value => value && value.name ? value.name : "-"
         },
@@ -42,7 +42,7 @@ const AccountTable = ({ auth, accounts, accountsCount, page, platform, onPageCha
             key: 'email',
             title: 'Email',
             width: 150,
-            dataIndex: 'email'
+            dataIndex: 'email',
         },
         {
             key: 'password',
@@ -67,7 +67,7 @@ const AccountTable = ({ auth, accounts, accountsCount, page, platform, onPageCha
             key: 'status',
             title: 'Status',
             dataIndex: 'status',
-            width: 150,
+            width: 120,
             render: (value, record) => (
                 <Switch
                     checked={value}
