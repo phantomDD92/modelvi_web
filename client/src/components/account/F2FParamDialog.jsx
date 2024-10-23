@@ -1,4 +1,6 @@
-import { Modal, Form, Input, Radio, InputNumber } from "antd";
+import { PostMode } from "@/utils/const";
+import { Modal, Form, Input, Radio, InputNumber, TimePicker } from "antd";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
 const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
@@ -12,10 +14,10 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
     const handleOkClick = async () => {
         try {
             await form.validateFields();
-            const { postOffsets, ...params } = form.getFieldsValue();
+            const { postOffsets, postStart, ...params } = form.getFieldsValue();
             const offsets = postOffsets ? postOffsets.split(",").map(str => parseInt(str.trim())) : [1, 21, 51];
-            // console.log(offsets, params);
-            onUpdate(account, { ...params, postOffsets: offsets });
+            console.log(params, postStart ? postStart.format("HH:mm") : undefined);
+            onUpdate(account, { ...params, postOffsets: offsets, postStart: postStart ? postStart.format("HH:mm") : undefined });
         } catch (e) {
 
         }
@@ -23,21 +25,23 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
 
     useEffect(() => {
         if (open && account && account.params) {
-            const { commentInterval, postCount, postOffsets, postInterval, postMode } = account.params;
+            const { commentInterval, postCount, postOffsets, postInterval, postMode, postStart, postLimit } = account.params;
             form.setFieldsValue({
                 commentInterval: commentInterval || 3,
                 postInterval: postInterval || 10,
                 postOffsets: postOffsets ? postOffsets.join(",") : "1, 21, 51",
-                postMode: postMode || "offset",
+                postMode: postMode || PostMode.LIMITED,
                 postCount: postCount || 3,
+                postStart: dayjs(postStart || "0:00", "HH:mm"),
+                postLimit: postLimit || 10,
             });
-            setPostingMode(postMode || "offset");
+            setPostingMode(postMode || PostMode.LIMITED);
         }
     }, [open]);
 
     const handlePostingOffsetValidation = (_, value) => {
         try {
-            if (!/^[0-9\,]+$/.test(value)) 
+            if (!/^[0-9\,]+$/.test(value))
                 throw new Error("unsupported character")
             const offsets = value.split(",").map(str => parseInt(str.trim()));
             for (var i = 0; i < offsets.length; ++i) {
@@ -69,8 +73,9 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
             >
                 <Form.Item label="Posting Method" name="postMode">
                     <Radio.Group onChange={handlePostingMethodChange}>
-                        <Radio.Button value="offset">Offset</Radio.Button>
-                        <Radio.Button value="interval">Interval</Radio.Button>
+                        <Radio.Button value={PostMode.LIMITED}>Limited</Radio.Button>
+                        <Radio.Button value={PostMode.OFFSET}>Offset</Radio.Button>
+                        <Radio.Button value={PostMode.INTERVAL}>Interval</Radio.Button>
                     </Radio.Group>
                 </Form.Item>
                 {postingMode == "offset" &&
@@ -87,12 +92,28 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
                         <Input addonAfter="min" />
                     </Form.Item>
                 }
-                {postingMode == "interval" &&
+                {postingMode == PostMode.LIMITED &&
+                    <Form.Item
+                        name="postStart"
+                        label="Posting Start Time"
+                        rules={[{ required: true }]}>
+                        <TimePicker format="HH:mm" />
+                    </Form.Item>
+                }
+                {(postingMode == PostMode.INTERVAL || postingMode == PostMode.LIMITED) &&
                     <Form.Item
                         name="postInterval"
                         label="Posting Interval"
                         rules={[{ required: true }]}>
                         <InputNumber addonAfter="min" min={1} max={60} />
+                    </Form.Item>
+                }
+                {postingMode == PostMode.LIMITED &&
+                    <Form.Item
+                        name="postLimit"
+                        label="Posting Limit Per Day"
+                        rules={[{ required: true }]}>
+                        <InputNumber addonAfter="articles" min={1} max={10} />
                     </Form.Item>
                 }
                 <Form.Item

@@ -30,8 +30,16 @@ module.exports = AccountModel;
 //    uuid: vault id
 //    storage: storage id
 // uploaded : upload flag for contents
-// storyNextTime : next story time
-// storyInterval : story interval
-// storyIndex: processing story Index
-// storyMaxCount: max story items count
-// storyReplaceCount: replace count
+//    storyNextTime : next story time
+//    storyInterval : story interval
+//    storyIndex: processing story Index
+//    storyMaxCount: max story items count
+//    storyReplaceCount: replace count
+
+// post related params
+//    postInterval(number) : posting interval (minutes)
+//    postMode(string): interval, offset, limit
+//    postCount(number): remaining post articles
+//    postLimit(number):  max posting limit per day
+//    postOffsets(array_number): posting minutes offset
+//    postStart(string):  posting start time (18:00)

@@ -2,6 +2,7 @@
 // export const SERVER_PATH = "http://localhost:5000";
 export const API_PATH = `${window.location.protocol}//${window.location.host}/api`;
 export const SERVER_PATH = `${window.location.protocol}//${window.location.host}`;
+
 export const Platform = {
     ALL: "ALL",
     F2F: "F2F",
@@ -18,4 +19,10 @@ export const PostType = {
 export const AdminRole = {
     MANAGER: 1,
     AGENCY: 2,
+}
+
+export const PostMode = {
+    INTERVAL: "interval",
+    LIMITED: "limited",
+    OFFSET: "offset",
 }
