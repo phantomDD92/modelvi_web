@@ -1,3 +1,4 @@
+import { PostMode } from "@/utils/const";
 import { Modal, Form, Input, Radio, InputNumber } from "antd";
 import { useEffect, useState } from "react";
 
@@ -68,8 +69,8 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
             >
                 <Form.Item label="Posting Method" name="postMode">
                     <Radio.Group onChange={handlePostingMethodChange}>
-                        <Radio.Button value="offset">Offset</Radio.Button>
-                        <Radio.Button value="interval">Interval</Radio.Button>
+                    <Radio.Button value={PostMode.INTERVAL}>Interval</Radio.Button>
+                    <Radio.Button value={PostMode.OFFSET}>Offsets</Radio.Button>
                     </Radio.Group>
                 </Form.Item>
                 {postingMode == "offset" &&
@@ -100,12 +101,6 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
                     rules={[{ required: true }]}>
                     <InputNumber addonAfter="articles" min={1} max={10} />
                 </Form.Item>
-                {/* <Form.Item
-                    name="commentInterval"
-                    label="Comment Interval"
-                    rules={[{ required: true }]}>
-                    <InputNumber addonAfter="min" min={1} max={60} />
-                </Form.Item> */}
             </Form>
         </Modal>
     )
