@@ -8,11 +8,13 @@ import AccountTable from "@/components/account/AccountTable";
 import AccountDialog from "@/components/account/AccountDialog";
 import F2FParamDialog from "@/components/account/F2FParamDialog";
 import FNCParamDialog from "@/components/account/FNCParamDialog";
+import FANParamDialog from "@/components/account/FANParamDialog";
 
 export const AccountList = () => {
   const [visible, setVisible] = useState(false);
   const [f2fShow, setF2FShow] = useState(false);
   const [fncShow, setFNCShow] = useState(false);
+  const [fanShow, setFANShow] = useState(false);
   const [account, setAccount] = useState();
   const navigate = useNavigate();
   const dispatch = useDispatch()
@@ -67,6 +69,8 @@ export const AccountList = () => {
       setF2FShow(true);
     } else if (platform == Platform.FNC) {
       setFNCShow(true);
+    } else if (platform == Platform.FAN) {
+      setFANShow(true);
     }
   }
 
@@ -142,6 +146,12 @@ export const AccountList = () => {
         open={fncShow}
         account={account}
         onCancel={() => setFNCShow(false)}
+        onUpdate={handleUpdateParams}
+      />
+      <FANParamDialog
+        open={fanShow}
+        account={account}
+        onCancel={() => setFANShow(false)}
         onUpdate={handleUpdateParams}
       />
     </div>
