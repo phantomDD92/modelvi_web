@@ -111,12 +111,23 @@ const clearContents = (accountId) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { "params.contents": [] } })
 
 const setContents = (accountId, contents) => {
-  const newContents = contents.map(({ image, folder, title, tags }) => ({ image, folder, title, tags }));
+  const newContents = contents.map(({ _id, ...params }) => ({ ...params }));
   return AccountModel.findByIdAndUpdate(accountId, {
       $push: { "params.contents": { $each: newContents } },
       $set: { "params.recent": true, "params.uploaded": false }
   });
 }
+
+const replaceContents = (accountId, contents) => {
+  return AccountModel.findByIdAndUpdate(accountId, {
+      $set: { "params.contents": contents }
+  });
+
+}
+
+const loadAll = () => 
+  AccountModel.find();
+
 const AccountService = {
   loadAccounts,
   createAccount,
@@ -138,6 +149,9 @@ const AccountService = {
   findByIdAndUpdateTime,
   findByAlias,
   getAccountNames,
+
+  loadAll,
+  replaceContents,
 };
 
 module.exports = AccountService;

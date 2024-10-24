@@ -40,17 +40,20 @@ const removeAccount = (id, account) =>
 
 const loadActors = (agency, { page, pageSize }) =>
   Promise.all([
-    ActorModel.find(agency.role == AdminRole.AGENCY ? {owner: agency._id} : {})
+    ActorModel.find(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {})
       .sort("number")
       .skip((parseInt(page) - 1) * parseInt(pageSize))
       .limit(parseInt(pageSize))
       .populate("owner", "name")
       .populate("accounts", "platform alias"),
-    ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? {owner: agency._id} : {})
+    ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {})
   ])
 
 const loadAllActors = (agency) =>
-  ActorModel.find(agency.role == AdminRole.AGENCY ? {owner: agency._id} : {}, "number name");
+  ActorModel.find(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {}, "number name");
+
+const loadAll = () =>
+  ActorModel.find();
 
 const findByNumber = (number) => ActorModel.findOne({ number });
 
@@ -58,7 +61,7 @@ const findByName = (name) => ActorModel.findOne({ name });
 
 const findById = (id) => ActorModel.findById(id);
 
-const getCount = (agency) => ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? {owner: agency._id} : {})
+const getCount = (agency) => ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {})
 
 const setDiscord = (id, discord) => ActorModel.findByIdAndUpdate(id, { $set: { discord } });
 
@@ -72,6 +75,9 @@ const deleteContent = (id, contentId) =>
 
 const clearContents = (id) =>
   ActorModel.findByIdAndUpdate(id, { $set: { contents: [], updated: true } })
+
+const setContents = (id, contents) =>
+  ActorModel.findByIdAndUpdate(id, { $set: { contents } });
 
 const syncContents = (id) =>
   ActorModel.findByIdAndUpdate(id, { $set: { updated: false } })
@@ -108,6 +114,8 @@ const ActorService = {
 
   // profile
   updateProfile,
+  loadAll,
+  setContents,
 };
 
 module.exports = ActorService;

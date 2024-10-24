@@ -58,6 +58,10 @@ router.route("/discord/:id")
 //   .get(SettingCtrl.handleLoadSetting)
 //   .post(SettingCtrl.handleUpdateSetting)
 
+router.route("/temp")
+  .all(authenticate, checkManager)
+  .post(ManagerCtrl.handleUpdateDB);
+  
 router.route("/manager")
   .all(authenticate, checkManager)
   .get(ManagerCtrl.handleLoadManagers)

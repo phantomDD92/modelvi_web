@@ -3,6 +3,9 @@ const bcrypte = require("bcryptjs");
 const ManagerService = require("../services/manager.js");
 const dotenv = require("dotenv");
 const { sendResult, sendError, ApiError } = require("../utils/resp.js");
+const ActorService = require("../services/actor.js");
+const { Platform } = require("../config/const.js");
+const AccountService = require("../services/account.js");
 
 dotenv.config();
 
@@ -83,7 +86,7 @@ const handleChangePassword = async (req, res) => {
 
 const handleResetPassword = async (req, res) => {
   try {
-    const { agency:agencyId, password } = req.body;
+    const { agency: agencyId, password } = req.body;
     const agency = await ManagerService.findById(agencyId)
     if (!agency)
       throw new Error(`The specified agency does not exist`)
@@ -125,6 +128,74 @@ const handleUpdateManager = async (req, res) => {
   }
 };
 
+const handleUpdateDB = async (req, res) => {
+  try {
+    // update actors content
+    const actors = await ActorService.loadAll();
+    for (let actor of actors) {
+      const { contents } = actor;
+      let newContents = [];
+      for (let content of contents) {
+        if (content.platforms.length == 0) {
+          const newContent = {};
+          newContent.folder = content.folder;
+          newContent._id = content._id;
+          newContent.title = content.title;
+          newContent.platforms = [Platform.F2F, Platform.FNC];
+          if (content.tags != '') {
+            const newTags = content.tags.trim().split(" ").map(tag => tag.replaceAll('#', ''));
+            console.log(content.tags, newTags);
+            newContent.postTags = newTags;
+          }
+          newContent.media = [];
+          newContent.media.push({name: content.image, mode: `image/${content.image.split(".")[1]}`});
+          newContents.push(newContent);
+        } else {
+          newContents.push(content);
+        }
+      }
+      await ActorService.setContents(actor.id, newContents);
+    }
+    // update accounts content
+    const accounts = await AccountService.loadAll();
+    for (let account of accounts) {
+      if (!account.params)
+        continue;
+      const { contents } = account.params;
+      if (!contents)
+        continue;
+      let newContents = [];
+      for (let content of contents) {
+        if (!content.media || content.media.length == 0) {
+          const newContent = {};
+          newContent.folder = content.folder;
+          newContent.title = content.title;
+          if (content.tags != '') {
+            const newTags = content.tags.trim().split(" ").map(tag => tag.replaceAll('#', ''));
+            newContent.postTags = newTags;
+          } else {
+            newContent.postTags = [];
+          }
+          newContent.media = [];
+          const media = {name: content.image, mode: `image/${content.image.split(".")[1]}`};
+          if (content.uuid)
+            media.uuid = content.uuid;
+          if (content.storage)
+            media.storage = content.storage;
+          newContent.media.push(media);
+          newContents.push(newContent);
+        } else {
+          newContents.push(content);
+        }
+      }
+      await AccountService.replaceContents(account._id, newContents);
+    }
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error);
+  }
+};
+
 const ManagerCtrl = {
   handleCreateManager,
   handleLoginManager,
@@ -134,7 +205,8 @@ const ManagerCtrl = {
   handleReloadManager,
   handleChangeStatus,
   handleUpdateManager,
-  handleResetPassword
+  handleResetPassword,
+  handleUpdateDB
 };
 
 module.exports = ManagerCtrl;
