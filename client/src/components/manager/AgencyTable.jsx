@@ -1,8 +1,8 @@
 import { AdminRole } from '@/utils/const'
-import { Card, Table, Tooltip, Popconfirm, Button, Flex, Switch, Avatar, Dropdown } from "antd";
-import { DeleteOutlined, UserAddOutlined, EditOutlined, KeyOutlined } from "@ant-design/icons";
+import { Card, Table,  Button, Flex, Switch, Avatar, Dropdown } from "antd";
+import { DeleteOutlined, UserAddOutlined, EditOutlined, KeyOutlined, DatabaseOutlined } from "@ant-design/icons";
 
-export const AgencyTable = ({ agencies, onDelete, onCreate, onEdit, onStatusChange, onPasswordReset }) => {
+export const AgencyTable = ({ agencies, onDelete, onCreate, onEdit, onStatusChange, onPasswordReset, onUpdateDB }) => {
     const columns = [
         {
             key: 'name',
@@ -111,8 +111,10 @@ return (
                 Manager List
             </div>
         }
-        extra={
-            <Button icon={<UserAddOutlined />} onClick={onCreate}>Create</Button>
+        extra={[
+            <Button key="create" icon={<UserAddOutlined />} onClick={onCreate}>Create</Button>,
+            // <Button key="db" icon={<DatabaseOutlined />} onClick={onUpdateDB}>UpdateDB</Button>
+        ]
         }
     >
         <Table

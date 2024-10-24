@@ -52,6 +52,14 @@ export const deleteAgency = (agency, callback) => async (dispatch) => {
   })
 };
 
+export const updateDB = (callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/temp`,
+    inform: `database is successfully updated.`,
+    callback
+  })
+};
+
 export const changeAgencyStatus = (agency, status, callback) => async (dispatch) => {
   await ApiRequest.postAction(dispatch, {
     path: `/manager/${agency._id}`,

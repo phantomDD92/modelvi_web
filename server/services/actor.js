@@ -40,17 +40,20 @@ const removeAccount = (id, account) =>
 
 const loadActors = (agency, { page, pageSize }) =>
   Promise.all([
-    ActorModel.find(agency.role == AdminRole.AGENCY ? {owner: agency._id} : {})
+    ActorModel.find(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {})
       .sort("number")
       .skip((parseInt(page) - 1) * parseInt(pageSize))
       .limit(parseInt(pageSize))
       .populate("owner", "name")
       .populate("accounts", "platform alias"),
-    ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? {owner: agency._id} : {})
+    ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {})
   ])
 
 const loadAllActors = (agency) =>
-  ActorModel.find(agency.role == AdminRole.AGENCY ? {owner: agency._id} : {}, "number name");
+  ActorModel.find(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {}, "number name");
+
+const loadAll = () =>
+  ActorModel.find();
 
 const findByNumber = (number) => ActorModel.findOne({ number });
 
@@ -58,20 +61,23 @@ const findByName = (name) => ActorModel.findOne({ name });
 
 const findById = (id) => ActorModel.findById(id);
 
-const getCount = (agency) => ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? {owner: agency._id} : {})
+const getCount = (agency) => ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {})
 
 const setDiscord = (id, discord) => ActorModel.findByIdAndUpdate(id, { $set: { discord } });
 
 const clearDiscord = (id) => ActorModel.findByIdAndUpdate(id, { $set: { discord: null } });
 
-const appendContent = (id, { image, folder, title, tags }) =>
-  ActorModel.findByIdAndUpdate(id, { $push: { contents: { image, folder, title, tags } }, $set: { updated: true } });
+const appendContent = (id, params) =>
+  ActorModel.findByIdAndUpdate(id, { $push: { contents: params }, $set: { updated: true } });
 
 const deleteContent = (id, contentId) =>
   ActorModel.findByIdAndUpdate(id, { $pull: { contents: { _id: contentId } }, $set: { updated: true } })
 
 const clearContents = (id) =>
   ActorModel.findByIdAndUpdate(id, { $set: { contents: [], updated: true } })
+
+const setContents = (id, contents) =>
+  ActorModel.findByIdAndUpdate(id, { $set: { contents } });
 
 const syncContents = (id) =>
   ActorModel.findByIdAndUpdate(id, { $set: { updated: false } })
@@ -108,6 +114,8 @@ const ActorService = {
 
   // profile
   updateProfile,
+  loadAll,
+  setContents,
 };
 
 module.exports = ActorService;

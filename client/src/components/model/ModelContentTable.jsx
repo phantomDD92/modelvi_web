@@ -1,6 +1,8 @@
-import { Card, Table, Tooltip, Popconfirm, Button, Flex, Image } from "antd";
+import { Card, Table, Tooltip, Popconfirm, Button, Flex, Image, Tag } from "antd";
 import { DeleteOutlined, PlusOutlined, UploadOutlined, RollbackOutlined, EditOutlined } from "@ant-design/icons";
-import { AdminRole, SERVER_PATH } from "@/utils/const";
+import { AdminRole, Platform, SERVER_PATH } from "@/utils/const";
+import Media from "../common/Media";
+import { render } from "react-dom";
 
 export const ModelContentTable = ({ auth, model, onDelete, onCreate, onEdit, onBack, onClear, onSync }) => {
     const hasPermission = (auth, record) => {
@@ -12,11 +14,33 @@ export const ModelContentTable = ({ auth, model, onDelete, onCreate, onEdit, onB
     }
     const columns = [
         {
-            key: 'image',
-            title: 'Image',
+            key: 'platforms',
+            title: 'Platforms',
+            dataIndex: 'platforms',
+            width: 200,
+            render: value => value && value.length > 0 ?
+                <Flex gap="4px 0" wrap>{value.map(tag => <Tag key={tag} color="processing">{tag}</Tag>)}</Flex>
+                : <Flex gap="4px 0" wrap><Tag key={Platform.F2F} color="processing">{Platform.F2F}</Tag><Tag key={Platform.FNC} color="processing">{Platform.FNC}</Tag></Flex>
+        },
+        {
+            key: 'media',
+            title: 'Media',
             dataIndex: 'image',
             width: 150,
-            render: value => <Image src={`${SERVER_PATH}/uploads/${value}`} width={100} />
+            render: (value, record) => {
+                if (record.media && record.media.length > 0) {
+                    return <Media src={record.media[0].name} type={record.media[0].mode} width={100} small/>
+                } else if (record.image) {
+                    return <Image src={`${SERVER_PATH}/uploads/${value}`} width={100} />
+                }
+            }
+        },
+        {
+            key: 'preview',
+            title: 'Preview',
+            dataIndex: 'preview',
+            width: 150,
+            render: value => value && value.name ? <Media src={value.name} type={value.mode} width={100} small/> : '-'
         },
         {
             key: 'title',
@@ -27,6 +51,7 @@ export const ModelContentTable = ({ auth, model, onDelete, onCreate, onEdit, onB
             key: 'tags',
             title: 'Tags',
             dataIndex: 'tags',
+            render: (value, record) => record.postTags && record.postTags.length > 0 ? record.postTags.map(tag => `#${tag}`).join(" ") : (record.tags || "-")
         },
         {
             key: 'folder',
@@ -110,7 +135,7 @@ export const ModelContentTable = ({ auth, model, onDelete, onCreate, onEdit, onB
             <Table
                 pagination={{ position: ["topRight", "bottomRight"], showTotal: total => `Total ${total} contents` }}
                 rowKey={row => row._id}
-                dataSource={model ? model.contents: []}
+                dataSource={model ? model.contents : []}
                 columns={columns}
             />
         </Card>

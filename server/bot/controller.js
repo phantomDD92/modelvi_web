@@ -148,9 +148,11 @@ const handleUpdateContents = async (req, res) => {
     const actor = await ActorService.findById(account.actor);
     if (!actor)
       throw new ApiError("unknown actor");
+    const actorJson = actor.toJSON();
+    const contents = actorJson.contents.filter(content => content.platforms.includes(account.platform));
     await AccountService.clearContents(req.bot.id);
-    await AccountService.setContents(req.bot.id, actor.contents);
-    sendResult(res, { count: actor.contents.length });
+    await AccountService.setContents(req.bot.id, contents);
+    sendResult(res, { count: contents.length });
   } catch (error) {
     sendError(res, error)
   }
@@ -158,11 +160,11 @@ const handleUpdateContents = async (req, res) => {
 
 const handleUpdateMedia = async (req, res) => {
   try {
-    const { id, uuid } = req.body;
+    const { id, uuid, subject } = req.body;
     const account = await AccountService.findById(req.bot.id);
     if (!account)
       throw new ApiError("unknown account")
-    field = `params.contents.${id}.uuid`
+    field = subject == "content_media" ? `params.contents.${id}.media.0.uuid` : `params.contents.${id}.preview.uuid`;
     await AccountService.updateParams(account, { [field]: uuid });
     sendResult(res);
   } catch (error) {
@@ -218,6 +220,7 @@ const handleUpdateAccount = async (req, res) => {
         handleUpdateContents(req, res);
         break;
       case "content_media":
+      case "content_preview":
         handleUpdateMedia(req, res);
         break;
       case "post_setting":
