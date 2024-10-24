@@ -35,6 +35,10 @@ const ActorSchema = new Schema({
     folder: String,
     title: String,
     tags: String,
+    platforms: [String],  // platform
+    media: [{ name: String, mode: String, uuid: String }],  // photo or video
+    preview: { name: String, mode: String, uuid: String }, // preview video for fansly only
+    postTags: [String],  // tags array
   }],
   updated: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },

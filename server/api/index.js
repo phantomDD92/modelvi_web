@@ -3,7 +3,7 @@ const multer = require('multer')
 const path = require('path')
 const { v4: uuidv4 } = require("uuid")
 
-const imageStorage = multer.diskStorage({
+const mediaStorage = multer.diskStorage({
   destination: async function (req, file, cb) {
     cb(null, "uploads");
   },
@@ -11,8 +11,8 @@ const imageStorage = multer.diskStorage({
     const fileName = uuidv4();
     cb(null, fileName + path.extname(file.originalname))
   }
-})
-const imageUpload = multer({ storage: imageStorage })
+});
+const imageUpload = multer({ storage: mediaStorage })
 
 const authenticate = require("../middleware/auth.js");
 const ActorCtrl = require("../controllers/actor.js");

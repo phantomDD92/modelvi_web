@@ -1,0 +1,31 @@
+.media-preview {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  opacity: 0;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+.media-root {
+  position: relative;
+  height: 100%;
+}
+.media-preview:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+  opacity: 1;
+  color: white;
+}
+
+.media-content {
+  height: auto;
+}
+
+.ant-modal.preview-modal .ant-modal-content{
+  padding: 0;
+  background-color: rgba(255, 255, 255, 0);
+}

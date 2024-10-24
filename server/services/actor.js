@@ -64,8 +64,8 @@ const setDiscord = (id, discord) => ActorModel.findByIdAndUpdate(id, { $set: { d
 
 const clearDiscord = (id) => ActorModel.findByIdAndUpdate(id, { $set: { discord: null } });
 
-const appendContent = (id, { image, folder, title, tags }) =>
-  ActorModel.findByIdAndUpdate(id, { $push: { contents: { image, folder, title, tags } }, $set: { updated: true } });
+const appendContent = (id, params) =>
+  ActorModel.findByIdAndUpdate(id, { $push: { contents: params }, $set: { updated: true } });
 
 const deleteContent = (id, contentId) =>
   ActorModel.findByIdAndUpdate(id, { $pull: { contents: { _id: contentId } }, $set: { updated: true } })
