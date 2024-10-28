@@ -81,6 +81,7 @@ export const AccountList = () => {
   const handleReloadData = () => {
     setF2FShow(false);
     setFNCShow(false);
+    setFANShow(false);
     setVisible(false);
     dispatch(loadAccounts(platform, { page, pageSize: 10 }))
   }
