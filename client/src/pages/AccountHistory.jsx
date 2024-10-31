@@ -25,7 +25,7 @@ export const AccountHistory = () => {
       title: 'Time',
       dataIndex: 'createdAt',
       width: 200,
-      render: value => moment(value).format("YYYY-MM-DD hh:mm")
+      render: value => moment(value).format("YYYY-MM-DD HH:mm")
     },
     {
       key: 'action',

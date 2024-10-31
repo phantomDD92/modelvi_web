@@ -41,7 +41,7 @@ export const ScheduleList = () => {
       title: 'Schedule Time',
       dataIndex: 'scheduledAt',
       width: 150,
-      render: value => moment(value).format("YYYY-MM-DD hh:mm")
+      render: value => moment(value).format("YYYY-MM-DD HH:mm")
     },
     {
       key: 'model',
