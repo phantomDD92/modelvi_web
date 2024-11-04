@@ -179,7 +179,7 @@ const handleUpdatePostSetting = async (req, res) => {
     if (!account)
       throw new ApiError("unknown account")
     const accountJson = account.toJSON();
-    const { contents, postOffsets, postMode, postInterval } = accountJson.params;
+    const { contents, postOffsets, postMode, postInterval, postStart, postLimit } = accountJson.params;
     if (contents.length == 0)
       throw new ApiError("no contents");
     let newPostIndex = (id + 1) % contents.length;
@@ -199,6 +199,25 @@ const handleUpdatePostSetting = async (req, res) => {
         postNextOffset += 60
       }
       postNextTime = currentTime.add(postNextOffset - currentMinute, "minute").toDate();
+    } else if (postMode == "limited") {
+      const currentTime = moment();
+      let startTime = moment(postStart || "12:00", "HH:mm");
+      if (currentTime.isBefore(startTime))
+          startTime.add(-1, "day");
+      let nextTime = moment(startTime);
+      let found = false
+      for (var i = 1; i < (postLimit || 10); ++i) {
+          nextTime.add(postInterval, "minute");
+          if (nextTime.isAfter(currentTime)) {
+              found = true;
+              break;
+          }
+      }
+      if (!found) {
+          nextTime = moment(startTime);
+          nextTime.add(1, "day");
+      }
+      postNextTime = nextTime.toDate();
     } else {
       postNextTime = moment().add(postInterval || 10, "minute").toDate();
     }
