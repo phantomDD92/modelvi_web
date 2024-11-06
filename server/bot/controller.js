@@ -9,6 +9,7 @@ const LogService = require('../services/log');
 const ActionService = require('../services/action');
 const moment = require('moment');
 const ActorService = require('../services/actor');
+const { DEFAULT_FOLLOW_INTERVAL, DEFAULT_COMMENT_INTERVAL } = require('../utils/const');
 
 const handleLoginAccount = async (req, res) => {
   try {
@@ -172,17 +173,47 @@ const handleUpdateMedia = async (req, res) => {
   }
 }
 
-const handleUpdatePostSetting = async (req, res) => {
+const handleUpdateFollowSetting = async (req, res) => {
   try {
-    const { id } = req.body;
     const account = await AccountService.findById(req.bot.id);
     if (!account)
       throw new ApiError("unknown account")
     const accountJson = account.toJSON();
-    const { contents, postOffsets, postMode, postInterval, postStart, postLimit } = accountJson.params;
+    const { followInterval } = accountJson.params;
+    const followNextTime = moment().add(followInterval || DEFAULT_FOLLOW_INTERVAL, "minute").toDate();
+    await AccountService.updateParams(account, { "params.followNextTime": followNextTime });
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
+const handleUpdateCommentSetting = async (req, res) => {
+  try {
+    const account = await AccountService.findById(req.bot.id);
+    if (!account)
+      throw new ApiError("unknown account")
+    const accountJson = account.toJSON();
+    const { commentInterval } = accountJson.params;
+    const commentNextTime = moment().add(commentInterval || DEFAULT_COMMENT_INTERVAL, "minute").toDate();
+    await AccountService.updateParams(account, { "params.commentNextTime": commentNextTime });
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
+const handleUpdatePostSetting = async (req, res) => {
+  try {
+    const { next } = req.body;
+    const account = await AccountService.findById(req.bot.id);
+    if (!account)
+      throw new ApiError("unknown account")
+    const accountJson = account.toJSON();
+    const { contents, postOffsets, postMode, postInterval, postStart, postLimit, postContentIndx } = accountJson.params;
     if (contents.length == 0)
       throw new ApiError("no contents");
-    let newPostIndex = (id + 1) % contents.length;
+    let newPostIndex = next ? (postContentIndx + 1) % contents.length : postContentIndx;
     let postNextTime;
     let offsets = postOffsets | [1, 21, 51];
     if (postMode == "offsets") {
@@ -203,19 +234,19 @@ const handleUpdatePostSetting = async (req, res) => {
       const currentTime = moment();
       let startTime = moment(postStart || "12:00", "HH:mm");
       if (currentTime.isBefore(startTime))
-          startTime.add(-1, "day");
+        startTime.add(-1, "day");
       let nextTime = moment(startTime);
       let found = false
       for (var i = 1; i < (postLimit || 10); ++i) {
-          nextTime.add(postInterval, "minute");
-          if (nextTime.isAfter(currentTime)) {
-              found = true;
-              break;
-          }
+        nextTime.add(postInterval, "minute");
+        if (nextTime.isAfter(currentTime)) {
+          found = true;
+          break;
+        }
       }
       if (!found) {
-          nextTime = moment(startTime);
-          nextTime.add(1, "day");
+        nextTime = moment(startTime);
+        nextTime.add(1, "day");
       }
       postNextTime = nextTime.toDate();
     } else {
@@ -244,6 +275,12 @@ const handleUpdateAccount = async (req, res) => {
         break;
       case "post_setting":
         handleUpdatePostSetting(req, res);
+        break;
+      case "follow_setting":
+        handleUpdateFollowSetting(req, res);
+        break;
+      case "comment_setting":
+        handleUpdateCommentSetting(req, res);
         break;
       default:
         throw new ApiError("Unknown Api Request")
