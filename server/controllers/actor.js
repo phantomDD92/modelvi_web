@@ -1,6 +1,7 @@
 const { AdminRole } = require("../config/const");
 const AccountService = require("../services/account");
 const ActorService = require("../services/actor");
+const NotifyUtils = require("../utils/notifiy");
 const { sendResult, sendError, ApiError } = require("../utils/resp");
 
 const handleLoadActors = async (req, res) => {
@@ -35,6 +36,7 @@ const handleCreateActor = async (req, res) => {
     if (actor)
       throw new ApiError(`The model number(${number}) is already existed.`);
     await ActorService.createActor({ number, name, owner: agency._id, ...params });
+    await NotifyUtils.sendMessage(`AGENCY : ${agency.name}`, `MODEL : ${number}. ${name}`, `create model`);
     sendResult(res);
   } catch (error) {
     console.error(error)
@@ -58,6 +60,7 @@ const handleDeleteActor = async (req, res) => {
         )}) still have some accounts.`
       );
     await ActorService.deleteActor(actorId);
+    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name})`, `MODEL : ${actor.number}. ${actor.name}`,  `delete model`);
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -184,6 +187,7 @@ const handleSyncContents = async (req, res) => {
     await AccountService.syncContents(actorId);
     await ActorService.syncContents(actorId);
     actor = await ActorService.findById(actorId);
+    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name})`, `MODEL : ${actor.number}. ${actor.name}`,  `update contents`);
     sendResult(res, { actor });
   } catch (error) {
     sendError(res, error);

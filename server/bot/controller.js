@@ -145,7 +145,7 @@ const handleUpdateContents = async (req, res) => {
     const account = await AccountService.findById(req.bot.id);
     if (!account)
       throw new ApiError("unknown account")
-    const actor = await ActorService.findById(account.actor);
+    const actor = await ActorService.findById(account.actor._id);
     if (!actor)
       throw new ApiError("unknown actor");
     const actorJson = actor.toJSON();

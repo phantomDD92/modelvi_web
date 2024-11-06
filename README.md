@@ -77,5 +77,5 @@ $ npm start
 * Start the frontend application:
 ```bash
 $ cd client
-$ npm start
+$ npm run dev
 ```

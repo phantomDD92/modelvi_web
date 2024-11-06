@@ -2,6 +2,7 @@ const { Platform, AdminRole } = require("../config/const");
 const AccountService = require("../services/account");
 const ActorService = require("../services/actor");
 const HistoryService = require("../services/history");
+const NotifyUtils = require("../utils/notifiy");
 const { sendResult, sendError, ApiError } = require("../utils/resp");
 
 const handleLoadAccounts = async (req, res) => {
@@ -35,6 +36,7 @@ const handleCreateAccount = async (req, res) => {
       throw new ApiError(`Account amount is limited by website`);
     const account = await AccountService.createAccount(platform, currActor, { ...params, owner: currActor.owner, creator: req.manager._id });
     await ActorService.appendAccount(actor, account._id)
+    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name})`, `ACCOUNT : ${currActor.number}. ${currActor.name} - ${platform} - ${alias}`,  `create account`);
     sendResult(res);
   } catch (error) {
     console.error(error);
@@ -49,11 +51,12 @@ const handleDeleteAccount = async (req, res) => {
     if (!account) throw new ApiError("The account is not existed.");
     if (req.manager.role != AdminRole.MANAGER && account.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`The model is able to delete only by owner.`)
-    await ActorService.removeAccount(account.actor, account);
+    await ActorService.removeAccount(account.actor?._id, account);
     await AccountService.deleteAccount(id);
+    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name}`, `ACCOUNT : ${account.actor?.number}. ${account.actor?.name} - ${account.platform} - ${account.alias}`,  `delete account`);
     sendResult(res);
   } catch (error) {
-    sendError(res, error);
+    sendError(res, error)
   }
 };
 
@@ -84,6 +87,7 @@ const handleUpdateStatus = async (req, res) => {
     if (req.manager.role != AdminRole.MANAGER && account.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
     await AccountService.setStatus(id, status);
+    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name}`, `ACCOUNT : ${account.actor?.number}. ${account.actor?.name} - ${account.platform} - ${account.alias}`,  `${status ? 'enable' : 'disable'} bot`);
     sendResult(res);
   } catch (error) {
     sendError(res, error);

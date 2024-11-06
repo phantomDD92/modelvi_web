@@ -68,7 +68,7 @@ const deleteAccount = (id) =>
   AccountModel.findByIdAndDelete(id);
 
 const findById = (id) =>
-  AccountModel.findById(id);
+  AccountModel.findById(id).populate("actor", "number name");
 
 const getCount = (agency) =>
   Promise.all([
