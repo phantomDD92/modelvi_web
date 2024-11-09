@@ -188,6 +188,21 @@ const handleUpdateFollowSetting = async (req, res) => {
   }
 }
 
+const handleUpdateStorySetting = async (req, res) => {
+  try {
+    const account = await AccountService.findById(req.bot.id);
+    if (!account)
+      throw new ApiError("unknown account")
+    const accountJson = account.toJSON();
+    const { storyInterval } = accountJson.params;
+    const storyNextTime = moment().add(storyInterval || DEFAULT_STORY_INTERVAL, "minute").toDate();
+    await AccountService.updateParams(account, { "params.storyNextTime": storyNextTime });
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
 const handleUpdateCommentSetting = async (req, res) => {
   try {
     const account = await AccountService.findById(req.bot.id);
@@ -281,6 +296,9 @@ const handleUpdateAccount = async (req, res) => {
         break;
       case "comment_setting":
         handleUpdateCommentSetting(req, res);
+        break;
+      case "story_setting":
+        handleUpdateStorySetting(req, res);
         break;
       default:
         throw new ApiError("Unknown Api Request")
