@@ -126,7 +126,7 @@ export const DiscordList = () => {
     <div>
       <Card
         title={
-          <div className="h-20 p-6 text-xl">
+          <div>
             Discord Url List
           </div>
         }

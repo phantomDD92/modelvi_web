@@ -29,7 +29,7 @@ export const ModelContentTable = ({ auth, model, onDelete, onCreate, onEdit, onB
             width: 150,
             render: (value, record) => {
                 if (record.media && record.media.length > 0) {
-                    return <Media src={record.media[0].name} type={record.media[0].mode} width={100} small/>
+                    return <Media src={record.media[0].name} type={record.media[0].mode} width={100} small />
                 } else if (record.image) {
                     return <Image src={`${SERVER_PATH}/uploads/${value}`} width={100} />
                 }
@@ -40,7 +40,7 @@ export const ModelContentTable = ({ auth, model, onDelete, onCreate, onEdit, onB
             title: 'Preview',
             dataIndex: 'preview',
             width: 150,
-            render: value => value && value.name ? <Media src={value.name} type={value.mode} width={100} small/> : '-'
+            render: value => value && value.name ? <Media src={value.name} type={value.mode} width={100} small /> : '-'
         },
         {
             key: 'title',
@@ -87,11 +87,7 @@ export const ModelContentTable = ({ auth, model, onDelete, onCreate, onEdit, onB
 
     return (
         <Card
-            title={
-                <div className="h-20 p-6 text-xl">
-                    {model && model.name ? `${model.name}'s Content` : `Model's Content`}
-                </div>
-            }
+            title={model && model.name ? `${model.name}'s Content` : `Model's Content`}
             extra={
                 <Flex gap="small">
                     <Button

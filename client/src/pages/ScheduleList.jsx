@@ -156,7 +156,7 @@ export const ScheduleList = () => {
   return (
     <div>
       <Card
-        title={<div className="h-20 p-6 text-xl"> Scheduled Posts </div>}
+        title={<div> Scheduled Posts </div>}
         extra={
           <Flex gap="small">
             <Button

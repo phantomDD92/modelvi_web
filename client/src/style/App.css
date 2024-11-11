@@ -30,8 +30,24 @@
 
 .ant-modal-header {
   min-height: 50px;
+  
 }
 
+.ant-modal .ant-modal-footer {
+  margin-top: 25px;
+}
+
+.ant-modal-header > .ant-modal-title {
+  font-size: 1.5em;
+}
+
+.ant-modal .ant-modal-content {
+  padding: 30px 40px;
+}
+
+.ant-modal-body h5 {
+  padding: 5px 5px 10px;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -39,4 +55,11 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.ant-card .ant-card-head-title {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  padding: 1.5rem;
+  height: 5rem;
 }

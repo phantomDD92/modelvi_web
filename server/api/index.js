@@ -25,6 +25,7 @@ const CommentCtrl = require("../controllers/comment.js");
 const HistoryCtrl = require("../controllers/history.js");
 const ScheduleCtrl = require("../controllers/schedule.js");
 const checkManager = require("../middleware/manager.js");
+const UserCtrl = require("../controllers/user.js");
 
 const router = express.Router();
 
@@ -61,14 +62,14 @@ router.route("/discord/:id")
 router.route("/temp")
   .all(authenticate, checkManager)
   .post(ManagerCtrl.handleUpdateDB);
-  
+
 router.route("/manager")
   .all(authenticate, checkManager)
   .get(ManagerCtrl.handleLoadManagers)
   .post(ManagerCtrl.handleCreateManager)
   .put(ManagerCtrl.handleResetPassword)
   .delete(ManagerCtrl.handleDeleteManager);
-  
+
 router.route("/manager/:id")
   .all(authenticate, checkManager)
   .put(ManagerCtrl.handleUpdateManager)
@@ -154,6 +155,18 @@ router
   .route("/comment/:id")
   .all(authenticate)
   .delete(CommentCtrl.handleDeleteComment);
+
+
+router
+  .route("/user")
+  .all(authenticate)
+  .get(UserCtrl.handleLoadUsers)
+  .post(UserCtrl.handleCreateUser);
+
+router
+  .route("/user/:id")
+  .all(authenticate)
+  .delete(UserCtrl.handleDeleteUser);
 
 router
   .route("/history/:accountId")

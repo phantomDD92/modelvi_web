@@ -63,8 +63,8 @@ export const updateDB = (callback) => async (dispatch) => {
 export const changeAgencyStatus = (agency, status, callback) => async (dispatch) => {
   await ApiRequest.postAction(dispatch, {
     path: `/manager/${agency._id}`,
-    data: {status},
-    inform: `Agency(${agency.name}) is ${status ? 'enabled': 'disabled'}`,
+    data: { status },
+    inform: `Agency(${agency.name}) is ${status ? 'enabled' : 'disabled'}`,
     callback
   })
 };
@@ -118,11 +118,13 @@ export const reloadManager = (token) => async (dispatch) => {
   })
 };
 
-export const loadComments = () => async (dispatch) => {
-  await ApiRequest.getAction(dispatch, {
-    path: '/comment',
-    action: ACTIONS.LOAD_COMMENTS,
-  })
+export const loadComments = () => async (dispatch, getState) => {
+  if (!getState().home.commentsValid) {
+    await ApiRequest.getAction(dispatch, {
+      path: '/comment',
+      action: ACTIONS.LOAD_COMMENTS,
+    })
+  }
 };
 
 export const createComment = (text, callback) => async (dispatch) => {
@@ -130,14 +132,16 @@ export const createComment = (text, callback) => async (dispatch) => {
     path: '/comment',
     data: { text },
     inform: 'comment is successfully created.',
+    action: ACTIONS.UPDATE_COMMENTS,
     callback
   })
 };
 
-export const deleteComment = (comment, callback) => async (dispatch) => {
+export const deleteComment = (commentId, callback) => async (dispatch) => {
   await ApiRequest.deleteAction(dispatch, {
-    path: `/comment/${comment._id}`,
+    path: `/comment/${commentId}`,
     inform: 'comment is successfully deleted.',
+    action: ACTIONS.UPDATE_COMMENTS,
     callback
   })
 };
@@ -146,7 +150,34 @@ export const clearComments = (callback) => async (dispatch) => {
   await ApiRequest.deleteAction(dispatch, {
     path: `/comment`,
     inform: 'comments is all cleared.',
-    callback
+    callback,
+    action: ACTIONS.UPDATE_COMMENTS,
   })
 };
 
+export const createUser = (alias, status, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: '/user',
+    data: { alias, status },
+    inform: 'user alias is successfully appended.',
+    callback,
+    action: ACTIONS.UPDATE_USERS
+  })
+};
+
+export const deleteUser = (userId, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/user/${userId}`,
+    inform: 'user alias is successfully deleted.',
+    callback,
+    action: ACTIONS.UPDATE_USERS
+  });
+};
+
+export const loadUsers = () => async (dispatch, getState) => {
+  if (!getState().home.usersValid)
+    await ApiRequest.getAction(dispatch, {
+      path: '/user',
+      action: ACTIONS.LOAD_USERS,
+    });
+};

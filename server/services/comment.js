@@ -1,16 +1,16 @@
 const CommentModel = require("../models/comment")
 
-const loadComments = () => 
-    CommentModel.find({});
+const loadComments = (agency) =>
+    CommentModel.find({ agency }).sort("-createdAt");
 
-const createComment = (text) => 
-    CommentModel.create({text})
+const createComment = (agency, text) =>
+    CommentModel.create({ agency, text });
 
-const deleteComment = (id) => 
-    CommentModel.findByIdAndDelete(id)
+const deleteComment = (id) =>
+    CommentModel.findByIdAndDelete(id);
 
-const clearComments = () => 
-    CommentModel.deleteMany({})
+const clearComments = () =>
+    CommentModel.deleteMany({});
 
 const CommentService = {
     createComment,

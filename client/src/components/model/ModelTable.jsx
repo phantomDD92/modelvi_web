@@ -115,11 +115,7 @@ export const ModelTable = ({ auth, models, modelsCount, page, onPageChange, onDe
 
     return (
         <Card
-            title={
-                <div className="h-20 p-6 text-xl">
-                    Model List
-                </div>
-            }
+            title={"Model List"}
             extra={
                 <Button
                     icon={<UserAddOutlined />}

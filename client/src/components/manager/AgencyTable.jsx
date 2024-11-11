@@ -106,11 +106,7 @@ export const AgencyTable = ({ agencies, onDelete, onCreate, onEdit, onStatusChan
 
 return (
     <Card
-        title={
-            <div className="h-20 p-6 text-xl">
-                Manager List
-            </div>
-        }
+        title="Agency List"
         extra={[
             <Button key="create" icon={<UserAddOutlined />} onClick={onCreate}>Create</Button>,
             // <Button key="db" icon={<DatabaseOutlined />} onClick={onUpdateDB}>UpdateDB</Button>

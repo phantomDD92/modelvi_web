@@ -3,7 +3,7 @@ const { sendError, sendResult } = require("../utils/resp");
 
 const handleLoadComments = async (req, res) => {
     try {
-        const comments = await CommentService.loadComments();
+        const comments = await CommentService.loadComments(req.manager._id);
         sendResult(res, { comments });
     } catch (error) {
         console.error(error);
@@ -14,7 +14,7 @@ const handleLoadComments = async (req, res) => {
 const handleCreateComment = async (req, res) => {
     try {
         const { text } = req.body;
-        await CommentService.createComment(text);
+        await CommentService.createComment(req.manager._id, text);
         const comments = await CommentService.loadComments();
         sendResult(res, { comments });
     } catch (error) {

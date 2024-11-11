@@ -86,7 +86,7 @@ const ProxyTable = ({ proxies, proxiesCount, page, onPageChange, onClear, onDele
     return (
         <Card
             title={
-                <div className="h-20 p-6 text-xl">
+                <div>
                     Proxy List&nbsp;(
                     <a href="https://proxy-seller.com/?partner=JRKRDS2FS7PGXQ" target="_blank">Proxy Seller</a>
                     &nbsp;-&nbsp;

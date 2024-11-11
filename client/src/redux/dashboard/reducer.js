@@ -18,6 +18,9 @@ const initialState = {
   },
   managers: [],
   comments: [],
+  commentsValid: false,
+  users: [],
+  usersValid: false,
 }
 
 const dashboardReducer = (state = initialState, action) => {
@@ -61,6 +64,23 @@ const dashboardReducer = (state = initialState, action) => {
       return {
         ...state,
         comments: action.payload.comments,
+        commentsValid: true,
+      }
+    case ACTIONS.UPDATE_COMMENTS:
+      return {
+        ...state,
+        commentsValid: false,
+      }
+    case ACTIONS.LOAD_USERS:
+      return {
+        ...state,
+        users: action.payload.users,
+        usersValid: true,
+      }
+    case ACTIONS.UPDATE_USERS:
+      return {
+        ...state,
+        usersValid: false,
       }
     default:
       return state;

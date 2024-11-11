@@ -1,8 +1,11 @@
 import { PostMode } from "@/utils/const";
-import { Modal, Form, Input, Radio, InputNumber, TimePicker } from "antd";
+import { Modal, Form, Input, Radio, Col, Row, InputNumber, Typography, TimePicker, Button, Flex } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-
+import { EditOutlined } from '@ant-design/icons';
+import { useDispatch, useSelector } from "react-redux";
+import { loadComments, loadUsers } from "@/redux/dashboard/actions";
+import { Link } from "react-router-dom";
 const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
     const [postingMode, setPostingMode] = useState('offset');
@@ -10,6 +13,8 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
         labelCol: { span: 8 },
         wrapperCol: { span: 16 },
     };
+    const dispatch = useDispatch();
+    const homeProps = useSelector(state => state.home);
 
     const handleOkClick = async () => {
         try {
@@ -39,6 +44,11 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
         }
     }, [open]);
 
+    useEffect(() => {
+        dispatch(loadComments());
+        dispatch(loadUsers());
+    }, [loadComments, loadUsers, dispatch]);
+
     const handlePostingOffsetValidation = (_, value) => {
         try {
             if (!/^[0-9\,]+$/.test(value))
@@ -62,7 +72,7 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
     }
     return (
         <Modal
-            title={"F2F Account Setting"}
+            title={"F2F Bot Settings"}
             open={open}
             onOk={handleOkClick}
             onCancel={onCancel}>
@@ -71,6 +81,7 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
                 form={form}
                 name="f2f-setting"
             >
+                <Typography.Title level={5}>Post Settings</Typography.Title>
                 <Form.Item label="Posting Method" name="postMode">
                     <Radio.Group onChange={handlePostingMethodChange}>
                         <Radio.Button value={PostMode.LIMITED}>Limited</Radio.Button>
@@ -122,13 +133,24 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
                     rules={[{ required: true }]}>
                     <InputNumber addonAfter="articles" min={1} max={10} />
                 </Form.Item>
+
+                <Typography.Title level={5}>Comment Settings</Typography.Title>
                 <Form.Item
                     name="commentInterval"
                     label="Comment Interval"
                     rules={[{ required: true }]}>
                     <InputNumber addonAfter="min" min={1} max={60} />
                 </Form.Item>
-
+                <Form.Item
+                    name="commentBlockLists"
+                    label="Block Users List">
+                    <Link to={"/comment"}>{homeProps.users.filter(user => user.status == "block").length} Users Blocked</Link>
+                </Form.Item>
+                <Form.Item
+                    name="commentBlockLists"
+                    label="Comments List">
+                    <Link to={"/comment"}>{homeProps.comments.length} Comments Available</Link>
+                </Form.Item>
             </Form>
         </Modal>
     )

@@ -7,6 +7,7 @@ import ModelContent from "./pages/ModelContent";
 import AccountHistory from "./pages/AccountHistory";
 import ScheduleList from "./pages/ScheduleList";
 import { AdminRole } from "./utils/const";
+import CommentListPage from "./pages/CommentList";
 
 const routes = [
     {
@@ -61,14 +62,15 @@ const routes = [
         component: <AccountHistory />
         // mode: "main"
     },
-    // {
-    //     key: "comment",
-    //     path: "/comment",
-    //     label: "Comment",
-    //     icon: <MessageOutlined />,
-    //     component: <CommentList />,
-    //     mode: "main"
-    // },
+    {
+        key: "comment",
+        path: "/comment",
+        label: "Comment",
+        link: "/comment",
+        icon: <SolutionOutlined />,
+        component: <CommentListPage />,
+        mode: "main"
+    },
     {
         key: "proxy",
         path: "/proxy",

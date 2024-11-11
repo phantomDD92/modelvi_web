@@ -129,9 +129,9 @@ const AccountTable = ({ auth, accounts, accountsCount, page, platform, onPageCha
         <Card
             title={
                 <Flex align="center">
-                    <div className="h-20 p-6 text-xl">
+                    <span>
                         Account List
-                    </div>
+                    </span>
                     <Radio.Group onChange={(e) => onPlatformChange(e.target.value)} value={platform}>
                         <Radio.Button value={Platform.F2F}>F2F</Radio.Button>
                         <Radio.Button value={Platform.FNC}>Fancentro</Radio.Button>

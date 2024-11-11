@@ -11,11 +11,11 @@ const Layouts = ({ children }) => {
       <SiderBar />
       <Layout>
         <HeaderBar />
-        <Content className="m-4 max-h-full overflow-auto">     
+        <Content className="m-4 max-h-full overflow-auto overflow-x-hidden">     
             {children}
         </Content>
-        <Footer className="text-center">
-          Fancentro ©{new Date().getFullYear()} Created by Eric
+        <Footer className="text-center h-12">
+          ModelVI ©{new Date().getFullYear()} Created by WeAutomate
         </Footer>
       </Layout>
     </Layout>
