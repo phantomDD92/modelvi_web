@@ -9,6 +9,10 @@ router.route("/platform/:platform")
   .get(BotController.handleLoadAccounts)
   .post(BotController.handleLoginAccount)
 
+router.route("/console")
+  .get(BotController.handleGetIdleAccounts)
+  .post(BotController.handleReleaseAccounts);
+
 router.route("/account")
   .all(checkBot)
   .get(BotController.handleGetAccount)

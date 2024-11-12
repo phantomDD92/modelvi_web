@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const { Platform, AdminRole } = require("../config/const");
 const AccountModel = require("../models/account");
 
@@ -104,8 +105,8 @@ const findByAlias = (platform, alias) =>
 const getAccountNames = (platform) =>
   AccountModel.find({ platform }, 'alias')
 
-const findByIdAndUpdateTime = (id) => 
-  AccountModel.findByIdAndUpdate(id, {$set: {updatedAt: new Date()}})
+const findByIdAndUpdateTime = (id) =>
+  AccountModel.findByIdAndUpdate(id, { $set: { updatedAt: new Date() } })
 
 const clearContents = (accountId) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { "params.contents": [] } })
@@ -113,20 +114,34 @@ const clearContents = (accountId) =>
 const setContents = (accountId, contents) => {
   const newContents = contents.map(({ _id, platforms, ...params }) => ({ ...params }));
   return AccountModel.findByIdAndUpdate(accountId, {
-      $push: { "params.contents": { $each: newContents } },
-      $set: { "params.recent": true, "params.uploaded": false }
+    $push: { "params.contents": { $each: newContents } },
+    $set: { "params.recent": true, "params.uploaded": false }
   });
 }
 
 const replaceContents = (accountId, contents) => {
   return AccountModel.findByIdAndUpdate(accountId, {
-      $set: { "params.contents": contents }
+    $set: { "params.contents": contents }
   });
 
 }
 
-const loadAll = () => 
+const loadAll = () =>
   AccountModel.find();
+
+const releaseAccounts = (platform, console) =>
+  AccountModel.updateMany({ platform, console }, { $set: { console: "" } });
+
+const allocateAccounts = async (platform, console, count) => {
+  // const session = await mongoose.startSession();
+  // try {
+  //   session.startTransaction();
+  //   const users = await AccountModel.find({ console: "", status: true }).limit(count).session(session);
+  //   if (users.length)
+  // } catch (error) {
+
+  // }
+}
 
 const AccountService = {
   loadAccounts,
@@ -152,6 +167,9 @@ const AccountService = {
 
   loadAll,
   replaceContents,
+
+  releaseAccounts,
+  allocateAccounts,
 };
 
 module.exports = AccountService;

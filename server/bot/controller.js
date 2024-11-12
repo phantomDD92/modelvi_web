@@ -10,6 +10,7 @@ const ActionService = require('../services/action');
 const moment = require('moment');
 const ActorService = require('../services/actor');
 const { DEFAULT_FOLLOW_INTERVAL, DEFAULT_COMMENT_INTERVAL } = require('../utils/const');
+const { default: mongoose } = require('mongoose');
 
 const handleLoginAccount = async (req, res) => {
   try {
@@ -391,6 +392,28 @@ const handleCreateCommentAction = async (req, res) => {
   }
 }
 
+const handleGetIdleAccounts = async (req, res) => {
+  const { platform, console, count } = req.body;
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();  
+    const users = await User.find({ status: 'inactive' }).limit(3).session(session);
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
+const handleReleaseAccounts = async (req, res) => {
+  try {
+    const { platform, console } = req.body;
+    await AccountService.releaseAccounts(platform, console);
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
 const BotController = {
   handleLoginAccount,
   handleLoadAccounts,
@@ -407,6 +430,10 @@ const BotController = {
   handleUpdateTime,
   handleFindCommentAction,
   handleCreateCommentAction,
+
+  // bot console
+  handleGetIdleAccounts,
+  handleReleaseAccounts,
 };
 
 module.exports = BotController

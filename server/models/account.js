@@ -10,7 +10,7 @@ const AccountSchema = new Schema({
   alias: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  device: { type: String},
+  device: { type: String },
   status: { type: Boolean, default: false },
   lastError: { type: String, default: '' },
   description: { type: String, default: '' },
@@ -19,6 +19,7 @@ const AccountSchema = new Schema({
   creator: { type: SchemaTypes.ObjectId, ref: "Manager" },
   updatedAt: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now },
+  console: { type: String, default: ""},
 });
 
 AccountSchema.index({ platform: 1, number: 1 });
