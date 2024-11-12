@@ -1,6 +1,9 @@
-import { PostMode } from "@/utils/const";
-import { Modal, Form, Input, Radio, InputNumber } from "antd";
+import { loadComments, loadUsers } from "@/redux/dashboard/actions";
+import { DEFAULT_COMMENT_INTERVAL, DEFAULT_POST_COUNT, DEFAULT_POST_INTERVAL, DEFAULT_POST_METHOD as DEFAULT_POST_MODE, PostMode } from "@/utils/const";
+import { Modal, Form, Input, Radio, InputNumber, Typography } from "antd";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
@@ -9,6 +12,13 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
         labelCol: { span: 8 },
         wrapperCol: { span: 16 },
     };
+    const dispatch = useDispatch();
+    const homeProps = useSelector(state => state.home);
+
+    useEffect(() => {
+        dispatch(loadComments());
+        dispatch(loadUsers());
+    }, [loadComments, loadUsers, dispatch]);
 
     const handleOkClick = async () => {
         try {
@@ -23,21 +33,21 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
     }
 
     useEffect(() => {
-        if (open && account && account.params) {
-            const { postCount, postOffsets, postInterval, postMode } = account.params;
+        if (open && account) {
             form.setFieldsValue({
-                postInterval: postInterval || 10,
-                postOffsets: postOffsets ? postOffsets.join(",") : "1, 21, 51",
-                postMode: postMode || "offset",
-                postCount: postCount || 3,
+                postInterval: account.params?.postInterval || DEFAULT_POST_INTERVAL,
+                postOffsets: account.params?.postOffsets ? account.params?.postOffsets.join(",") : "1, 21, 51",
+                postMode: account.params?.postMode || DEFAULT_POST_MODE,
+                postCount: account.params?.postCount || DEFAULT_POST_COUNT,
+                commentInterval: account.params?.commentInterval || DEFAULT_COMMENT_INTERVAL,
             });
-            setPostingMode(postMode || "offset");
+            setPostingMode(account.params?.postMode || DEFAULT_POST_MODE);
         }
     }, [open]);
 
     const handlePostingOffsetValidation = (_, value) => {
         try {
-            if (!/^[0-9\,]+$/.test(value)) 
+            if (!/^[0-9\,]+$/.test(value))
                 throw new Error("unsupported character")
             const offsets = value.split(",").map(str => parseInt(str.trim()));
             for (var i = 0; i < offsets.length; ++i) {
@@ -67,10 +77,11 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
                 form={form}
                 name="fan-setting"
             >
+                <Typography.Title level={5}>Post Settings</Typography.Title>
                 <Form.Item label="Posting Method" name="postMode">
                     <Radio.Group onChange={handlePostingMethodChange}>
-                    <Radio.Button value={PostMode.INTERVAL}>Interval</Radio.Button>
-                    <Radio.Button value={PostMode.OFFSET}>Offsets</Radio.Button>
+                        <Radio.Button value={PostMode.INTERVAL}>Interval</Radio.Button>
+                        <Radio.Button value={PostMode.OFFSET}>Offsets</Radio.Button>
                     </Radio.Group>
                 </Form.Item>
                 {postingMode == "offset" &&
@@ -100,6 +111,21 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
                     label="Keeping Articles"
                     rules={[{ required: true }]}>
                     <InputNumber addonAfter="articles" min={1} max={10} />
+                </Form.Item>
+                <Typography.Title level={5}>Comment Settings</Typography.Title>
+                <Form.Item
+                    name="commentInterval"
+                    label="Comment Interval"
+                    rules={[{ required: true }]}>
+                    <InputNumber addonAfter="min" min={1} max={60} />
+                </Form.Item>
+                <Form.Item
+                    label="Block Users List">
+                    <Link to={"/comment"}>{homeProps.users.filter(user => user.status == "block").length} Users Blocked</Link>
+                </Form.Item>
+                <Form.Item
+                    label="Comments List">
+                    <Link to={"/comment"}>{homeProps.comments.length} Comments Available</Link>
                 </Form.Item>
             </Form>
         </Modal>

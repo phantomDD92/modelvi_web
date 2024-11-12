@@ -106,30 +106,32 @@ const handleUpdateParams = async (req, res) => {
     if (account.platform == Platform.F2F) {
       const { commentInterval, postInterval, postCount, postMode, postOffsets, postLimit, postStart } = params;
       await AccountService.updateParams(id, {
-        "params.postInterval": postInterval || 10,
+        "params.postInterval": postInterval,
+        "params.postCount": postCount,
+        "params.postMode": postMode,
+        "params.postOffsets": postOffsets,
+        "params.postStart": postStart,
+        "params.postLimit": postLimit,
         "params.commentInterval": commentInterval,
-        "params.postCount": postCount || 3,
-        "params.postMode": postMode || "offset",
-        "params.postOffsets": postOffsets || [1, 21, 51],
-        "params.postStart": postStart || "0:00",
-        "params.postLimit": postLimit || 10,
       });
     } else if (account.platform == Platform.FNC) {
-      const { commentInterval, postInterval, storyInterval, storyMaxCount, storyReplaceCount } = params;
+      const { commentInterval, postInterval, storyInterval, storyMaxCount, postCount, storyReplaceCount } = params;
       await AccountService.updateParams(id, {
-        "params.commentInterval": commentInterval,
         "params.postInterval": postInterval,
+        "params.postCount": postCount,
+        "params.commentInterval": commentInterval,
         "params.storyInterval": storyInterval,
         "params.storyMaxCount": storyMaxCount,
         "params.storyReplaceCount": storyReplaceCount,
       });
     } else if (account.platform == Platform.FAN) {
-      const { postInterval, postCount, postMode, postOffsets } = params;
+      const { postInterval, postCount, postMode, postOffsets, commentInterval } = params;
       await AccountService.updateParams(id, {
-        "params.postInterval": postInterval || 10,
-        "params.postCount": postCount || 3,
-        "params.postMode": postMode || "offset",
-        "params.postOffsets": postOffsets || [1, 21, 51],
+        "params.postInterval": postInterval,
+        "params.postCount": postCount,
+        "params.postMode": postMode,
+        "params.postOffsets": postOffsets,
+        "params.commentInterval": commentInterval,
       });
     }
     sendResult(res);

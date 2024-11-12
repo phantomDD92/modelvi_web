@@ -1,4 +1,4 @@
-import { PostMode } from "@/utils/const";
+import { DEFAULT_COMMENT_INTERVAL, DEFAULT_POST_COUNT, DEFAULT_POST_INTERVAL, PostMode } from "@/utils/const";
 import { Modal, Form, Input, Radio, Col, Row, InputNumber, Typography, TimePicker, Button, Flex } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -29,18 +29,17 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
     }
 
     useEffect(() => {
-        if (open && account && account.params) {
-            const { commentInterval, postCount, postOffsets, postInterval, postMode, postStart, postLimit } = account.params;
+        if (open && account) {
             form.setFieldsValue({
-                commentInterval: commentInterval || 3,
-                postInterval: postInterval || 10,
-                postOffsets: postOffsets ? postOffsets.join(",") : "1, 21, 51",
-                postMode: postMode || PostMode.LIMITED,
-                postCount: postCount || 3,
-                postStart: dayjs(postStart || "0:00", "HH:mm"),
-                postLimit: postLimit || 10,
+                postInterval: account.params?.postInterval || DEFAULT_POST_INTERVAL,
+                postOffsets: (account.params?.postOffsets) ? account.params?.postOffsets.join(",") : "1, 21, 51",
+                postMode: account.params?.postMode || PostMode.LIMITED,
+                postCount: account.params?.postCount || DEFAULT_POST_COUNT,
+                postStart: dayjs(account.params?.postStart || "0:00", "HH:mm"),
+                postLimit: account.params?.postLimit || 10,
+                commentInterval: account.params?.commentInterval || DEFAULT_COMMENT_INTERVAL,
             });
-            setPostingMode(postMode || PostMode.LIMITED);
+            setPostingMode(account.params?.postMode || PostMode.LIMITED);
         }
     }, [open]);
 
