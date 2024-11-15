@@ -13,12 +13,13 @@ const loadSchedules = (searchParams, { page, pageSize }) =>
         ScheduleModel.countDocuments(searchParams)
     ]);
 
-const createSchedule = ({ actor, owner, file, platform, type, title, folder, description, tags, price, scheduledAt }) =>
+const createSchedule = ({ actor, owner, media, preview, platforms, type, title, folder, description, tags, price, scheduledAt }) =>
     ScheduleModel.create({
         actor,
         owner,
-        file,
-        platform,
+        media,
+        preview,
+        platforms,
         type,
         title,
         folder,
@@ -28,13 +29,13 @@ const createSchedule = ({ actor, owner, file, platform, type, title, folder, des
         scheduledAt
     })
 
-const changeSchedule = (scheduleId, { file, platform, type, title, folder, description, tags, price, scheduledAt }) =>
-    ScheduleModel.findByIdAndUpdate(scheduleId, { file, platform, type, title, folder, description, tags, price, scheduledAt })
+const changeSchedule = (scheduleId, { media, preview, platforms, type, title, folder, description, tags, price, scheduledAt }) =>
+    ScheduleModel.findByIdAndUpdate(scheduleId, { media, preview, platforms, type, title, folder, description, tags, price, scheduledAt })
 
 const deleteSchedule = (scheduleId) =>
     ScheduleModel.findByIdAndDelete(scheduleId)
 
-const findById = (id) => 
+const findById = (id) =>
     ScheduleModel.findById(id)
 
 const ScheduleService = {

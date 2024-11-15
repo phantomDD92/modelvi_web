@@ -26,7 +26,7 @@ const handleLoadSchedules = async (req, res) => {
 
 const handleCreateSchedule = async (req, res) => {
     try {
-        const { actor, platform, scheduledAt, ...params } = req.body;
+        const { actor, platforms, scheduledAt, ...params } = req.body;
         const actorInst = await ActorService.findById(actor)
         if (!actorInst)
             throw new ApiError("Model does not exist");
