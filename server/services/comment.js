@@ -1,7 +1,7 @@
 const CommentModel = require("../models/comment")
 
 const loadComments = (agency) =>
-    CommentModel.find({ agency }).sort("-createdAt");
+    CommentModel.find(agency ? { agency } : {}).sort("-createdAt");
 
 const createComment = (agency, text) =>
     CommentModel.create({ agency, text });

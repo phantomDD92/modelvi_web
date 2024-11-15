@@ -15,7 +15,7 @@ const createWhiteUser = (agency, alias) =>
     });
 
 const loadUsers = (agency) =>
-    UserModel.find({ agency }).sort("-createdAt");
+    UserModel.find(agency ? { agency } : {}).sort("-createdAt");
 
 const deleteUser = (userId) =>
     UserModel.findByIdAndDelete(userId);

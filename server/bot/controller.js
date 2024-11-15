@@ -11,6 +11,8 @@ const moment = require('moment');
 const ActorService = require('../services/actor');
 const { DEFAULT_FOLLOW_INTERVAL, DEFAULT_COMMENT_INTERVAL } = require('../utils/const');
 const { default: mongoose } = require('mongoose');
+const CommentService = require('../services/comment');
+const UserService = require('../services/user');
 
 const handleLoginAccount = async (req, res) => {
   try {
@@ -210,10 +212,18 @@ const handleUpdateCommentSetting = async (req, res) => {
     if (!account)
       throw new ApiError("unknown account")
     const accountJson = account.toJSON();
+    // update comment interval
     const { commentInterval } = accountJson.params;
     const commentNextTime = moment().add(commentInterval || DEFAULT_COMMENT_INTERVAL, "minute").toDate();
     await AccountService.updateParams(account, { "params.commentNextTime": commentNextTime });
-    sendResult(res);
+    // load comments and block users
+    // const comments = await CommentService.loadComments(req.bot.owner);
+    // const users = await UserService.loadUsers(req.bot.owner);
+
+    const comments = await CommentService.loadComments();
+    const users = await UserService.loadUsers();
+  
+    sendResult(res, {comments: comments.map(comment => comment.text), users});
   } catch (error) {
     sendError(res, error)
   }
