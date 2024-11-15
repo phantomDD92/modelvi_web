@@ -15,7 +15,7 @@ const Layouts = ({ children }) => {
             {children}
         </Content>
         <Footer className="text-center h-12">
-          ModelVI ©{new Date().getFullYear()} Created by WeAutomate
+          ModelVI ©{new Date().getFullYear()} Created by David
         </Footer>
       </Layout>
     </Layout>
