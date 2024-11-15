@@ -45,15 +45,15 @@ const routes = [
         component: <AccountList />,
         mode: "main"
     },
-    {
-        key: "schedule",
-        path: "/schedule",
-        link: "/schedule",
-        label: "Schedules",
-        icon: <SolutionOutlined />,
-        component: <ScheduleList />,
-        mode: "main",
-    },
+    // {
+    //     key: "schedule",
+    //     path: "/schedule",
+    //     link: "/schedule",
+    //     label: "Schedules",
+    //     icon: <SolutionOutlined />,
+    //     component: <ScheduleList />,
+    //     mode: "main",
+    // },
     {
         key: "history",
         path: "/account/:platform/:accountId",
