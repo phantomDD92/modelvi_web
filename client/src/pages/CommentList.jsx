@@ -19,14 +19,7 @@ export const CommentListPage = () => {
           <CommentListView />
         </Col>
         <Col span={12} >
-          {/* <Row gutter={[16, 16]}>
-            <Col span={24}> */}
-              <CommentBlockListView />
-            {/* </Col>
-            <Col span={24}>
-              <CommentWhiteListView />
-            </Col>
-          </Row> */}
+          <CommentBlockListView />
         </Col>
       </Row>
     </div>

@@ -103,7 +103,7 @@ const findByAlias = (platform, alias) =>
   AccountModel.findOne({ platform, alias })
 
 const getAccountNames = (platform) =>
-  AccountModel.find({ platform }, 'alias')
+  AccountModel.find({ platform, status:true }, 'alias')
 
 const findByIdAndUpdateTime = (id) =>
   AccountModel.findByIdAndUpdate(id, { $set: { updatedAt: new Date() } })

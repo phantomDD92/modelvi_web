@@ -217,11 +217,11 @@ const handleUpdateCommentSetting = async (req, res) => {
     const commentNextTime = moment().add(commentInterval || DEFAULT_COMMENT_INTERVAL, "minute").toDate();
     await AccountService.updateParams(account, { "params.commentNextTime": commentNextTime });
     // load comments and block users
-    // const comments = await CommentService.loadComments(req.bot.owner);
-    // const users = await UserService.loadUsers(req.bot.owner);
+    const comments = await CommentService.loadComments(req.bot.owner);
+    const users = await UserService.loadUsers(req.bot.owner);
 
-    const comments = await CommentService.loadComments();
-    const users = await UserService.loadUsers();
+    // const comments = await CommentService.loadComments();
+    // const users = await UserService.loadUsers();
   
     sendResult(res, {comments: comments.map(comment => comment.text), users});
   } catch (error) {
