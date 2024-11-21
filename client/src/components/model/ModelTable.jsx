@@ -74,11 +74,11 @@ export const ModelTable = ({ auth, models, modelsCount, page, onPageChange, onDe
                     onClick={() => onEdit(record)}
                     menu={{
                         items: [
-                            {
-                                label: 'Edit Profile',
-                                key: 'profile',
-                                icon: <SolutionOutlined />,
-                            },
+                            // {
+                            //     label: 'Edit Profile',
+                            //     key: 'profile',
+                            //     icon: <SolutionOutlined />,
+                            // },
                             {
                                 label: 'View Contents',
                                 key: 'content',

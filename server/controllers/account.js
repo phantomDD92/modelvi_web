@@ -25,7 +25,7 @@ const handleCreateAccount = async (req, res) => {
     if (!currActor)
       throw new ApiError(`The model is not existed.`);
     // check duplication
-    const {alias} = params;
+    const { alias } = params;
     const dupAccount = await AccountService.findByAlias(platform, alias);
     if (dupAccount)
       throw new ApiError("The account with the same alias is already existed.");
@@ -36,7 +36,7 @@ const handleCreateAccount = async (req, res) => {
       throw new ApiError(`Account amount is limited by website`);
     const account = await AccountService.createAccount(platform, currActor, { ...params, owner: currActor.owner, creator: req.manager._id });
     await ActorService.appendAccount(actor, account._id)
-    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name})`, `ACCOUNT : ${currActor.number}. ${currActor.name} - ${platform} - ${alias}`,  `create account`);
+    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name})`, `ACCOUNT : ${currActor.number}. ${currActor.name} - ${platform} - ${alias}`, `create account`);
     sendResult(res);
   } catch (error) {
     console.error(error);
@@ -53,7 +53,7 @@ const handleDeleteAccount = async (req, res) => {
       throw new ApiError(`The model is able to delete only by owner.`)
     await ActorService.removeAccount(account.actor?._id, account);
     await AccountService.deleteAccount(id);
-    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name}`, `ACCOUNT : ${account.actor?.number}. ${account.actor?.name} - ${account.platform} - ${account.alias}`,  `delete account`);
+    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name}`, `ACCOUNT : ${account.actor?.number}. ${account.actor?.name} - ${account.platform} - ${account.alias}`, `delete account`);
     sendResult(res);
   } catch (error) {
     sendError(res, error)
@@ -87,7 +87,7 @@ const handleUpdateStatus = async (req, res) => {
     if (req.manager.role != AdminRole.MANAGER && account.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
     await AccountService.setStatus(id, status);
-    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name}`, `ACCOUNT : ${account.actor?.number}. ${account.actor?.name} - ${account.platform} - ${account.alias}`,  `${status ? 'enable' : 'disable'} bot`);
+    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name}`, `ACCOUNT : ${account.actor?.number}. ${account.actor?.name} - ${account.platform} - ${account.alias}`, `${status ? 'enable' : 'disable'} bot`);
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -104,7 +104,7 @@ const handleUpdateParams = async (req, res) => {
     if (req.manager.role != AdminRole.MANAGER && account.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
     if (account.platform == Platform.F2F) {
-      const { commentInterval, postInterval, postCount, postMode, postOffsets, postLimit, postStart } = params;
+      const { commentInterval, postInterval, postCount, postMode, postOffsets, postLimit, postStart, commentEnabled } = params;
       await AccountService.updateParams(id, {
         "params.postInterval": postInterval,
         "params.postCount": postCount,
@@ -112,6 +112,7 @@ const handleUpdateParams = async (req, res) => {
         "params.postOffsets": postOffsets,
         "params.postStart": postStart,
         "params.postLimit": postLimit,
+        "params.commentEnabled": commentEnabled,
         "params.commentInterval": commentInterval,
       });
     } else if (account.platform == Platform.FNC) {
@@ -186,7 +187,7 @@ const handleAllStart = async (req, res) => {
     const { platform } = req.params;
     if (req.manager.role == AdminRole.MANAGER)
       await AccountService.setAllStatus(platform, true)
-    else 
+    else
       await AccountService.setAgencyStatus(req.manager, platform, true)
     sendResult(res);
   } catch (error) {
@@ -199,7 +200,7 @@ const handleAllStop = async (req, res) => {
     const { platform } = req.params;
     if (req.manager.role == AdminRole.MANAGER)
       await AccountService.setAllStatus(platform, false)
-    else 
+    else
       await AccountService.setAgencyStatus(req.manager, platform, false)
     sendResult(res);
   } catch (error) {

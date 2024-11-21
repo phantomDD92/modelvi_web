@@ -99,7 +99,7 @@ const handleCreateLastError = async (req, res) => {
   try {
     const { action } = req.body;
     await HistoryService.createHistory(req.bot.id, action);
-    await AccountService.updateParams(req.bot.id, { lastError: action });
+    await AccountService.updateParams(req.bot.id, { lastError: action, status: false });
     sendResult(res)
   } catch (error) {
     sendError(res, error)
@@ -222,8 +222,8 @@ const handleUpdateCommentSetting = async (req, res) => {
 
     // const comments = await CommentService.loadComments();
     // const users = await UserService.loadUsers();
-  
-    sendResult(res, {comments: comments.map(comment => comment.text), users});
+
+    sendResult(res, { comments: comments.map(comment => comment.text), users });
   } catch (error) {
     sendError(res, error)
   }
@@ -406,7 +406,7 @@ const handleGetIdleAccounts = async (req, res) => {
   const { platform, console, count } = req.body;
   const session = await mongoose.startSession();
   try {
-    session.startTransaction();  
+    session.startTransaction();
     const users = await User.find({ status: 'inactive' }).limit(3).session(session);
     sendResult(res);
   } catch (error) {
