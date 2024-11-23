@@ -51,9 +51,10 @@ export const ManagerList = () => {
     setPasswordOpen(true);
   }
 
-  // const handleUpdateDB = () => {
-  //   dispatch(updateDB());
-  // }
+  const handleUpdateDB = () => {
+    dispatch(updateDB());
+    // dispatch(amazonTest());
+  }
 
   const handleResetPassword = (agency, password) => {
     dispatch(resetPassword(agency, password));
@@ -69,7 +70,7 @@ export const ManagerList = () => {
         onEdit={handleEditClicked}
         onStatusChange={handleChangeStatus}
         onPasswordReset={handleResetPasswordClick}
-        // onUpdateDB={handleUpdateDB}
+        onUpdateDB={handleUpdateDB}
       />
       <AgencyDialog
         agency={agency}

@@ -131,24 +131,18 @@ const handleUpdateManager = async (req, res) => {
 const handleUpdateDB = async (req, res) => {
   try {
     // update actors content
+    
     const actors = await ActorService.loadAll();
     for (let actor of actors) {
       const { contents } = actor;
       let newContents = [];
       for (let content of contents) {
-        if (content.platforms.length == 0) {
-          const newContent = {};
-          newContent.folder = content.folder;
-          newContent._id = content._id;
-          newContent.title = content.title;
-          newContent.platforms = [Platform.F2F, Platform.FNC];
-          if (content.tags != '') {
-            const newTags = content.tags.trim().split(" ").map(tag => tag.replaceAll('#', ''));
-            console.log(content.tags, newTags);
-            newContent.postTags = newTags;
-          }
-          newContent.media = [];
-          newContent.media.push({name: content.image, mode: `image/${content.image.split(".")[1]}`});
+        if (content.postTags.length == 1 && content.postTags[0].includes("#")) {
+          let newContent = content;
+          const postTags = content.postTags[0].replaceAll("#", " ").trim().split(/\s+/);
+          console.log("### ", actor.number, actor.name);
+          console.log(postTags);
+          newContent.postTags = postTags;
           newContents.push(newContent);
         } else {
           newContents.push(content);
@@ -166,23 +160,10 @@ const handleUpdateDB = async (req, res) => {
         continue;
       let newContents = [];
       for (let content of contents) {
-        if (!content.media || content.media.length == 0) {
-          const newContent = {};
-          newContent.folder = content.folder;
-          newContent.title = content.title;
-          if (content.tags != '') {
-            const newTags = content.tags.trim().split(" ").map(tag => tag.replaceAll('#', ''));
-            newContent.postTags = newTags;
-          } else {
-            newContent.postTags = [];
-          }
-          newContent.media = [];
-          const media = {name: content.image, mode: `image/${content.image.split(".")[1]}`};
-          if (content.uuid)
-            media.uuid = content.uuid;
-          if (content.storage)
-            media.storage = content.storage;
-          newContent.media.push(media);
+        if (content.postTags.length == 1 && content.postTags[0].includes("#")) {
+          let newContent = content;
+          const postTags = content.postTags[0].replaceAll("#", " ").trim().split(/\s+/);
+          newContent.postTags = postTags;
           newContents.push(newContent);
         } else {
           newContents.push(content);
