@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { Card, Row, Col, Statistic, Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { getStats } from "@/redux/dashboard/actions";
+import {DeleteOutlined} from '@ant-design/icons';
+import StatsBox from "@/components/dashboard/StatsBox";
 
 export const Home = () => {
   const dispatch = useDispatch()
@@ -18,11 +20,6 @@ export const Home = () => {
             <Statistic title="Models Count" value={homeProps.stats.actorCount} />
           </Card>
         </Col>
-        {/* <Col md={6} sm={12}>
-          <Card >
-            <Statistic title="Total Discord" value={homeProps.stats.discordCount} />
-          </Card>
-        </Col> */}
         <Col md={6} sm={12} >
           <Card >
             <Statistic title="Proxies Count" value={homeProps.stats.proxyCount} />
@@ -39,6 +36,16 @@ export const Home = () => {
           </Card>
         </Col>
       </Row>
+      {/* <Row>
+        <Col span={12}>
+        <StatsBox 
+        title="Models"
+        items={[
+          {heading: "All", count: 20, icon: <DeleteOutlined />},
+        ]}
+        />
+        </Col>
+      </Row> */}
     </Card>
   );
 };

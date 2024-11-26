@@ -74,7 +74,11 @@ const findById = (id) =>
 const getCount = (agency) =>
   Promise.all([
     AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.F2F } : { platform: Platform.F2F }),
-    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FNC } : { platform: Platform.FNC })
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FNC } : { platform: Platform.FNC }),
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FAN } : { platform: Platform.FAN }),
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.F2F, status: false } : { platform: Platform.F2F, status: false }),
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FNC, status: false } : { platform: Platform.FNC, status: false }),
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FAN, status: false } : { platform: Platform.FAN, status: false }),
   ]);
 
 const updateParams = (accountId, params) =>
