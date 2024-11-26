@@ -1,4 +1,4 @@
-const { Card, Row, Col } = require("antd");
+import { Card, Row, Col } from 'antd';
 
 const StatsBox = ({ title, description, items = [] }) => {
   const span = items.length > 0 ? 24 / items.length : 24;
