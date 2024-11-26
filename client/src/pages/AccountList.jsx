@@ -9,6 +9,7 @@ import AccountDialog from "@/components/account/AccountDialog";
 import F2FParamDialog from "@/components/account/F2FParamDialog";
 import FNCParamDialog from "@/components/account/FNCParamDialog";
 import FANParamDialog from "@/components/account/FANParamDialog";
+import { Modal } from "antd";
 
 export const AccountList = () => {
   const [visible, setVisible] = useState(false);
@@ -51,7 +52,10 @@ export const AccountList = () => {
   }
 
   const handleDeleteAccount = (account) => {
-    dispatch(deleteAccount(platform, account, handleReloadData));
+    Modal.confirm({
+      title: "Are you sure to delete this account?",
+      onOk: () => {dispatch(deleteAccount(platform, account, handleReloadData));},
+    });
   }
 
   const handleEditButtonClick = (account) => {

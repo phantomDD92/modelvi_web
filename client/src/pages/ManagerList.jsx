@@ -4,6 +4,7 @@ import { changeAgencyStatus, createAgency as createAgency, deleteAgency, loadAge
 import AgencyTable from "@/components/manager/AgencyTable";
 import AgencyDialog from "@/components/manager/AgencyDialog";
 import PasswordDialog from "@/components/manager/PasswordDialog";
+import { Modal } from "antd";
 
 export const ManagerList = () => {
   const dispatch = useDispatch()
@@ -20,8 +21,12 @@ export const ManagerList = () => {
     dispatch(loadAgencies());
     setVisible(false)
   }
+
   const handleDeleteAgency = (user) => {
-    dispatch(deleteAgency(user, handleReloadData));
+    Modal.confirm({
+      title: "Are you sure to delete this agency?",
+      onOk: () => { dispatch(deleteAgency(user, handleReloadData)); },
+    });
   }
 
   const handleCreateClicked = () => {
@@ -70,7 +75,7 @@ export const ManagerList = () => {
         onEdit={handleEditClicked}
         onStatusChange={handleChangeStatus}
         onPasswordReset={handleResetPasswordClick}
-        onUpdateDB={handleUpdateDB}
+        // onUpdateDB={handleUpdateDB}
       />
       <AgencyDialog
         agency={agency}

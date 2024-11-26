@@ -6,6 +6,7 @@ import qs from 'query-string';
 import ModelTable from "@/components/model/ModelTable";
 import ModelDialog from "@/components/model/ModelDialog";
 import ProfileDialog from "@/components/model/ProfileDialog";
+import { Modal } from "antd";
 
 export const ModelList = () => {
   const [visible, setVisible] = useState(false);
@@ -33,7 +34,10 @@ export const ModelList = () => {
 
 
   const handleDeleteModel = (model) => {
-    dispatch(deleteModel(model, handleReloadData));
+    Modal.confirm({
+      title: "Are you sure to delete this model?",
+      onOk: () => { dispatch(deleteModel(model, handleReloadData)) },
+    });
   }
 
   const handleReloadData = () => {

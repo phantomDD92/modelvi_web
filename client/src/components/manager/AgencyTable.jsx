@@ -109,7 +109,7 @@ return (
         title="Agency List"
         extra={[
             <Button key="create" icon={<UserAddOutlined />} onClick={onCreate}>Create</Button>,
-            <Button key="db" icon={<DatabaseOutlined />} onClick={onUpdateDB}>UpdateDB</Button>
+            // <Button key="db" icon={<DatabaseOutlined />} onClick={onUpdateDB}>UpdateDB</Button>
         ]
         }
     >
