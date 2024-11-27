@@ -6,6 +6,7 @@ const initialState = {
   stats: {
     discordCount: 0,
     proxyCount: 0,
+    proxyExpiredCount: 0,
     f2fCount: 0,
     fncCount: 0,
     fanCount: 0,
@@ -16,7 +17,9 @@ const initialState = {
     fncRunningCount: 0,
     fanRunningCount: 0,
     actorCount: 0,
+    actorUpdatedCount: 0,
   },
+  disabledAccounts: [],
   setting: {
     headless: false,
     viewWidth: 0,
@@ -36,6 +39,7 @@ const dashboardReducer = (state = initialState, action) => {
       return {
         ...state,
         stats: action.payload.stats,
+        disabledAccounts: action.payload.disabledAccounts || []
       };
     case ACTIONS.LOAD_SETTING:
     case ACTIONS.UPDATE_SETTING:

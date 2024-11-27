@@ -19,7 +19,6 @@ const AccountSchema = new Schema({
   creator: { type: SchemaTypes.ObjectId, ref: "Manager" },
   updatedAt: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now },
-  console: { type: String, default: ""},
 });
 
 AccountSchema.index({ platform: 1, number: 1 });

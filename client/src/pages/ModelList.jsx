@@ -24,6 +24,13 @@ export const ModelList = () => {
     dispatch(loadModels({ page, pageSize}));
   }, [loadModels, page, pageSize])
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      dispatch(loadModels({ page, pageSize}));
+    }, 60000);
+    return () => clearInterval(interval);
+  });
+
   const handleProfileClick = (model) => {
     setModel(model)
     setProfileOpen(true);

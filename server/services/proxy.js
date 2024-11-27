@@ -52,7 +52,10 @@ const deleteProxy = (id) => {
 }
 
 const getCount = (agency) =>
-    ProxyModel.countDocuments(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id })
+    Promise.all([
+        ProxyModel.countDocuments(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id }),
+        ProxyModel.countDocuments(agency.role == AdminRole.MANAGER ? { expiredAt: { $lt: new Date() } } : { owner: agency._id, expiredAt: { $lt: new Date() } })
+    ]);
 
 const findById = (id) =>
     ProxyModel.findById(id)

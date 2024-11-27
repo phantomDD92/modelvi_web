@@ -61,7 +61,11 @@ const findByName = (name) => ActorModel.findOne({ name });
 
 const findById = (id) => ActorModel.findById(id);
 
-const getCount = (agency) => ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {})
+const getCount = (agency) => 
+  Promise.all([
+    ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {}),
+    ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, updated: true } : {updated: true}),
+  ]);
 
 const setDiscord = (id, discord) => ActorModel.findByIdAndUpdate(id, { $set: { discord } });
 

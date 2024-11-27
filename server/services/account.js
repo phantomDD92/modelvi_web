@@ -14,6 +14,11 @@ const loadAccounts = (agency, platform, { page, pageSize }) =>
     AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { platform, owner: agency._id } : { platform })
   ])
 
+const loadDisabledAccounts = (agency) =>
+  AccountModel.find(agency.role == AdminRole.AGENCY ? { owner: agency._id, status: false } : { status: false })
+    .sort("-updatedAt")
+    .populate("owner", "name")
+    .populate("actor", "name");
 
 const createAccount = (
   platform,
@@ -178,6 +183,7 @@ const AccountService = {
 
   releaseAccounts,
   allocateAccounts,
+  loadDisabledAccounts,
 };
 
 module.exports = AccountService;

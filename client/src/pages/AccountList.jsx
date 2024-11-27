@@ -34,7 +34,13 @@ export const AccountList = () => {
     dispatch(loadAccounts(platform, { page, pageSize }));
   }, [loadAccounts, platform, page, pageSize])
 
-
+  useEffect(() => {
+    const interval = setInterval(() => {
+      dispatch(loadAccounts(platform, { page, pageSize }));
+    }, 60000);
+    return () => clearInterval(interval);
+  });
+  
   const handleSetStatus = (account, status) => {
     dispatch(setAccountStatus(account, status, handleReloadData))
   }
@@ -83,6 +89,7 @@ export const AccountList = () => {
     dispatch(updateAccountParams(platform, account, params, handleReloadData));
   }
 
+  
   const handleReloadData = () => {
     setF2FShow(false);
     setFNCShow(false);
