@@ -1,4 +1,4 @@
-import { Card, Table, Tooltip, Popconfirm, Button, Flex, Tag, Avatar, Dropdown } from "antd";
+import { Card, Table, Button, Flex, Tag, Avatar, Dropdown } from "antd";
 import { DeleteOutlined, EditOutlined, UserOutlined, UserAddOutlined, ReadOutlined, SolutionOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { AdminRole } from "@/utils/const";
@@ -58,6 +58,13 @@ export const ModelTable = ({ auth, models, modelsCount, page, pageSize, onPageCh
             dataIndex: 'contents',
             width: 150,
             render: value => value ? value.length : '-'
+        },
+        {
+            key: 'updated',
+            title: 'Synced',
+            dataIndex: 'updated',
+            width: 100,
+            render: value => value ? <Tag color="error">No</Tag>: <Tag color="processing">Yes</Tag>
         },
         {
             key: 'accounts',
