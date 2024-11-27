@@ -21,6 +21,7 @@ export const AccountList = () => {
   const dispatch = useDispatch()
   const location = useLocation();
   const page = parseInt(qs.parse(location.search).page) || 1;
+  const pageSize = parseInt(qs.parse(location.search).size) || 10;
   const { platform } = useParams()
   const modelProps = useSelector(state => state.model)
   const homeProps = useSelector(state => state.home)
@@ -30,8 +31,8 @@ export const AccountList = () => {
   }, [loadAllModels])
 
   useEffect(() => {
-    dispatch(loadAccounts(platform, { page, pageSize: 10 }));
-  }, [loadAccounts, platform, page])
+    dispatch(loadAccounts(platform, { page, pageSize }));
+  }, [loadAccounts, platform, page, pageSize])
 
 
   const handleSetStatus = (account, status) => {
@@ -87,7 +88,7 @@ export const AccountList = () => {
     setFNCShow(false);
     setFANShow(false);
     setVisible(false);
-    dispatch(loadAccounts(platform, { page, pageSize: 10 }))
+    dispatch(loadAccounts(platform, { page, pageSize }))
   }
 
   const handleStartAll = () => {
@@ -98,11 +99,12 @@ export const AccountList = () => {
     dispatch(stopAllAccount(platform, handleReloadData))
   }
 
-  const handlePageChange = (pg) => {
+  const handlePageChange = (pg, pgSize) => {
     navigate({
       pathname: location.pathname,
       search: createSearchParams({
         page: pg,
+        size: pgSize,
       }).toString()
     }, { replace: true });
   }
@@ -120,6 +122,7 @@ export const AccountList = () => {
         accounts={modelProps.accounts}
         accountsCount={modelProps.accountsCount}
         page={page}
+        pageSize={pageSize}
         platform={platform}
         onPageChange={handlePageChange}
         onPlatformChange={handlePlatformChange}

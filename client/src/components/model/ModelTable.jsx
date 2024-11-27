@@ -3,7 +3,7 @@ import { DeleteOutlined, EditOutlined, UserOutlined, UserAddOutlined, ReadOutlin
 import moment from "moment";
 import { AdminRole } from "@/utils/const";
 
-export const ModelTable = ({ auth, models, modelsCount, page, onPageChange, onDelete, onCreate, onEdit, onContent, onProfile }) => {
+export const ModelTable = ({ auth, models, modelsCount, page, pageSize, onPageChange, onDelete, onCreate, onEdit, onContent, onProfile }) => {
     const hasPermission = (auth, record) => {
         if (auth.role == AdminRole.MANAGER)
             return true
@@ -129,6 +129,7 @@ export const ModelTable = ({ auth, models, modelsCount, page, onPageChange, onDe
                     position: ["topRight", "bottomRight"],
                     showTotal: total => `Total ${total} models`,
                     current: page,
+                    pageSize: pageSize,
                     total: modelsCount,
                     onChange: onPageChange,
                 }}

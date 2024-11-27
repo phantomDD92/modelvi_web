@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const { Platform, AdminRole } = require("../config/const");
 const AccountModel = require("../models/account");
+const moment = require('moment');
 
 const loadAccounts = (agency, platform, { page, pageSize }) =>
   Promise.all([
@@ -79,6 +80,9 @@ const getCount = (agency) =>
     AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.F2F, status: false } : { platform: Platform.F2F, status: false }),
     AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FNC, status: false } : { platform: Platform.FNC, status: false }),
     AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FAN, status: false } : { platform: Platform.FAN, status: false }),
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.F2F, updatedAt: { $gte: moment().subtract(10, 'minute').toDate() } } : { platform: Platform.F2F, updatedAt: { $gte: moment().subtract(10, 'minute').toDate() } }),
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FNC, updatedAt: { $gte: moment().subtract(10, 'minute').toDate() } } : { platform: Platform.FNC, updatedAt: { $gte: moment().subtract(10, 'minute').toDate() } }),
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FAN, updatedAt: { $gte: moment().subtract(10, 'minute').toDate() } } : { platform: Platform.FAN, updatedAt: { $gte: moment().subtract(10, 'minute').toDate() } }),
   ]);
 
 const updateParams = (accountId, params) =>
@@ -107,7 +111,7 @@ const findByAlias = (platform, alias) =>
   AccountModel.findOne({ platform, alias })
 
 const getAccountNames = (platform) =>
-  AccountModel.find({ platform, status:true }, 'alias')
+  AccountModel.find({ platform, status: true }, 'alias')
 
 const findByIdAndUpdateTime = (id) =>
   AccountModel.findByIdAndUpdate(id, { $set: { updatedAt: new Date() } })

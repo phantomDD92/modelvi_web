@@ -9,8 +9,8 @@ const handleGetStats = async (req, res) => {
         const actorCount = await ActorService.getCount(req.manager);
         // const discordCount = await DiscordService.getCount();
         const proxyCount = await ProxyService.getCount(req.manager);
-        const [f2fCount, fncCount] = await AccountService.getCount(req.manager);
-        sendResult(res, { stats: { actorCount, proxyCount, f2fCount, fncCount } });
+        const [f2fCount, fncCount, fanCount, f2fDisabledCount, fncDisabledCount, fanDisabledCount, f2fRunningCount, fncRunningCount, fanRunningCount] = await AccountService.getCount(req.manager);
+        sendResult(res, { stats: { actorCount, proxyCount, f2fCount, fncCount, fanCount, f2fDisabledCount, fncDisabledCount, fanDisabledCount, f2fRunningCount, fncRunningCount, fanRunningCount } });
     } catch (error) {
         sendError(res, error)
     }

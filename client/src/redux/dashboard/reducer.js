@@ -8,6 +8,13 @@ const initialState = {
     proxyCount: 0,
     f2fCount: 0,
     fncCount: 0,
+    fanCount: 0,
+    f2fDisabledCount: 0,
+    fncDisabledCount: 0,
+    fanDisabledCount: 0,
+    f2fRunningCount: 0,
+    fncRunningCount: 0,
+    fanRunningCount: 0,
     actorCount: 0,
   },
   setting: {

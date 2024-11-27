@@ -16,12 +16,13 @@ export const ModelList = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const page = parseInt(qs.parse(location.search).page) || 1;
+  const pageSize = parseInt(qs.parse(location.search).size) || 10;
   const modelProps = useSelector(state => state.model)
   const homeProps = useSelector(state => state.home)
 
   useEffect(() => {
-    dispatch(loadModels({ page, pageSize: 10 }));
-  }, [loadModels, page])
+    dispatch(loadModels({ page, pageSize}));
+  }, [loadModels, page, pageSize])
 
   const handleProfileClick = (model) => {
     setModel(model)
@@ -41,7 +42,7 @@ export const ModelList = () => {
   }
 
   const handleReloadData = () => {
-    dispatch(loadModels({ page, pageSize: 10 }));
+    dispatch(loadModels({ page, pageSize }));
     setVisible(false)
     setProfileOpen(false)
   }
@@ -68,10 +69,10 @@ export const ModelList = () => {
     dispatch(updateProfile(model, params, handleReloadData));
   }
 
-  const handlePageChange = (pg) => {
+  const handlePageChange = (pg, pgSize) => {
     navigate({
       pathname: location.pathname,
-      search: createSearchParams({ page: pg }).toString()
+      search: createSearchParams({ page: pg, size: pgSize }).toString()
     }, { replace: true });
   }
 
@@ -79,6 +80,7 @@ export const ModelList = () => {
     <div>
       <ModelTable
         page={page}
+        pageSize={pageSize}
         auth={homeProps.auth}
         models={modelProps.models}
         modelsCount={modelProps.modelsCount}

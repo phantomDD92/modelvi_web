@@ -129,7 +129,7 @@ export const ModelContentTable = ({ auth, model, onDelete, onCreate, onEdit, onB
             }
         >
             <Table
-                pagination={{ position: ["topRight", "bottomRight"], showTotal: total => `Total ${total} contents` }}
+                pagination={{ position: ["topRight", "bottomRight"], showTotal: total => `Total ${total} contents`, showSizeChanger: true }}
                 rowKey={row => row._id}
                 dataSource={model ? model.contents : []}
                 columns={columns}
