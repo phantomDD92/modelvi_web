@@ -28,9 +28,9 @@ const initialState = {
   },
   managers: [],
   comments: [],
-  commentsValid: false,
   users: [],
-  usersValid: false,
+  agencyUsers: [],
+  agencyComments: [],
 }
 
 const dashboardReducer = (state = initialState, action) => {
@@ -75,23 +75,29 @@ const dashboardReducer = (state = initialState, action) => {
       return {
         ...state,
         comments: action.payload.comments,
-        commentsValid: true,
       }
     case ACTIONS.UPDATE_COMMENTS:
       return {
         ...state,
-        commentsValid: false,
       }
     case ACTIONS.LOAD_USERS:
       return {
         ...state,
         users: action.payload.users,
-        usersValid: true,
       }
     case ACTIONS.UPDATE_USERS:
       return {
         ...state,
-        usersValid: false,
+      }
+    case ACTIONS.LOAD_AGENCY_USERS:
+      return {
+        ...state,
+        agencyUsers: action.payload.users,
+      }
+    case ACTIONS.LOAD_AGENCY_COMMENTS:
+      return {
+        ...state,
+        agencyComments: action.payload.comments,
       }
     default:
       return state;

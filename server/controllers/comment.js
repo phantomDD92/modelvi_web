@@ -11,6 +11,18 @@ const handleLoadComments = async (req, res) => {
     }
 };
 
+
+const handleLoadAgencyComments = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const comments = await CommentService.loadComments(id);
+        sendResult(res, { comments });
+    } catch (error) {
+        console.error(error);
+        sendError(res, error);
+    }
+};
+
 const handleCreateComment = async (req, res) => {
     try {
         const { text } = req.body;
@@ -51,6 +63,7 @@ const CommentCtrl = {
     handleLoadComments,
     handleDeleteComment,
     handleClearComments,
+    handleLoadAgencyComments,
 };
 
 module.exports = CommentCtrl

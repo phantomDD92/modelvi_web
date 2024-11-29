@@ -3,7 +3,7 @@ import { Modal, Form, Input, Radio, Col, Row, InputNumber, Typography, TimePicke
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadComments, loadUsers } from "@/redux/dashboard/actions";
+import { loadAgencyComments, loadAgencyUsers, loadComments, loadUsers } from "@/redux/dashboard/actions";
 import { Link } from "react-router-dom";
 import { comment } from "postcss";
 
@@ -46,9 +46,11 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
     }, [open]);
 
     useEffect(() => {
-        dispatch(loadComments());
-        dispatch(loadUsers());
-    }, [loadComments, loadUsers, dispatch]);
+        if (account) {
+            dispatch(loadAgencyComments(account.owner?._id));
+            dispatch(loadAgencyUsers(account.owner?._id));
+        }
+    }, [account, loadAgencyComments, loadAgencyUsers, dispatch]);
 
     const handlePostingOffsetValidation = (_, value) => {
         try {
@@ -149,16 +151,16 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
                     name="commentBlockLists"
                     label="Block Users List">
                     {account?.owner?._id === homeProps.auth._id ?
-                        <Link to={"/comment"}>{homeProps.users.filter(user => user.status == "block").length} Users Blocked</Link> :
-                        <span>{homeProps.users.filter(user => user.status == "block").length} Users Blocked</span>
+                        <Link to={"/comment"}>{homeProps.agencyUsers.filter(user => user.status == "block").length} Users Blocked</Link> :
+                        <span>{homeProps.agencyUsers.filter(user => user.status == "block").length} Users Blocked</span>
                     }
                 </Form.Item>
                 <Form.Item
                     name="commentBlockLists"
                     label="Comments List">
                     {account?.owner?._id === homeProps.auth._id ?
-                        <Link to={"/comment"}>{homeProps.comments.length} Comments Available</Link> :
-                        <span>{homeProps.comments.length} Comments Available</span>
+                        <Link to={"/comment"}>{homeProps.agencyComments.length} Comments Available</Link> :
+                        <span>{homeProps.agencyComments.length} Comments Available</span>
                     }
                 </Form.Item>
             </Form>

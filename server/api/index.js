@@ -156,6 +156,9 @@ router
   .all(authenticate)
   .delete(CommentCtrl.handleDeleteComment);
 
+router.route("/agency/comment/:id")
+  .all(authenticate)
+  .get(CommentCtrl.handleLoadAgencyComments);
 
 router
   .route("/user")
@@ -167,6 +170,10 @@ router
   .route("/user/:id")
   .all(authenticate)
   .delete(UserCtrl.handleDeleteUser);
+
+router.route("/agency/user/:id")
+  .all(authenticate)
+  .get(UserCtrl.handleLoadAgencyUsers);
 
 router
   .route("/history/:accountId")

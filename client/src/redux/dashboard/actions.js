@@ -119,12 +119,10 @@ export const reloadManager = (token) => async (dispatch) => {
 };
 
 export const loadComments = () => async (dispatch, getState) => {
-  if (!getState().home.commentsValid) {
-    await ApiRequest.getAction(dispatch, {
-      path: '/comment',
-      action: ACTIONS.LOAD_COMMENTS,
-    })
-  }
+  await ApiRequest.getAction(dispatch, {
+    path: '/comment',
+    action: ACTIONS.LOAD_COMMENTS,
+  })
 };
 
 export const createComment = (text, callback) => async (dispatch) => {
@@ -175,9 +173,22 @@ export const deleteUser = (userId, callback) => async (dispatch) => {
 };
 
 export const loadUsers = () => async (dispatch, getState) => {
-  if (!getState().home.usersValid)
-    await ApiRequest.getAction(dispatch, {
-      path: '/user',
-      action: ACTIONS.LOAD_USERS,
-    });
+  await ApiRequest.getAction(dispatch, {
+    path: '/user',
+    action: ACTIONS.LOAD_USERS,
+  });
+};
+
+export const loadAgencyUsers = (agencyId) => async (dispatch, getState) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/agency/user/${agencyId}`,
+    action: ACTIONS.LOAD_AGENCY_USERS,
+  });
+};
+
+export const loadAgencyComments = (agencyId) => async (dispatch, getState) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/agency/comment/${agencyId}`,
+    action: ACTIONS.LOAD_AGENCY_COMMENTS,
+  });
 };

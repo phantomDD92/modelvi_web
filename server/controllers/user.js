@@ -11,6 +11,17 @@ const handleLoadUsers = async (req, res) => {
   }
 };
 
+const handleLoadAgencyUsers = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const users = await UserService.loadUsers(id);
+    sendResult(res, { users });
+  } catch (error) {
+    console.error(error);
+    sendError(res, error);
+  }
+};
+
 const handleCreateUser = async (req, res) => {
   try {
     const { alias, status } = req.body;
@@ -39,7 +50,8 @@ const handleDeleteUser = async (req, res) => {
 const UserCtrl = {
   handleCreateUser,
   handleLoadUsers,
-  handleDeleteUser
+  handleDeleteUser,
+  handleLoadAgencyUsers
 };
 
 module.exports = UserCtrl;
