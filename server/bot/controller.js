@@ -236,7 +236,7 @@ const handleUpdatePostSetting = async (req, res) => {
     if (!account)
       throw new ApiError("unknown account")
     const { params } = account.toJSON();
-    const { contents, postOffsets, postMode, postInterval, postStart, postLimit, postContentIndex } = params;
+    const { contents, postOffsets, postMode, postInterval, postStart, postLimit } = params;
     if (contents.length == 0)
       throw new ApiError("no contents");
     // append new post Id and get delete id list
@@ -250,6 +250,7 @@ const handleUpdatePostSetting = async (req, res) => {
       deleteIds.push(deleteId);
     }
     // calculate next post index
+    const postContentIndex = params.postContentIndex || 0;
     let newPostIndex = next ? (postContentIndex + 1) % contents.length : postContentIndex;
 
     // calculate next post time
