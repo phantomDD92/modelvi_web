@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loadAgencyComments, loadAgencyUsers, loadComments, loadUsers } from "@/redux/dashboard/actions";
 import { Link } from "react-router-dom";
-import { comment } from "postcss";
 
 const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
@@ -40,7 +39,7 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
                 postLimit: account.params?.postLimit || 10,
                 commentInterval: account.params?.commentInterval || DEFAULT_COMMENT_INTERVAL,
             });
-            setCommentEnabled(account.params?.commentEnabled);
+            setCommentEnabled(account.params?.commentEnabled || false);
             setPostingMode(account.params?.postMode || PostMode.LIMITED);
         }
     }, [open]);

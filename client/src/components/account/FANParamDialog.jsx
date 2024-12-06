@@ -1,6 +1,6 @@
-import { loadComments, loadUsers } from "@/redux/dashboard/actions";
+import { loadAgencyComments, loadAgencyUsers } from "@/redux/dashboard/actions";
 import { DEFAULT_COMMENT_INTERVAL, DEFAULT_POST_COUNT, DEFAULT_POST_INTERVAL, DEFAULT_POST_METHOD as DEFAULT_POST_MODE, PostMode } from "@/utils/const";
-import { Modal, Form, Input, Radio, InputNumber, Typography } from "antd";
+import { Modal, Form, Input, Radio, InputNumber, Switch } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
     const [postingMode, setPostingMode] = useState('offset');
+    const [commentEnabled, setCommentEnabled] = useState(false);
     const layout = {
         labelCol: { span: 8 },
         wrapperCol: { span: 16 },
@@ -16,9 +17,11 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
     const homeProps = useSelector(state => state.home);
 
     useEffect(() => {
-        dispatch(loadComments());
-        dispatch(loadUsers());
-    }, [loadComments, loadUsers, dispatch]);
+        if (account) {
+            dispatch(loadAgencyComments(account.owner?._id));
+            dispatch(loadAgencyUsers(account.owner?._id));
+        }
+    }, [account, loadAgencyComments, loadAgencyUsers, dispatch]);
 
     const handleOkClick = async () => {
         try {
@@ -26,7 +29,7 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
             const { postOffsets, ...params } = form.getFieldsValue();
             const offsets = postOffsets ? postOffsets.split(",").map(str => parseInt(str.trim())) : [1, 21, 51];
             // console.log(offsets, params);
-            onUpdate(account, { ...params, postOffsets: offsets });
+            onUpdate(account, { ...params, postOffsets: offsets, commentEnabled });
         } catch (e) {
 
         }
@@ -41,6 +44,7 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
                 postCount: account.params?.postCount || DEFAULT_POST_COUNT,
                 commentInterval: account.params?.commentInterval || DEFAULT_COMMENT_INTERVAL,
             });
+            setCommentEnabled(account.params?.commentEnabled || false);
             setPostingMode(account.params?.postMode || DEFAULT_POST_MODE);
         }
     }, [open]);
@@ -77,7 +81,7 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
                 form={form}
                 name="fan-setting"
             >
-                <Typography.Title level={5}>Post Settings</Typography.Title>
+                <div className="text-lg font-medium ml-3 mb-6">Post Settings</div>
                 <Form.Item label="Posting Method" name="postMode">
                     <Radio.Group onChange={handlePostingMethodChange}>
                         <Radio.Button value={PostMode.INTERVAL}>Interval</Radio.Button>
@@ -112,20 +116,31 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
                     rules={[{ required: true }]}>
                     <InputNumber addonAfter="articles" min={1} max={10} />
                 </Form.Item>
-                <Typography.Title level={5}>Comment Settings</Typography.Title>
+                <div className="flex items-center mb-6 ml-3">
+                    <span className="font-medium text-lg mr-3">Comment Settings</span>
+                    <Switch onChange={value => setCommentEnabled(value)} />
+                </div>
                 <Form.Item
                     name="commentInterval"
                     label="Comment Interval"
                     rules={[{ required: true }]}>
-                    <InputNumber addonAfter="min" min={1} max={60} />
+                    <InputNumber addonAfter="min" min={1} max={60} disabled={!commentEnabled} />
                 </Form.Item>
                 <Form.Item
+                    name="commentBlockLists"
                     label="Block Users List">
-                    <Link to={"/comment"}>{homeProps.users.filter(user => user.status == "block").length} Users Blocked</Link>
+                    {account?.owner?._id === homeProps.auth._id ?
+                        <Link to={"/comment"}>{homeProps.agencyUsers.filter(user => user.status == "block").length} Users Blocked</Link> :
+                        <span>{homeProps.agencyUsers.filter(user => user.status == "block").length} Users Blocked</span>
+                    }
                 </Form.Item>
                 <Form.Item
+                    name="commentBlockLists"
                     label="Comments List">
-                    <Link to={"/comment"}>{homeProps.comments.length} Comments Available</Link>
+                    {account?.owner?._id === homeProps.auth._id ?
+                        <Link to={"/comment"}>{homeProps.agencyComments.length} Comments Available</Link> :
+                        <span>{homeProps.agencyComments.length} Comments Available</span>
+                    }
                 </Form.Item>
             </Form>
         </Modal>

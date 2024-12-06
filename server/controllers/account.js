@@ -116,22 +116,24 @@ const handleUpdateParams = async (req, res) => {
         "params.commentInterval": commentInterval,
       });
     } else if (account.platform == Platform.FNC) {
-      const { commentInterval, postInterval, storyInterval, storyMaxCount, postCount, storyReplaceCount } = params;
+      const { commentInterval, postInterval, storyInterval, storyMaxCount, postCount, storyReplaceCount, commentEnabled } = params;
       await AccountService.updateParams(id, {
         "params.postInterval": postInterval,
         "params.postCount": postCount,
+        "params.commentEnabled": commentEnabled,
         "params.commentInterval": commentInterval,
         "params.storyInterval": storyInterval,
         "params.storyMaxCount": storyMaxCount,
         "params.storyReplaceCount": storyReplaceCount,
       });
     } else if (account.platform == Platform.FAN) {
-      const { postInterval, postCount, postMode, postOffsets, commentInterval } = params;
+      const { postInterval, postCount, postMode, postOffsets, commentInterval, commentEnabled } = params;
       await AccountService.updateParams(id, {
         "params.postInterval": postInterval,
         "params.postCount": postCount,
         "params.postMode": postMode,
         "params.postOffsets": postOffsets,
+        "params.commentEnabled": commentEnabled,
         "params.commentInterval": commentInterval,
       });
     }
