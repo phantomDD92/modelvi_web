@@ -107,7 +107,7 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
                         name="postInterval"
                         label="Posting Interval"
                         rules={[{ required: true }]}>
-                        <InputNumber addonAfter="min" min={1} max={60} />
+                        <InputNumber addonAfter="min" min={1} max={600} />
                     </Form.Item>
                 }
                 <Form.Item
@@ -124,7 +124,7 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
                     name="commentInterval"
                     label="Comment Interval"
                     rules={[{ required: true }]}>
-                    <InputNumber addonAfter="min" min={1} max={60} disabled={!commentEnabled} />
+                    <InputNumber addonAfter="min" min={1} max={600} disabled={!commentEnabled} />
                 </Form.Item>
                 <Form.Item
                     name="commentBlockLists"

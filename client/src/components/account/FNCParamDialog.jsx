@@ -59,7 +59,7 @@ const FNCParamDialog = ({ open, account, onCancel, onUpdate }) => {
             >
                 <div className="text-lg font-medium ml-3 mb-6">Post Settings</div>
                 <Form.Item name="postInterval" label="Post Interval" rules={[{ required: true }]}>
-                    <InputNumber min={1} max={60} addonAfter="min" />
+                    <InputNumber min={1} max={600} addonAfter="min" />
                 </Form.Item>
                 <Form.Item
                     name="postCount"
@@ -75,7 +75,7 @@ const FNCParamDialog = ({ open, account, onCancel, onUpdate }) => {
                     name="commentInterval"
                     label="Comment Interval"
                     rules={[{ required: true }]}>
-                    <InputNumber min={1} max={60} addonAfter="min" disabled={!commentEnabled} />
+                    <InputNumber min={1} max={600} addonAfter="min" disabled={!commentEnabled} />
                 </Form.Item>
                 <Form.Item
                     name="commentBlockLists"
@@ -95,7 +95,7 @@ const FNCParamDialog = ({ open, account, onCancel, onUpdate }) => {
                 </Form.Item>
                 <div className="text-lg font-medium ml-3 mb-6">Story Settings</div>
                 <Form.Item name="storyInterval" label="Story Interval" rules={[{ required: true }]}>
-                    <InputNumber min={1} max={60} addonAfter="min" />
+                    <InputNumber min={1} max={600} addonAfter="min" />
                 </Form.Item>
                 <Form.Item name="storyMaxCount" label="Story Max Count" rules={[{ required: true }]}>
                     <InputNumber min={1} max={20} addonAfter="stories" />

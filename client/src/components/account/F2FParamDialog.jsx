@@ -119,7 +119,7 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
                         name="postInterval"
                         label="Posting Interval"
                         rules={[{ required: true }]}>
-                        <InputNumber addonAfter="min" min={1} max={60} />
+                        <InputNumber addonAfter="min" min={1} max={600} />
                     </Form.Item>
                 }
                 {postingMode == PostMode.LIMITED &&
@@ -134,7 +134,7 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
                     name="postCount"
                     label="Keeping Articles"
                     rules={[{ required: true }]}>
-                    <InputNumber addonAfter="articles" min={1} max={10} />
+                    <InputNumber addonAfter="articles" min={1} max={30} />
                 </Form.Item>
                 <div className="flex items-center mb-6 ml-3">
                     <span className="font-medium text-lg mr-3">Comment Settings</span>
@@ -144,7 +144,7 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
                     name="commentInterval"
                     label="Comment Interval"
                     rules={[{ required: true }]}>
-                    <InputNumber addonAfter="min" min={1} max={60} disabled={!commentEnabled} />
+                    <InputNumber addonAfter="min" min={1} max={600} disabled={!commentEnabled} />
                 </Form.Item>
                 <Form.Item
                     name="commentBlockLists"
