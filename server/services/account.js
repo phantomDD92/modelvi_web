@@ -156,6 +156,9 @@ const allocateAccounts = async (platform, console, count) => {
   // }
 }
 
+const changeAgency = (actor, agency) =>
+  AccountModel.updateMany({ actor }, { $set: { owner: agency } });
+
 const AccountService = {
   loadAccounts,
   createAccount,
@@ -180,7 +183,7 @@ const AccountService = {
 
   loadAll,
   replaceContents,
-
+  changeAgency,
   releaseAccounts,
   allocateAccounts,
   loadDisabledAccounts,

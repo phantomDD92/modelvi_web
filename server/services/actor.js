@@ -95,6 +95,9 @@ const getActorCount = (agencyId) =>
 const updateProfile = (id, params) =>
   ActorModel.findByIdAndUpdate(id, { $set: { profile: params } })
 
+const changeAgency = (id, agency) => 
+  ActorModel.findByIdAndUpdate(id, {$set: {owner: agency}});
+
 const ActorService = {
   createActor,
   updateActor,
@@ -115,7 +118,7 @@ const ActorService = {
   syncContents,
   loadAllActors,
   getActorCount,
-
+  changeAgency,
   // profile
   updateProfile,
   loadAll,

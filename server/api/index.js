@@ -105,7 +105,8 @@ router
   .route("/actor/:actorId")
   .all(authenticate)
   .put(ActorCtrl.handleUpdateActor)
-  .post(ActorCtrl.handleUpdateProfile)
+  .post(ActorCtrl.handleChangeAgency)
+  // .post(ActorCtrl.handleUpdateProfile)
   .delete(ActorCtrl.handleDeleteActor);
 
 router

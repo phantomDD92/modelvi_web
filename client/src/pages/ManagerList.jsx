@@ -69,7 +69,7 @@ export const ManagerList = () => {
   return (
     <div>
       <AgencyTable
-        agencies={homeProps.managers}
+        agencies={homeProps.managers.filter(manager => manager.role == 2)}
         onCreate={handleCreateClicked}
         onDelete={handleDeleteAgency}
         onEdit={handleEditClicked}

@@ -60,7 +60,7 @@ const handleDeleteActor = async (req, res) => {
         )}) still have some accounts.`
       );
     await ActorService.deleteActor(actorId);
-    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name})`, `MODEL : ${actor.number}. ${actor.name}`,  `delete model`);
+    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name})`, `MODEL : ${actor.number}. ${actor.name}`, `delete model`);
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -69,7 +69,7 @@ const handleDeleteActor = async (req, res) => {
 
 const handleUpdateActor = async (req, res) => {
   try {
-    const {actorId} = req.params;
+    const { actorId } = req.params;
     const { number, name, ...params } = req.body;
     let actor = await ActorService.findByName(name);
     if (actor && actor._id != actorId)
@@ -89,7 +89,7 @@ const handleUpdateActor = async (req, res) => {
 
 const handleUpdateProfile = async (req, res) => {
   try {
-    const {actorId} = req.params;
+    const { actorId } = req.params;
     const params = req.body;
     const actor = await ActorService.findById(actorId);
     if (!actor)
@@ -97,7 +97,24 @@ const handleUpdateProfile = async (req, res) => {
     if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
     await ActorService.updateProfile(actorId, params);
-    await AccountService.updateParamsForActor(actorId, {"params.profileUpdated": true});
+    await AccountService.updateParamsForActor(actorId, { "params.profileUpdated": true });
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error);
+  }
+};
+
+const handleChangeAgency = async (req, res) => {
+  try {
+    const { actorId } = req.params;
+    const { agency } = req.body;
+    const actor = await ActorService.findById(actorId);
+    if (!actor)
+      throw new ApiError(`The model is not existed.`);
+    if (req.manager.role != AdminRole.MANAGER)
+      throw new ApiError(`The model's owner is able to change only by admin.`)
+    await ActorService.changeAgency(actorId, agency)
+    await AccountService.changeAgency(actorId, agency);
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -187,7 +204,7 @@ const handleSyncContents = async (req, res) => {
     await AccountService.syncContents(actorId);
     await ActorService.syncContents(actorId);
     actor = await ActorService.findById(actorId);
-    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name})`, `MODEL : ${actor.number}. ${actor.name}`,  `update contents`);
+    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name})`, `MODEL : ${actor.number}. ${actor.name}`, `update contents`);
     sendResult(res, { actor });
   } catch (error) {
     sendError(res, error);
@@ -207,6 +224,7 @@ const ActorCtrl = {
   handleClearContents,
   handleSyncContents,
   handleUpdateProfile,
+  handleChangeAgency,
 };
 
 module.exports = ActorCtrl;

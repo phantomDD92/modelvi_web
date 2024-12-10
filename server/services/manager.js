@@ -21,8 +21,7 @@ const findAllByName = (name) =>
     ManagerModel.findOne({ name })
 
 const loadManagers = () =>
-    ManagerModel.find({ role: AdminRole.AGENCY }, 'name email maxAccounts maxActors role status createdAt');
-
+    ManagerModel.find({}, 'name email maxAccounts maxActors role status createdAt');
 
 const deleteManager = (id) => {
     return ManagerModel.deleteOne({ _id: id })

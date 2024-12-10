@@ -50,6 +50,14 @@ export const updateProfile = (actor, params, callback) => async (dispatch) => {
   })
 };
 
+export const changeAgency = (actor, params, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/actor/${actor._id}`,
+    data: params,
+    inform: "The model's agency is changed",
+    callback
+  })
+};
 // export const setModelStatus = (model, status, callback) => async (dispatch) => {
 //   await ApiRequest.putAction(dispatch, {
 //     path: `/actor/${model._id}`,

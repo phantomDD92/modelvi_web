@@ -3,7 +3,7 @@ import { DeleteOutlined, EditOutlined, UserOutlined, UserAddOutlined, ReadOutlin
 import moment from "moment";
 import { AdminRole } from "@/utils/const";
 
-export const ModelTable = ({ auth, models, modelsCount, page, pageSize, onPageChange, onDelete, onCreate, onEdit, onContent, onProfile }) => {
+export const ModelTable = ({ auth, models, modelsCount, page, pageSize, onPageChange, onAgencyChange, onDelete, onCreate, onEdit, onContent, onProfile }) => {
     const hasPermission = (auth, record) => {
         if (auth.role == AdminRole.MANAGER)
             return true
@@ -11,6 +11,10 @@ export const ModelTable = ({ auth, models, modelsCount, page, pageSize, onPageCh
             return true
         return false
     }
+    const isAdmin = (auth) => {
+        return auth.role == AdminRole.MANAGER;
+    }
+
     const columns = [
         {
             key: 'number',
@@ -64,7 +68,7 @@ export const ModelTable = ({ auth, models, modelsCount, page, pageSize, onPageCh
             title: 'Synced',
             dataIndex: 'updated',
             width: 100,
-            render: value => value ? <Tag color="error">No</Tag>: <Tag color="processing">Yes</Tag>
+            render: value => value ? <Tag color="error">No</Tag> : <Tag color="processing">Yes</Tag>
         },
         {
             key: 'accounts',
@@ -80,24 +84,38 @@ export const ModelTable = ({ auth, models, modelsCount, page, pageSize, onPageCh
                 <Dropdown.Button
                     onClick={() => onEdit(record)}
                     menu={{
-                        items: [
-                            // {
-                            //     label: 'Edit Profile',
-                            //     key: 'profile',
-                            //     icon: <SolutionOutlined />,
-                            // },
-                            {
-                                label: 'View Contents',
-                                key: 'content',
-                                icon: <ReadOutlined />,
-                            },
-                            {
-                                label: 'Delete Model',
-                                key: 'delete',
-                                icon: <DeleteOutlined />,
-                                danger: true,
-                            },
-                        ],
+                        items: isAdmin(auth) ?
+                            [
+                                {
+                                    label: 'View Contents',
+                                    key: 'content',
+                                    icon: <ReadOutlined />,
+                                },
+                                {
+                                    label: 'Change Agency',
+                                    key: 'agency',
+                                    icon: <UserOutlined />,
+                                },
+                                {
+                                    label: 'Delete Model',
+                                    key: 'delete',
+                                    icon: <DeleteOutlined />,
+                                    danger: true,
+                                },
+                            ] :
+                            [
+                                {
+                                    label: 'View Contents',
+                                    key: 'content',
+                                    icon: <ReadOutlined />,
+                                },
+                                {
+                                    label: 'Delete Model',
+                                    key: 'delete',
+                                    icon: <DeleteOutlined />,
+                                    danger: true,
+                                },
+                            ],
                         onClick: (e) => {
                             switch (e.key) {
                                 case "content":
@@ -108,6 +126,9 @@ export const ModelTable = ({ auth, models, modelsCount, page, pageSize, onPageCh
                                     break;
                                 case "delete":
                                     onDelete(record)
+                                    break;
+                                case "agency":
+                                    onAgencyChange(record)
                                     break;
                                 default:
                                     break;
