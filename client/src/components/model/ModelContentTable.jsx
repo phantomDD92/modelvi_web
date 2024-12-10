@@ -1,8 +1,7 @@
 import { Card, Table, Tooltip, Popconfirm, Button, Flex, Image, Tag } from "antd";
 import { DeleteOutlined, PlusOutlined, UploadOutlined, RollbackOutlined, EditOutlined } from "@ant-design/icons";
-import { AdminRole, Platform, SERVER_PATH } from "@/utils/const";
+import { AdminRole, Platform, SERVER_PATH, StoryType } from "@/utils/const";
 import Media from "../common/Media";
-import { render } from "react-dom";
 
 export const ModelContentTable = ({ auth, model, onDelete, onCreate, onEdit, onBack, onClear, onSync }) => {
     const hasPermission = (auth, record) => {
@@ -12,14 +11,29 @@ export const ModelContentTable = ({ auth, model, onDelete, onCreate, onEdit, onB
             return true
         return false
     }
+
+    const storyTag = (record) => {
+        let mode = "";
+        if (record.platforms && record.platforms.includes(Platform.FNS)) {
+            if (record.story == StoryType.FOLLOWER) {
+                mode = "FNC Story - Followers";
+            } else if (record.story = StoryType.SUBSCRIBER) {
+                mode = "FNC Story - Subscribers";
+            } else {
+                mode = "FNC Story - Public";
+            }
+            return <Tag color="error">{mode}</Tag>
+        }
+        return ""
+    }
     const columns = [
         {
             key: 'platforms',
             title: 'Platforms',
             dataIndex: 'platforms',
             width: 200,
-            render: value => value && value.length > 0 ?
-                <Flex gap="4px 0" wrap>{value.map(tag => <Tag key={tag} color="processing">{tag}</Tag>)}</Flex>
+            render: (value, record) => value && value.length > 0 ?
+                <Flex gap="4px 0" wrap>{value.filter(tag => tag != Platform.FNS).map(tag => <Tag key={tag} color="processing">{tag}</Tag>)} {storyTag(record)}</Flex>
                 : <Flex gap="4px 0" wrap><Tag key={Platform.F2F} color="processing">{Platform.F2F}</Tag><Tag key={Platform.FNC} color="processing">{Platform.FNC}</Tag></Flex>
         },
         {

@@ -1,7 +1,7 @@
-import { Button, Upload, Modal, Form, Input, Checkbox, Flex, Select } from "antd";
+import { Button, Upload, Modal, Form, Input, Checkbox, Flex, Radio } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { Platform, SERVER_PATH } from "@/utils/const";
+import { Platform, SERVER_PATH, StoryType } from "@/utils/const";
 import Media from "../common/Media";
 
 const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
@@ -95,7 +95,11 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
         return platforms.length == 1 && platforms[0] == Platform.FAN;
     }
 
-    const handleChangePlatforms = (value) => {
+    const isFancentroStory = () => {
+        return platforms.includes(Platform.FNS);
+    }
+
+    const handlePlatformsChange = (value) => {
         setPlatforms(value);
     }
 
@@ -115,10 +119,21 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                 <Form.Item name="platforms" label="Platforms" rules={[{ required: true }]}>
                     <Checkbox.Group options={[
                         { label: 'F2F', value: Platform.F2F },
-                        { label: 'Fancentro', value: Platform.FNC },
                         { label: 'Fansly', value: Platform.FAN },
-                    ]} onChange={handleChangePlatforms} />
+                        { label: 'Fancentro', value: Platform.FNC },
+                        { label: 'Fancentro Story', value: Platform.FNS },
+                    ]} onChange={handlePlatformsChange} />
+
                 </Form.Item>
+                {isFancentroStory() &&
+                    <Form.Item name="story" label="Story Type">
+                        <Radio.Group buttonStyle="solid"  optionType="button" options={[
+                            { label: 'Public', value: StoryType.PUBLIC },
+                            { label: 'Followers', value: StoryType.FOLLOWER },
+                            { label: 'Subscribers', value: StoryType.SUBSCRIBER },
+                        ]} defaultValue={StoryType.PUBLIC}/>
+                    </Form.Item>
+                }
                 <Form.Item
                     label="Media"
                     name="medias"

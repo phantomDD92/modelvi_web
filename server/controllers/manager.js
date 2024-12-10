@@ -140,8 +140,6 @@ const handleUpdateDB = async (req, res) => {
         if (content.postTags.length == 1 && content.postTags[0].includes("#")) {
           let newContent = content;
           const postTags = content.postTags[0].replaceAll("#", " ").trim().split(/\s+/);
-          console.log("### ", actor.number, actor.name);
-          console.log(postTags);
           newContent.postTags = postTags;
           newContents.push(newContent);
         } else {

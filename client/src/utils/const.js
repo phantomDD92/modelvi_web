@@ -13,16 +13,24 @@ export const DEFAULT_STORY_REPLACE = 1;
 
 export const Platform = {
     ALL: "ALL",
-    F2F: "F2F",
+    F2F: "F2F", 
     FNC: "FNC",
     FAN: "FAN",
+    FNS: "FNS", // for fancentro story
 }
 
 export const PostType = {
     FREE: 1,
     FAN: 2,
-    PAID: 3,
+    SUBSCRIBER: 3,
+    PAID: 4,
 }
+
+export const StoryType = {
+    PUBLIC: 1,
+    FOLLOWER: 2,
+    SUBSCRIBER: 3,
+};
 
 export const AdminRole = {
     MANAGER: 1,

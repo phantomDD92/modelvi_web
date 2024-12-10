@@ -35,6 +35,7 @@ const ActorSchema = new Schema({
     folder: String,
     title: String,
     tags: String,
+    story: Number,
     platforms: [String],  // platform
     media: [{ name: String, mode: String, uuid: String }],  // photo or video
     preview: { name: String, mode: String, uuid: String }, // preview video for fansly only

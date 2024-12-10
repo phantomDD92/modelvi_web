@@ -33,7 +33,7 @@ const updateActor = (
 const deleteActor = (id) => ActorModel.deleteOne({ _id: id });
 
 const appendAccount = (id, account) =>
-  ActorModel.findByIdAndUpdate(id, { $push: { accounts: account._id } });
+  ActorModel.findByIdAndUpdate(id, { $push: { accounts: account._id }, $set: { updated: true } });
 
 const removeAccount = (id, account) =>
   ActorModel.findByIdAndUpdate(id, { $pull: { accounts: account._id } });
@@ -61,10 +61,10 @@ const findByName = (name) => ActorModel.findOne({ name });
 
 const findById = (id) => ActorModel.findById(id);
 
-const getCount = (agency) => 
+const getCount = (agency) =>
   Promise.all([
     ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {}),
-    ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, updated: true } : {updated: true}),
+    ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, updated: true } : { updated: true }),
   ]);
 
 const setDiscord = (id, discord) => ActorModel.findByIdAndUpdate(id, { $set: { discord } });
@@ -87,7 +87,7 @@ const syncContents = (id) =>
   ActorModel.findByIdAndUpdate(id, { $set: { updated: false } })
 
 const updateContent = (id, contentId, params) =>
-  ActorModel.findOneAndUpdate({ _id: id, 'contents._id': contentId }, { $set: { 'contents.$': params } })
+  ActorModel.findOneAndUpdate({ _id: id, 'contents._id': contentId }, { $set: { 'contents.$': params }, updated: true })
 
 const getActorCount = (agencyId) =>
   ActorModel.countDocuments({ owner: agencyId });
