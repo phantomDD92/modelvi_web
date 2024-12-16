@@ -75,7 +75,7 @@ export const ManagerList = () => {
         onEdit={handleEditClicked}
         onStatusChange={handleChangeStatus}
         onPasswordReset={handleResetPasswordClick}
-        onUpdateDB={handleUpdateDB}
+        // onUpdateDB={handleUpdateDB}
       />
       <AgencyDialog
         agency={agency}
