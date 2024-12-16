@@ -4,7 +4,7 @@ const ManagerService = require("../services/manager.js");
 const dotenv = require("dotenv");
 const { sendResult, sendError, ApiError } = require("../utils/resp.js");
 const ActorService = require("../services/actor.js");
-const { Platform } = require("../config/const.js");
+const { Platform, StoryType } = require("../config/const.js");
 const AccountService = require("../services/account.js");
 
 dotenv.config();
@@ -128,19 +128,21 @@ const handleUpdateManager = async (req, res) => {
   }
 };
 
+/** Update Database */
 const handleUpdateDB = async (req, res) => {
   try {
     // update actors content
-    
     const actors = await ActorService.loadAll();
     for (let actor of actors) {
       const { contents } = actor;
       let newContents = [];
       for (let content of contents) {
-        if (content.postTags.length == 1 && content.postTags[0].includes("#")) {
+        if (content.platforms.includes(Platform.FNC) && !content.platforms.includes(Platform.FNS)) {
           let newContent = content;
-          const postTags = content.postTags[0].replaceAll("#", " ").trim().split(/\s+/);
-          newContent.postTags = postTags;
+          let platforms = content.platforms;
+          platforms.push(Platform.FNS);
+          newContent.story = StoryType.PUBLIC
+          newContent.platforms = platforms;
           newContents.push(newContent);
         } else {
           newContents.push(content);
@@ -149,7 +151,7 @@ const handleUpdateDB = async (req, res) => {
       await ActorService.setContents(actor.id, newContents);
     }
     // update accounts content
-    const accounts = await AccountService.loadAll();
+    const accounts = await AccountService.loadAll(Platform.FNC);
     for (let account of accounts) {
       if (!account.params)
         continue;
@@ -158,14 +160,9 @@ const handleUpdateDB = async (req, res) => {
         continue;
       let newContents = [];
       for (let content of contents) {
-        if (content.postTags.length == 1 && content.postTags[0].includes("#")) {
-          let newContent = content;
-          const postTags = content.postTags[0].replaceAll("#", " ").trim().split(/\s+/);
-          newContent.postTags = postTags;
-          newContents.push(newContent);
-        } else {
-          newContents.push(content);
-        }
+        let newContent = content;
+        newContent.story = StoryType.PUBLIC;
+        newContents.push(newContent);
       }
       await AccountService.replaceContents(account._id, newContents);
     }

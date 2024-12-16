@@ -15,9 +15,10 @@ export const ModelContentTable = ({ auth, model, onDelete, onCreate, onEdit, onB
     const storyTag = (record) => {
         let mode = "";
         if (record.platforms && record.platforms.includes(Platform.FNS)) {
+            console.log("record : ", record)
             if (record.story == StoryType.FOLLOWER) {
                 mode = "FNC Story - Followers";
-            } else if (record.story = StoryType.SUBSCRIBER) {
+            } else if (record.story == StoryType.SUBSCRIBER) {
                 mode = "FNC Story - Subscribers";
             } else {
                 mode = "FNC Story - Public";
@@ -33,8 +34,14 @@ export const ModelContentTable = ({ auth, model, onDelete, onCreate, onEdit, onB
             dataIndex: 'platforms',
             width: 200,
             render: (value, record) => value && value.length > 0 ?
-                <Flex gap="4px 0" wrap>{value.filter(tag => tag != Platform.FNS).map(tag => <Tag key={tag} color="processing">{tag}</Tag>)} {storyTag(record)}</Flex>
-                : <Flex gap="4px 0" wrap><Tag key={Platform.F2F} color="processing">{Platform.F2F}</Tag><Tag key={Platform.FNC} color="processing">{Platform.FNC}</Tag></Flex>
+                <Flex gap="4px 0" wrap>
+                    {value.filter(tag => tag != Platform.FNS).map(tag => <Tag key={tag} color="processing">{tag}</Tag>)}
+                    {storyTag(record)}
+                </Flex>
+                : <Flex gap="4px 0" wrap>
+                    <Tag key={Platform.F2F} color="processing">{Platform.F2F}</Tag>
+                    <Tag key={Platform.FNC} color="processing">{Platform.FNC}</Tag>
+                </Flex>
         },
         {
             key: 'media',

@@ -27,9 +27,10 @@ export const PostType = {
 }
 
 export const StoryType = {
+    NONE: 0,
     PUBLIC: 1,
     FOLLOWER: 2,
-    SUBSCRIBER: 3,
+    SUBSCRIBER: 4,
 };
 
 export const AdminRole = {

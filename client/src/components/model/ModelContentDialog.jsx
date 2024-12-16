@@ -37,14 +37,14 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
     const handleOkClick = async () => {
         try {
             await form.validateFields();
-            const { medias, previews, tags, ...params } = form.getFieldsValue();
+            const { medias, previews, tags, platforms, story, ...params } = form.getFieldsValue();
             const postTags = tags.replaceAll("#", " ").trim().split(/\s+/);
             let media = [{ name: mediaName, mode: mediaType }];
             let preview;
             if (previews && previews.length > 0) {
                 preview = { name: previewName, mode: previewType }
             }
-            onUpdate({ media, preview, postTags, ...params });
+            onUpdate({ media, preview, postTags, platforms, story: platforms.includes(Platform.FNS) ? story : StoryType.NONE, ...params });
         } catch (e) {
             console.error(e);
         }
@@ -127,11 +127,11 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                 </Form.Item>
                 {isFancentroStory() &&
                     <Form.Item name="story" label="Story Type">
-                        <Radio.Group buttonStyle="solid"  optionType="button" options={[
+                        <Radio.Group buttonStyle="solid" optionType="button" options={[
                             { label: 'Public', value: StoryType.PUBLIC },
                             { label: 'Followers', value: StoryType.FOLLOWER },
                             { label: 'Subscribers', value: StoryType.SUBSCRIBER },
-                        ]} defaultValue={StoryType.PUBLIC}/>
+                        ]} defaultValue={StoryType.PUBLIC} />
                     </Form.Item>
                 }
                 <Form.Item

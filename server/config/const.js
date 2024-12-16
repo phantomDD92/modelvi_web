@@ -7,9 +7,10 @@ const Status = {
 
 const Platform = {
     ALL: "ALL",
-    FNC: "FNC",
-    F2F: "F2F",
-    FAN: "FAN",
+    FNC: "FNC", // fancentro posting
+    F2F: "F2F", // f2f posting
+    FAN: "FAN", // fansly posting
+    FNS: "FNS", // fancentro storying
 }
 
 const PostType = {
@@ -17,6 +18,13 @@ const PostType = {
     FAN: 2,
     PAID: 3,
 }
+
+const StoryType = {
+    NONE: 0,
+    PUBLIC: 1,
+    FOLLOWER: 2,
+    SUBSCRIBER: 4,
+};
 
 const Protocol = {
     HTTP: "http",
@@ -33,5 +41,6 @@ module.exports = {
     Platform,
     Protocol,
     PostType,
-    AdminRole
+    AdminRole,
+    StoryType
 }

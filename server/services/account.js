@@ -139,8 +139,8 @@ const replaceContents = (accountId, contents) => {
 
 }
 
-const loadAll = () =>
-  AccountModel.find();
+const loadAll = (platform) =>
+  AccountModel.find({platform});
 
 const releaseAccounts = (platform, console) =>
   AccountModel.updateMany({ platform, console }, { $set: { console: "" } });

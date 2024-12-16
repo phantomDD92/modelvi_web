@@ -86,8 +86,8 @@ export const ModelList = () => {
     }, { replace: true });
   }
 
-  const handleChangeAgency = (model, agency) => {
-    dispatch(changeAgency(model, agency, handleReloadData));
+  const handleChangeAgency = (model, params) => {
+    dispatch(changeAgency(model, params, handleReloadData));
   }
 
   return (
