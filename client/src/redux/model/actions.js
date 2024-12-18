@@ -120,11 +120,14 @@ export const removeModel = (discord, model, callback) => async (dispatch) => {
   })
 };
 
-export const loadAccounts = (platform, { page, pageSize }) => async (dispatch) => {
+const waitForTimeout = (secs) => new Promise(resolve => setTimeout(() => resolve(), secs * 1000));
+
+export const loadAccounts = (platform, { page, pageSize }, callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/account/${platform}`,
     params: { page, pageSize },
     action: ACTIONS.LOAD_ACCOUNTS,
+    callback
   });
 };
 
@@ -225,11 +228,12 @@ export const deleteModelContent = (actorId, content, callback) => async (dispatc
   })
 };
 
-export const loadAccountHistory = (platform, accountId, { page, pageSize }) => async (dispatch) => {
+export const loadAccountHistory = (platform, accountId, { page, pageSize }, callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/history/${platform}/${accountId}`,
     params: { page, pageSize },
     action: ACTIONS.LOAD_ACCOUNT_HISTORY,
+    callback
   })
 }
 

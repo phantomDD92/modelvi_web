@@ -18,6 +18,7 @@ const initialState = {
   // For Account History Page
   history: [],
   historyCount: 0,
+  historyAccount: undefined,
   // For Schedule List Page
   schedules: [],
   schedulesCount: 0,
@@ -60,6 +61,7 @@ const modelReducer = (state = initialState, action) => {
         ...state,
         history: action.payload.history,
         historyCount: action.payload.historyCount,
+        historyAccount: action.payload.account
       };
     case ACTIONS.LOAD_SCHEDULES:
       return {

@@ -3,7 +3,7 @@ import { DeleteOutlined, EditOutlined, UserAddOutlined, ReadOutlined, SolutionOu
 import { AdminRole, Platform } from "@/utils/const"
 import moment from "moment";
 
-const AccountTable = ({ auth, accounts, accountsCount, page, pageSize, platform, onPageChange, onStatusChange, onPlatformChange, onCreate, onStartAll, onStopAll, onEdit, onDelete, onParameter, onHistory }) => {
+const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, platform, onPageChange, onStatusChange, onPlatformChange, onCreate, onStartAll, onStopAll, onEdit, onDelete, onParameter, onHistory }) => {
     const hasPermission = (auth, record) => {
         if (auth.role == AdminRole.MANAGER)
             return true
@@ -167,6 +167,7 @@ const AccountTable = ({ auth, accounts, accountsCount, page, pageSize, platform,
                     total: accountsCount,
                     onChange: onPageChange,
                 }}
+                loading={loading}
                 rowKey={row => row._id}
                 dataSource={accounts}
                 columns={columns}
