@@ -147,8 +147,9 @@ const handleLoadHistory = async (req, res) => {
   try {
     const { id } = req.params;
     const { page, pageSize } = req.query;
+    const account = await AccountService.findById(id);
     const [history, historyCount] = await HistoryService.loadHistories(id, { page, pageSize: pageSize || "10" })
-    sendResult(res, { history, historyCount });
+    sendResult(res, { history, historyCount, account });
   } catch (error) {
     sendError(res, error);
   }

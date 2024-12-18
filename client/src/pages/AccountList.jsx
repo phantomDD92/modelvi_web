@@ -17,6 +17,7 @@ export const AccountList = () => {
   const [fncShow, setFNCShow] = useState(false);
   const [fanShow, setFANShow] = useState(false);
   const [account, setAccount] = useState();
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch()
   const location = useLocation();
@@ -31,12 +32,14 @@ export const AccountList = () => {
   }, [loadAllModels])
 
   useEffect(() => {
-    dispatch(loadAccounts(platform, { page, pageSize }));
+    setLoading(true);
+    dispatch(loadAccounts(platform, { page, pageSize }, () => setLoading(false)));
   }, [loadAccounts, platform, page, pageSize])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      dispatch(loadAccounts(platform, { page, pageSize }));
+      setLoading(true);
+      dispatch(loadAccounts(platform, { page, pageSize }, () => setLoading(false)));
     }, 60000);
     return () => clearInterval(interval);
   });
@@ -95,7 +98,8 @@ export const AccountList = () => {
     setFNCShow(false);
     setFANShow(false);
     setVisible(false);
-    dispatch(loadAccounts(platform, { page, pageSize }))
+    setLoading(true);
+    dispatch(loadAccounts(platform, { page, pageSize }, () => setLoading(false)))
   }
 
   const handleStartAll = () => {
@@ -128,6 +132,7 @@ export const AccountList = () => {
         auth={homeProps.auth}
         accounts={modelProps.accounts}
         accountsCount={modelProps.accountsCount}
+        loading={loading}
         page={page}
         pageSize={pageSize}
         platform={platform}
