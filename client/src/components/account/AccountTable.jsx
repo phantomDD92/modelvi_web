@@ -21,7 +21,7 @@ const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, 
         {
             key: 'name',
             title: 'Name',
-            width: 150,
+            width: 120,
             dataIndex: 'actor',
             render: value => <Flex gap="middle" align='center'><Avatar src="/img/actor.png" /><span>{value.name}</span></Flex>
         },
@@ -35,7 +35,7 @@ const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, 
         {
             key: 'alias',
             title: 'Alias',
-            width: 150,
+            width: 120,
             dataIndex: 'alias',
         },
         {
@@ -48,15 +48,25 @@ const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, 
             key: 'password',
             title: 'Password',
             dataIndex: 'password',
-            width: 150,
+            width: 100,
             render: value => value.substr(0, 2) + "***" + value.substr(value.length - 2, 2)
         },
         {
             key: 'bot',
             title: 'Bot',
             dataIndex: 'updatedAt',
-            width: 150,
-            render: value => value ? moment().diff(moment(value), 'minute', false) < 10 ? <Tag color="success">Running</Tag> : <Tag color="error">Closed</Tag> : <Tag color="error">Closed</Tag>
+            width: 300,
+            render: (value, record) => {
+                if (value && moment().diff(moment(value), 'minute', false) < 10) {
+                    const ops = ["posting"]
+                    if (record.platform == Platform.FNC)
+                        ops.push("storying")
+                    if (record.params?.commentEnabled)
+                        ops.push("commenting")
+                    return <>{ops.map(item => <Tag color="success" key={`${record.alias}_${item}`}>{item}</Tag>)}</>
+                }
+                return <Tag color="error">Closed</Tag>
+            }
         },
         {
             key: 'lastError',
@@ -83,45 +93,45 @@ const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, 
             width: 150,
             render: (_, record) => hasPermission(auth, record) ? (
                 <Dropdown.Button
-                onClick={() => onEdit(record)}
-                menu={{
-                    items: [
-                        {
-                            label: 'Edit Settings',
-                            key: 'settings',
-                            icon: <SolutionOutlined />,
-                        },
-                        {
-                            label: 'View History',
-                            key: 'history',
-                            icon: <ReadOutlined />,
-                        },
-                        {
-                            label: 'Delete Account',
-                            key: 'delete',
-                            icon: <DeleteOutlined />,
-                            danger: true,
-                        },
-                    ],
-                    onClick: (e) => {
-                        switch (e.key) {
-                            case "settings":
-                                onParameter(record)
-                                break;
-                            case "history":
-                                onHistory(record)
-                                break;
-                            case "delete":
-                                onDelete(record)
-                                break;
-                            default:
-                                break;
+                    onClick={() => onEdit(record)}
+                    menu={{
+                        items: [
+                            {
+                                label: 'Edit Settings',
+                                key: 'settings',
+                                icon: <SolutionOutlined />,
+                            },
+                            {
+                                label: 'View History',
+                                key: 'history',
+                                icon: <ReadOutlined />,
+                            },
+                            {
+                                label: 'Delete Account',
+                                key: 'delete',
+                                icon: <DeleteOutlined />,
+                                danger: true,
+                            },
+                        ],
+                        onClick: (e) => {
+                            switch (e.key) {
+                                case "settings":
+                                    onParameter(record)
+                                    break;
+                                case "history":
+                                    onHistory(record)
+                                    break;
+                                case "delete":
+                                    onDelete(record)
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
-                    }
-                }}>
-                <EditOutlined /> Edit
-            </Dropdown.Button>)
-            :""
+                    }}>
+                    <EditOutlined /> Edit
+                </Dropdown.Button>)
+                : ""
         },
     ]
 
