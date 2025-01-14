@@ -95,8 +95,26 @@ const getActorCount = (agencyId) =>
 const updateProfile = (id, params) =>
   ActorModel.findByIdAndUpdate(id, { $set: { profile: params } })
 
-const changeAgency = (id, agency) => 
-  ActorModel.findByIdAndUpdate(id, {$set: {owner: agency}});
+const changeAgency = (id, agency) =>
+  ActorModel.findByIdAndUpdate(id, { $set: { owner: agency } });
+
+const getStats = () =>
+  ActorModel.aggregate([
+    {
+      $group: {
+        _id: {
+          creator: "$owner",     // Group by creator
+        },
+        count: { $sum: 1 },        // Count the number of documents in each group
+      }
+    },
+    {
+      $project: {
+        creator: "$_id.creator",  // Flatten the fields
+        count: 1,
+      }
+    }
+  ])
 
 const ActorService = {
   createActor,
@@ -123,6 +141,7 @@ const ActorService = {
   updateProfile,
   loadAll,
   setContents,
+  getStats
 };
 
 module.exports = ActorService;

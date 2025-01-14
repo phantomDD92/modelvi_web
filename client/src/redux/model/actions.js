@@ -1,11 +1,12 @@
 import ACTIONS from "./types";
 import ApiRequest from "@/utils/api";
 
-export const loadModels = ({ page, pageSize }) => async (dispatch) =>
+export const loadModels = ({ page, pageSize }, callback) => async (dispatch) =>
   ApiRequest.getAction(dispatch, {
     path: `/actor`,
     params: { page, pageSize },
     action: ACTIONS.LOAD_MODELS,
+    callback
   })
 
 export const loadAllModels = () => async (dispatch) =>
@@ -175,10 +176,11 @@ export const deleteAccount = (platform, account, callback) => async (dispatch) =
   })
 };
 
-export const getModelContent = (actorId) => (dispatch) =>
+export const getModelContent = (actorId, callback) => (dispatch) =>
   ApiRequest.getAction(dispatch, {
     path: `/contents/${actorId}`,
     action: ACTIONS.GET_MODEL_CONTENT,
+    callback
   })
 
 export const appendModelContent = (actorId, params, callback) => async (dispatch) => {

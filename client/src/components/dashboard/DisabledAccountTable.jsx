@@ -2,7 +2,7 @@ import { Card, Table, Button, Flex, Switch, Tag, Avatar } from "antd";
 import { ReadOutlined } from "@ant-design/icons";
 import moment from "moment";
 
-const DisabledAccountTable = ({ accounts, onHistory, onStatusChange }) => {
+const DisabledAccountTable = ({ accounts, loading, onHistory, onStatusChange }) => {
     const columns = [
         {
             key: 'number',
@@ -101,6 +101,7 @@ const DisabledAccountTable = ({ accounts, onHistory, onStatusChange }) => {
                 rowKey={row => row._id}
                 dataSource={accounts}
                 columns={columns}
+                loading={loading}
             />
         </Card>
     );

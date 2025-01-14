@@ -3,7 +3,7 @@ import { DeleteOutlined, PlusOutlined, UploadOutlined, RollbackOutlined, EditOut
 import { AdminRole, Platform, SERVER_PATH, StoryType } from "@/utils/const";
 import Media from "../common/Media";
 
-export const ModelContentTable = ({ auth, model, onDelete, onCreate, onEdit, onBack, onClear, onSync }) => {
+export const ModelContentTable = ({ auth, loading, model, onDelete, onCreate, onEdit, onBack, onClear, onSync }) => {
     const hasPermission = (auth, record) => {
         if (auth.role == AdminRole.MANAGER)
             return true
@@ -152,6 +152,7 @@ export const ModelContentTable = ({ auth, model, onDelete, onCreate, onEdit, onB
             <Table
                 pagination={{ position: ["topRight", "bottomRight"], showTotal: total => `Total ${total} contents`, showSizeChanger: true }}
                 rowKey={row => row._id}
+                loading={loading}
                 dataSource={model ? model.contents : []}
                 columns={columns}
             />

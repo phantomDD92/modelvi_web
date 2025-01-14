@@ -13,6 +13,7 @@ export const ModelList = () => {
   const [visible, setVisible] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [agencyOpen, setAgencyOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [model, setModel] = useState();
   const dispatch = useDispatch()
   const navigate = useNavigate();
@@ -23,12 +24,14 @@ export const ModelList = () => {
   const homeProps = useSelector(state => state.home)
 
   useEffect(() => {
-    dispatch(loadModels({ page, pageSize }));
+    setLoading(true);
+    dispatch(loadModels({ page, pageSize }, () => setLoading(false)));
   }, [loadModels, page, pageSize])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      dispatch(loadModels({ page, pageSize }));
+      setLoading(true);
+      dispatch(loadModels({ page, pageSize }, () => setLoading(false)));
     }, 60000);
     return () => clearInterval(interval);
   });
@@ -51,7 +54,8 @@ export const ModelList = () => {
   }
 
   const handleReloadData = () => {
-    dispatch(loadModels({ page, pageSize }));
+    setLoading(true);
+    dispatch(loadModels({ page, pageSize }, () => setLoading(false)));
     setVisible(false);
     setProfileOpen(false);
     setAgencyOpen(false);

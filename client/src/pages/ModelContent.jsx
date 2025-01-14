@@ -11,15 +11,18 @@ export const ModelContent = () => {
   const homeProps = useSelector(state => state.home)
   const [content, setContent] = useState()
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const routeParams = useParams()
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(getModelContent(routeParams.modelId))
+    setLoading(true);
+    dispatch(getModelContent(routeParams.modelId, () => setLoading(false)))
   }, [getModelContent, routeParams.modelId])
 
   const handleReloadData = () => {
-    dispatch(getModelContent(routeParams.modelId));
+    setLoading(true);
+    dispatch(getModelContent(routeParams.modelId, () => setLoading(false)));
     setVisible(false)
   }
 
@@ -57,6 +60,7 @@ export const ModelContent = () => {
     <div>
       <ModelContentTable
         auth={homeProps.auth}
+        loading={loading}
         model={modelProps.contentModel}
         onCreate={handleCreateButtonClick}
         onEdit={handleEditButtonClick}

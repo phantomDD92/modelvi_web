@@ -140,7 +140,7 @@ const replaceContents = (accountId, contents) => {
 }
 
 const loadAll = (platform) =>
-  AccountModel.find({platform});
+  AccountModel.find({ platform });
 
 const releaseAccounts = (platform, console) =>
   AccountModel.updateMany({ platform, console }, { $set: { console: "" } });
@@ -158,6 +158,26 @@ const allocateAccounts = async (platform, console, count) => {
 
 const changeAgency = (actor, agency) =>
   AccountModel.updateMany({ actor }, { $set: { owner: agency } });
+
+const getStats = () =>
+  AccountModel.aggregate([
+    {
+      $group: {
+        _id: {
+          creator: "$creator",     // Group by creator
+          platform: "$platform"    // and platform
+        },
+        count: { $sum: 1 },        // Count the number of documents in each group
+      }
+    },
+    {
+      $project: {
+        creator: "$_id.creator",  // Flatten the fields
+        platform: "$_id.platform",
+        count: 1,
+      }
+    }
+  ])
 
 const AccountService = {
   loadAccounts,
@@ -187,6 +207,8 @@ const AccountService = {
   releaseAccounts,
   allocateAccounts,
   loadDisabledAccounts,
+
+  getStats,
 };
 
 module.exports = AccountService;

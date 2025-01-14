@@ -27,6 +27,8 @@ const initialState = {
     captchaKey: ''
   },
   managers: [],
+  modelStats: [],
+  accountStats: [],
   comments: [],
   users: [],
   agencyUsers: [],
@@ -51,6 +53,8 @@ const dashboardReducer = (state = initialState, action) => {
       return {
         ...state,
         managers: action.payload.managers,
+        modelStats: action.payload.modelStats,
+        accountStats: action.payload.accountStats,
       };
     case ACTIONS.LOGIN_MANAGER:
       localStorage.setItem("token", action.payload.token)

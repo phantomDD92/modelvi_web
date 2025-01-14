@@ -2,10 +2,11 @@ import { toast } from "react-hot-toast";
 import ACTIONS from "./types";
 import ApiRequest from "@/utils/api";
 
-export const getStats = () => async (dispatch) => {
+export const getStats = (callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: "/stats",
     action: ACTIONS.LOAD_STATS,
+    callback
   })
 };
 

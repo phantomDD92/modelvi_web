@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Row, Col, Statistic } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { getStats } from "@/redux/dashboard/actions";
@@ -11,19 +11,24 @@ export const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const homeProps = useSelector(state => state.home)
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    dispatch(getStats());
+    setLoading(true);
+    dispatch(getStats(() => setLoading(false)));
   }, [getStats]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      dispatch(getStats());
+      setLoading(true);
+      dispatch(getStats(() => setLoading(false)));
     }, 60000);
     return () => clearInterval(interval);
   });
 
   const handleReloadData = () => {
-    dispatch(getStats());
+    setLoading(true);
+    dispatch(getStats(() => setLoading(false)));
   }
 
   const handleHistoryButtonClick = (account) => {
@@ -41,10 +46,10 @@ export const Home = () => {
           <Card >
             <Row gutter={16}>
               <Col span={8}>
-                <Statistic title="Total Models" value={homeProps.stats.actorCount} prefix={<TeamOutlined />} />
+                <Statistic title="Total Models" loading={loading} value={homeProps.stats.actorCount} prefix={<TeamOutlined />} />
               </Col>
               <Col span={8}>
-                <Statistic title="Unsynced Models" value={homeProps.stats.actorUpdatedCount} prefix={<UsergroupDeleteOutlined />} />
+                <Statistic title="Unsynced Models" loading={loading} value={homeProps.stats.actorUpdatedCount} prefix={<UsergroupDeleteOutlined />} />
               </Col>
             </Row>
           </Card>
@@ -53,10 +58,10 @@ export const Home = () => {
           <Card >
             <Row gutter={16}>
               <Col span={8}>
-                <Statistic title="Total Proxies" value={homeProps.stats.proxyCount} prefix={<SyncOutlined />} />
+                <Statistic title="Total Proxies" loading={loading} value={homeProps.stats.proxyCount} prefix={<SyncOutlined />} />
               </Col>
               <Col span={8}>
-                <Statistic title="Expired Proxies" value={homeProps.stats.proxyExpiredCount} prefix={<DisconnectOutlined />} />
+                <Statistic title="Expired Proxies" loading={loading} value={homeProps.stats.proxyExpiredCount} prefix={<DisconnectOutlined />} />
               </Col>
             </Row>
           </Card>
@@ -67,28 +72,13 @@ export const Home = () => {
           <Card>
             <Row gutter={16}>
               <Col span={8}>
-                <Statistic title="F2F Accounts" value={homeProps.stats.f2fCount} prefix={<UserOutlined />} />
+                <Statistic title="F2F Accounts" loading={loading} value={homeProps.stats.f2fCount} prefix={<UserOutlined />} />
               </Col>
               <Col span={8}>
-                <Statistic title="F2F Runnings" value={homeProps.stats.f2fRunningCount} prefix={<UserSwitchOutlined />} />
+                <Statistic title="F2F Runnings" loading={loading} value={homeProps.stats.f2fRunningCount} prefix={<UserSwitchOutlined />} />
               </Col>
               <Col span={8}>
-                <Statistic title="F2F Disables" value={homeProps.stats.f2fDisabledCount} prefix={<UserDeleteOutlined />} />
-              </Col>
-            </Row>
-          </Card>
-        </Col>
-        <Col md={8} sm={12}>
-          <Card>
-            <Row gutter={16}>
-              <Col span={8}>
-                <Statistic title="Fancentro Accounts" value={homeProps.stats.fncCount} prefix={<UserOutlined />} />
-              </Col>
-              <Col span={8}>
-                <Statistic title="Fancentro Runnings" value={homeProps.stats.fncRunningCount} prefix={<UserSwitchOutlined />} />
-              </Col>
-              <Col span={8}>
-                <Statistic title="Fancentro Disables" value={homeProps.stats.fncDisabledCount} prefix={<UserDeleteOutlined />} />
+                <Statistic title="F2F Disables" loading={loading} value={homeProps.stats.f2fDisabledCount} prefix={<UserDeleteOutlined />} />
               </Col>
             </Row>
           </Card>
@@ -97,13 +87,28 @@ export const Home = () => {
           <Card>
             <Row gutter={16}>
               <Col span={8}>
-                <Statistic title="Fansly Accounts" value={homeProps.stats.fanCount} prefix={<UserOutlined />} />
+                <Statistic title="Fancentro Accounts" loading={loading} value={homeProps.stats.fncCount} prefix={<UserOutlined />} />
               </Col>
               <Col span={8}>
-                <Statistic title="Fansly Runnings" value={homeProps.stats.fanRunningCount} prefix={<UserSwitchOutlined />} />
+                <Statistic title="Fancentro Runnings" loading={loading} value={homeProps.stats.fncRunningCount} prefix={<UserSwitchOutlined />} />
               </Col>
               <Col span={8}>
-                <Statistic title="Fansly Disables" value={homeProps.stats.fanDisabledCount} prefix={<UserDeleteOutlined />} />
+                <Statistic title="Fancentro Disables" loading={loading} value={homeProps.stats.fncDisabledCount} prefix={<UserDeleteOutlined />} />
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+        <Col md={8} sm={12}>
+          <Card>
+            <Row gutter={16}>
+              <Col span={8}>
+                <Statistic title="Fansly Accounts" loading={loading} value={homeProps.stats.fanCount} prefix={<UserOutlined />} />
+              </Col>
+              <Col span={8}>
+                <Statistic title="Fansly Runnings" loading={loading} value={homeProps.stats.fanRunningCount} prefix={<UserSwitchOutlined />} />
+              </Col>
+              <Col span={8}>
+                <Statistic title="Fansly Disables" loading={loading} value={homeProps.stats.fanDisabledCount} prefix={<UserDeleteOutlined />} />
               </Col>
             </Row>
           </Card>
@@ -114,6 +119,7 @@ export const Home = () => {
           accounts={homeProps.disabledAccounts}
           onHistory={handleHistoryButtonClick}
           onStatusChange={handleSetStatus}
+          loading={loading}
         />
       </Row>
     </Card>

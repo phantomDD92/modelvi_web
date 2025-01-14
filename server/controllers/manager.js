@@ -58,8 +58,11 @@ const handleDeleteManager = async (req, res) => {
 
 const handleLoadManagers = async (req, res) => {
   try {
-    const managers = await ManagerService.loadManagers()
-    res.json({ success: true, message: "Load Managers", payload: { managers } })
+    const managers = await ManagerService.loadManagers();
+    const modelStats = await ActorService.getStats();
+    const accountStats = await AccountService.getStats();
+
+    res.json({ success: true, message: "Load Managers", payload: { managers, modelStats, accountStats } })
   } catch (error) {
     console.error(error)
     res.json({ success: false, message: error.message })

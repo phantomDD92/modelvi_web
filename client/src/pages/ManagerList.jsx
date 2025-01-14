@@ -70,6 +70,8 @@ export const ManagerList = () => {
     <div>
       <AgencyTable
         agencies={homeProps.managers.filter(manager => manager.role == 2)}
+        modelStats={homeProps.modelStats}
+        accountStats={homeProps.accountStats}
         onCreate={handleCreateClicked}
         onDelete={handleDeleteAgency}
         onEdit={handleEditClicked}
