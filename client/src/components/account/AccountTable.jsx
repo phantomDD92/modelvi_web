@@ -60,7 +60,7 @@ const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, 
                 if (value && moment().diff(moment(value), 'minute', false) < 10) {
                     const ops = ["posting"]
                     if (record.platform == Platform.FNC)
-                        ops.push("storying")
+                        ops.push("story's")
                     if (record.params?.commentEnabled)
                         ops.push("commenting")
                     return <>{ops.map(item => <Tag color="success" key={`${record.alias}_${item}`}>{item}</Tag>)}</>
