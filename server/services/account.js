@@ -164,7 +164,7 @@ const getStats = () =>
     {
       $group: {
         _id: {
-          creator: "$creator",     // Group by creator
+          creator: "$owner",     // Group by creator
           platform: "$platform"    // and platform
         },
         count: { $sum: 1 },        // Count the number of documents in each group
