@@ -110,7 +110,6 @@ const handleClearLastError = async (req, res) => {
   try {
     // await HistoryService.clearHistory(req.bot.id);
     await AccountService.updateParams(req.bot.id, { lastError: "" });
-    await HistoryService.createHistory(req.bot.id, "bot started");
     sendResult(res)
   } catch (error) {
     sendError(res, error)
