@@ -106,7 +106,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
     return (
         <Modal
             title={content ? "Edit Content" : "Append Content"}
-            width={600}
+            width={700}
             open={open}
             onOk={handleOkClick}
             onCancel={onCancel}>
@@ -120,6 +120,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                     <Checkbox.Group options={[
                         { label: 'F2F', value: Platform.F2F },
                         { label: 'Fansly', value: Platform.FAN },
+                        { label: 'Fanvue', value: Platform.FANVUE },
                         { label: 'Fancentro', value: Platform.FNC },
                         { label: 'Fancentro Story', value: Platform.FNS },
                     ]} onChange={handlePlatformsChange} />

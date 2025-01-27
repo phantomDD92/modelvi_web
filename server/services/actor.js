@@ -50,7 +50,9 @@ const loadActors = (agency, { page, pageSize }) =>
   ])
 
 const loadAllActors = (agency) =>
-  ActorModel.find(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {}, "number name");
+  ActorModel
+    .find(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {}, "number name")
+    .sort("number");
 
 const loadAll = () =>
   ActorModel.find();

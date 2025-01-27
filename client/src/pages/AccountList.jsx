@@ -1,21 +1,26 @@
+import { Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createAccount, deleteAccount, loadAccounts, loadAllModels, setAccountStatus, startAllAccount, stopAllAccount, updateAccount, updateAccountParams } from "@/redux/model/actions";
 import { Platform } from "@/utils/const";
 import { createSearchParams, useLocation, useNavigate, useParams } from "react-router-dom";
 import qs from 'query-string';
+
 import AccountTable from "@/components/account/AccountTable";
 import AccountDialog from "@/components/account/AccountDialog";
 import F2FParamDialog from "@/components/account/F2FParamDialog";
 import FNCParamDialog from "@/components/account/FNCParamDialog";
 import FANParamDialog from "@/components/account/FANParamDialog";
-import { Modal } from "antd";
+import FanvueParamDialog from "@/components/account/FanvueParamDialog";
 
 export const AccountList = () => {
+
   const [visible, setVisible] = useState(false);
   const [f2fShow, setF2FShow] = useState(false);
   const [fncShow, setFNCShow] = useState(false);
   const [fanShow, setFANShow] = useState(false);
+  const [fanvueShow, setFanvueShow] = useState(false);
+
   const [account, setAccount] = useState();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -43,7 +48,7 @@ export const AccountList = () => {
     }, 60000);
     return () => clearInterval(interval);
   });
-  
+
   const handleSetStatus = (account, status) => {
     dispatch(setAccountStatus(account, status, handleReloadData))
   }
@@ -64,7 +69,7 @@ export const AccountList = () => {
   const handleDeleteAccount = (account) => {
     Modal.confirm({
       title: "Are you sure to delete this account?",
-      onOk: () => {dispatch(deleteAccount(platform, account, handleReloadData));},
+      onOk: () => { dispatch(deleteAccount(platform, account, handleReloadData)); },
     });
   }
 
@@ -79,12 +84,21 @@ export const AccountList = () => {
 
   const handleParamsButtonClick = (account) => {
     setAccount(account);
-    if (platform == Platform.F2F) {
-      setF2FShow(true);
-    } else if (platform == Platform.FNC) {
-      setFNCShow(true);
-    } else if (platform == Platform.FAN) {
-      setFANShow(true);
+    switch (platform) {
+      case Platform.F2F:
+        setF2FShow(true);
+        break;
+      case Platform.FNC:
+        setFNCShow(true);
+        break;
+      case Platform.FAN:
+        setFANShow(true);
+        break;
+      case Platform.FANVUE:
+        setFanvueShow(true);
+        break;
+      default:
+        break;
     }
   }
 
@@ -92,11 +106,12 @@ export const AccountList = () => {
     dispatch(updateAccountParams(platform, account, params, handleReloadData));
   }
 
-  
+
   const handleReloadData = () => {
     setF2FShow(false);
     setFNCShow(false);
     setFANShow(false);
+    setFanvueShow(false);
     setVisible(false);
     setLoading(true);
     dispatch(loadAccounts(platform, { page, pageSize }, () => setLoading(false)))
@@ -172,6 +187,12 @@ export const AccountList = () => {
         open={fanShow}
         account={account}
         onCancel={() => setFANShow(false)}
+        onUpdate={handleUpdateParams}
+      />
+      <FanvueParamDialog
+        open={fanvueShow}
+        account={account}
+        onCancel={() => setFanvueShow(false)}
         onUpdate={handleUpdateParams}
       />
     </div>

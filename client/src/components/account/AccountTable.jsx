@@ -1,6 +1,25 @@
-import { Card, Table, Tooltip, Popconfirm, Button, Flex, Switch, Radio, Tag, Avatar, Dropdown } from "antd";
-import { DeleteOutlined, EditOutlined, UserAddOutlined, ReadOutlined, SolutionOutlined } from "@ant-design/icons";
-import { AdminRole, Platform } from "@/utils/const"
+import {
+    Avatar,
+    Button,
+    Card,
+    Dropdown,
+    Flex,
+    Radio,
+    Table,
+    Tag,
+    Switch,
+} from "antd";
+import {
+    DeleteOutlined,
+    EditOutlined,
+    UserAddOutlined,
+    ReadOutlined,
+    SolutionOutlined
+} from "@ant-design/icons";
+import { 
+    AdminRole,
+     Platform 
+} from "@/utils/const"
 import moment from "moment";
 
 const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, platform, onPageChange, onStatusChange, onPlatformChange, onCreate, onStartAll, onStopAll, onEdit, onDelete, onParameter, onHistory }) => {
@@ -146,6 +165,7 @@ const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, 
                         <Radio.Button value={Platform.F2F}>F2F</Radio.Button>
                         <Radio.Button value={Platform.FNC}>Fancentro</Radio.Button>
                         <Radio.Button value={Platform.FAN}>Fansly</Radio.Button>
+                        <Radio.Button value={Platform.FANVUE}>Fanvue</Radio.Button>
                     </Radio.Group>
                 </Flex>
             }

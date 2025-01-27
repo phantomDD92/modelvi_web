@@ -1,27 +1,47 @@
-import { loadAgencyComments, loadAgencyUsers } from "@/redux/dashboard/actions";
-import { DEFAULT_COMMENT_INTERVAL, DEFAULT_POST_COUNT, DEFAULT_POST_INTERVAL, DEFAULT_POST_MODE as DEFAULT_POST_MODE, PostMode } from "@/utils/const";
-import { Modal, Form, Input, Radio, InputNumber, Switch } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import {
+    Modal,
+    Form,
+    Input,
+    Radio,
+    InputNumber,
+    Switch
+} from "antd";
+import {
+    loadAgencyComments,
+    loadAgencyUsers
+} from "@/redux/dashboard/actions";
+import {
+    DEFAULT_COMMENT_INTERVAL,
+    DEFAULT_POST_COUNT,
+    DEFAULT_POST_INTERVAL,
+    DEFAULT_POST_MODE,
+    PostMode
+} from "@/utils/const";
 
-const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
-    const [form] = Form.useForm();
-    const [postingMode, setPostingMode] = useState('offset');
+const FanvueParamDialog = ({ open, account, onCancel, onUpdate }) => {
+
+    const [postingMode, setPostingMode] = useState(DEFAULT_POST_MODE);
     const [commentEnabled, setCommentEnabled] = useState(false);
+
+    const [form] = Form.useForm();
+    // const dispatch = useDispatch();
+    const homeProps = useSelector(state => state.home);
+
+
     const layout = {
         labelCol: { span: 8 },
         wrapperCol: { span: 16 },
     };
-    const dispatch = useDispatch();
-    const homeProps = useSelector(state => state.home);
 
-    useEffect(() => {
-        if (account) {
-            dispatch(loadAgencyComments(account.owner?._id));
-            dispatch(loadAgencyUsers(account.owner?._id));
-        }
-    }, [account, loadAgencyComments, loadAgencyUsers, dispatch]);
+    // useEffect(() => {
+    //     if (account) {
+    //         dispatch(loadAgencyComments(account.owner?._id));
+    //         dispatch(loadAgencyUsers(account.owner?._id));
+    //     }
+    // }, [account, loadAgencyComments, loadAgencyUsers, dispatch]);
 
     const handleOkClick = async () => {
         try {
@@ -71,23 +91,25 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
     }
     return (
         <Modal
-            title={"Fansly Account Setting"}
             open={open}
+            title={"Fanvue Account Setting"}
             onOk={handleOkClick}
             onCancel={onCancel}>
             <Form
                 {...layout}
                 form={form}
-                name="fan-setting"
+                name="fanvue-setting"
             >
-                <div className="text-lg font-medium ml-3 mb-6">Post Settings</div>
-                <Form.Item label="Posting Method" name="postMode">
+                <div className="text-lg font-medium ml-3 mb-6">
+                    Post Settings
+                </div>
+                {/* <Form.Item label="Posting Method" name="postMode">
                     <Radio.Group onChange={handlePostingMethodChange}>
                         <Radio.Button value={PostMode.INTERVAL}>Interval</Radio.Button>
                         <Radio.Button value={PostMode.OFFSET}>Offsets</Radio.Button>
                     </Radio.Group>
-                </Form.Item>
-                {postingMode == "offset" &&
+                </Form.Item> */}
+                {/* {postingMode == "offset" &&
                     <Form.Item
                         name="postOffsets"
                         label="Posting Offsets"
@@ -100,7 +122,7 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
                         ]}>
                         <Input addonAfter="min" />
                     </Form.Item>
-                }
+                } */}
                 {postingMode == "interval" &&
                     <Form.Item
                         name="postInterval"
@@ -115,7 +137,7 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
                     rules={[{ required: true }]}>
                     <InputNumber addonAfter="articles" min={1} max={10} />
                 </Form.Item>
-                <div className="flex items-center mb-6 ml-3">
+                {/* <div className="flex items-center mb-6 ml-3">
                     <span className="font-medium text-lg mr-3">Comment Settings</span>
                     <Switch onChange={value => setCommentEnabled(value)} />
                 </div>
@@ -140,10 +162,10 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
                         <Link to={"/comment"}>{homeProps.agencyComments.length} Comments Available</Link> :
                         <span>{homeProps.agencyComments.length} Comments Available</span>
                     }
-                </Form.Item>
+                </Form.Item> */}
             </Form>
         </Modal>
     )
 }
 
-export default FANParamDialog;
+export default FanvueParamDialog;

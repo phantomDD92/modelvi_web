@@ -188,8 +188,10 @@ export const loadAgencyUsers = (agencyId) => async (dispatch, getState) => {
 };
 
 export const loadAgencyComments = (agencyId) => async (dispatch, getState) => {
-  await ApiRequest.getAction(dispatch, {
-    path: `/agency/comment/${agencyId}`,
-    action: ACTIONS.LOAD_AGENCY_COMMENTS,
-  });
+  if (agencyId) {
+    await ApiRequest.getAction(dispatch, {
+      path: `/agency/comment/${agencyId}`,
+      action: ACTIONS.LOAD_AGENCY_COMMENTS,
+    });  
+  }
 };
