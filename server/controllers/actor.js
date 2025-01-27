@@ -27,16 +27,27 @@ const handleCreateActor = async (req, res) => {
   try {
     const { number, name, ...params } = req.body;
     const agency = req.manager;
+
+    // check agency limit
     const count = await ActorService.getActorCount(agency._id);
     if (agency.role == AdminRole.AGENCY && count >= agency.maxActors)
       throw new ApiError(`Model amount is limited by website`);
+
+    // check if model name is duplicated
     let actor = await ActorService.findByName(name);
     if (actor) throw new ApiError(`The model name(${name}) is already existed.`);
-    actor = await ActorService.findByNumber(number);
+
+    // check if model number is duplicated
+    actor = await ActorService.findByNumber(req.manager._id, number);
     if (actor)
       throw new ApiError(`The model number(${number}) is already existed.`);
+
+    // create model
     await ActorService.createActor({ number, name, owner: agency._id, ...params });
+
+    // send notification to discord
     await NotifyUtils.sendMessage(`AGENCY : ${agency.name}`, `MODEL : ${number}. ${name}`, `create model`);
+
     sendResult(res);
   } catch (error) {
     console.error(error)
@@ -74,13 +85,14 @@ const handleUpdateActor = async (req, res) => {
     let actor = await ActorService.findByName(name);
     if (actor && actor._id != actorId)
       throw new ApiError(`The model name(${name}) is already existed.`);
-    actor = await ActorService.findByNumber(number);
+    actor = await ActorService.findByNumber(req.manager._id, number);
     if (actor && actor._id != actorId)
       throw new ApiError(`The model number(${name}) is already existed.`);
     actor = await ActorService.findById(actorId);
     if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
     await ActorService.updateActor(actorId, { number, name, ...params });
+    await AccountService.updateNumber(actorId, number);
     sendResult(res);
   } catch (error) {
     sendError(res, error);

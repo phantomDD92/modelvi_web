@@ -6,7 +6,7 @@ const moment = require('moment');
 const loadAccounts = (agency, platform, { page, pageSize }) =>
   Promise.all([
     AccountModel.find(agency.role == AdminRole.AGENCY ? { platform, owner: agency._id } : { platform })
-      .sort("number")
+      .sort({ owner: 1, number: 1 })
       .skip((parseInt(page) - 1) * parseInt(pageSize))
       .limit(parseInt(pageSize))
       .populate("owner", "name")
@@ -179,6 +179,13 @@ const getStats = () =>
     }
   ])
 
+// Update account number for a model
+const updateNumber = (actorId, number) =>
+  AccountModel.updateMany(
+    { actor: actorId },
+    { $set: { number } }
+  );
+
 const AccountService = {
   loadAccounts,
   createAccount,
@@ -209,6 +216,7 @@ const AccountService = {
   loadDisabledAccounts,
 
   getStats,
+  updateNumber, // update accounts' number for model
 };
 
 module.exports = AccountService;

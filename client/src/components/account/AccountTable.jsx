@@ -40,7 +40,7 @@ const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, 
         {
             key: 'name',
             title: 'Name',
-            width: 120,
+            width: 200,
             dataIndex: 'actor',
             render: value => <Flex gap="middle" align='center'><Avatar src="/img/actor.png" /><span>{value.name}</span></Flex>
         },

@@ -41,7 +41,7 @@ const removeAccount = (id, account) =>
 const loadActors = (agency, { page, pageSize }) =>
   Promise.all([
     ActorModel.find(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {})
-      .sort("number")
+      .sort({ owner: 1, number: 1 })
       .skip((parseInt(page) - 1) * parseInt(pageSize))
       .limit(parseInt(pageSize))
       .populate("owner", "name")
@@ -52,12 +52,13 @@ const loadActors = (agency, { page, pageSize }) =>
 const loadAllActors = (agency) =>
   ActorModel
     .find(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {}, "number name")
-    .sort("number");
+    .sort({ owner: 1, number: 1 });
 
 const loadAll = () =>
   ActorModel.find();
 
-const findByNumber = (number) => ActorModel.findOne({ number });
+const findByNumber = (agencyId, number) =>
+  ActorModel.findOne({ owner: agencyId, number });
 
 const findByName = (name) => ActorModel.findOne({ name });
 
