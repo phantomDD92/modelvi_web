@@ -116,12 +116,16 @@ const handleUpdateParams = async (req, res) => {
         "params.commentInterval": commentInterval,
       });
     } else if (account.platform == Platform.FNC) {
-      const { commentInterval, postInterval, storyInterval, storyMaxCount, postCount, storyReplaceCount, commentEnabled } = params;
+      const { commentInterval, postMode, postOffsets, postInterval, storyMode, storyOffsets, storyInterval, storyMaxCount, postCount, storyReplaceCount, commentEnabled } = params;
       await AccountService.updateParams(id, {
+        "params.postMode": postMode,
+        "params.postOffsets": postOffsets,
         "params.postInterval": postInterval,
         "params.postCount": postCount,
         "params.commentEnabled": commentEnabled,
         "params.commentInterval": commentInterval,
+        "params.storyMode": storyMode,
+        "params.storyOffsets": storyOffsets,
         "params.storyInterval": storyInterval,
         "params.storyMaxCount": storyMaxCount,
         "params.storyReplaceCount": storyReplaceCount,

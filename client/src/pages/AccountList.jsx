@@ -9,7 +9,7 @@ import qs from 'query-string';
 import AccountTable from "@/components/account/AccountTable";
 import AccountDialog from "@/components/account/AccountDialog";
 import F2FParamDialog from "@/components/account/F2FParamDialog";
-import FNCParamDialog from "@/components/account/FNCParamDialog";
+import FancentroParamDialog from "@/components/account/FNCParamDialog";
 import FANParamDialog from "@/components/account/FANParamDialog";
 import FanvueParamDialog from "@/components/account/FanvueParamDialog";
 
@@ -177,7 +177,7 @@ export const AccountList = () => {
         onCancel={() => setF2FShow(false)}
         onUpdate={handleUpdateParams}
       />
-      <FNCParamDialog
+      <FancentroParamDialog
         open={fncShow}
         account={account}
         onCancel={() => setFNCShow(false)}

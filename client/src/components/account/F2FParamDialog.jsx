@@ -21,8 +21,16 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
         try {
             await form.validateFields();
             const { postOffsets, postStart, ...params } = form.getFieldsValue();
-            const offsets = postOffsets ? postOffsets.split(",").map(str => parseInt(str.trim())) : [1, 21, 51];
-            onUpdate(account, { ...params, postOffsets: offsets, postStart: postStart ? postStart.format("HH:mm") : undefined, commentEnabled });
+            const offsets = postOffsets
+                ? postOffsets.split(",").map(str => parseInt(str.trim()))
+                : [1, 21, 51];
+            onUpdate(account,
+                {
+                    ...params,
+                    postOffsets: offsets,
+                    postStart: postStart ? postStart.format("HH:mm") : undefined,
+                    commentEnabled
+                });
         } catch (e) {
 
         }
