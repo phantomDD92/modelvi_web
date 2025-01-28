@@ -6,6 +6,7 @@ export const SERVER_PATH = `${window.location.protocol}//${window.location.host}
 export const DEFAULT_POST_INTERVAL = 60;
 export const DEFAULT_POST_COUNT = 5;
 export const DEFAULT_POST_MODE = "interval";
+export const DEFAULT_POST_OFFSETS = "1,21,51";
 export const DEFAULT_COMMENT_INTERVAL = 30;
 export const DEFAULT_STORY_INTERVAL = 10;
 export const DEFAULT_STORY_COUNT = 6;

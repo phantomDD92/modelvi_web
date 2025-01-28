@@ -1,10 +1,28 @@
-import { DEFAULT_COMMENT_INTERVAL, DEFAULT_POST_COUNT, DEFAULT_POST_INTERVAL, PostMode } from "@/utils/const";
-import { Modal, Form, Input, Radio, Col, Row, InputNumber, Typography, TimePicker, Button, Flex, Switch } from "antd";
-import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadAgencyComments, loadAgencyUsers, loadComments, loadUsers } from "@/redux/dashboard/actions";
 import { Link } from "react-router-dom";
+import dayjs from "dayjs";
+import {
+    Form,
+    Input,
+    InputNumber,
+    Modal,
+    Radio,
+    Switch,
+    TimePicker,
+} from "antd";
+
+import {
+    DEFAULT_COMMENT_INTERVAL,
+    DEFAULT_POST_COUNT,
+    DEFAULT_POST_INTERVAL,
+    DEFAULT_POST_OFFSETS,
+    PostMode
+} from "@/utils/const";
+import {
+    loadAgencyComments,
+    loadAgencyUsers
+} from "@/redux/dashboard/actions";
 
 const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
@@ -40,7 +58,7 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
         if (open && account) {
             form.setFieldsValue({
                 postInterval: account.params?.postInterval || DEFAULT_POST_INTERVAL,
-                postOffsets: (account.params?.postOffsets) ? account.params?.postOffsets.join(",") : "1, 21, 51",
+                postOffsets: (account.params?.postOffsets) ? account.params?.postOffsets.join(",") : DEFAULT_POST_OFFSETS,
                 postMode: account.params?.postMode || PostMode.LIMITED,
                 postCount: account.params?.postCount || DEFAULT_POST_COUNT,
                 postStart: dayjs(account.params?.postStart || "0:00", "HH:mm"),
