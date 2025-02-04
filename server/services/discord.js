@@ -3,14 +3,22 @@ const DiscordModel = require("../models/discord");
 const loadDiscords = ({ page, pageSize }) =>
   Promise.all([
     DiscordModel.find()
-    .skip((parseInt(page) - 1) * parseInt(pageSize))
-    .limit(parseInt(pageSize))
-    .populate({
-      path: "actors",
-      select: "number name",
-    }),
+      .skip((parseInt(page) - 1) * parseInt(pageSize))
+      .limit(parseInt(pageSize))
+      .populate({
+        path: "actors",
+        select: "owner number name",
+        populate: {
+          path: "owner",
+          select: "name"
+        }
+      }),
     DiscordModel.countDocuments()
   ])
+
+const loadAllDiscords = () =>
+  DiscordModel.find({}, 'desc')
+
 
 const createDiscord = ({ url, desc }) => {
   return DiscordModel.create({ url, desc });
@@ -42,6 +50,7 @@ const getCount = () => DiscordModel.countDocuments()
 const findById = (id) => DiscordModel.findById(id)
 
 const DiscordService = {
+  loadAllDiscords,
   loadDiscords,
   createDiscord,
   deleteDiscord,

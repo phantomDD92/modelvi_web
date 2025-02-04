@@ -3,7 +3,7 @@ import { DeleteOutlined, EditOutlined, UserOutlined, UserAddOutlined, ReadOutlin
 import moment from "moment";
 import { AdminRole } from "@/utils/const";
 
-export const ModelTable = ({ auth, models, modelsCount, page, pageSize, onPageChange, onAgencyChange, onDelete, onCreate, onEdit, onContent, onProfile }) => {
+export const ModelTable = ({ auth, models, loading, modelsCount, page, pageSize, onPageChange, onAgencyChange, onDelete, onCreate, onEdit, onContent, onProfile }) => {
     const hasPermission = (auth, record) => {
         if (auth.role == AdminRole.MANAGER)
             return true
@@ -49,13 +49,6 @@ export const ModelTable = ({ auth, models, modelsCount, page, pageSize, onPageCh
             width: 200,
             dataIndex: 'birthplace'
         },
-        // {
-        //     key: 'discord',
-        //     title: 'Discord',
-        //     dataIndex: 'discord',
-        //     width: 150,
-        //     render: value => value ? <Tag color="success">Yes</Tag> : <Tag color="error">No</Tag>
-        // },
         {
             key: 'contents',
             title: 'Contents',
@@ -75,6 +68,13 @@ export const ModelTable = ({ auth, models, modelsCount, page, pageSize, onPageCh
             title: 'Accounts',
             dataIndex: 'accounts',
             render: value => value.length == 0 ? '-' : <Flex gap="small">{value.map(el => <Tag color="success">{el.platform}</Tag>)}</Flex>
+        },
+        {
+            key: 'discord',
+            title: 'ChatTeam',
+            dataIndex: 'discord',
+            width: 150,
+            render: value => value?.desc || "-"
         },
         {
             key: 'action',
@@ -161,6 +161,7 @@ export const ModelTable = ({ auth, models, modelsCount, page, pageSize, onPageCh
                     total: modelsCount,
                     onChange: onPageChange,
                 }}
+                loading={loading}
                 rowKey={row => row._id}
                 dataSource={models}
                 columns={columns}

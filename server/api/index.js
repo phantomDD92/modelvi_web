@@ -41,6 +41,9 @@ router.route("/proxy/:id")
   .put(ProxyCtrl.handleSetProxyStatus)
   .delete(ProxyCtrl.handleDeleteProxy);
 
+router.route("/discord_all")
+  .all(authenticate)
+  .get(DiscordCtrl.handleLoadAllDiscords)
 
 router.route("/discord")
   .all(authenticate, checkManager)

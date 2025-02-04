@@ -3,7 +3,7 @@ const { Schema, SchemaTypes } = mongoose;
 
 const DicordSchema = new Schema({
   url: { type: String, required: true },
-  desc: {type:String},
+  desc: { type: String },
   actors: [{ type: SchemaTypes.ObjectId, ref: 'Actor' }],
 });
 

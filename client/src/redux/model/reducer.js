@@ -22,6 +22,8 @@ const initialState = {
   // For Schedule List Page
   schedules: [],
   schedulesCount: 0,
+
+  discordLinks: [],
 }
 
 const modelReducer = (state = initialState, action) => {
@@ -42,6 +44,11 @@ const modelReducer = (state = initialState, action) => {
         ...state,
         discords: action.payload.discords,
         discordsCount: action.payload.discordsCount,
+      };
+    case ACTIONS.LOAD_ALL_DISCORDS:
+      return {
+        ...state,
+        discordLinks: action.payload.discords,
       };
     case ACTIONS.LOAD_ACCOUNTS:
       return {

@@ -1,6 +1,7 @@
 const { AdminRole } = require("../config/const");
 const AccountService = require("../services/account");
 const ActorService = require("../services/actor");
+const DiscordService = require("../services/discord");
 const NotifyUtils = require("../utils/notifiy");
 const { sendResult, sendError, ApiError } = require("../utils/resp");
 
@@ -25,7 +26,7 @@ const handleLoadAllModels = async (req, res) => {
 
 const handleCreateActor = async (req, res) => {
   try {
-    const { number, name, ...params } = req.body;
+    const { number, name, discord, ...params } = req.body;
     const agency = req.manager;
 
     // check agency limit
@@ -43,7 +44,9 @@ const handleCreateActor = async (req, res) => {
       throw new ApiError(`The model number(${number}) is already existed.`);
 
     // create model
-    await ActorService.createActor({ number, name, owner: agency._id, ...params });
+    actor = await ActorService.createActor({ number, name, owner: agency._id, discord, ...params });
+
+    await DiscordService.appendActor(discord, actor._id)
 
     // send notification to discord
     await NotifyUtils.sendMessage(`AGENCY : ${agency.name}`, `MODEL : ${number}. ${name}`, `create model`);
@@ -70,6 +73,8 @@ const handleDeleteActor = async (req, res) => {
           "name"
         )}) still have some accounts.`
       );
+    if (actor.discord)
+      await DiscordService.removeActor(actor.discord, actor._id);
     await ActorService.deleteActor(actorId);
     await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name})`, `MODEL : ${actor.number}. ${actor.name}`, `delete model`);
     sendResult(res);
@@ -81,7 +86,7 @@ const handleDeleteActor = async (req, res) => {
 const handleUpdateActor = async (req, res) => {
   try {
     const { actorId } = req.params;
-    const { number, name, ...params } = req.body;
+    const { number, name, discord, ...params } = req.body;
     let actor = await ActorService.findByName(name);
     if (actor && actor._id != actorId)
       throw new ApiError(`The model name(${name}) is already existed.`);
@@ -91,7 +96,11 @@ const handleUpdateActor = async (req, res) => {
     actor = await ActorService.findById(actorId);
     if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
-    await ActorService.updateActor(actorId, { number, name, ...params });
+    await ActorService.updateActor(actorId, { number, name, discord, ...params });
+    if (actor.discord)
+      await DiscordService.removeActor(actor.discord, actor._id)
+    if (discord)
+      await DiscordService.appendActor(discord, actor._id)
     await AccountService.updateNumber(actorId, number);
     sendResult(res);
   } catch (error) {

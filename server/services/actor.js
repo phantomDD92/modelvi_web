@@ -6,19 +6,21 @@ const createActor = ({
   name,
   birthday,
   birthplace,
-  owner
+  owner,
+  discord
 }) => ActorModel.create({
   number,
   name,
   birthday,
   birthplace,
-  owner
+  owner,
+  discord
 });
 
 
 const updateActor = (
   id,
-  { number, name, birthday, birthplace, owner }
+  { number, name, birthday, birthplace, owner, discord }
 ) =>
   ActorModel.findByIdAndUpdate(id, {
     $set: {
@@ -27,6 +29,7 @@ const updateActor = (
       birthday,
       birthplace,
       owner,
+      discord,
     },
   });
 
@@ -45,14 +48,16 @@ const loadActors = (agency, { page, pageSize }) =>
       .skip((parseInt(page) - 1) * parseInt(pageSize))
       .limit(parseInt(pageSize))
       .populate("owner", "name")
+      .populate("discord", "desc")
       .populate("accounts", "platform alias"),
     ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {})
   ])
 
 const loadAllActors = (agency) =>
   ActorModel
-    .find(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {}, "number name")
-    .sort({ owner: 1, number: 1 });
+    .find(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {}, "owner number name")
+    .sort({ owner: 1, number: 1 })
+    .populate("owner", "name");
 
 const loadAll = () =>
   ActorModel.find();

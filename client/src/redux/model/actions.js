@@ -68,6 +68,14 @@ export const changeAgency = (actor, params, callback) => async (dispatch) => {
 //   })
 // };
 
+export const loadAllDiscords = () => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/discord_all`,
+    action: ACTIONS.LOAD_ALL_DISCORDS,
+  });
+};
+
+
 export const loadDiscords = ({ page, pageSize }) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/discord`,

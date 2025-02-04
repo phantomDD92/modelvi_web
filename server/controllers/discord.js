@@ -12,6 +12,16 @@ const handleLoadDiscords = async (req, res) => {
   }
 };
 
+const handleLoadAllDiscords = async (req, res) => {
+  try {
+    const {page, pageSize} = req.query;
+    const [discords, discordsCount] = await DiscordService.loadDiscords({page, pageSize: pageSize || "10"});
+    sendResult(res, { discords, discordsCount });
+  } catch (error) {
+    sendError(res, error);
+  }
+};
+
 const handleCreateDiscord = async (req, res) => {
   try {
     const { url, desc } = req.body;
@@ -42,7 +52,7 @@ const handleUpdateDiscord = async (req, res) => {
 
 const handleDeleteDiscord = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.body;
     const discord = await DiscordService.findById(id);
     if (!discord) throw new ApiError("discord is not existed.");
     const actors = discord.get("actors");
@@ -106,6 +116,7 @@ const handleRemoveActor = async (req, res) => {
   }
 };
 const DiscordCtrl = {
+  handleLoadAllDiscords,
   handleLoadDiscords,
   handleCreateDiscord,
   handleDeleteDiscord,

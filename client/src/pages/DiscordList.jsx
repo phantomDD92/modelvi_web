@@ -20,14 +20,14 @@ export const DiscordList = () => {
   const columns = [
     {
       key: 'desc',
-      title: 'Description',
+      title: 'Name',
       width: 200,
       dataIndex: 'desc',
       render: (value) => value
     },
     {
       key: 'url',
-      title: 'Discord Url',
+      title: 'Discord Web Hook',
       dataIndex: 'url'
     },
     {
@@ -35,7 +35,7 @@ export const DiscordList = () => {
       title: 'Models',
       width: 200,
       dataIndex: 'actors',
-      render: (value) => value.length == 0 ? '-' : value.map(el => el.number).join(",")
+      render: (value) => value.length == 0 ? '-' : `${value.length} models`
     },
     {
       key: 'operation',
@@ -43,10 +43,10 @@ export const DiscordList = () => {
       width: 200,
       render: (_, record) => (
         <Flex gap="large">
-          <Tooltip title="Append model">
+          <Tooltip title="Manage Models">
             <Button icon={<UserAddOutlined />} onClick={() => handleAppendButtonClick(record)} />
           </Tooltip>
-          <Tooltip title="Edit discord url">
+          <Tooltip title="Edit Discord">
             <Button icon={<EditOutlined />} onClick={() => handleEditButtonClick(record)} />
           </Tooltip>
           <Popconfirm
@@ -127,7 +127,7 @@ export const DiscordList = () => {
       <Card
         title={
           <div>
-            Discord Url List
+            Chat Teams List
           </div>
         }
         extra={
@@ -152,6 +152,7 @@ export const DiscordList = () => {
       <Modal
         title={discord ? "Edit discord" : "Create discord"}
         open={visible}
+        width={800}
         onOk={handleSaveDiscord}
         onCancel={() => setVisible(false)}>
         <Form
@@ -162,23 +163,26 @@ export const DiscordList = () => {
           <Form.Item name="desc" label="Description">
             <Input />
           </Form.Item>
-          <Form.Item name="url" label="Discord Url" rules={[{ required: true }]}>
-            <Input.TextArea />
+          <Form.Item name="url" label="Discord Web Hook" rules={[{ required: true }]}>
+            <Input.TextArea 
+            autoSize={{minRows: 3}}
+            />
           </Form.Item>
         </Form>
       </Modal>
       <Modal
-        title={"Models for discord"}
+        title={"Models for ChatTeam"}
+        width={800}
         open={show}
         onOk={() => setShow(false)}
         onCancel={() => setShow(false)}>
         <Flex gap="large" justify="space-between">
           <List
-            header="Models belonged to discord"
+            header="Models belonged to ChatTeam"
             dataSource={discord ? discord.actors : []}
             renderItem={item =>
               <List.Item actions={[<Button icon={<DeleteOutlined />} onClick={() => handleRemoveModel(item)} />]}>
-                {`${item.number}. ${item.name}`}
+                {`${item.owner?.name} - ${item.number}. ${item.name}`}
               </List.Item>}
           />
           <List
@@ -186,7 +190,7 @@ export const DiscordList = () => {
             dataSource={modelProps.allModels}
             renderItem={item =>
               <List.Item actions={[<Button icon={<PlusOutlined />} onClick={() => handleAppendModel(item)} />]}>
-                {`${item.number}. ${item.name}`}
+                {`${item.owner?.name} - ${item.number}. ${item.name}`}
               </List.Item>
             }
             pagination={true}
