@@ -1,6 +1,7 @@
 const { Platform, AdminRole } = require("../config/const");
 const AccountService = require("../services/account");
 const ActorService = require("../services/actor");
+const ChatTeamService = require("../services/chatteam");
 const HistoryService = require("../services/history");
 const NotifyUtils = require("../utils/notifiy");
 const { sendResult, sendError, ApiError } = require("../utils/resp");
@@ -20,10 +21,10 @@ const handleLoadAccounts = async (req, res) => {
 const handleCreateAccount = async (req, res) => {
   try {
     const { platform } = req.params;
-    const { actor, ...params } = req.body;
+    const { actor, chatTeam, ...params } = req.body;
     let currActor = await ActorService.findById(actor);
     if (!currActor)
-      throw new ApiError(`The model is not existed.`);
+      throw new ApiError(`The model does not exist.`);
     // check duplication
     const { alias } = params;
     const dupAccount = await AccountService.findByAlias(platform, alias);
@@ -34,8 +35,9 @@ const handleCreateAccount = async (req, res) => {
     const count = await AccountService.getAgencyCount(req.manager._id)
     if (req.manager.role == AdminRole.AGENCY && count >= req.manager.maxAccounts)
       throw new ApiError(`Account amount is limited by website`);
-    const account = await AccountService.createAccount(platform, currActor, { ...params, owner: currActor.owner, creator: req.manager._id });
+    const account = await AccountService.createAccount(platform, currActor, { ...params, chatTeam: chatTeam, owner: currActor.owner, creator: req.manager._id });
     await ActorService.appendAccount(actor, account._id)
+    await ChatTeamService.appendAccount(chatTeam, account._id);
     await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name})`, `ACCOUNT : ${currActor.number}. ${currActor.name} - ${platform} - ${alias}`, `create account`);
     sendResult(res);
   } catch (error) {
@@ -48,10 +50,12 @@ const handleDeleteAccount = async (req, res) => {
   try {
     const { id } = req.params;
     const account = await AccountService.findById(id);
-    if (!account) throw new ApiError("The account is not existed.");
+    if (!account) throw new ApiError("The account does not exist.");
     if (req.manager.role != AdminRole.MANAGER && account.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`The model is able to delete only by owner.`)
     await ActorService.removeAccount(account.actor?._id, account);
+    if (account.chatTeam)
+      await ChatTeamService.removeAccount(account.chatTeam, account._id)
     await AccountService.deleteAccount(id);
     await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name}`, `ACCOUNT : ${account.actor?.number}. ${account.actor?.name} - ${account.platform} - ${account.alias}`, `delete account`);
     sendResult(res);
@@ -63,15 +67,19 @@ const handleDeleteAccount = async (req, res) => {
 const handleUpdateAccount = async (req, res) => {
   try {
     const { id } = req.params;
-    const { actor, ...params } = req.body;
+    const { actor, chatTeam, ...params } = req.body;
     const currActor = await ActorService.findById(actor);
-    if (!currActor) throw new ApiError("The model is not existed.");
+    if (!currActor) throw new ApiError("The model does not exist.");
     const account = await AccountService.findById(id);
     if (!account)
-      throw new ApiError("The account is not existed.");
+      throw new ApiError("The account does not exist.");
     if (req.manager.role != AdminRole.MANAGER && account.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
-    await AccountService.updateAccount(id, currActor, params);
+    await AccountService.updateAccount(id, currActor, { chatTeam, ...params });
+    if (account.chatTeam)
+      await ChatTeamService.removeAccount(account.chatTeam, account._id)
+    if (chatTeam)
+      await ChatTeamService.appendAccount(chatTeam, account._id)
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -83,7 +91,7 @@ const handleUpdateStatus = async (req, res) => {
     const { id, status } = req.body;
     const account = await AccountService.findById(id)
     if (!account)
-      throw new ApiError("The account is not existed.");
+      throw new ApiError("The account does not exist.");
     if (req.manager.role != AdminRole.MANAGER && account.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
     await AccountService.setStatus(id, status);
@@ -100,7 +108,7 @@ const handleUpdateParams = async (req, res) => {
     const params = req.body;
     const account = await AccountService.findById(id);
     if (!account)
-      throw new ApiError("The account is not existed.");
+      throw new ApiError("The account does not exist.");
     if (req.manager.role != AdminRole.MANAGER && account.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
     if (account.platform == Platform.F2F) {
@@ -164,7 +172,7 @@ const handleClearHistory = async (req, res) => {
     const { id } = req.params;
     const account = await AccountService.findById(id);
     if (!account)
-      throw new ApiError("The account is not existed.");
+      throw new ApiError("The account does not exist.");
     if (req.manager.role != AdminRole.MANAGER && account.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
     await HistoryService.clearHistory(id)
@@ -179,7 +187,7 @@ const handleClearError = async (req, res) => {
     const { id } = req.params;
     const account = await AccountService.findById(id);
     if (!account)
-      throw new ApiError("The account is not existed.");
+      throw new ApiError("The account does not exist.");
     if (req.manager.role != AdminRole.MANAGER && account.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
     await AccountService.clearError(id)

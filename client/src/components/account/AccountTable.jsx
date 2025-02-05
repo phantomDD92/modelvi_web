@@ -16,9 +16,9 @@ import {
     ReadOutlined,
     SolutionOutlined
 } from "@ant-design/icons";
-import { 
+import {
     AdminRole,
-     Platform 
+    Platform
 } from "@/utils/const"
 import moment from "moment";
 
@@ -64,12 +64,19 @@ const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, 
             dataIndex: 'email',
         },
         {
-            key: 'password',
-            title: 'Password',
-            dataIndex: 'password',
-            width: 100,
-            render: value => value.substr(0, 2) + "***" + value.substr(value.length - 2, 2)
+            key: 'chatTeam',
+            title: 'Chat Team',
+            dataIndex: 'chatTeam',
+            width: 150,
+            render: value => value?.name || "-"
         },
+        // {
+        //     key: 'password',
+        //     title: 'Password',
+        //     dataIndex: 'password',
+        //     width: 100,
+        //     render: value => value.substr(0, 2) + "***" + value.substr(value.length - 2, 2)
+        // },
         {
             key: 'bot',
             title: 'Bot',

@@ -7,7 +7,6 @@ const ActorSchema = new Schema({
   name: { type: String, required: true }, // model name
   birthday: { type: Date }, // model name
   birthplace: { type: String }, // model name
-  discord: { type: SchemaTypes.ObjectId, ref: "Discord" },
   owner: { type: SchemaTypes.ObjectId, ref: "Manager" },
   accounts: [{ type: SchemaTypes.ObjectId, ref: "Account" }],
   contents: [{

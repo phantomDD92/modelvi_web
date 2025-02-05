@@ -17,6 +17,7 @@ const AccountSchema = new Schema({
   params: {},
   owner: { type: SchemaTypes.ObjectId, ref: "Manager" },
   creator: { type: SchemaTypes.ObjectId, ref: "Manager" },
+  chatTeam: { type: SchemaTypes.ObjectId, ref: "ChatTeam" },
   updatedAt: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now },
 });

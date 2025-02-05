@@ -9,9 +9,9 @@ const initialState = {
   contents: [],
   contentsUpdated: false,
   contentModel: undefined,
-  // For Discord List Page
-  discords: [],
-  discordsCount: 0,
+  // For Chat Team Page
+  teams: [],
+  teamsCount: 0,
   // For Account List Page
   accounts: [],
   accountsCount: 0,
@@ -23,7 +23,7 @@ const initialState = {
   schedules: [],
   schedulesCount: 0,
 
-  discordLinks: [],
+  chatTeams: [],
 }
 
 const modelReducer = (state = initialState, action) => {
@@ -39,16 +39,16 @@ const modelReducer = (state = initialState, action) => {
         ...state,
         allModels: action.payload.actors,
       };
-    case ACTIONS.LOAD_DISCORDS:
+    case ACTIONS.LOAD_CHAT_TEAMS:
       return {
         ...state,
-        discords: action.payload.discords,
-        discordsCount: action.payload.discordsCount,
+        teams: action.payload.teams,
+        teamsCount: action.payload.teamsCount,
       };
-    case ACTIONS.LOAD_ALL_DISCORDS:
+    case ACTIONS.LOAD_ALL_CHAT_TEAMS:
       return {
         ...state,
-        discordLinks: action.payload.discords,
+        chatTeams: action.payload.teams,
       };
     case ACTIONS.LOAD_ACCOUNTS:
       return {

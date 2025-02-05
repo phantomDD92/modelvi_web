@@ -2,7 +2,7 @@ import { Modal, Form, Input, Row, Col, InputNumber, DatePicker, Select } from "a
 import moment from "moment";
 import { useEffect } from "react";
 
-const ModelDialog = ({ open, model, discords, onCancel, onCreate, onUpdate }) => {
+const ModelDialog = ({ open, model, onCancel, onCreate, onUpdate }) => {
     const [form] = Form.useForm();
     const layout = {
         labelCol: { span: 8 },
@@ -29,7 +29,7 @@ const ModelDialog = ({ open, model, discords, onCancel, onCreate, onUpdate }) =>
     }
     useEffect(() => {
         if (model) {
-            form.setFieldsValue({ ...model, birthday: moment(model.birthday), discord: model.discord?._id })
+            form.setFieldsValue({ ...model, birthday: moment(model.birthday) })
         } else {
             form.resetFields();
         }
@@ -82,22 +82,6 @@ const ModelDialog = ({ open, model, discords, onCancel, onCreate, onUpdate }) =>
                         </Form.Item>
                     </Col>
                 </Row>
-                <Row gutter={20}>
-                    <Col span={12}>
-                        <Form.Item
-                            name="discord"
-                            label="ChatTeam"
-                            rules={[{ required: true }]}>
-                            <Select
-                                options={discords.map(discord => ({
-                                    label: `${discord.desc}`,
-                                    value: discord._id
-                                }))}
-                            />
-                        </Form.Item>
-                    </Col>
-                </Row>
-
                 {/* <Row>
                     <Col span={24}>
                         <Form.Item labelCol={8} wrapperCol={16} name="description" label="Bio" >

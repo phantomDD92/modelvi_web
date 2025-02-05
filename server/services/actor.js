@@ -7,20 +7,18 @@ const createActor = ({
   birthday,
   birthplace,
   owner,
-  discord
 }) => ActorModel.create({
   number,
   name,
   birthday,
   birthplace,
   owner,
-  discord
 });
 
 
 const updateActor = (
   id,
-  { number, name, birthday, birthplace, owner, discord }
+  { number, name, birthday, birthplace, owner }
 ) =>
   ActorModel.findByIdAndUpdate(id, {
     $set: {
@@ -29,7 +27,6 @@ const updateActor = (
       birthday,
       birthplace,
       owner,
-      discord,
     },
   });
 
@@ -48,7 +45,6 @@ const loadActors = (agency, { page, pageSize }) =>
       .skip((parseInt(page) - 1) * parseInt(pageSize))
       .limit(parseInt(pageSize))
       .populate("owner", "name")
-      .populate("discord", "desc")
       .populate("accounts", "platform alias"),
     ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {})
   ])
@@ -74,10 +70,6 @@ const getCount = (agency) =>
     ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {}),
     ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, updated: true } : { updated: true }),
   ]);
-
-const setDiscord = (id, discord) => ActorModel.findByIdAndUpdate(id, { $set: { discord } });
-
-const clearDiscord = (id) => ActorModel.findByIdAndUpdate(id, { $set: { discord: null } });
 
 const appendContent = (id, params) =>
   ActorModel.findByIdAndUpdate(id, { $push: { contents: params }, $set: { updated: true } });
@@ -135,8 +127,6 @@ const ActorService = {
   findByNumber,
   findById,
   getCount,
-  setDiscord,
-  clearDiscord,
   appendContent,
   deleteContent,
   clearContents,

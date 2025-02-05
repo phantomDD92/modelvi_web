@@ -1,7 +1,7 @@
 import { Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createAccount, deleteAccount, loadAccounts, loadAllModels, setAccountStatus, startAllAccount, stopAllAccount, updateAccount, updateAccountParams } from "@/redux/model/actions";
+import { createAccount, deleteAccount, loadAccounts, loadAllChatTeams, loadAllModels, setAccountStatus, startAllAccount, stopAllAccount, updateAccount, updateAccountParams } from "@/redux/model/actions";
 import { Platform } from "@/utils/const";
 import { createSearchParams, useLocation, useNavigate, useParams } from "react-router-dom";
 import qs from 'query-string';
@@ -48,6 +48,10 @@ export const AccountList = () => {
     }, 60000);
     return () => clearInterval(interval);
   });
+
+  useEffect(() => {
+    dispatch(loadAllChatTeams())
+  }, [loadAllChatTeams])
 
   const handleSetStatus = (account, status) => {
     dispatch(setAccountStatus(account, status, handleReloadData))
@@ -167,6 +171,7 @@ export const AccountList = () => {
         platform={platform}
         account={account}
         models={modelProps.allModels}
+        chatTeams={modelProps.chatTeams}
         onCancel={() => setVisible(false)}
         onCreate={handleCreateAccount}
         onUpdate={handleUpdateAccount}

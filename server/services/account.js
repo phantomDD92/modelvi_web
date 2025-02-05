@@ -1,4 +1,3 @@
-const { default: mongoose } = require("mongoose");
 const { Platform, AdminRole } = require("../config/const");
 const AccountModel = require("../models/account");
 const moment = require('moment');
@@ -10,7 +9,8 @@ const loadAccounts = (agency, platform, { page, pageSize }) =>
       .skip((parseInt(page) - 1) * parseInt(pageSize))
       .limit(parseInt(pageSize))
       .populate("owner", "name")
-      .populate("actor", "name"),
+      .populate("actor", "name")
+      .populate("chatTeam", "name"),
     AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { platform, owner: agency._id } : { platform })
   ])
 
@@ -23,7 +23,7 @@ const loadDisabledAccounts = (agency) =>
 const createAccount = (
   platform,
   actor,
-  { alias, email, password, discord, description, owner, creator, device }
+  { alias, email, password, chatTeam, description, owner, creator, device }
 ) =>
   AccountModel.create({
     platform,
@@ -32,7 +32,7 @@ const createAccount = (
     alias,
     email,
     password,
-    discord,
+    chatTeam,
     description,
     owner,
     device,
@@ -51,7 +51,7 @@ const createAccount = (
 const updateAccount = (
   id,
   actor,
-  { alias, email, password, discord, description, device }
+  { alias, email, password, chatTeam, description, device }
 ) =>
   AccountModel.findByIdAndUpdate(id, {
     $set: {
@@ -61,7 +61,7 @@ const updateAccount = (
       email,
       device,
       password,
-      discord,
+      chatTeam,
       description,
     },
   });
@@ -186,6 +186,9 @@ const updateNumber = (actorId, number) =>
     { $set: { number } }
   );
 
+const setChatTeam = (accountId, teamId) =>
+  ChatTeamModel.findByIdAndUpdate(accountId, { $set: { chatTeam: teamId } })
+
 const AccountService = {
   loadAccounts,
   createAccount,
@@ -217,6 +220,7 @@ const AccountService = {
 
   getStats,
   updateNumber, // update accounts' number for model
+  setChatTeam
 };
 
 module.exports = AccountService;

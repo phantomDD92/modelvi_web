@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { changeAgency, createModel, deleteModel, loadAllDiscords, loadDiscords, loadModels, updateModel, updateProfile } from "@/redux/model/actions";
+import { changeAgency, createModel, deleteModel, loadAllChatTeams, loadModels, updateModel, updateProfile } from "@/redux/model/actions";
 import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
 import qs from 'query-string';
 import ModelTable from "@/components/model/ModelTable";
@@ -27,10 +27,6 @@ export const ModelList = () => {
     setLoading(true);
     dispatch(loadModels({ page, pageSize }, () => setLoading(false)));
   }, [loadModels, page, pageSize])
-
-  useEffect(() => {
-    dispatch(loadAllDiscords());
-  }, [loadAllDiscords])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -121,7 +117,6 @@ export const ModelList = () => {
       <ModelDialog
         open={visible}
         model={model}
-        discords={modelProps.discordLinks}
         onCancel={() => setVisible(false)}
         onCreate={handleCreateModel}
         onUpdate={handleUpdateModel}

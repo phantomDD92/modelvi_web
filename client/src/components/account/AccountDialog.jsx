@@ -2,7 +2,7 @@ import { Platform } from "@/utils/const";
 import { Modal, Form, Input, Select } from "antd";
 import { useEffect } from "react";
 
-const AccountDialog = ({ open, platform, models, account, onCancel, onCreate, onUpdate }) => {
+const AccountDialog = ({ open, platform, models, chatTeams, account, onCancel, onCreate, onUpdate }) => {
     const [form] = Form.useForm();
 
     const handleOkClick = async () => {
@@ -20,7 +20,7 @@ const AccountDialog = ({ open, platform, models, account, onCancel, onCreate, on
     }
     useEffect(() => {
         if (account && open) {
-            form.setFieldsValue({ ...account, actor: account.actor._id })
+            form.setFieldsValue({ ...account, actor: account.actor._id, chatTeam: account.chatTeam?._id })
         } else {
             form.resetFields();
         }
@@ -69,6 +69,15 @@ const AccountDialog = ({ open, platform, models, account, onCancel, onCreate, on
                     label="Password"
                     rules={[{ required: true }]}>
                     <Input />
+                </Form.Item>
+                <Form.Item
+                    name="chatTeam"
+                    label="Chat Team">
+                    <Select
+                        options={chatTeams.map(team => ({
+                            label: team.name,
+                            value: team._id
+                        }))} />
                 </Form.Item>
                 {platform == Platform.FAN &&
                     <Form.Item

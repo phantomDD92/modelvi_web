@@ -70,13 +70,6 @@ export const ModelTable = ({ auth, models, loading, modelsCount, page, pageSize,
             render: value => value.length == 0 ? '-' : <Flex gap="small">{value.map(el => <Tag color="success">{el.platform}</Tag>)}</Flex>
         },
         {
-            key: 'discord',
-            title: 'ChatTeam',
-            dataIndex: 'discord',
-            width: 150,
-            render: value => value?.desc || "-"
-        },
-        {
             key: 'action',
             title: 'Action',
             width: 150,

@@ -17,7 +17,7 @@ const imageUpload = multer({ storage: mediaStorage })
 const authenticate = require("../middleware/auth.js");
 const ActorCtrl = require("../controllers/actor.js");
 const AccountCtrl = require("../controllers/account.js");
-const DiscordCtrl = require("../controllers/discord.js");
+const ChatTeamCtrl = require("../controllers/chatteam.js");
 const DashboardCtrl = require("../controllers/dashboard.js");
 const ProxyCtrl = require("../controllers/proxy.js");
 const ManagerCtrl = require("../controllers/manager.js");
@@ -41,21 +41,21 @@ router.route("/proxy/:id")
   .put(ProxyCtrl.handleSetProxyStatus)
   .delete(ProxyCtrl.handleDeleteProxy);
 
-router.route("/discord_all")
+router.route("/chat_all")
   .all(authenticate)
-  .get(DiscordCtrl.handleLoadAllDiscords)
+  .get(ChatTeamCtrl.handleLoadAllChatTeams)
 
-router.route("/discord")
+router.route("/chat")
   .all(authenticate, checkManager)
-  .get(DiscordCtrl.handleLoadDiscords)
-  .post(DiscordCtrl.handleCreateDiscord)
-  .delete(DiscordCtrl.handleDeleteDiscord)
+  .get(ChatTeamCtrl.handleLoadChatTeams)
+  .post(ChatTeamCtrl.handleCreateChatTeam)
+  .delete(ChatTeamCtrl.handleDeleteChatTeam)
 
-router.route("/discord/:id")
+router.route("/chat/:id")
   .all(authenticate, checkManager)
-  .post(DiscordCtrl.handleAppendActor)
-  .put(DiscordCtrl.handleUpdateDiscord)
-  .delete(DiscordCtrl.handleRemoveActor)
+  .post(ChatTeamCtrl.handleAppendAccount)
+  .put(ChatTeamCtrl.handleUpdateChatTeam)
+  .delete(ChatTeamCtrl.handleRemoveAccount)
 
 // router.route("/setting")
 //   .all(authenticate)

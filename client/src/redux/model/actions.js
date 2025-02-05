@@ -68,61 +68,62 @@ export const changeAgency = (actor, params, callback) => async (dispatch) => {
 //   })
 // };
 
-export const loadAllDiscords = () => async (dispatch) => {
+export const loadAllChatTeams = () => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
-    path: `/discord_all`,
-    action: ACTIONS.LOAD_ALL_DISCORDS,
+    path: `/chat_all`,
+    action: ACTIONS.LOAD_ALL_CHAT_TEAMS,
   });
 };
 
 
-export const loadDiscords = ({ page, pageSize }) => async (dispatch) => {
+export const loadChatTeams = ({ page, pageSize }, callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
-    path: `/discord`,
+    path: `/chat`,
     params: { page, pageSize },
-    action: ACTIONS.LOAD_DISCORDS,
+    action: ACTIONS.LOAD_CHAT_TEAMS,
+    callback
   });
 };
 
-export const createDiscord = (params, callback) => async (dispatch) => {
+export const createChatTeam = (params, callback) => async (dispatch) => {
   await ApiRequest.postAction(dispatch, {
-    path: `/discord`,
+    path: `/chat`,
     data: params,
-    inform: "successfully create discord url",
+    inform: "successfully create chat team",
     callback
   })
 };
 
-export const updateDiscord = (discord, params, callback) => async (dispatch) => {
+export const updateChatTeam = (chatTeam, params, callback) => async (dispatch) => {
   await ApiRequest.putAction(dispatch, {
-    path: `/discord/${discord._id}`,
+    path: `/chat/${chatTeam._id}`,
     data: params,
-    inform: "successfully update discord url",
+    inform: "successfully update chat team",
     callback
   })
 };
 
-export const deleteDiscord = (discord, callback) => async (dispatch) => {
+export const deleteChatTeam = (chatTeam, callback) => async (dispatch) => {
   await ApiRequest.deleteAction(dispatch, {
-    path: `/discord`,
-    data: { id: discord._id },
-    inform: "successfully delete discord url",
+    path: `/chat`,
+    data: { id: chatTeam._id },
+    inform: "successfully delete chat team",
     callback
   })
 };
 
-export const appendModel = (discord, model, callback) => async (dispatch) => {
+export const appendModel = (chatTeam, model, callback) => async (dispatch) => {
   await ApiRequest.postAction(dispatch, {
-    path: `/discord/${discord._id}`,
+    path: `/chat/${chatTeam._id}`,
     data: { model },
     inform: "successfully append model",
     callback
   })
 };
 
-export const removeModel = (discord, model, callback) => async (dispatch) => {
+export const removeModel = (chatTeam, model, callback) => async (dispatch) => {
   await ApiRequest.deleteAction(dispatch, {
-    path: `/discord/${discord._id}`,
+    path: `/chat/${chatTeam._id}`,
     data: { model },
     inform: "successfully remove model",
     callback
