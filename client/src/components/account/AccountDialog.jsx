@@ -82,7 +82,7 @@ const AccountDialog = ({ open, platform, models, chatTeams, account, onCancel, o
                 {platform == Platform.FAN &&
                     <Form.Item
                         name="device"
-                        label="Device Id" >
+                        label="Security Key" >
                         <Input />
                     </Form.Item>
                 }
