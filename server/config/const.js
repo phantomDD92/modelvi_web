@@ -11,12 +11,20 @@ const Platform = {
     F2F: "F2F", // f2f posting
     FAN: "FAN", // fansly posting
     FNS: "FNS", // fancentro storying
+    KNKY: "KNKY", 
+    FANVUE: "FANVUE", 
 }
 
 const PostType = {
     FREE: 1,
     FAN: 2,
     PAID: 3,
+}
+
+const PostMode = {
+    INTERVAL: "interval",
+    OFFSETS: "offsets",
+    LIMITED: "limited",
 }
 
 const StoryType = {
@@ -42,5 +50,6 @@ module.exports = {
     Protocol,
     PostType,
     AdminRole,
-    StoryType
+    StoryType,
+    PostMode,
 }

@@ -17,11 +17,11 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
     const homeProps = useSelector(state => state.home);
 
     useEffect(() => {
-        if (account) {
+        if (open && account) {
             dispatch(loadAgencyComments(account.owner?._id));
             dispatch(loadAgencyUsers(account.owner?._id));
         }
-    }, [account, loadAgencyComments, loadAgencyUsers, dispatch]);
+    }, [open, account, loadAgencyComments, loadAgencyUsers, dispatch]);
 
     const handleOkClick = async () => {
         try {

@@ -71,11 +71,11 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
     }, [open]);
 
     useEffect(() => {
-        if (account) {
+        if (open && account) {
             dispatch(loadAgencyComments(account.owner?._id));
             dispatch(loadAgencyUsers(account.owner?._id));
         }
-    }, [account, loadAgencyComments, loadAgencyUsers, dispatch]);
+    }, [open, account, loadAgencyComments, loadAgencyUsers, dispatch]);
 
     const handlePostingOffsetValidation = (_, value) => {
         try {

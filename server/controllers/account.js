@@ -1,4 +1,4 @@
-const { Platform, AdminRole } = require("../config/const");
+const { Platform, AdminRole, PostMode } = require("../config/const");
 const AccountService = require("../services/account");
 const ActorService = require("../services/actor");
 const ChatTeamService = require("../services/chatteam");
@@ -147,6 +147,14 @@ const handleUpdateParams = async (req, res) => {
         "params.postOffsets": postOffsets,
         "params.commentEnabled": commentEnabled,
         "params.commentInterval": commentInterval,
+      });
+    } else if (account.platform == Platform.KNKY) {
+      const { postInterval, postCount } = params;
+      await AccountService.updateParams(id, {
+        "params.postInterval": postInterval,
+        "params.postCount": postCount,
+        "params.postMode": PostMode.INTERVAL,
+        "params.commentEnabled": false,
       });
     }
     sendResult(res);

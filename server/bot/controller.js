@@ -236,21 +236,23 @@ const handleUpdatePostSetting = async (req, res) => {
       throw new ApiError("unknown account")
     const { params } = account.toJSON();
     const { contents, postOffsets, postMode, postInterval, postStart, postLimit } = params;
-    if (contents.length == 0)
-      throw new ApiError("no contents");
+    let deleteIds = []
+
     // append new post Id and get delete id list
     let postRemains = params.postRemains || [];
     let postCount = params.postCount || 10;
     if (postId && postId != "undefined")
       postRemains.push(postId);
-    let deleteIds = []
     while (postRemains.length > postCount) {
       const deleteId = postRemains.shift();
       deleteIds.push(deleteId);
     }
     // calculate next post index
-    const postContentIndex = params.postContentIndex || 0;
-    let newPostIndex = next ? (postContentIndex + 1) % contents.length : postContentIndex;
+    let newPostIndex = 0;
+    if (contents.length > 0) {
+      const postContentIndex = params.postContentIndex || 0;
+      newPostIndex = next ? (postContentIndex + 1) % contents.length : postContentIndex;
+    }
 
     // calculate next post time
     let postNextTime;
@@ -291,7 +293,11 @@ const handleUpdatePostSetting = async (req, res) => {
     } else {
       postNextTime = moment().add(postInterval || 10, "minute").toDate();
     }
-    await AccountService.updateParams(account, { "params.postNextTime": postNextTime, "params.postContentIndex": newPostIndex, "params.postRemains": postRemains });
+    await AccountService.updateParams(account, {
+      "params.postNextTime": postNextTime,
+      "params.postContentIndex": newPostIndex,
+      "params.postRemains": postRemains
+    });
     sendResult(res, { deleteIds });
   } catch (error) {
     sendError(res, error)

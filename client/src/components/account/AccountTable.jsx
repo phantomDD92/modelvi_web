@@ -173,6 +173,7 @@ const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, 
                         <Radio.Button value={Platform.FNC}>Fancentro</Radio.Button>
                         <Radio.Button value={Platform.FAN}>Fansly</Radio.Button>
                         <Radio.Button value={Platform.FANVUE}>Fanvue</Radio.Button>
+                        <Radio.Button value={Platform.KNKY}>Knky</Radio.Button>
                     </Radio.Group>
                 </Flex>
             }

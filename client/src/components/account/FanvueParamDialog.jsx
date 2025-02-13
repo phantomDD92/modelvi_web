@@ -1,47 +1,29 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
     Modal,
     Form,
-    Input,
-    Radio,
     InputNumber,
-    Switch
 } from "antd";
-import {
-    loadAgencyComments,
-    loadAgencyUsers
-} from "@/redux/dashboard/actions";
+
 import {
     DEFAULT_COMMENT_INTERVAL,
     DEFAULT_POST_COUNT,
     DEFAULT_POST_INTERVAL,
     DEFAULT_POST_MODE,
-    PostMode
+    PostMode,
 } from "@/utils/const";
 
 const FanvueParamDialog = ({ open, account, onCancel, onUpdate }) => {
 
     const [postingMode, setPostingMode] = useState(DEFAULT_POST_MODE);
     const [commentEnabled, setCommentEnabled] = useState(false);
-
     const [form] = Form.useForm();
-    // const dispatch = useDispatch();
-    const homeProps = useSelector(state => state.home);
-
 
     const layout = {
         labelCol: { span: 8 },
         wrapperCol: { span: 16 },
     };
-
-    // useEffect(() => {
-    //     if (account) {
-    //         dispatch(loadAgencyComments(account.owner?._id));
-    //         dispatch(loadAgencyUsers(account.owner?._id));
-    //     }
-    // }, [account, loadAgencyComments, loadAgencyUsers, dispatch]);
 
     const handleOkClick = async () => {
         try {
@@ -68,27 +50,6 @@ const FanvueParamDialog = ({ open, account, onCancel, onUpdate }) => {
         }
     }, [open]);
 
-    const handlePostingOffsetValidation = (_, value) => {
-        try {
-            if (!/^[0-9\,]+$/.test(value))
-                throw new Error("unsupported character")
-            const offsets = value.split(",").map(str => parseInt(str.trim()));
-            for (var i = 0; i < offsets.length; ++i) {
-                if (offsets[i] < 0 || offsets[i] >= 60)
-                    throw new Error("invalid offset value");
-                if (i < (offsets.length - 1) && offsets[i] >= offsets[i + 1]) {
-                    throw new Error("invalid offset sequence");
-                }
-            }
-            return Promise.resolve();
-        } catch (error) {
-            return Promise.reject('invalid offsets format');
-        }
-    }
-
-    const handlePostingMethodChange = (e) => {
-        setPostingMode(e.target.value);
-    }
     return (
         <Modal
             open={open}
@@ -103,27 +64,7 @@ const FanvueParamDialog = ({ open, account, onCancel, onUpdate }) => {
                 <div className="text-lg font-medium ml-3 mb-6">
                     Post Settings
                 </div>
-                {/* <Form.Item label="Posting Method" name="postMode">
-                    <Radio.Group onChange={handlePostingMethodChange}>
-                        <Radio.Button value={PostMode.INTERVAL}>Interval</Radio.Button>
-                        <Radio.Button value={PostMode.OFFSET}>Offsets</Radio.Button>
-                    </Radio.Group>
-                </Form.Item> */}
-                {/* {postingMode == "offset" &&
-                    <Form.Item
-                        name="postOffsets"
-                        label="Posting Offsets"
-                        rules={[
-                            { required: true },
-                            {
-                                message: 'Please input interger(<60) array. ex : 1,21,51',
-                                validator: handlePostingOffsetValidation
-                            }
-                        ]}>
-                        <Input addonAfter="min" />
-                    </Form.Item>
-                } */}
-                {postingMode == "interval" &&
+                {postingMode == PostMode.INTERVAL &&
                     <Form.Item
                         name="postInterval"
                         label="Posting Interval"
@@ -137,32 +78,6 @@ const FanvueParamDialog = ({ open, account, onCancel, onUpdate }) => {
                     rules={[{ required: true }]}>
                     <InputNumber addonAfter="articles" min={1} max={10} />
                 </Form.Item>
-                {/* <div className="flex items-center mb-6 ml-3">
-                    <span className="font-medium text-lg mr-3">Comment Settings</span>
-                    <Switch onChange={value => setCommentEnabled(value)} />
-                </div>
-                <Form.Item
-                    name="commentInterval"
-                    label="Comment Interval"
-                    rules={[{ required: true }]}>
-                    <InputNumber addonAfter="min" min={1} max={600} disabled={!commentEnabled} />
-                </Form.Item>
-                <Form.Item
-                    name="commentBlockLists"
-                    label="Block Users List">
-                    {account?.owner?._id === homeProps.auth._id ?
-                        <Link to={"/comment"}>{homeProps.agencyUsers.filter(user => user.status == "block").length} Users Blocked</Link> :
-                        <span>{homeProps.agencyUsers.filter(user => user.status == "block").length} Users Blocked</span>
-                    }
-                </Form.Item>
-                <Form.Item
-                    name="commentBlockLists"
-                    label="Comments List">
-                    {account?.owner?._id === homeProps.auth._id ?
-                        <Link to={"/comment"}>{homeProps.agencyComments.length} Comments Available</Link> :
-                        <span>{homeProps.agencyComments.length} Comments Available</span>
-                    }
-                </Form.Item> */}
             </Form>
         </Modal>
     )

@@ -6,12 +6,15 @@ import { Platform } from "@/utils/const";
 import { createSearchParams, useLocation, useNavigate, useParams } from "react-router-dom";
 import qs from 'query-string';
 
-import AccountTable from "@/components/account/AccountTable";
-import AccountDialog from "@/components/account/AccountDialog";
+import {
+  AccountTable,
+  AccountDialog,
+} from "@/components/account";
 import F2FParamDialog from "@/components/account/F2FParamDialog";
 import FancentroParamDialog from "@/components/account/FNCParamDialog";
 import FANParamDialog from "@/components/account/FANParamDialog";
 import FanvueParamDialog from "@/components/account/FanvueParamDialog";
+import KnkyParamDialog from "@/components/account/KnkyParamDialog";
 
 export const AccountList = () => {
 
@@ -20,6 +23,7 @@ export const AccountList = () => {
   const [fncShow, setFNCShow] = useState(false);
   const [fanShow, setFANShow] = useState(false);
   const [fanvueShow, setFanvueShow] = useState(false);
+  const [knkyShow, setKnkyShow] = useState(false);
 
   const [account, setAccount] = useState();
   const [loading, setLoading] = useState(false);
@@ -101,6 +105,9 @@ export const AccountList = () => {
       case Platform.FANVUE:
         setFanvueShow(true);
         break;
+      case Platform.KNKY:
+        setKnkyShow(true);
+        break;
       default:
         break;
     }
@@ -116,6 +123,7 @@ export const AccountList = () => {
     setFNCShow(false);
     setFANShow(false);
     setFanvueShow(false);
+    setKnkyShow(false);
     setVisible(false);
     setLoading(true);
     dispatch(loadAccounts(platform, { page, pageSize }, () => setLoading(false)))
@@ -198,6 +206,12 @@ export const AccountList = () => {
         open={fanvueShow}
         account={account}
         onCancel={() => setFanvueShow(false)}
+        onUpdate={handleUpdateParams}
+      />
+      <KnkyParamDialog
+        open={knkyShow}
+        account={account}
+        onCancel={() => setKnkyShow(false)}
         onUpdate={handleUpdateParams}
       />
     </div>

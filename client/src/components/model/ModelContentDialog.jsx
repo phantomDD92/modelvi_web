@@ -121,6 +121,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                         { label: 'F2F', value: Platform.F2F },
                         { label: 'Fansly', value: Platform.FAN },
                         { label: 'Fanvue', value: Platform.FANVUE },
+                        { label: 'Knky', value: Platform.KNKY },
                         { label: 'Fancentro', value: Platform.FNC },
                         { label: 'Fancentro Story', value: Platform.FNS },
                     ]} onChange={handlePlatformsChange} />

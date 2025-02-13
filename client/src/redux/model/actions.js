@@ -172,7 +172,7 @@ export const updateAccountParams = (platform, account, params, callback) => asyn
   await ApiRequest.postAction(dispatch, {
     path: `/account/${platform}/${account._id}`,
     data: params,
-    inform: "successfully update account params.",
+    inform: "successfully update account parameters.",
     callback
   })
 }
