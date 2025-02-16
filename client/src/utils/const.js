@@ -19,6 +19,7 @@ export const Platform = {
     FAN: "FAN",
     FANVUE: "FANVUE",
     FNS: "FNS", // for fancentro story
+    KNKY: "KNKY",
 }
 
 export const PostType = {
