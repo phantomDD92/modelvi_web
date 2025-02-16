@@ -73,7 +73,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                 setPreviewName(preview.name);
                 previews = [preview.name];
             }
-            form.setFieldsValue({ medias, previews, platforms, tags: postTags.map(tag => `#${tag}`).join(" "), ...params })
+            form.setFieldsValue({ medias, previews, platforms, tags: (postTags || []).map(tag => `#${tag}`).join(" "), ...params })
         } else {
             form.resetFields();
             setMediaName();
