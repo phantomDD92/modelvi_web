@@ -18,7 +18,6 @@ const OwnerDialog = ({ open, model, onCancel, onUpdate }) => {
     }
     useEffect(() => {
         if (model && open) {
-            console.log(model);
             form.setFieldsValue({ agency: model.owner?._id })
         } else {
             form.resetFields();

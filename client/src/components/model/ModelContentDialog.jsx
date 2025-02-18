@@ -1,7 +1,7 @@
-import { Button, Upload, Modal, Form, Input, Checkbox, Flex, Radio } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { Platform, SERVER_PATH, StoryType } from "@/utils/const";
+import { Button, Upload, Modal, Form, Input, Checkbox, Flex, Radio, InputNumber } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { KnkyStoryType, Platform, SERVER_PATH, StoryType } from "@/utils/const";
 import Media from "../common/Media";
 
 const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
@@ -11,6 +11,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
     const [previewName, setPreviewName] = useState();
     const [previewType, setPreviewType] = useState();
     const [platforms, setPlatforms] = useState([]);
+    const [knkyStoryType, setKnkyStoryType] = useState();
 
     const handleMediaChange = ({ file }) => {
         if (file.status == 'done') {
@@ -37,14 +38,18 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
     const handleOkClick = async () => {
         try {
             await form.validateFields();
-            const { medias, previews, tags, platforms, story, ...params } = form.getFieldsValue();
-            const postTags = tags.replaceAll("#", " ").trim().split(/\s+/);
+            const { medias, previews, tags, platforms, ...params } = form.getFieldsValue();
+            let postTags = [];
+            const tagsStr = tags.replaceAll("#", " ").trim()
+            if (tagsStr != "") {
+                postTags = tagsStr.split(/\s+/);
+            }
             let media = [{ name: mediaName, mode: mediaType }];
             let preview;
             if (previews && previews.length > 0) {
                 preview = { name: previewName, mode: previewType }
             }
-            onUpdate({ media, preview, postTags, platforms, story: platforms.includes(Platform.FNS) ? story : StoryType.NONE, ...params });
+            onUpdate({ media, preview, postTags, platforms, ...params });
         } catch (e) {
             console.error(e);
         }
@@ -52,7 +57,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
 
     useEffect(() => {
         if (open && content) {
-            const { image, platforms, media, preview, postTags, ...params } = content;
+            const { image, platforms, media, preview, postTags, knkyStoryType, ...params } = content;
             setPlatforms(platforms);
             let medias = [];
             let previews = [];
@@ -73,13 +78,23 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                 setPreviewName(preview.name);
                 previews = [preview.name];
             }
-            form.setFieldsValue({ medias, previews, platforms, tags: (postTags || []).map(tag => `#${tag}`).join(" "), ...params })
+            knkyStoryType && setKnkyStoryType(knkyStoryType);
+            form.setFieldsValue({
+                medias,
+                previews,
+                platforms,
+                knkyStoryType: knkyStoryType || KnkyStoryType.NONE,
+                tags: (postTags || []).map(tag => `#${tag}`).join(" "),
+                ...params
+            })
         } else {
             form.resetFields();
             setMediaName();
             setMediaType();
+            setPlatforms([]);
             setPreviewName();
             setPreviewType();
+            setKnkyStoryType(StoryType.NONE)
         }
     }, [content, open]);
 
@@ -95,8 +110,11 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
         return platforms.length == 1 && platforms[0] == Platform.FAN;
     }
 
-    const isFancentroStory = () => {
-        return platforms.includes(Platform.FNS);
+    const isFancentro = () => {
+        return platforms.includes(Platform.FNC);
+    }
+    const isKnky = () => {
+        return platforms.includes(Platform.KNKY);
     }
 
     const handlePlatformsChange = (value) => {
@@ -112,28 +130,66 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
             onCancel={onCancel}>
             <Form
                 form={form}
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 20 }}
                 initialValues={{
                     tags: "",
-                    folder: 'AAA'
+                    folder: 'AAA',
+                    story: StoryType.NONE,
+                    knkyStoryType: KnkyStoryType.NONE,
+                    knkyStoryPrice: 5,
                 }}>
+                {/* <Form.Item name="platforms" label="Platforms" rules={[{ required: true }]}>
+                    <Select
+                        mode="multiple"
+                        allowClear
+                        options={[
+                            { label: 'F2F', value: Platform.F2F },
+                            { label: 'Fancentro', value: Platform.FNC },
+                            { label: 'Fansly', value: Platform.FAN },
+                            { label: 'Fanvue', value: Platform.FANVUE },
+                            { label: 'Knky', value: Platform.KNKY },
+                        ]} onChange={handlePlatformsChange} />
+                </Form.Item> */}
                 <Form.Item name="platforms" label="Platforms" rules={[{ required: true }]}>
                     <Checkbox.Group options={[
                         { label: 'F2F', value: Platform.F2F },
+                        { label: 'Fancentro', value: Platform.FNC },
                         { label: 'Fansly', value: Platform.FAN },
                         { label: 'Fanvue', value: Platform.FANVUE },
                         { label: 'Knky', value: Platform.KNKY },
-                        { label: 'Fancentro', value: Platform.FNC },
-                        { label: 'Fancentro Story', value: Platform.FNS },
                     ]} onChange={handlePlatformsChange} />
-
                 </Form.Item>
-                {isFancentroStory() &&
-                    <Form.Item name="story" label="Story Type">
-                        <Radio.Group buttonStyle="solid" optionType="button" options={[
-                            { label: 'Public', value: StoryType.PUBLIC },
-                            { label: 'Followers', value: StoryType.FOLLOWER },
-                            { label: 'Subscribers', value: StoryType.SUBSCRIBER },
-                        ]} defaultValue={StoryType.PUBLIC} />
+                {isFancentro() &&
+                    <Form.Item name="story" label="Fancentro Story">
+                        <Radio.Group
+                            buttonStyle="solid"
+                            optionType="button"
+                            options={[
+                                { label: 'None', value: StoryType.NONE },
+                                { label: 'Public', value: StoryType.PUBLIC },
+                                { label: 'Followers', value: StoryType.FOLLOWER },
+                                { label: 'Subscribers', value: StoryType.SUBSCRIBER },
+                            ]} />
+                    </Form.Item>
+                }
+                {isKnky() &&
+                    <Form.Item name="knkyStoryType" label="Knky Story">
+                        <Radio.Group
+                            buttonStyle="solid"
+                            optionType="button"
+                            options={[
+                                { label: 'None', value: StoryType.NONE },
+                                { label: 'Public', value: StoryType.PUBLIC },
+                                { label: 'Prime', value: StoryType.FOLLOWER },
+                                { label: 'PayToView', value: StoryType.SUBSCRIBER },
+                            ]}
+                            onChange={(e) => setKnkyStoryType(e.target.value)} />
+                    </Form.Item>
+                }
+                {isKnky() && knkyStoryType == KnkyStoryType.PAYTOVIEW &&
+                    <Form.Item name="knkyStoryPrice" label="PayToView Price">
+                        <InputNumber min={0} />
                     </Form.Item>
                 }
                 <Form.Item

@@ -19,6 +19,8 @@ const ActorSchema = new Schema({
     media: [{ name: String, mode: String, uuid: String }],  // photo or video
     preview: { name: String, mode: String, uuid: String }, // preview video for fansly only
     postTags: [String],  // tags array
+    knkyStoryType: Number,
+    knkyStoryPrice: Number,
   }],
   updated: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },

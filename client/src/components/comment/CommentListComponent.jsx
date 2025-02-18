@@ -1,5 +1,5 @@
-import { Button, Card, List, Flex, Input } from "antd";
 import React, { useState } from "react";
+import { Button, Card, List, Flex, Input } from "antd";
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 
 const CommentListComponent = ({ comments, onAdd, onDelete }) => {

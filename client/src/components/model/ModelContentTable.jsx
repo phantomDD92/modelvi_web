@@ -1,46 +1,74 @@
 import { Card, Table, Tooltip, Popconfirm, Button, Flex, Image, Tag } from "antd";
 import { DeleteOutlined, PlusOutlined, UploadOutlined, RollbackOutlined, EditOutlined } from "@ant-design/icons";
-import { AdminRole, Platform, SERVER_PATH, StoryType } from "@/utils/const";
+import { KnkyStoryType, Platform, SERVER_PATH, StoryType } from "@/utils/const";
 import Media from "../common/Media";
 
-export const ModelContentTable = ({ auth, loading, model, onDelete, onCreate, onEdit, onBack, onClear, onSync }) => {
-    const hasPermission = (auth, record) => {
-        if (auth.role == AdminRole.MANAGER)
-            return true
-        if (record.owner && record.owner._id == auth._id)
-            return true
-        return false
+export const ModelContentTable = ({ loading, model, onDelete, onCreate, onEdit, onBack, onClear, onSync }) => {
+
+    const isFancentroStory = (record) => {
+        return record.platforms && record.platforms.includes(Platform.FNC) && record.story != StoryType.NONE
     }
 
-    const storyTag = (record) => {
-        let mode = "";
-        if (record.platforms && record.platforms.includes(Platform.FNS)) {
-            console.log("record : ", record)
-            if (record.story == StoryType.FOLLOWER) {
-                mode = "FNC Story - Followers";
-            } else if (record.story == StoryType.SUBSCRIBER) {
-                mode = "FNC Story - Subscribers";
-            } else {
-                mode = "FNC Story - Public";
-            }
-            return <Tag color="error">{mode}</Tag>
+    const isKnkyStory = (record) => {
+        return record.platforms && record.platforms.includes(Platform.KNKY) && record.knkyStoryType
+    }
+
+    const getFancentroStoryTag = (record) => {
+        switch (record.story) {
+            case StoryType.PUBLIC:
+                return <Tag color="error">FNC Story - Public</Tag>
+            case StoryType.FOLLOWER:
+                return <Tag color="error">FNC Story - Followers</Tag>
+            case StoryType.SUBSCRIBER:
+                return <Tag color="error">FNC Story - Subscribers</Tag>
+            default:
+                break;
+        }   
+        return ""
+    }
+
+    const getKnkyStoryTag = (record) => {
+        switch (record.knkyStoryType) {
+            case KnkyStoryType.PUBLIC:
+                return <Tag color="error">Knky Story - Public</Tag>
+            case KnkyStoryType.PRIME:
+                return <Tag color="error">Knky Story - Prime</Tag>
+            case KnkyStoryType.PAYTOVIEW:
+                return <Tag color="error">Knky Story - PayToView</Tag>
+            default:
+                break;
+        }   
+        return ""
+    }
+
+    const getPlatformTag = (platform) => {
+        switch(platform) {
+            case Platform.F2F:
+                return <Tag key={platform} color="processing">F2F</Tag>;
+            case Platform.FNC:
+                return <Tag key={platform} color="processing">Fancentro</Tag>;
+            case Platform.FAN:
+                return <Tag key={platform} color="processing">Fansly</Tag>;
+            case Platform.FANVUE:
+                return <Tag key={platform} color="processing">Fanvue</Tag>;
+            case Platform.KNKY:
+                return <Tag key={platform} color="processing">Knky</Tag>;
+            default:
+                break
         }
         return ""
     }
+
     const columns = [
         {
             key: 'platforms',
             title: 'Platforms',
             dataIndex: 'platforms',
-            width: 200,
-            render: (value, record) => value && value.length > 0 ?
+            render: (value, record) =>
                 <Flex gap="4px 0" wrap>
-                    {value.filter(tag => tag != Platform.FNS).map(tag => <Tag key={tag} color="processing">{tag}</Tag>)}
-                    {storyTag(record)}
-                </Flex>
-                : <Flex gap="4px 0" wrap>
-                    <Tag key={Platform.F2F} color="processing">{Platform.F2F}</Tag>
-                    <Tag key={Platform.FNC} color="processing">{Platform.FNC}</Tag>
+                    {value.filter(tag => tag != Platform.FNS).map(tag => getPlatformTag(tag))}
+                    {isFancentroStory(record) && getFancentroStoryTag(record)}
+                    {isKnkyStory(record) && getKnkyStoryTag(record)}
                 </Flex>
         },
         {
@@ -66,11 +94,13 @@ export const ModelContentTable = ({ auth, loading, model, onDelete, onCreate, on
         {
             key: 'title',
             title: 'Title',
+            width: 450,
             dataIndex: 'title',
         },
         {
             key: 'tags',
             title: 'Tags',
+            width: 200,
             dataIndex: 'tags',
             render: (value, record) => record.postTags && record.postTags.length > 0 ? record.postTags.map(tag => `#${tag}`).join(" ") : (record.tags || "-")
         },
@@ -78,7 +108,7 @@ export const ModelContentTable = ({ auth, loading, model, onDelete, onCreate, on
             key: 'folder',
             title: 'Folder',
             dataIndex: 'folder',
-            width: 100,
+            width: 80,
             render: value => value || "-"
         },
         {

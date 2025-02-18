@@ -11,12 +11,6 @@ const SiderBar = () => {
         <Layout.Sider
             breakpoint="lg"
             collapsedWidth="0"
-            // onBreakpoint={(broken) => {
-            //     console.log(broken);
-            // }}
-            // onCollapse={(collapsed, type) => {
-            //     console.log(collapsed, type);
-            // }}
         >
             <div className="h-16 flex items-center justify-center">
                 <span className="text-white text-3xl">Model<b>VI</b></span>

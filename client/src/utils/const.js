@@ -29,11 +29,20 @@ export const PostType = {
     PAID: 4,
 }
 
+// fancentro story type
 export const StoryType = {
     NONE: 0,
     PUBLIC: 1,
     FOLLOWER: 2,
     SUBSCRIBER: 4,
+};
+
+// knky story type
+export const KnkyStoryType = {
+    NONE: 0,
+    PUBLIC: 1,
+    PRIME: 2,
+    PAYTOVIEW: 4,
 };
 
 export const AdminRole = {

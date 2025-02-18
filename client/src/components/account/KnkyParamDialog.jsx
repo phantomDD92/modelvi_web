@@ -40,13 +40,13 @@ const KnkyParamDialog = ({ open, account, onCancel, onUpdate }) => {
     return (
         <Modal
             open={open}
-            title={"Fanvue Account Setting"}
+            title={"Knky Account Setting"}
             onOk={handleOkClick}
             onCancel={onCancel}>
             <Form
                 {...layout}
                 form={form}
-                name="fanvue-setting"
+                name="knky-setting"
             >
                 <div className="text-lg font-medium ml-3 mb-6">
                     Post Settings
