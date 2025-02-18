@@ -20,10 +20,10 @@ const SiderBar = () => {
                 theme="dark"
                 mode="inline"
                 defaultSelectedKeys={[currentKey]}
-                onSelect={({item}) => {
+                onSelect={({ item }) => {
                     navigate(item.props.link);
                 }}
-                items={routes.filter(route => route.mode === "main" && (!route.visible || route.visible(homeProps.auth)))} />
+                items={routes.filter(route => route.mode === "main" && (!route.visible || route.visible(homeProps.auth))).map(({ visible, ...data }) => ({ ...data }))} />
         </Layout.Sider>
     )
 }

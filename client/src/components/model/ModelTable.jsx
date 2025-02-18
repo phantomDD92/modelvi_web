@@ -1,7 +1,7 @@
 import { Card, Table, Button, Flex, Tag, Avatar, Dropdown } from "antd";
 import { DeleteOutlined, EditOutlined, UserOutlined, UserAddOutlined, ReadOutlined, SolutionOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { AdminRole } from "@/utils/const";
+import { AdminRole, Platform } from "@/utils/const";
 
 export const ModelTable = ({ auth, models, loading, modelsCount, page, pageSize, onPageChange, onAgencyChange, onDelete, onCreate, onEdit, onContent, onProfile }) => {
     const hasPermission = (auth, record) => {
@@ -13,6 +13,24 @@ export const ModelTable = ({ auth, models, loading, modelsCount, page, pageSize,
     }
     const isAdmin = (auth) => {
         return auth.role == AdminRole.MANAGER;
+    }
+
+    const getPlatformTag = (platform) => {
+        switch (platform) {
+            case Platform.F2F:
+                return <Tag key={platform} color="processing">F2F</Tag>;
+            case Platform.FNC:
+                return <Tag key={platform} color="processing">Fancentro</Tag>;
+            case Platform.FAN:
+                return <Tag key={platform} color="processing">Fansly</Tag>;
+            case Platform.FANVUE:
+                return <Tag key={platform} color="processing">Fanvue</Tag>;
+            case Platform.KNKY:
+                return <Tag key={platform} color="processing">Knky</Tag>;
+            default:
+                break
+        }
+        return ""
     }
 
     const columns = [
@@ -61,13 +79,13 @@ export const ModelTable = ({ auth, models, loading, modelsCount, page, pageSize,
             title: 'Synced',
             dataIndex: 'updated',
             width: 100,
-            render: value => value ? <Tag color="error">No</Tag> : <Tag color="processing">Yes</Tag>
+            render: value => value ? <Tag color="error">No</Tag> : <Tag color="success">Yes</Tag>
         },
         {
             key: 'accounts',
             title: 'Accounts',
             dataIndex: 'accounts',
-            render: value => value.length == 0 ? '-' : <Flex gap="small">{value.map(el => <Tag color="success">{el.platform}</Tag>)}</Flex>
+            render: value => value.length == 0 ? '-' : <Flex gap="small">{value.map(el => getPlatformTag(el.platform))}</Flex>
         },
         {
             key: 'action',

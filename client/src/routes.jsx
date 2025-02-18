@@ -29,7 +29,7 @@ const routes = [
         mode: "main"
     },
     {
-        key: "model",
+        key: "content",
         path: "/model/:modelId",
         label: "Model Content",
         icon: <SolutionOutlined />,

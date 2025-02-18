@@ -9,10 +9,11 @@ const LogService = require('../services/log');
 const ActionService = require('../services/action');
 const moment = require('moment');
 const ActorService = require('../services/actor');
-const { DEFAULT_FOLLOW_INTERVAL, DEFAULT_COMMENT_INTERVAL } = require('../utils/const');
+const { DEFAULT_FOLLOW_INTERVAL, DEFAULT_COMMENT_INTERVAL, DEFAULT_STORY_INTERVAL, DEFAULT_STORY_OFFSETS, DEFAULT_POST_OFFSETS } = require('../utils/const');
 const { default: mongoose } = require('mongoose');
 const CommentService = require('../services/comment');
 const UserService = require('../services/user');
+const { PostMode } = require('../config/const');
 
 const handleLoginAccount = async (req, res) => {
   try {
@@ -150,7 +151,7 @@ const handleUpdateContents = async (req, res) => {
       throw new ApiError("unknown account")
     const actor = await ActorService.findById(account.actor._id);
     if (!actor)
-      throw new ApiError("unknown actor");
+      throw new ApiError("unknown model");
     const actorJson = actor.toJSON();
     const contents = actorJson.contents.filter(content => content.platforms.includes(account.platform));
     await AccountService.clearContents(req.bot.id);
@@ -192,13 +193,33 @@ const handleUpdateFollowSetting = async (req, res) => {
 
 const handleUpdateStorySetting = async (req, res) => {
   try {
+    const { index } = req.body;
     const account = await AccountService.findById(req.bot.id);
     if (!account)
       throw new ApiError("unknown account")
     const accountJson = account.toJSON();
-    const { storyInterval } = accountJson.params;
-    const storyNextTime = moment().add(storyInterval || DEFAULT_STORY_INTERVAL, "minute").toDate();
-    await AccountService.updateParams(account, { "params.storyNextTime": storyNextTime });
+    const storyMode = accountJson.params?.storyMode || PostMode.INTERVAL;
+    const storyInterval = accountJson.params?.storyInterval || DEFAULT_STORY_INTERVAL;
+    let offsets = accountJson.params?.storyOffsets || DEFAULT_STORY_OFFSETS;
+    let storyNextTime;
+    if (storyMode == PostMode.OFFSETS) {
+      const currentTime = moment();
+      const currentMinute = currentTime.minute()
+      let storyNextOffset = offsets[0];
+      for (let offset of offsets) {
+        if (offset > currentMinute) {
+          storyNextOffset = offset;
+          break;
+        }
+      }
+      if (storyNextOffset < currentMinute) {
+        storyNextOffset += 60
+      }
+      storyNextTime = currentTime.add(storyNextOffset - currentMinute, "minute").toDate();
+    } else {
+      storyNextTime = moment().add(storyInterval, "minute").toDate();
+    }
+    await AccountService.updateParams(account, { "params.storyNextTime": storyNextTime, "params.storyIndex": index });
     sendResult(res);
   } catch (error) {
     sendError(res, error)
@@ -256,7 +277,7 @@ const handleUpdatePostSetting = async (req, res) => {
 
     // calculate next post time
     let postNextTime;
-    let offsets = postOffsets | [1, 21, 51];
+    let offsets = postOffsets || DEFAULT_POST_OFFSETS;
     if (postMode == "offsets") {
       const currentTime = moment();
       const currentMinute = currentTime.minute()

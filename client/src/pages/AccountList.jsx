@@ -1,20 +1,19 @@
-import { Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createAccount, deleteAccount, loadAccounts, loadAllChatTeams, loadAllModels, setAccountStatus, startAllAccount, stopAllAccount, updateAccount, updateAccountParams } from "@/redux/model/actions";
-import { Platform } from "@/utils/const";
 import { createSearchParams, useLocation, useNavigate, useParams } from "react-router-dom";
 import qs from 'query-string';
-
+import { Modal } from "antd";
+import { createAccount, deleteAccount, loadAccounts, loadAllChatTeams, loadAllModels, setAccountStatus, startAllAccount, stopAllAccount, updateAccount, updateAccountParams } from "@/redux/model/actions";
 import {
   AccountTable,
   AccountDialog,
+  AccountParamDialog
 } from "@/components/account";
 import F2FParamDialog from "@/components/account/F2FParamDialog";
 import FancentroParamDialog from "@/components/account/FNCParamDialog";
 import FANParamDialog from "@/components/account/FANParamDialog";
 import FanvueParamDialog from "@/components/account/FanvueParamDialog";
-import KnkyParamDialog from "@/components/account/KnkyParamDialog";
+import { Platform } from "@/utils/const";
 
 export const AccountList = () => {
 
@@ -24,15 +23,16 @@ export const AccountList = () => {
   const [fanShow, setFANShow] = useState(false);
   const [fanvueShow, setFanvueShow] = useState(false);
   const [knkyShow, setKnkyShow] = useState(false);
-
   const [account, setAccount] = useState();
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
   const dispatch = useDispatch()
   const location = useLocation();
+  const { platform } = useParams()
+  
   const page = parseInt(qs.parse(location.search).page) || 1;
   const pageSize = parseInt(qs.parse(location.search).size) || 10;
-  const { platform } = useParams()
   const modelProps = useSelector(state => state.model)
   const homeProps = useSelector(state => state.home)
 
@@ -208,7 +208,7 @@ export const AccountList = () => {
         onCancel={() => setFanvueShow(false)}
         onUpdate={handleUpdateParams}
       />
-      <KnkyParamDialog
+      <AccountParamDialog
         open={knkyShow}
         account={account}
         onCancel={() => setKnkyShow(false)}

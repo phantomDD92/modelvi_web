@@ -149,13 +149,7 @@ const handleUpdateParams = async (req, res) => {
         "params.commentInterval": commentInterval,
       });
     } else if (account.platform == Platform.KNKY) {
-      const { postInterval, postCount } = params;
-      await AccountService.updateParams(id, {
-        "params.postInterval": postInterval,
-        "params.postCount": postCount,
-        "params.postMode": PostMode.INTERVAL,
-        "params.commentEnabled": false,
-      });
+      await AccountService.updateParams(id, { params });
     }
     sendResult(res);
   } catch (error) {
