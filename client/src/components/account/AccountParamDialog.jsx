@@ -146,7 +146,7 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
                     <>
                         <div className="flex items-center mb-6 ml-3">
                             <span className="font-medium text-lg mr-3">Story Settings</span>
-                            <Switch onChange={value => setStoryEnabled(value)} />
+                            <Switch value={storyEnabled} onChange={value => setStoryEnabled(value)} />
                         </div>
                         <Form.Item label="Story Method" name="storyMode">
                             <Radio.Group onChange={e => setStoryMode(e.target.value)} disabled={!storyEnabled}>

@@ -257,17 +257,15 @@ const handleUpdatePostSetting = async (req, res) => {
       throw new ApiError("unknown account")
     const { params } = account.toJSON();
     const { contents, postOffsets, postMode, postInterval, postStart, postLimit } = params;
-    let deleteIds = []
-
     // append new post Id and get delete id list
     let postRemains = params.postRemains || [];
     let postCount = params.postCount || 10;
     if (postId && postId != "undefined")
       postRemains.push(postId);
-    while (postRemains.length > postCount) {
-      const deleteId = postRemains.shift();
-      deleteIds.push(deleteId);
-    }
+    // while (postRemains.length > postCount) {
+    //   const deleteId = postRemains.shift();
+    //   deleteIds.push(deleteId);
+    // }
     // calculate next post index
     let newPostIndex = 0;
     if (contents.length > 0) {
@@ -319,7 +317,7 @@ const handleUpdatePostSetting = async (req, res) => {
       "params.postContentIndex": newPostIndex,
       "params.postRemains": postRemains
     });
-    sendResult(res, { deleteIds });
+    sendResult(res);
   } catch (error) {
     sendError(res, error)
   }

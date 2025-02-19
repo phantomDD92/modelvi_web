@@ -82,12 +82,18 @@ const getCount = (agency) =>
     AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.F2F } : { platform: Platform.F2F }),
     AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FNC } : { platform: Platform.FNC }),
     AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FAN } : { platform: Platform.FAN }),
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FANVUE } : { platform: Platform.FANVUE }),
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.KNKY } : { platform: Platform.KNKY }),
     AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.F2F, status: false } : { platform: Platform.F2F, status: false }),
     AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FNC, status: false } : { platform: Platform.FNC, status: false }),
     AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FAN, status: false } : { platform: Platform.FAN, status: false }),
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FANVUE, status: false } : { platform: Platform.FANVUE, status: false }),
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.KNKY, status: false } : { platform: Platform.KNKY, status: false }),
     AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.F2F, updatedAt: { $gte: moment().subtract(10, 'minute').toDate() } } : { platform: Platform.F2F, updatedAt: { $gte: moment().subtract(10, 'minute').toDate() } }),
     AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FNC, updatedAt: { $gte: moment().subtract(10, 'minute').toDate() } } : { platform: Platform.FNC, updatedAt: { $gte: moment().subtract(10, 'minute').toDate() } }),
     AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FAN, updatedAt: { $gte: moment().subtract(10, 'minute').toDate() } } : { platform: Platform.FAN, updatedAt: { $gte: moment().subtract(10, 'minute').toDate() } }),
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.FANVUE, updatedAt: { $gte: moment().subtract(10, 'minute').toDate() } } : { platform: Platform.FANVUE, updatedAt: { $gte: moment().subtract(10, 'minute').toDate() } }),
+    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id, platform: Platform.KNKY, updatedAt: { $gte: moment().subtract(10, 'minute').toDate() } } : { platform: Platform.KNKY, updatedAt: { $gte: moment().subtract(10, 'minute').toDate() } }),
   ]);
 
 const updateParams = (accountId, params) =>

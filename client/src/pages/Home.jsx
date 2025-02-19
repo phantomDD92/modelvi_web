@@ -113,6 +113,36 @@ export const Home = () => {
             </Row>
           </Card>
         </Col>
+        <Col md={8} sm={12}>
+          <Card>
+            <Row gutter={16}>
+              <Col span={8}>
+                <Statistic title="Fanvue Accounts" loading={loading} value={homeProps.stats.fanvueCount} prefix={<UserOutlined />} />
+              </Col>
+              <Col span={8}>
+                <Statistic title="Fanvue Runnings" loading={loading} value={homeProps.stats.fanvueRunningCount} prefix={<UserSwitchOutlined />} />
+              </Col>
+              <Col span={8}>
+                <Statistic title="Fanvue Disables" loading={loading} value={homeProps.stats.fanvueDisabledCount} prefix={<UserDeleteOutlined />} />
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+        <Col md={8} sm={12}>
+          <Card>
+            <Row gutter={16}>
+              <Col span={8}>
+                <Statistic title="Knky Accounts" loading={loading} value={homeProps.stats.knkyCount} prefix={<UserOutlined />} />
+              </Col>
+              <Col span={8}>
+                <Statistic title="Knky Runnings" loading={loading} value={homeProps.stats.knkyRunningCount} prefix={<UserSwitchOutlined />} />
+              </Col>
+              <Col span={8}>
+                <Statistic title="Knky Disables" loading={loading} value={homeProps.stats.knkyDisabledCount} prefix={<UserDeleteOutlined />} />
+              </Col>
+            </Row>
+          </Card>
+        </Col>
       </Row>
       <Row className="mt-8">
         <DisabledAccountTable
