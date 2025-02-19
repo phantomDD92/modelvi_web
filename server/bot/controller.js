@@ -251,7 +251,7 @@ const handleUpdateCommentSetting = async (req, res) => {
 
 const handleUpdatePostSetting = async (req, res) => {
   try {
-    const { next, postId } = req.body;
+    const { next, postId, deleteIds } = req.body;
     const account = await AccountService.findById(req.bot.id);
     if (!account)
       throw new ApiError("unknown account")
@@ -259,13 +259,10 @@ const handleUpdatePostSetting = async (req, res) => {
     const { contents, postOffsets, postMode, postInterval, postStart, postLimit } = params;
     // append new post Id and get delete id list
     let postRemains = params.postRemains || [];
-    let postCount = params.postCount || 10;
+    if (deleteIds)
+      postRemains = postRemains.filter(post => !deleteIds.includes(post));
     if (postId && postId != "undefined")
       postRemains.push(postId);
-    // while (postRemains.length > postCount) {
-    //   const deleteId = postRemains.shift();
-    //   deleteIds.push(deleteId);
-    // }
     // calculate next post index
     let newPostIndex = 0;
     if (contents.length > 0) {
