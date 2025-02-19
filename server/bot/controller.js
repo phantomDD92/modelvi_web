@@ -317,7 +317,7 @@ const handleUpdatePostSetting = async (req, res) => {
       "params.postContentIndex": newPostIndex,
       "params.postRemains": postRemains
     });
-    sendResult(res);
+    sendResult(res, { deleteIds:[] });
   } catch (error) {
     sendError(res, error)
   }
