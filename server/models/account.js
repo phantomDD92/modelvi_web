@@ -15,6 +15,7 @@ const AccountSchema = new Schema({
   lastError: { type: String, default: '' },
   description: { type: String, default: '' },
   params: {},
+  failures: { type: Number, default: 0 },
   owner: { type: SchemaTypes.ObjectId, ref: "Manager" },
   creator: { type: SchemaTypes.ObjectId, ref: "Manager" },
   chatTeam: { type: SchemaTypes.ObjectId, ref: "ChatTeam" },

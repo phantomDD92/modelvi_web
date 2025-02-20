@@ -99,6 +99,9 @@ const getCount = (agency) =>
 const updateParams = (accountId, params) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: params });
 
+const updateParameter = (accountId, params) =>
+  AccountModel.findByIdAndUpdate(accountId, params);
+
 const syncContents = (actorId) =>
   AccountModel.updateMany({ actor: actorId }, { $set: { "params.uploaded": false, "params.recent": false } })
 
@@ -193,7 +196,7 @@ const updateNumber = (actorId, number) =>
   );
 
 const setChatTeam = (accountId, teamId) =>
-  ChatTeamModel.findByIdAndUpdate(accountId, { $set: { chatTeam: teamId } })
+  AccountModel.findByIdAndUpdate(accountId, { $set: { chatTeam: teamId } })
 
 const AccountService = {
   loadAccounts,
@@ -205,6 +208,7 @@ const AccountService = {
   findByActor,
   getCount,
   updateParams,
+  updateParameter,
   syncContents,
   clearContents,
   setContents,

@@ -38,7 +38,10 @@ const handleCreateAccount = async (req, res) => {
     const account = await AccountService.createAccount(platform, currActor, { ...params, chatTeam: chatTeam, owner: currActor.owner, creator: req.manager._id });
     await ActorService.appendAccount(actor, account._id)
     await ChatTeamService.appendAccount(chatTeam, account._id);
-    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name})`, `ACCOUNT : ${currActor.number}. ${currActor.name} - ${platform} - ${alias}`, `create account`);
+    await NotifyUtils.sendMessage(
+      `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
+      `${currActor.number}. ${currActor.name} - ${platform} ${alias}`,
+      `CREATE ACCOUNT`);
     sendResult(res);
   } catch (error) {
     console.error(error);
@@ -57,7 +60,10 @@ const handleDeleteAccount = async (req, res) => {
     if (account.chatTeam)
       await ChatTeamService.removeAccount(account.chatTeam, account._id)
     await AccountService.deleteAccount(id);
-    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name}`, `ACCOUNT : ${account.actor?.number}. ${account.actor?.name} - ${account.platform} - ${account.alias}`, `delete account`);
+    await NotifyUtils.sendMessage(
+      `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
+      `${account.actor?.number}. ${account.actor?.name} - ${account.platform} ${account.alias}`,
+      `DELETE ACCOUNT`);
     sendResult(res);
   } catch (error) {
     sendError(res, error)
@@ -95,7 +101,10 @@ const handleUpdateStatus = async (req, res) => {
     if (req.manager.role != AdminRole.MANAGER && account.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
     await AccountService.setStatus(id, status);
-    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name}`, `ACCOUNT : ${account.actor?.number}. ${account.actor?.name} - ${account.platform} - ${account.alias}`, `${status ? 'enable' : 'disable'} bot`);
+    await NotifyUtils.sendMessage(
+      `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
+      `${account.actor?.number}. ${account.actor?.name} - ${account.platform} ${account.alias}`,
+      `${status ? 'ENABLE' : 'DISABLE'} bot`);
     sendResult(res);
   } catch (error) {
     sendError(res, error);

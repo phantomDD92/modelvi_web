@@ -45,8 +45,11 @@ const handleCreateActor = async (req, res) => {
     // create model
     actor = await ActorService.createActor({ number, name, owner: agency._id, ...params });
 
-     // send notification to discord
-    await NotifyUtils.sendMessage(`AGENCY : ${agency.name}`, `MODEL : ${number}. ${name}`, `create model`);
+    // send notification to discord
+    await NotifyUtils.sendMessage(
+      `${agency.name} (${agency.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
+      `${number}. ${name}`,
+      `CREATE MODEL`);
 
     sendResult(res);
   } catch (error) {
@@ -71,7 +74,11 @@ const handleDeleteActor = async (req, res) => {
         )}) still have some accounts.`
       );
     await ActorService.deleteActor(actorId);
-    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name})`, `MODEL : ${actor.number}. ${actor.name}`, `delete model`);
+    await NotifyUtils.sendMessage(
+      `${req.manager?.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
+      `${actor.number}. ${actor.name}`,
+      `DELETE MODEL`);
+
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -216,7 +223,10 @@ const handleSyncContents = async (req, res) => {
     await AccountService.syncContents(actorId);
     await ActorService.syncContents(actorId);
     actor = await ActorService.findById(actorId);
-    await NotifyUtils.sendMessage(`AGENCY : ${req.manager.name})`, `MODEL : ${actor.number}. ${actor.name}`, `update contents`);
+    await NotifyUtils.sendMessage(
+      `${req.manager?.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
+      `${actor.number}. ${actor.name}`,
+      `UPDATE CONTENTS`);
     sendResult(res, { actor });
   } catch (error) {
     sendError(res, error);

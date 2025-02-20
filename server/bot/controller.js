@@ -98,9 +98,12 @@ const handleCreateHistory = async (req, res) => {
 
 const handleCreateLastError = async (req, res) => {
   try {
-    const { action } = req.body;
+    const { action, disabled } = req.body;
+    const account = await AccountService.findById(req.bot.id);
+    const failures = (account.failures || 0);
+    const status = !disabled && (failures < 10)
     await HistoryService.createHistory(req.bot.id, action);
-    await AccountService.updateParams(req.bot.id, { lastError: action, status: false });
+    await AccountService.updateParameter(req.bot.id, { $set: { lastError: action, status }, $inc: { failures: 1 } });
     sendResult(res)
   } catch (error) {
     sendError(res, error)
@@ -110,7 +113,7 @@ const handleCreateLastError = async (req, res) => {
 const handleClearLastError = async (req, res) => {
   try {
     // await HistoryService.clearHistory(req.bot.id);
-    await AccountService.updateParams(req.bot.id, { lastError: "" });
+    await AccountService.updateParams(req.bot.id, { lastError: "", failures: 0 });
     sendResult(res)
   } catch (error) {
     sendError(res, error)
@@ -314,7 +317,7 @@ const handleUpdatePostSetting = async (req, res) => {
       "params.postContentIndex": newPostIndex,
       "params.postRemains": postRemains
     });
-    sendResult(res, { deleteIds:[] });
+    sendResult(res, { deleteIds: [] });
   } catch (error) {
     sendError(res, error)
   }

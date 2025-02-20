@@ -5,9 +5,10 @@ dotenv.config();
 
 const sendMessage = async (who, what, message) => {
   if (process.env.DISCORD_AGENCIES_WEBHOOK) {
-    axios.post(process.env.DISCORD_AGENCIES_WEBHOOK,
-      { content: `[ ${moment().format("YYYY-MM-DD HH:mm:ss")} ]\n ### ${who}\n &&& ${what}\n --------- ${message}` }
-    )
+    axios.post(process.env.DISCORD_AGENCIES_WEBHOOK, {
+      username: `${who}`,
+      content: `[ ${moment().format("YYYY-MM-DD HH:mm:ss")} ]\n**${message}**\n${what}`
+    })
       .then(() => { })
       .catch(() => { })
   }
