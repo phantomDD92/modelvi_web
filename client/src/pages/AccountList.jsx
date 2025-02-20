@@ -9,20 +9,12 @@ import {
   AccountDialog,
   AccountParamDialog
 } from "@/components/account";
-import F2FParamDialog from "@/components/account/F2FParamDialog";
-import FancentroParamDialog from "@/components/account/FNCParamDialog";
-import FANParamDialog from "@/components/account/FANParamDialog";
-import FanvueParamDialog from "@/components/account/FanvueParamDialog";
 import { Platform } from "@/utils/const";
 
 export const AccountList = () => {
 
   const [visible, setVisible] = useState(false);
-  const [f2fShow, setF2FShow] = useState(false);
-  const [fncShow, setFNCShow] = useState(false);
-  const [fanShow, setFANShow] = useState(false);
-  const [fanvueShow, setFanvueShow] = useState(false);
-  const [knkyShow, setKnkyShow] = useState(false);
+  const [paramShow, setParamShow] = useState(false);
   const [account, setAccount] = useState();
   const [loading, setLoading] = useState(false);
 
@@ -30,7 +22,7 @@ export const AccountList = () => {
   const dispatch = useDispatch()
   const location = useLocation();
   const { platform } = useParams()
-  
+
   const page = parseInt(qs.parse(location.search).page) || 1;
   const pageSize = parseInt(qs.parse(location.search).size) || 10;
   const modelProps = useSelector(state => state.model)
@@ -92,25 +84,7 @@ export const AccountList = () => {
 
   const handleParamsButtonClick = (account) => {
     setAccount(account);
-    switch (platform) {
-      case Platform.F2F:
-        setF2FShow(true);
-        break;
-      case Platform.FNC:
-        setFNCShow(true);
-        break;
-      case Platform.FAN:
-        setFANShow(true);
-        break;
-      case Platform.FANVUE:
-        setFanvueShow(true);
-        break;
-      case Platform.KNKY:
-        setKnkyShow(true);
-        break;
-      default:
-        break;
-    }
+    setParamShow(true);
   }
 
   const handleUpdateParams = (account, params) => {
@@ -119,11 +93,7 @@ export const AccountList = () => {
 
 
   const handleReloadData = () => {
-    setF2FShow(false);
-    setFNCShow(false);
-    setFANShow(false);
-    setFanvueShow(false);
-    setKnkyShow(false);
+    setParamShow(false);
     setVisible(false);
     setLoading(true);
     dispatch(loadAccounts(platform, { page, pageSize }, () => setLoading(false)))
@@ -184,34 +154,10 @@ export const AccountList = () => {
         onCreate={handleCreateAccount}
         onUpdate={handleUpdateAccount}
       />
-      <F2FParamDialog
-        open={f2fShow}
-        account={account}
-        onCancel={() => setF2FShow(false)}
-        onUpdate={handleUpdateParams}
-      />
-      <FancentroParamDialog
-        open={fncShow}
-        account={account}
-        onCancel={() => setFNCShow(false)}
-        onUpdate={handleUpdateParams}
-      />
-      <FANParamDialog
-        open={fanShow}
-        account={account}
-        onCancel={() => setFANShow(false)}
-        onUpdate={handleUpdateParams}
-      />
-      <FanvueParamDialog
-        open={fanvueShow}
-        account={account}
-        onCancel={() => setFanvueShow(false)}
-        onUpdate={handleUpdateParams}
-      />
       <AccountParamDialog
-        open={knkyShow}
+        open={paramShow}
         account={account}
-        onCancel={() => setKnkyShow(false)}
+        onCancel={() => setParamShow(false)}
         onUpdate={handleUpdateParams}
       />
     </div>

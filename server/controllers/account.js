@@ -111,46 +111,7 @@ const handleUpdateParams = async (req, res) => {
       throw new ApiError("The account does not exist.");
     if (req.manager.role != AdminRole.MANAGER && account.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
-    if (account.platform == Platform.F2F) {
-      const { commentInterval, postInterval, postCount, postMode, postOffsets, postLimit, postStart, commentEnabled } = params;
-      await AccountService.updateParams(id, {
-        "params.postInterval": postInterval,
-        "params.postCount": postCount,
-        "params.postMode": postMode,
-        "params.postOffsets": postOffsets,
-        "params.postStart": postStart,
-        "params.postLimit": postLimit,
-        "params.commentEnabled": commentEnabled,
-        "params.commentInterval": commentInterval,
-      });
-    } else if (account.platform == Platform.FNC) {
-      const { commentInterval, postMode, postOffsets, postInterval, storyMode, storyOffsets, storyInterval, storyMaxCount, postCount, storyReplaceCount, commentEnabled } = params;
-      await AccountService.updateParams(id, {
-        "params.postMode": postMode,
-        "params.postOffsets": postOffsets,
-        "params.postInterval": postInterval,
-        "params.postCount": postCount,
-        "params.commentEnabled": commentEnabled,
-        "params.commentInterval": commentInterval,
-        "params.storyMode": storyMode,
-        "params.storyOffsets": storyOffsets,
-        "params.storyInterval": storyInterval,
-        "params.storyMaxCount": storyMaxCount,
-        "params.storyReplaceCount": storyReplaceCount,
-      });
-    } else if (account.platform == Platform.FAN) {
-      const { postInterval, postCount, postMode, postOffsets, commentInterval, commentEnabled } = params;
-      await AccountService.updateParams(id, {
-        "params.postInterval": postInterval,
-        "params.postCount": postCount,
-        "params.postMode": postMode,
-        "params.postOffsets": postOffsets,
-        "params.commentEnabled": commentEnabled,
-        "params.commentInterval": commentInterval,
-      });
-    } else if (account.platform == Platform.KNKY) {
-      await AccountService.updateParams(id, { params: { ...account.params, ...params } });
-    }
+    await AccountService.updateParams(id, { params: { ...account.params, ...params } });
     sendResult(res);
   } catch (error) {
     sendError(res, error);
