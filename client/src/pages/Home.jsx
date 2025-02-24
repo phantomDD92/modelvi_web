@@ -143,6 +143,21 @@ export const Home = () => {
             </Row>
           </Card>
         </Col>
+        <Col md={8} sm={12}>
+          <Card>
+            <Row gutter={16}>
+              <Col span={8}>
+                <Statistic title="Maloum Accounts" loading={loading} value={homeProps.stats.maloumCount} prefix={<UserOutlined />} />
+              </Col>
+              <Col span={8}>
+                <Statistic title="Maloum Runnings" loading={loading} value={homeProps.stats.maloumRunningCount} prefix={<UserSwitchOutlined />} />
+              </Col>
+              <Col span={8}>
+                <Statistic title="Maloum Disables" loading={loading} value={homeProps.stats.maloumDisabledCount} prefix={<UserDeleteOutlined />} />
+              </Col>
+            </Row>
+          </Card>
+        </Col>
       </Row>
       <Row className="mt-8">
         <DisabledAccountTable

@@ -13,6 +13,7 @@ const Platform = {
     FNS: "FNS", // fancentro storying
     KNKY: "KNKY", 
     FANVUE: "FANVUE", 
+    MALOUM: "MALOUM",
 }
 
 const PostType = {

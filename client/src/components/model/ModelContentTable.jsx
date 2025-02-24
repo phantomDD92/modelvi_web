@@ -23,7 +23,7 @@ export const ModelContentTable = ({ loading, model, onDelete, onCreate, onEdit, 
                 return <Tag color="error">FNC Story - Subscribers</Tag>
             default:
                 break;
-        }   
+        }
         return ""
     }
 
@@ -37,12 +37,12 @@ export const ModelContentTable = ({ loading, model, onDelete, onCreate, onEdit, 
                 return <Tag color="error">Knky Story - PayToView</Tag>
             default:
                 break;
-        }   
+        }
         return ""
     }
 
     const getPlatformTag = (platform) => {
-        switch(platform) {
+        switch (platform) {
             case Platform.F2F:
                 return <Tag key={platform} color="processing">F2F</Tag>;
             case Platform.FNC:
@@ -53,6 +53,8 @@ export const ModelContentTable = ({ loading, model, onDelete, onCreate, onEdit, 
                 return <Tag key={platform} color="processing">Fanvue</Tag>;
             case Platform.KNKY:
                 return <Tag key={platform} color="processing">Knky</Tag>;
+            case Platform.MALOUM:
+                return <Tag key={platform} color="processing">Maloum</Tag>;
             default:
                 break
         }

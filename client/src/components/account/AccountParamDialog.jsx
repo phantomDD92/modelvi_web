@@ -110,7 +110,7 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
         }
     }
 
-    const hasCommentSupport = (platform) => (platform == Platform.F2F || platform == Platform.FNC || platform == Platform.FAN);
+    const hasCommentSupport = (platform) => (platform == Platform.F2F || platform == Platform.FNC || platform == Platform.FAN|| platform == Platform.MALOUM);
 
     const hasStorySupport = (platform) => (platform == Platform.FNC || platform == Platform.KNKY);
 

@@ -27,6 +27,8 @@ export const ModelTable = ({ auth, models, loading, modelsCount, page, pageSize,
                 return <Tag key={platform} color="processing">Fanvue</Tag>;
             case Platform.KNKY:
                 return <Tag key={platform} color="processing">Knky</Tag>;
+            case Platform.MALOUM:
+                return <Tag key={platform} color="processing">Maloum</Tag>;
             default:
                 break
         }

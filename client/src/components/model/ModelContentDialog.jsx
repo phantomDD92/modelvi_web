@@ -139,18 +139,6 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                     knkyStoryType: KnkyStoryType.NONE,
                     knkyStoryPrice: 5,
                 }}>
-                {/* <Form.Item name="platforms" label="Platforms" rules={[{ required: true }]}>
-                    <Select
-                        mode="multiple"
-                        allowClear
-                        options={[
-                            { label: 'F2F', value: Platform.F2F },
-                            { label: 'Fancentro', value: Platform.FNC },
-                            { label: 'Fansly', value: Platform.FAN },
-                            { label: 'Fanvue', value: Platform.FANVUE },
-                            { label: 'Knky', value: Platform.KNKY },
-                        ]} onChange={handlePlatformsChange} />
-                </Form.Item> */}
                 <Form.Item name="platforms" label="Platforms" rules={[{ required: true }]}>
                     <Checkbox.Group options={[
                         { label: 'F2F', value: Platform.F2F },
@@ -158,6 +146,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                         { label: 'Fansly', value: Platform.FAN },
                         { label: 'Fanvue', value: Platform.FANVUE },
                         { label: 'Knky', value: Platform.KNKY },
+                        { label: 'Maloum', value: Platform.MALOUM },
                     ]} onChange={handlePlatformsChange} />
                 </Form.Item>
                 {isFancentro() &&

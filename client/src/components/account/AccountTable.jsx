@@ -85,7 +85,7 @@ const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, 
             render: (value, record) => {
                 if (value && moment().diff(moment(value), 'minute', false) < 10) {
                     const ops = ["posting"]
-                    if (record.platform == Platform.FNC)
+                    if (record.params?.storyEnabled)
                         ops.push("story's")
                     if (record.params?.commentEnabled)
                         ops.push("commenting")
@@ -174,6 +174,7 @@ const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, 
                         <Radio.Button value={Platform.FAN}>Fansly</Radio.Button>
                         <Radio.Button value={Platform.FANVUE}>Fanvue</Radio.Button>
                         <Radio.Button value={Platform.KNKY}>Knky</Radio.Button>
+                        <Radio.Button value={Platform.MALOUM}>Maloum</Radio.Button>
                     </Radio.Group>
                 </Flex>
             }

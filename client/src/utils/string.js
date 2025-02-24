@@ -12,6 +12,8 @@ export const getPlatformName = (platform) => {
       return "Fanvue";
     case Platform.KNKY:
       return "Knky";
+    case Platform.MALOUM:
+      return "Maloum";
     default:
       break;
   }

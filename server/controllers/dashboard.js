@@ -10,30 +10,36 @@ const handleGetStats = async (req, res) => {
         const teamCount = await ChatTeamService.getCount();
         const [proxyCount, proxyExpiredCount] = await ProxyService.getCount(req.manager);
         const [
-            f2fCount, 
-            fncCount, 
-            fanCount, 
-            fanvueCount, 
-            knkyCount, 
-            f2fDisabledCount, 
-            fncDisabledCount, 
-            fanDisabledCount, 
-            fanvueDisabledCount, 
-            knkyDisabledCount, 
-            f2fRunningCount, 
-            fncRunningCount, 
+            f2fCount,
+            f2fDisabledCount,
+            f2fRunningCount,
+            fncCount,
+            fncDisabledCount,
+            fncRunningCount,
+            fanCount,
+            fanDisabledCount,
             fanRunningCount,
-            fanvueRunningCount, 
-            knkyRunningCount
+            fanvueCount,
+            fanvueDisabledCount,
+            fanvueRunningCount,
+            knkyCount,
+            knkyDisabledCount,
+            knkyRunningCount,
+            maloumCount,
+            maloumDisabledCount,
+            maloumRunningCount
         ] = await AccountService.getCount(req.manager);
         const disabledAccounts = await AccountService.loadDisabledAccounts(req.manager);
         sendResult(res, {
             stats: {
                 actorCount, actorUpdatedCount,
                 proxyCount, proxyExpiredCount,
-                f2fCount, fncCount, fanCount, fanvueCount, knkyCount,
-                f2fDisabledCount, fncDisabledCount, fanDisabledCount, fanvueDisabledCount, knkyDisabledCount,
-                f2fRunningCount, fncRunningCount, fanRunningCount, fanvueRunningCount, knkyRunningCount,
+                f2fCount, f2fDisabledCount, f2fRunningCount,
+                fncCount, fncDisabledCount, fncRunningCount,
+                fanCount, fanDisabledCount, fanRunningCount,
+                fanvueCount, fanvueDisabledCount, fanvueRunningCount,
+                knkyCount, knkyDisabledCount, knkyRunningCount,
+                maloumCount, maloumDisabledCount, maloumRunningCount,
                 teamCount,
             },
             disabledAccounts,
