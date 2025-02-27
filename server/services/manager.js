@@ -2,7 +2,7 @@ const { AdminRole } = require("../config/const")
 const ManagerModel = require("../models/manager")
 const bcrypt = require('bcryptjs')
 
-const createManager = ({ name, password, maxActors, maxAccounts, email }) =>
+const createAgency = ({ name, password, maxActors, maxAccounts, email }) =>
     ManagerModel.create({
         name,
         email,
@@ -13,44 +13,46 @@ const createManager = ({ name, password, maxActors, maxAccounts, email }) =>
         status: true,
     })
 
-
-const findByName = (name) =>
+const findAgencyByName = (name) =>
     ManagerModel.findOne({ name }, 'name email role status maxAccounts maxActors createdAt')
 
-const findAllByName = (name) =>
-    ManagerModel.findOne({ name })
-
-const loadManagers = () =>
+const loadAgencies = () =>
     ManagerModel.find({}, 'name email maxAccounts maxActors role status createdAt');
 
-const deleteManager = (id) => {
-    return ManagerModel.deleteOne({ _id: id })
-}
+const deleteAgency = (agencyId) =>
+    ManagerModel.findByIdAndRemove(agencyId)
 
-const findById = (id) => {
+const findAgencyById = (id) => {
     return ManagerModel.findById(id, "name email role status maxAccounts maxActors createdAt");
 }
 
-const changePassword = (id, password) => {
+const changeAgencyPassword = (id, password) => {
     return ManagerModel.findByIdAndUpdate(id, { $set: { password: bcrypt.hashSync(password, 12) } })
 }
 
-const changeStatus = (id, status) =>
+const changeAgencyStatus = (id, status) =>
     ManagerModel.findByIdAndUpdate(id, { $set: { status } })
 
-const updateManager = (id, params) =>
+const changeAgency = (id, params) =>
     ManagerModel.findByIdAndUpdate(id, { $set: params })
 
+const deleteBulkAgencies = (agencyIds) =>
+    ManagerModel.deleteMany({ _id: { $in: agencyIds } });
+
+const updateBulkAgenciesStatus = (agencyIds, status) =>
+    ManagerModel.updateMany({ _id: { $in: agencyIds } }, { $set: { status } });
+
 const ManagerService = {
-    createManager,
-    findByName,
-    findAllByName,
-    loadManagers,
-    deleteManager,
-    findById,
-    changePassword,
-    changeStatus,
-    updateManager
+    findAgencyByName,
+    findAgencyById,
+    loadAgencies,
+    createAgency,
+    deleteBulkAgencies,
+    updateBulkAgenciesStatus,
+    deleteAgency,
+    changeAgencyPassword,
+    changeAgencyStatus,
+    changeAgency
 }
 
 module.exports = ManagerService

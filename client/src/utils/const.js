@@ -3,6 +3,11 @@
 export const API_PATH = `${window.location.protocol}//${window.location.host}/api`;
 export const SERVER_PATH = `${window.location.protocol}//${window.location.host}`;
 
+export const DEFAULT_REFRESH_TIMEOUT = 180000;
+export const DEFAULT_PAGE_SIZE = 10;
+export const DEFAULT_CURRENT_PAGE = 1;
+
+
 export const DEFAULT_POST_INTERVAL = 60;
 export const DEFAULT_POST_COUNT = 5;
 export const DEFAULT_POST_MODE = "interval";
@@ -21,6 +26,11 @@ export const Platform = {
     FNS: "FNS", // for fancentro story
     KNKY: "KNKY",
     MALOUM: "MALOUM",
+}
+
+export const AgencyRole = {
+    MANAGER: 1,
+    AGENCY: 2,
 }
 
 export const PostType = {

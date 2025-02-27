@@ -1,8 +1,14 @@
 import { Modal, Form, Input, Row, Col, InputNumber } from "antd";
 import { useEffect } from "react";
 
-const AgencyDialog = ({ open, agency, onCancel, onCreate, onUpdate }) => {
-    
+const AgencyDialog = ({
+    open,
+    agency,
+    onCancel,
+    onCreate,
+    onUpdate
+}) => {
+
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -13,34 +19,34 @@ const AgencyDialog = ({ open, agency, onCancel, onCreate, onUpdate }) => {
         }
     }, [agency]);
 
-    const handleOkClick = async () => {
-        try {
-            await form.validateFields();
-            if (agency) {
-                const params = form.getFieldsValue();
-                onUpdate(agency, params);
-            } else {
-                const { password, passwordConfirm, ...params } = form.getFieldsValue()
-                if (password != passwordConfirm) {
-                    toast.error("please confirm password, correctly");
-                    return
+    const handleOkClick = () => {
+        form.validateFields()
+            .then(() => {
+                if (agency) {
+                    const params = form.getFieldsValue();
+                    onUpdate && onUpdate(agency, params);
+                } else {
+                    const { password, passwordConfirm, ...params } = form.getFieldsValue()
+                    if (password != passwordConfirm) {
+                        toast.error("please confirm password, correctly");
+                        return
+                    }
+                    onCreate && onCreate({ password, ...params });
                 }
-                onCreate({ password, ...params });
-            }
-        } catch (e) {
-
-        }
+            })
+            .catch(() => { });
     }
 
     const layout = {
         labelCol: { span: 10 },
         wrapperCol: { span: 14 },
     };
+
     return (
         <Modal
-            title={agency ? "Update agency" : "Create agency"}
+            title={agency ? `Edit agency ( ${agency.name} )` : "Create agency"}
             open={open}
-            width={700}
+            width={800}
             onOk={handleOkClick}
             onCancel={onCancel}>
             <Form
@@ -52,7 +58,7 @@ const AgencyDialog = ({ open, agency, onCancel, onCreate, onUpdate }) => {
                     maxAccounts: 3,
                 }}
             >
-                <Row gutter={[24, 24]}>
+                <Row>
                     <Col span={12}>
                         <Form.Item
                             name="name"

@@ -8,7 +8,7 @@ const ManagerSchema = new mongoose.Schema({
   role: { type: String, default: AdminRole.AGENCY },  // role : manager, agency
   maxActors: { type: Number }, // max model count
   maxAccounts: { type: Number }, // max account count
-  status: {type: Boolean, default: true}, // status
+  status: { type: Boolean, default: true }, // status
   createdAt: { type: Date, default: Date.now },
 });
 

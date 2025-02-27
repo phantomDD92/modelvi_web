@@ -9,15 +9,15 @@ const AccountService = require("../services/account.js");
 
 dotenv.config();
 
-const handleCreateManager = async (req, res) => {
+const handleCreateAgency = async (req, res) => {
   try {
     const { name, password, ...params } = req.body;
-    const agency = await ManagerService.findByName(name)
+    const agency = await ManagerService.findAgencyByName(name)
     if (agency)
-      throw new ApiError(`Agency(${name}) is already existed`)
+      throw new ApiError(`The agency(${name}) is already existed`)
     if (password.length < 6)
       throw new ApiError("Password length is too short")
-    await ManagerService.createManager({ name, password, ...params });
+    await ManagerService.createAgency({ name, password, ...params });
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -27,75 +27,88 @@ const handleCreateManager = async (req, res) => {
 const handleLoginManager = async (req, res) => {
   try {
     const { name, password } = req.body;
-    const agency = await ManagerService.findAllByName(name)
+    const agency = await ManagerService.findAgencyByName(name)
     if (!agency)
       throw new ApiError(`Agency(${name}) is not registered`)
     const passwordCompare = await bcrypte.compare(password, agency.password);
     if (!passwordCompare)
       throw new ApiError("The password is incorrect");
     const token = jwt.sign({ id: agency._id }, process.env.SECRET_KEY || "SECRET_KEY_FNC", { expiresIn: "1h" });
-    const auth = await ManagerService.findByName(name);
+    const auth = await ManagerService.findAgencyByName(name);
     sendResult(res, { token, auth })
   } catch (error) {
     sendError(res, error)
   }
 };
 
-const handleDeleteManager = async (req, res) => {
+const handleDeleteAgency = async (req, res) => {
   try {
-    const { name } = req.body;
-    const user = await ManagerService.findByName(name)
-    if (!user)
-      throw new Error(`Manager(${name}) is not found`)
-    await ManagerService.deleteManager(user._id)
-    const managers = await ManagerService.loadManagers()
-    res.json({ success: true, message: "Delete Manager", payload: { managers } })
+    const { id: agencyId } = req.params;
+    const agency = await ManagerService.findAgencyById(agencyId)
+    if (!agency)
+      throw new ApiError(`The agency is not found`)
+    await ManagerService.deleteAgency(agencyId)
+    sendResult(res);
   } catch (error) {
     console.error(error)
-    res.json({ success: false, message: error.message })
+    sendError(res, error);
   }
 }
 
-const handleLoadManagers = async (req, res) => {
+const handleUpdateBulkAgencies = async (req, res) => {
   try {
-    const managers = await ManagerService.loadManagers();
-    const modelStats = await ActorService.getStats();
-    const accountStats = await AccountService.getStats();
-
-    res.json({ success: true, message: "Load Managers", payload: { managers, modelStats, accountStats } })
+    const { action, agencyIds, ...params } = req.body;
+    switch (action) {
+      case 'status':
+        const { status } = params;
+        await ManagerService.updateBulkAgenciesStatus(agencyIds, status);
+        break;
+      default:
+        throw new ApiError("Invalid operation");
+    }
+    sendResult(res);
   } catch (error) {
     console.error(error)
-    res.json({ success: false, message: error.message })
+    sendError(res, error);
+  }
+}
+
+const handleDeleteBulkAgencies = async (req, res) => {
+  try {
+    const { agencyIds } = req.body;
+    await ManagerService.deleteBulkAgencies(agencyIds)
+    sendResult(res);
+  } catch (error) {
+    console.error(error)
+    sendError(res, error);
+  }
+}
+
+const handleLoadAgencies = async (req, res) => {
+  try {
+    const managers = await ManagerService.loadAgencies();
+    const modelStats = await ActorService.getStats();
+    const accountStats = await AccountService.getStats();
+    sendResult(res, { managers, modelStats, accountStats });
+  } catch (error) {
+    console.error(error)
+    sendError(res, error);
   }
 }
 
 const handleChangePassword = async (req, res) => {
   try {
     const { name, password, newPassword } = req.body;
-    const user = await ManagerService.findAllByName(name)
+    const user = await ManagerService.findAgencyByName(name)
     if (!user)
-      throw new Error(`Manager(${name}) is not registered`)
+      throw new ApiError(`Agency(${name}) is not registered`)
     const passwordCompare = await bcrypte.compare(password, user.password);
-    if (!passwordCompare) {
-      throw new Error("The old password is incorrect");
-    }
-    await ManagerService.changePassword(user._id, newPassword);
-    res.json({ success: true, message: "Change Password" })
-  } catch (error) {
-    console.error(error)
-    res.json({ success: false, message: error.message })
-  }
-}
-
-const handleResetPassword = async (req, res) => {
-  try {
-    const { agency: agencyId, password } = req.body;
-    const agency = await ManagerService.findById(agencyId)
-    if (!agency)
-      throw new Error(`The specified agency does not exist`)
-    await ManagerService.changePassword(agencyId, password);
+    if (!passwordCompare)
+      throw new ApiError("The old password is incorrect");
+    await ManagerService.changeAgencyPassword(user._id, newPassword);
     sendResult(res);
   } catch (error) {
+    console.error(error)
     sendError(res, error);
   }
 }
@@ -108,23 +121,25 @@ const handleReloadManager = async (req, res) => {
   }
 }
 
-const handleChangeStatus = async (req, res) => {
+const handleUpdateAgency = async (req, res) => {
   try {
-    const { id } = req.params
-    const { status } = req.body;
-    await ManagerService.changeStatus(id, status)
-    sendResult(res);
-  } catch (error) {
-    sendError(res, error);
-  }
-};
-
-
-const handleUpdateManager = async (req, res) => {
-  try {
-    const { id } = req.params
-    const params = req.body;
-    await ManagerService.updateManager(id, params)
+    const { id: agencyId } = req.params
+    const { action, ...params } = req.body;
+    switch (action) {
+      case "change":
+        await ManagerService.changeAgency(agencyId, params)
+        break;
+      case "status":
+        const { status } = params;
+        await ManagerService.changeAgencyStatus(agencyId, status);
+        break;
+      case "password":
+        const { password } = params;
+        await ManagerService.changeAgencyPassword(agencyId, password);
+        break;
+      default:
+        throw new ApiError("Invalid operation");
+    }
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -176,15 +191,15 @@ const handleUpdateDB = async (req, res) => {
 };
 
 const ManagerCtrl = {
-  handleCreateManager,
+  handleCreateAgency,
   handleLoginManager,
-  handleDeleteManager,
+  handleDeleteAgency,
+  handleDeleteBulkAgencies,
   handleChangePassword,
-  handleLoadManagers,
+  handleLoadAgencies,
   handleReloadManager,
-  handleChangeStatus,
-  handleUpdateManager,
-  handleResetPassword,
+  handleUpdateAgency,
+  handleUpdateBulkAgencies,
   handleUpdateDB
 };
 

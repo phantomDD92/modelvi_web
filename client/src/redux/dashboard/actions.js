@@ -27,32 +27,6 @@ export const updateSetting = (params, callback) => async (dispatch) => {
   });
 };
 
-
-export const loadAgencies = () => async (dispatch) => {
-  await ApiRequest.getAction(dispatch, {
-    path: `/manager`,
-    action: ACTIONS.LOAD_MANAGERS,
-  })
-};
-
-export const createAgency = (params, callback) => async (dispatch) => {
-  await ApiRequest.postAction(dispatch, {
-    path: `/manager`,
-    data: params,
-    inform: `agency(${params.name}) is successfully created.`,
-    callback
-  })
-};
-
-export const deleteAgency = (agency, callback) => async (dispatch) => {
-  await ApiRequest.deleteAction(dispatch, {
-    path: `/manager`,
-    data: { name: agency.name },
-    inform: `agency(${agency.name}) is successfully deleted.`,
-    callback
-  })
-};
-
 export const updateDB = (callback) => async (dispatch) => {
   await ApiRequest.postAction(dispatch, {
     path: `/temp`,
@@ -61,10 +35,54 @@ export const updateDB = (callback) => async (dispatch) => {
   })
 };
 
-export const changeAgencyStatus = (agency, status, callback) => async (dispatch) => {
+export const loadAgencies = (callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/manager`,
+    action: ACTIONS.LOAD_MANAGERS,
+    callback,
+  })
+};
+
+export const createAgency = (params, callback) => async (dispatch) => {
   await ApiRequest.postAction(dispatch, {
+    path: `/manager`,
+    data: params,
+    inform: `Agency(${params.name}) is successfully created.`,
+    callback
+  })
+};
+
+export const deleteBulkAgencies = (agencyIds, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/manager`,
+    data: { agencyIds },
+    inform: `${agencyIds.length} agencies are successfully deleted.`,
+    callback
+  })
+};
+
+export const updateBulkAgenciesStatus = (agencyIds, status, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/manager`,
+    data: { action: 'status', agencyIds, status },
+    inform: `${agencyIds.length} agencies are successfully ${status ? 'enabled' : 'disabled'}.`,
+    callback
+  })
+};
+
+export const deleteAgency = (agency, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
     path: `/manager/${agency._id}`,
-    data: { status },
+    inform: `Agency(${agency.name}) is successfully deleted.`,
+    callback
+  })
+};
+
+
+export const changeAgencyStatus = (agency, status, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/manager/${agency._id}`,
+    data: { status, action: 'status' },
     inform: `Agency(${agency.name}) is ${status ? 'enabled' : 'disabled'}`,
     callback
   })
@@ -73,20 +91,21 @@ export const changeAgencyStatus = (agency, status, callback) => async (dispatch)
 export const updateAgency = (agency, params, callback) => async (dispatch) => {
   await ApiRequest.putAction(dispatch, {
     path: `/manager/${agency._id}`,
-    data: params,
-    inform: `Agency(${agency.name}) info is changed.`,
+    data: { ...params, action: 'change' },
+    inform: `Agency(${agency.name}) information is changed.`,
     callback
   })
 };
 
-export const resetPassword = (agency, password, callback) => async (dispatch) => {
+export const resetAgencyPassword = (agency, password, callback) => async (dispatch) => {
   await ApiRequest.putAction(dispatch, {
-    path: `/manager`,
-    inform: `The agency(${agency.name})'s password is resetted.`,
-    data: { agency: agency._id, password },
+    path: `/manager/${agency._id}`,
+    inform: `Agency(${agency.name})'s password is reset.`,
+    data: { password, action: 'password' },
     callback
   })
 };
+
 
 export const changePassword = (name, password, newPassword, callback) => async (dispatch) => {
   await ApiRequest.putAction(dispatch, {
@@ -111,6 +130,7 @@ export const logoutManager = () => async (dispatch) => {
   dispatch({ type: ACTIONS.LOGOUT_MANAGER });
   toast.success(`successfully logged out`)
 };
+
 
 export const reloadManager = (token) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
@@ -192,6 +212,6 @@ export const loadAgencyComments = (agencyId) => async (dispatch, getState) => {
     await ApiRequest.getAction(dispatch, {
       path: `/agency/comment/${agencyId}`,
       action: ACTIONS.LOAD_AGENCY_COMMENTS,
-    });  
+    });
   }
 };

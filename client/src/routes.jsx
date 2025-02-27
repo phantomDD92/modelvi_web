@@ -1,7 +1,7 @@
 import React from "react"
 import { UserOutlined, HomeOutlined, SolutionOutlined, SettingOutlined, WomanOutlined, EnvironmentOutlined, DiscordOutlined } from "@ant-design/icons";
 import {Home, ProxyList, ModelList, ChatTeamList, Settings} from "@/pages";
-import ManagerList from "./pages/ManagerList";
+import AgencyListPage from "./pages/AgencyList";
 import AccountList from "./pages/AccountList";
 import ModelContent from "./pages/ModelContent";
 import AccountHistory from "./pages/AccountHistory";
@@ -104,7 +104,7 @@ const routes = [
         label: "Agency",
         link: "/agency",
         icon: <UserOutlined />,
-        component: <ManagerList />,
+        component: <AgencyListPage />,
         mode: "main",
         visible: auth => auth.role == AdminRole.MANAGER,
     },

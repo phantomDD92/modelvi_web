@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
+import qs from 'query-string';
 import { useDispatch, useSelector } from "react-redux";
 import { changeAgency, createModel, deleteModel, loadAllChatTeams, loadModels, updateModel, updateProfile } from "@/redux/model/actions";
 import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
-import qs from 'query-string';
 import ModelTable from "@/components/model/ModelTable";
 import ModelDialog from "@/components/model/ModelDialog";
 import ProfileDialog from "@/components/model/ProfileDialog";

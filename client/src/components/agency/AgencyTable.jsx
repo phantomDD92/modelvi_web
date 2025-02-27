@@ -1,8 +1,25 @@
 import { AdminRole } from '@/utils/const'
-import { Card, Table, Button, Flex, Switch, Avatar, Dropdown } from "antd";
-import { DeleteOutlined, UserAddOutlined, EditOutlined, KeyOutlined, DatabaseOutlined } from "@ant-design/icons";
+import { Card, Table, Button, Flex, Switch, Avatar, Dropdown, Space, Typography } from "antd";
+import { DeleteOutlined, UserAddOutlined, EditOutlined, KeyOutlined, DatabaseOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 
-export const AgencyTable = ({ agencies, modelStats, accountStats, onDelete, onCreate, onEdit, onStatusChange, onPasswordReset, onUpdateDB }) => {
+export const AgencyTable = ({
+    pagination,
+    rowSelection,
+    dataSource,
+    modelStats,
+    accountStats,
+    loading,
+    actions: {
+        onBulkStatus,
+        onBulkDelete,
+        onDelete,
+        onCreate,
+        onEdit,
+        onStatusChange,
+        onPasswordReset,
+        onUpdateDB,
+    },
+}) => {
     const columns = [
         {
             key: 'name',
@@ -107,23 +124,6 @@ export const AgencyTable = ({ agencies, modelStats, accountStats, onDelete, onCr
                     }}>
                     <EditOutlined /> Edit
                 </Dropdown.Button>
-
-                // <Flex gap="small">
-                //     <Popconfirm
-                //         title="Confirm"
-                //         description="Are you sure to delete this agency?"
-                //         okText="Yes"
-                //         cancelText="No"
-                //         onConfirm={() => onDelete(record)}
-                //     >
-                //         <Tooltip title="Delete agency">
-                //             <Button icon={<DeleteOutlined />} danger />
-                //         </Tooltip>
-                //     </Popconfirm>
-                //     <Tooltip title="Edit agency info">
-                //         <Button icon={<EditOutlined />} onClick={() => onEdit(record)} />
-                //     </Tooltip>
-                // </Flex >
             )
         },
     ]
@@ -134,13 +134,44 @@ export const AgencyTable = ({ agencies, modelStats, accountStats, onDelete, onCr
             extra={[
                 <Button key="create" icon={<UserAddOutlined />} onClick={onCreate}>Create</Button>,
                 // <Button key="db" icon={<DatabaseOutlined />} onClick={onUpdateDB}>UpdateDB</Button>
-            ]
-            }
+            ]}
         >
+            <Space align='center' size="middle">
+                {rowSelection.selectedRowKeys && rowSelection.selectedRowKeys.length > 0 &&
+                    <>
+                        <h3>Bulk Actions : </h3>
+                        <Button
+                            key="enable"
+                            icon={<EyeOutlined />}
+                            onClick={() => onBulkStatus && onBulkStatus(true)}>
+                            {`Enable ${rowSelection.selectedRowKeys.length} agencies`}
+                        </Button>
+                        <Button
+                            key="disable"
+                            icon={<EyeInvisibleOutlined />}
+                            onClick={() => onBulkStatus && onBulkStatus(false)}>
+                            {`Disable ${rowSelection.selectedRowKeys.length} agencies`}
+                        </Button>
+                        <Button
+                            key="delete"
+                            icon={<DeleteOutlined />}
+                            danger
+                            onClick={onBulkDelete}>
+                            {`Delete ${rowSelection.selectedRowKeys.length} agencies`}
+                        </Button>
+                    </>
+                }
+            </Space>
             <Table
-                pagination={{ position: ["topRight", "bottomRight"], showTotal: total => `Total ${total} agencies` }}
+                pagination={{
+                    ...pagination,
+                    position: ["topRight", "bottomRight"],
+                    showTotal: total => `Total ${total} agencies`,
+                }}
+                loading={loading}
+                rowSelection={rowSelection}
                 rowKey={row => row._id}
-                dataSource={agencies}
+                dataSource={dataSource}
                 columns={columns}
             />
         </Card>

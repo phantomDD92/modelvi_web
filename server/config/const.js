@@ -40,7 +40,7 @@ const Protocol = {
     HTTPS: "https",
 }
 
-const AdminRole = {
+const AgencyRole = {
     MANAGER: 1,
     AGENCY: 2,
 }
@@ -50,7 +50,7 @@ module.exports = {
     Platform,
     Protocol,
     PostType,
-    AdminRole,
+    AdminRole: AgencyRole,
     StoryType,
     PostMode,
 }

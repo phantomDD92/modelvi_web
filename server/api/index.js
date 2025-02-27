@@ -68,15 +68,16 @@ router.route("/temp")
 
 router.route("/manager")
   .all(authenticate, checkManager)
-  .get(ManagerCtrl.handleLoadManagers)
-  .post(ManagerCtrl.handleCreateManager)
-  .put(ManagerCtrl.handleResetPassword)
-  .delete(ManagerCtrl.handleDeleteManager);
+  .get(ManagerCtrl.handleLoadAgencies)
+  .post(ManagerCtrl.handleCreateAgency)
+  .put(ManagerCtrl.handleUpdateBulkAgencies)
+  .delete(ManagerCtrl.handleDeleteBulkAgencies);
 
 router.route("/manager/:id")
   .all(authenticate, checkManager)
-  .put(ManagerCtrl.handleUpdateManager)
-  .post(ManagerCtrl.handleChangeStatus);
+  .put(ManagerCtrl.handleUpdateAgency)
+  .delete(ManagerCtrl.handleDeleteAgency)
+
 
 router.route("/auth")
   .post(ManagerCtrl.handleLoginManager)
