@@ -114,6 +114,7 @@ const deleteAction = async (dispatch, {action, path, data, params, callback, inf
             toast.error(message);
         }
     } catch (error) {
+        console.error(error);
         if (error.response?.status === 401) {
             dispatch(logoutManager());
         } else {

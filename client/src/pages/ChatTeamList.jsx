@@ -1,74 +1,124 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteChatTeam, loadChatTeams } from "@/redux/model/actions";
 import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
 import qs from 'query-string';
-import ChatTeamTable from "@/components/chat/ChatTeamTable";
-import ChatTeamDialog from "@/components/chat/ChatTeamDialog";
+import {
+  createChatTeam,
+  deleteChatTeam,
+  loadChatTeams,
+  changeChatTeam,
+  deleteBulkChatTeams
+} from "@/redux/model/actions";
+import {
+  ChatTeamTable,
+  ChatTeamDialog
+} from "@/components/chat";
+import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
+import { Modal } from "antd";
+import toast from "react-hot-toast";
 
-export const ChatTeamList = () => {
-  const dispatch = useDispatch()
-  const modelProps = useSelector(state => state.model);
-  const [open, setOpen] = useState(false);
+export const ChatTeamListPage = () => {
+
+  const [editOpen, setEditOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [team, setTeam] = useState();
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
+  const dispatch = useDispatch()
   const navigate = useNavigate();
   const location = useLocation();
-  const page = parseInt(qs.parse(location.search).page) || 1;
+  const modelProps = useSelector(state => state.model);
+
+  const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
+  const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
+
+  const loadChatTeamsCallback = useCallback(() => {
+    setLoading(true);
+    dispatch(loadChatTeams(() => setLoading(false)));
+  }, [dispatch]);
 
   useEffect(() => {
-    setLoading(true);
-    dispatch(loadChatTeams({ page, pageSize: 10 }, () => setLoading(false)));
-  }, [loadChatTeams, page])
-
+    loadChatTeamsCallback();
+  }, [loadChatTeamsCallback])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setLoading(true);
-      dispatch(loadChatTeams({ page, pageSize: 10 }, () => setLoading(false)));
-    }, 60000);
+      loadChatTeamsCallback();
+    }, DEFAULT_REFRESH_TIMEOUT);
     return () => clearInterval(interval);
   });
 
-  const handleDeleteChatTeam = (team) => {
-    dispatch(deleteChatTeam(team, handleReloadData));
-  }
-
-  const handleReloadData = () => {
-    setOpen(false)
-    setLoading(true);
-    dispatch(loadChatTeams({ page, pageSize: 10 }, () => setLoading(false)));
-  }
-
-  const handlePageChange = (pg) => {
+  const handleChangePagination = (pageValue, pageSizeValue) => {
     navigate({
       pathname: location.pathname,
-      search: createSearchParams({
-        page: pg
-      }).toString()
+      search: createSearchParams({ page: pageValue, size: pageSizeValue }).toString()
     }, { replace: true });
+  }
+
+  const handleCreateTeam = (params) => {
+    dispatch(createChatTeam(params, () => { setEditOpen(false); loadChatTeamsCallback(); }))
+  }
+
+  const handleUpdateTeam = (team, params) => {
+    dispatch(changeChatTeam(team, params, () => { setEditOpen(false); loadChatTeamsCallback(); }))
+  }
+
+  const handleBulkDeleteTeams = () => {
+    const nonEmptyTeams = modelProps.teams
+    .filter(team => selectedRowKeys.includes(team._id) && team.accounts && team.accounts.length > 0);
+    if (nonEmptyTeams.length > 0) {
+      toast.error(`Chat teams (${nonEmptyTeams.map(team => team.name).join(", ")}) are associated with some accounts`);
+      return;
+    }
+    Modal.confirm({
+      title: `Are you sure to delete ${selectedRowKeys.length} chat teams?`,
+      onOk: () => { dispatch(deleteBulkChatTeams(selectedRowKeys, () => { setSelectedRowKeys([]); loadChatTeamsCallback() })); },
+    });
+  }
+
+  const handleDeleteTeam = (team) => {
+    if (team.accounts && team.accounts.length > 0) {
+      toast.error(`Chat team(${team.name}) is associated with some accounts.`);
+      return;
+    }
+    Modal.confirm({
+      title: `Are you sure to delete the chat team (${team.name})?`,
+      onOk: () => dispatch(deleteChatTeam(team, () => { loadChatTeamsCallback() })),
+    });
   }
 
   return (
     <>
       <ChatTeamTable
         loading={loading}
-        teams={modelProps.teams}
-        teamsCount={modelProps.teamsCount}
-        onCreate={() => { setTeam(); setOpen(true) }}
-        onEdit={(team) => { setTeam(team); setOpen(true) }}
-        onDelete={handleDeleteChatTeam}
+        dataSource={modelProps.teams}
+        actions={{
+          onCreate: () => { setTeam(); setEditOpen(true); },
+          onEdit: (team) => { setTeam(team); setEditOpen(true) },
+          onDelete: handleDeleteTeam,
+          onBulkDelete: handleBulkDeleteTeams,
+        }}
+        pagination={{
+          current: page,
+          pageSize: pageSize,
+          onChange: handleChangePagination
+        }}
+        rowSelection={{
+          selectedRowKeys: selectedRowKeys,
+          onChange: (newSelectedRowKeys) => setSelectedRowKeys(newSelectedRowKeys),
+        }}
         page={page}
-        onPageChange={handlePageChange}
+
       />
       <ChatTeamDialog
-        open={open}
+        open={editOpen}
         team={team}
-        onCancel={() => setOpen(false)}
-        onUpdate={handleReloadData}
+        onCancel={() => setEditOpen(false)}
+        onCreate={handleCreateTeam}
+        onUpdate={handleUpdateTeam}
       />
     </>
   );
 };
 
-export default ChatTeamList;
+export default ChatTeamListPage;

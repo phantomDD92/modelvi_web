@@ -1,66 +1,63 @@
 const ChatTeamModel = require("../models/chatteam");
 
-const loadChatTeams = ({ page, pageSize }) =>
-  Promise.all([
-    ChatTeamModel.find()
-      .skip((parseInt(page) - 1) * parseInt(pageSize))
-      .limit(parseInt(pageSize))
-      .populate({
-        path: "accounts",
-        select: "owner actor number platform alias ",
-        populate: [
-          { path: "owner", select: "name" },
-          { path: "actor", select: "name" },
-        ]
-      }),
-    ChatTeamModel.countDocuments()
-  ])
+const loadTeams = () =>
+  ChatTeamModel.find()
+    .populate({
+      path: "accounts",
+      select: "owner actor number platform alias ",
+      populate: [
+        { path: "owner", select: "name" },
+        { path: "actor", select: "name" },
+      ]
+    })
 
 const loadAllChatTeams = () =>
   ChatTeamModel.find({}, 'name')
 
 
-const createChatTeam = ({ name, discord }) => {
-  return ChatTeamModel.create({ name, discord });
-};
+const createTeam = ({ name, discord }) =>
+  ChatTeamModel.create({ name, discord });
 
-const updateChatTeam = (id, { name, discord }) =>
-  ChatTeamModel.findByIdAndUpdate(id, { $set: { name, discord } });
+const changeTeam = (teamId, { name, discord }) =>
+  ChatTeamModel.findByIdAndUpdate(teamId, { $set: { name, discord } });
 
+const deleteTeam = (teamId) =>
+  ChatTeamModel.findByIdAndDelete(teamId)
 
-const deleteChatTeam = (id) =>
-  ChatTeamModel.findByIdAndDelete(id)
+const deleteBulkTeams = (teamIds) =>
+  ChatTeamModel.deleteMany({
+    _id: { $in: teamIds },
+    // accounts: { $exists: true, $ne: [] }
+  });
 
-const findByDiscord = (discord) =>
+const findTeamByDiscord = (discord) =>
   ChatTeamModel.findOne({ discord });
 
-
-const appendAccount = (id, accountId) => {
-  return ChatTeamModel.findByIdAndUpdate(id, {
+const appendTeamAccount = (teamId, accountId) => {
+  return ChatTeamModel.findByIdAndUpdate(teamId, {
     $push: { accounts: accountId },
   });
 };
 
-const removeAccount = (id, accountId) =>
-  ChatTeamModel.findByIdAndUpdate(id, { $pull: { accounts: accountId } });
+const removeTeamAccount = (teamId, accountId) =>
+  ChatTeamModel.findByIdAndUpdate(teamId, { $pull: { accounts: accountId } });
 
 const getCount = () => ChatTeamModel.countDocuments()
 
-const findById = (id) => ChatTeamModel.findById(id)
-
-
-
+const findTeamById = (teamId) =>
+  ChatTeamModel.findById(teamId)
 
 const ChatTeamService = {
+  findTeamByDiscord,
+  findTeamById,
   loadAllChatTeams,
-  loadChatTeams,
-  createChatTeam,
-  deleteChatTeam,
-  updateChatTeam,
-  findByDiscord,
-  findById,
-  appendAccount,
-  removeAccount,
+  loadTeams,
+  createTeam,
+  deleteTeam,
+  deleteBulkTeams,
+  changeTeam,
+  appendTeamAccount,
+  removeTeamAccount,
   getCount,
 };
 

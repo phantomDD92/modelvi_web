@@ -87,18 +87,20 @@ export const AgencyListPage = () => {
     dispatch(resetAgencyPassword(agency, password, () => setPasswordOpen(false)));
   }
 
-  const handleBulkStatusAgencies = (status) => {
+  const handleStatusBulkAgencies = (status) => {
     Modal.confirm({
       title: `Are you sure to ${status ? "enable" : "disable"} ${selectedRowKeys.length} agencies?`,
       onOk: () => { dispatch(updateBulkAgenciesStatus(selectedRowKeys, status, () => { setSelectedRowKeys([]); loadAgenciesCallback() })); },
     });
   }
 
-  const handleBulkDeleteAgencies = () => {
-    Modal.confirm({
-      title: `Are you sure to delete ${selectedRowKeys.length} agencies?`,
-      onOk: () => { dispatch(deleteBulkAgencies(selectedRowKeys, () => { setSelectedRowKeys([]); loadAgenciesCallback() })); },
-    });
+  const handleDeleteBulkAgencies = () => {
+    console.log(homeProps.modelStats)
+    console.log(homeProps.accountStats)
+    // Modal.confirm({
+    //   title: `Are you sure to delete ${selectedRowKeys.length} agencies?`,
+    //   onOk: () => { dispatch(deleteBulkAgencies(selectedRowKeys, () => { setSelectedRowKeys([]); loadAgenciesCallback() })); },
+    // });
   }
 
   return (
@@ -118,8 +120,8 @@ export const AgencyListPage = () => {
           onChange: (newSelectedRowKeys) => setSelectedRowKeys(newSelectedRowKeys),
         }}
         actions={{
-          onBulkDelete: handleBulkDeleteAgencies,
-          onBulkStatus: (status) => handleBulkStatusAgencies(status),
+          onBulkDelete: handleDeleteBulkAgencies,
+          onBulkStatus: (status) => handleStatusBulkAgencies(status),
           onCreate: () => { setAgency(); setEditOpen(true); },
           onEdit: (agency) => { setAgency(agency); setEditOpen(true) },
           onDelete: handleDeleteAgency,

@@ -37,7 +37,7 @@ const handleCreateAccount = async (req, res) => {
       throw new ApiError(`Account amount is limited by website`);
     const account = await AccountService.createAccount(platform, currActor, { ...params, chatTeam: chatTeam, owner: currActor.owner, creator: req.manager._id });
     await ActorService.appendAccount(actor, account._id)
-    await ChatTeamService.appendAccount(chatTeam, account._id);
+    await ChatTeamService.appendTeamAccount(chatTeam, account._id);
     await NotifyUtils.sendMessage(
       `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
       `${currActor.number}. ${currActor.name} - ${platform} ${alias}`,
@@ -58,7 +58,7 @@ const handleDeleteAccount = async (req, res) => {
       throw new ApiError(`The model is able to delete only by owner.`)
     await ActorService.removeAccount(account.actor?._id, account);
     if (account.chatTeam)
-      await ChatTeamService.removeAccount(account.chatTeam, account._id)
+      await ChatTeamService.removeTeamAccount(account.chatTeam, account._id)
     await AccountService.deleteAccount(id);
     await NotifyUtils.sendMessage(
       `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
@@ -83,9 +83,9 @@ const handleUpdateAccount = async (req, res) => {
       throw new ApiError(`The model is able to update only by owner.`)
     await AccountService.updateAccount(id, currActor, { chatTeam, ...params });
     if (account.chatTeam)
-      await ChatTeamService.removeAccount(account.chatTeam, account._id)
+      await ChatTeamService.removeTeamAccount(account.chatTeam, account._id)
     if (chatTeam)
-      await ChatTeamService.appendAccount(chatTeam, account._id)
+      await ChatTeamService.appendTeamAccount(chatTeam, account._id)
     sendResult(res);
   } catch (error) {
     sendError(res, error);

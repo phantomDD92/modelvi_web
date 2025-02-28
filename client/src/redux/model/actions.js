@@ -76,10 +76,9 @@ export const loadAllChatTeams = () => async (dispatch) => {
 };
 
 
-export const loadChatTeams = ({ page, pageSize }, callback) => async (dispatch) => {
+export const loadChatTeams = (callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/chat`,
-    params: { page, pageSize },
     action: ACTIONS.LOAD_CHAT_TEAMS,
     callback
   });
@@ -89,43 +88,33 @@ export const createChatTeam = (params, callback) => async (dispatch) => {
   await ApiRequest.postAction(dispatch, {
     path: `/chat`,
     data: params,
-    inform: "successfully create chat team",
+    inform: `Chat team (${params.name}) is successfully created`,
     callback
   })
 };
 
-export const updateChatTeam = (chatTeam, params, callback) => async (dispatch) => {
+export const changeChatTeam = (team, params, callback) => async (dispatch) => {
   await ApiRequest.putAction(dispatch, {
-    path: `/chat/${chatTeam._id}`,
-    data: params,
-    inform: "successfully update chat team",
+    path: `/chat/${team._id}`,
+    data: { ...params, action: "change" },
+    inform: `Chat team (${team.name}) is successfully changed`,
     callback
   })
 };
 
-export const deleteChatTeam = (chatTeam, callback) => async (dispatch) => {
+export const deleteChatTeam = (team, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/chat/${team._id}`,
+    inform: `Chat team (${team.name}) is successfully deleted`,
+    callback
+  })
+};
+
+export const deleteBulkChatTeams = (teamIds, callback) => async (dispatch) => {
   await ApiRequest.deleteAction(dispatch, {
     path: `/chat`,
-    data: { id: chatTeam._id },
-    inform: "successfully delete chat team",
-    callback
-  })
-};
-
-export const appendModel = (chatTeam, model, callback) => async (dispatch) => {
-  await ApiRequest.postAction(dispatch, {
-    path: `/chat/${chatTeam._id}`,
-    data: { model },
-    inform: "successfully append model",
-    callback
-  })
-};
-
-export const removeModel = (chatTeam, model, callback) => async (dispatch) => {
-  await ApiRequest.deleteAction(dispatch, {
-    path: `/chat/${chatTeam._id}`,
-    data: { model },
-    inform: "successfully remove model",
+    data: { teamIds },
+    inform: `${teamIds.length} chat teams are successfully deleted`,
     callback
   })
 };

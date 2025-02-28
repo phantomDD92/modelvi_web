@@ -1,25 +1,39 @@
 import React, { useEffect } from "react";
-import { Modal, Input, Form } from "antd";
-import { createChatTeam, updateChatTeam } from "@/redux/model/actions";
-import { useDispatch } from "react-redux";
+import {
+  Form,
+  Input,
+  Modal,
+} from "antd";
 
-const ChatTeamDialog = ({ open, team, onCancel, onUpdate }) => {
+const ChatTeamDialog = ({
+  open,
+  team,
+  onCreate,
+  onCancel,
+  onDelete,
+  onUpdate,
+}) => {
   const [form] = Form.useForm();
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (open) {
-      team ? form.setFieldsValue(team)
+      team
+        ? form.setFieldsValue(team)
         : form.resetFields()
     }
   }, [open, team]);
 
-  const handleUpdate = () => {
-    const { name, discord } = form.getFieldsValue()
-    if (team)
-      dispatch(updateChatTeam(team, { name: name.trim(), discord: discord.trim() }, () => onUpdate && onUpdate()))
-    else
-      dispatch(createChatTeam({ name: name.trim(), discord: discord.trim() }, () => onUpdate && onUpdate()));
+  const handleOkClick = () => {
+    form.validateFields()
+      .then(() => {
+        const { name, discord } = form.getFieldsValue()
+        if (team) {
+          onUpdate && onUpdate(team, { name: name.trim(), discord: discord.trim() })
+        } else {
+          onCreate({ name: name.trim(), discord: discord.trim() });
+        }
+      })
+      .catch(() => { });
   }
 
   return (
@@ -27,17 +41,23 @@ const ChatTeamDialog = ({ open, team, onCancel, onUpdate }) => {
       title={team ? "Edit Chat Team" : "Create Chat Team"}
       open={open}
       width={800}
-      onOk={handleUpdate}
-      onCancel={() => onCancel && onCancel()}>
+      onOk={handleOkClick}
+      onCancel={onCancel}>
       <Form
         layout="vertical"
         form={form}
         name="control-hooks"
       >
-        <Form.Item name="name" label="Name">
+        <Form.Item
+          name="name"
+          label="Name"
+          rules={[{ required: true }]}>
           <Input />
         </Form.Item>
-        <Form.Item name="discord" label="Discord Web Hook" rules={[{ required: true }]}>
+        <Form.Item
+          name="discord"
+          label="Discord Web Hook"
+          rules={[{ required: true }]}>
           <Input.TextArea
             autoSize={{ minRows: 3 }}
           />

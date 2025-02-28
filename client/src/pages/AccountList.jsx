@@ -9,7 +9,6 @@ import {
   AccountDialog,
   AccountParamDialog
 } from "@/components/account";
-import { Platform } from "@/utils/const";
 
 export const AccountList = () => {
 

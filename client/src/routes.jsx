@@ -1,6 +1,6 @@
 import React from "react"
 import { UserOutlined, HomeOutlined, SolutionOutlined, SettingOutlined, WomanOutlined, EnvironmentOutlined, DiscordOutlined } from "@ant-design/icons";
-import {Home, ProxyList, ModelList, ChatTeamList, Settings} from "@/pages";
+import {Home, ProxyList, ModelList, ChatTeamListPage, Settings} from "@/pages";
 import AgencyListPage from "./pages/AgencyList";
 import AccountList from "./pages/AccountList";
 import ModelContent from "./pages/ModelContent";
@@ -86,7 +86,7 @@ const routes = [
         link: "/discord",
         label: "ChatTeam",
         icon: <DiscordOutlined />,
-        component: <ChatTeamList />,
+        component: <ChatTeamListPage />,
         mode: "main",
         visible: auth => auth.role == AdminRole.MANAGER,
     },

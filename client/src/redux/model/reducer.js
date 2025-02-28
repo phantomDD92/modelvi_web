@@ -11,7 +11,6 @@ const initialState = {
   contentModel: undefined,
   // For Chat Team Page
   teams: [],
-  teamsCount: 0,
   // For Account List Page
   accounts: [],
   accountsCount: 0,
@@ -43,7 +42,6 @@ const modelReducer = (state = initialState, action) => {
       return {
         ...state,
         teams: action.payload.teams,
-        teamsCount: action.payload.teamsCount,
       };
     case ACTIONS.LOAD_ALL_CHAT_TEAMS:
       return {

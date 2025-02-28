@@ -1,7 +1,29 @@
-import { Card, Table, Tooltip, Popconfirm, Button, Flex } from "antd";
-import { DeleteOutlined, PlusOutlined, EditOutlined } from "@ant-design/icons";
+import {
+    Button,
+    Card,
+    Flex,
+    Space,
+    Table,
+    Tooltip,
+} from "antd";
+import {
+    DeleteOutlined,
+    EditOutlined,
+    PlusOutlined,
+} from "@ant-design/icons";
 
-export const ChatTeamTable = ({ loading, teams, teamsCount, page, onPageChange, onDelete, onCreate, onEdit }) => {
+export const ChatTeamTable = ({
+    pagination,
+    rowSelection,
+    loading,
+    dataSource,
+    actions: {
+        onDelete,
+        onCreate,
+        onEdit,
+        onBulkDelete,
+    }
+}) => {
 
     const columns = [
         {
@@ -30,19 +52,16 @@ export const ChatTeamTable = ({ loading, teams, teamsCount, page, onPageChange, 
             render: (_, record) => (
                 <Flex gap="large">
                     <Tooltip title="Edit">
-                        <Button icon={<EditOutlined />} onClick={() => onEdit && onEdit(record)} />
+                        <Button
+                            icon={<EditOutlined />}
+                            onClick={() => onEdit && onEdit(record)} />
                     </Tooltip>
-                    <Popconfirm
-                        title="Confirm"
-                        description="Are you sure to delete the chat team?"
-                        okText="Yes"
-                        cancelText="No"
-                        onConfirm={() => onDelete && onDelete(record)}
-                    >
-                        <Tooltip title="Delete">
-                            <Button shape="circle" icon={<DeleteOutlined />} danger />
-                        </Tooltip>
-                    </Popconfirm>
+                    <Tooltip title="Delete">
+                        <Button
+                            icon={<DeleteOutlined />}
+                            danger
+                            onClick={() => onDelete && onDelete(record)} />
+                    </Tooltip>
                 </Flex>
             )
         },
@@ -52,22 +71,39 @@ export const ChatTeamTable = ({ loading, teams, teamsCount, page, onPageChange, 
         <Card
             title={<div>Chat Teams List</div>}
             extra={
-                <div className="flex gap-4">
-                    <Button icon={<PlusOutlined />} onClick={onCreate}>Create</Button>
-                </div>
-            } >
+                <Space align="center">
+                    <Button
+                        icon={<PlusOutlined />}
+                        onClick={onCreate}>
+                        Create
+                    </Button>
+                </Space>
+            }>
+            <Space align='center' size="middle">
+                {rowSelection.selectedRowKeys && rowSelection.selectedRowKeys.length > 0 &&
+                    <>
+                        <h3>Bulk Actions : </h3>
+                        <Button
+                            key="delete"
+                            icon={<DeleteOutlined />}
+                            danger
+                            onClick={onBulkDelete}>
+                            {`Delete ${rowSelection.selectedRowKeys.length} chat teams`}
+                        </Button>
+                    </>
+                }
+            </Space>
             <Table
                 pagination={{
+                    ...pagination,
                     position: ["topRight", "bottomRight"],
                     showTotal: total => `Total ${total} teams`,
-                    current: page,
-                    total: teamsCount,
-                    onChange: onPageChange,
                 }}
                 loading={loading}
+                rowSelection={rowSelection}
                 rowKey={row => row._id}
                 columns={columns}
-                dataSource={teams}
+                dataSource={dataSource}
             />
         </Card>
     )
