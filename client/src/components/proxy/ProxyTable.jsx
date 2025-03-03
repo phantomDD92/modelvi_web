@@ -1,8 +1,34 @@
-import { Button, Card, Popconfirm, Switch, Table, Tag, Flex } from "antd";
-import { DeleteOutlined, UploadOutlined, ClearOutlined } from "@ant-design/icons";
+import { 
+    Button, 
+    Card, 
+    Space,
+    Switch, 
+    Table, 
+    Tag, 
+} from "antd";
+import { 
+    ClearOutlined,
+    EyeOutlined,
+    EyeInvisibleOutlined,
+    DeleteOutlined, 
+    UploadOutlined, 
+} from "@ant-design/icons";
 import moment from "moment";
 
-const ProxyTable = ({ proxies, proxiesCount, page, onPageChange, onClear, onDelete, onAppend, onStatusChange }) => {
+const ProxyTable = ({
+    pagination,
+    rowSelection,
+    loading,
+    dataSource,
+    actions: {
+        onClear,
+        onDelete,
+        onAppend,
+        onStatus,
+        onBulkDelete,
+        onBulkStatus
+    }
+}) => {
     const columns = [
         {
             key: 'url',
@@ -39,21 +65,21 @@ const ProxyTable = ({ proxies, proxiesCount, page, onPageChange, onClear, onDele
             title: 'F2F',
             width: 100,
             dataIndex: 'usage',
-            render: value => value && value.F2F ? value.F2F : '-'
+            render: value => value?.F2F || '-'
         },
         {
             key: 'fan',
             title: 'Fancentro',
             width: 100,
             dataIndex: 'usage',
-            render: value => value && value.FNC ? value.FNC : '-'
+            render: value => value?.FNC || '-'
         },
         {
             key: 'fan',
             title: 'Fansly',
             width: 100,
             dataIndex: 'usage',
-            render: value => value && value.FAN ? value.FAN : '-'
+            render: value => value?.FAN || '-'
         },
         {
             key: 'status',
@@ -65,7 +91,7 @@ const ProxyTable = ({ proxies, proxiesCount, page, onPageChange, onClear, onDele
                     checked={value}
                     checkedChildren="Enabled"
                     unCheckedChildren="Disabled"
-                    onChange={(status) => onStatusChange(record, status)}
+                    onChange={(status) => onStatus(record, status)}
                 />
             )
         },
@@ -90,37 +116,65 @@ const ProxyTable = ({ proxies, proxiesCount, page, onPageChange, onClear, onDele
                     Proxy List&nbsp;(
                     <a href="https://proxy-seller.com/?partner=JRKRDS2FS7PGXQ" target="_blank">Proxy Seller</a>
                     &nbsp;-&nbsp;
-                    <a href="https://billing.rayobyte.com/hosting/aff.php?aff=2556&redirectTo=https://rayobyte.com" target="_blank">Rayobyte Proxy</a>    
+                    <a href="https://billing.rayobyte.com/hosting/aff.php?aff=2556&redirectTo=https://rayobyte.com" target="_blank">Rayobyte Proxy</a>
                     )
                 </div>
             }
             extra={
-                <Flex gap="middle">
-                    <Popconfirm
-                        title="Confirm"
-                        description="Are you sure to remove all proxies?"
-                        okText="Yes"
-                        cancelText="No"
-                        onConfirm={onClear}
-                    >
-                        <Button danger icon={<ClearOutlined />}>Clear</Button>
-                    </Popconfirm>
-                    <Button icon={<UploadOutlined />} onClick={onAppend}>Append</Button>
-                </Flex>
+                <Space align='center' size="middle">
+                    <Button
+                        key="clear"
+                        danger
+                        icon={<ClearOutlined />}
+                        onClick={onClear}>
+                        Clear
+                    </Button>
+                    <Button
+                        key="append"
+                        icon={<UploadOutlined />}
+                        onClick={onAppend}>
+                        Append
+                    </Button>
+                </Space>
             }
         >
+            <Space align='center' size="middle">
+                {rowSelection.selectedRowKeys && rowSelection.selectedRowKeys.length > 0 &&
+                    <>
+                        <h3>Bulk Actions : </h3>
+                        <Button
+                            key="enable"
+                            icon={<EyeOutlined />}
+                            onClick={() => onBulkStatus && onBulkStatus(true)}>
+                            {`Enable ${rowSelection.selectedRowKeys.length} proxies`}
+                        </Button>
+                        <Button
+                            key="disable"
+                            icon={<EyeInvisibleOutlined />}
+                            onClick={() => onBulkStatus && onBulkStatus(false)}>
+                            {`Disable ${rowSelection.selectedRowKeys.length} proxies`}
+                        </Button>
+                        <Button
+                            key="delete"
+                            icon={<DeleteOutlined />}
+                            danger
+                            onClick={onBulkDelete}>
+                            {`Delete ${rowSelection.selectedRowKeys.length} proxies`}
+                        </Button>
+                    </>
+                }
+            </Space>
             <Table
                 pagination={{
+                    ...pagination,
                     position: ["topRight", "bottomRight"],
                     showTotal: total => `Total ${total} proxies`,
-                    current: page,
-                    pageSize: 10,
-                    total: proxiesCount,
-                    onChange: onPageChange,
                 }}
+                loading={loading}
+                rowSelection={rowSelection}
                 rowKey={row => row._id}
                 columns={columns}
-                dataSource={proxies}
+                dataSource={dataSource}
             />
         </Card>
 

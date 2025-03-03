@@ -16,7 +16,7 @@ const createActor = ({
 });
 
 
-const updateActor = (
+const changeActor = (
   id,
   { number, name, birthday, birthplace, owner }
 ) =>
@@ -30,7 +30,10 @@ const updateActor = (
     },
   });
 
-const deleteActor = (id) => ActorModel.deleteOne({ _id: id });
+const deleteActor = (id) => ActorModel.findByIdAndDelete(id);
+
+const deleteActors = (actorIds) =>
+  ActorModel.deleteMany({ _id: { $in: actorIds } });
 
 const appendAccount = (id, account) =>
   ActorModel.findByIdAndUpdate(id, { $push: { accounts: account._id }, $set: { updated: true } });
@@ -38,25 +41,16 @@ const appendAccount = (id, account) =>
 const removeAccount = (id, account) =>
   ActorModel.findByIdAndUpdate(id, { $pull: { accounts: account._id } });
 
-const loadActors = (agency, { page, pageSize }) =>
-  Promise.all([
-    ActorModel.find(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {})
+const loadActors = (agency) =>
+  agency.role == AdminRole.MANAGER
+    ? ActorModel.find({}, "-contents")
       .sort({ owner: 1, number: 1 })
-      .skip((parseInt(page) - 1) * parseInt(pageSize))
-      .limit(parseInt(pageSize))
       .populate("owner", "name")
-      .populate("accounts", "platform alias"),
-    ActorModel.countDocuments(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {})
-  ])
-
-const loadAllActors = (agency) =>
-  ActorModel
-    .find(agency.role == AdminRole.AGENCY ? { owner: agency._id } : {}, "owner number name")
-    .sort({ owner: 1, number: 1 })
-    .populate("owner", "name");
-
-const loadAll = () =>
-  ActorModel.find();
+      .populate("accounts", "platform alias")
+    : ActorModel.find({ owner: agency._id }, "-contents")
+      .sort({ owner: 1, number: 1 })
+      .populate("owner", "name")
+      .populate("accounts", "platform alias")
 
 const findByNumber = (agencyId, number) =>
   ActorModel.findOne({ owner: agencyId, number });
@@ -116,9 +110,14 @@ const getStats = () =>
     }
   ])
 
+const getEmptyActors = (agency, modelIds) =>
+  agency.role == AdminRole.MANAGER
+    ? ActorModel.find({ _id: { $in: modelIds }, accounts: { $size: 0 } }, "-contents")
+    : ActorModel.find({ _id: { $in: modelIds }, accounts: { $size: 0 }, owner: agency._id }, "-contents")
+
 const ActorService = {
   createActor,
-  updateActor,
+  changeActor,
   deleteActor,
   appendAccount,
   removeAccount,
@@ -132,14 +131,14 @@ const ActorService = {
   clearContents,
   updateContent,
   syncContents,
-  loadAllActors,
   getActorCount,
   changeAgency,
   // profile
   updateProfile,
-  loadAll,
   setContents,
-  getStats
+  getStats,
+  getEmptyActors,
+  deleteActors,
 };
 
 module.exports = ActorService;

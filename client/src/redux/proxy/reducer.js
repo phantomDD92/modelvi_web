@@ -2,7 +2,6 @@ import ACTIONS from "./types";
 
 const initialState = {
   proxies: [],
-  proxiesCount: 0,
 }
 
 const proxyReducer = (state = initialState, action) => {
@@ -11,7 +10,6 @@ const proxyReducer = (state = initialState, action) => {
       return {
         ...state,
         proxies: action.payload.proxies,
-        proxiesCount: action.payload.proxiesCount
       };
     default:
       return state;

@@ -6,17 +6,7 @@ const { sendResult, sendError, ApiError } = require("../utils/resp");
 
 const handleLoadActors = async (req, res) => {
   try {
-    const { page, pageSize } = req.query
-    const [actors, actorsCount] = await ActorService.loadActors(req.manager, { page, pageSize: pageSize || "10" });
-    sendResult(res, { actors, actorsCount });
-  } catch (error) {
-    sendError(res, error);
-  }
-};
-
-const handleLoadAllModels = async (req, res) => {
-  try {
-    const actors = await ActorService.loadAllActors(req.manager);
+    const actors = await ActorService.loadActors(req.manager);
     sendResult(res, { actors });
   } catch (error) {
     sendError(res, error);
@@ -77,68 +67,104 @@ const handleDeleteActor = async (req, res) => {
     await NotifyUtils.sendMessage(
       `${req.manager?.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
       `${actor.number}. ${actor.name}`,
-      `DELETE MODEL`);
-
+      `DELETE A MODEL`);
     sendResult(res);
   } catch (error) {
     sendError(res, error);
   }
 };
+
+const handleDeleteActors = async (req, res) => {
+  try {
+    const { modelIds } = req.body;
+    const emptyActors = await ActorService.getEmptyActors(req.manager, modelIds)
+    const emptyActorIds = emptyActors.map(actor => actor._id);
+    await ActorService.deleteActors(emptyActorIds);
+    await NotifyUtils.sendMessage(
+      `${req.manager?.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
+      `${emptyActors.map(actor => `${actor.number}. ${actor.name}`).join("\n")}`,
+      `DELETE ${emptyActors.length} MODELS`);
+    sendResult(res);
+  } catch (error) {
+    console.error(error);
+    sendError(res, error);
+  }
+}
 
 const handleUpdateActor = async (req, res) => {
   try {
     const { actorId } = req.params;
-    const { number, name, ...params } = req.body;
-    let actor = await ActorService.findByName(name);
-    if (actor && actor._id != actorId)
-      throw new ApiError(`The model name(${name}) is already existed.`);
-    actor = await ActorService.findByNumber(req.manager._id, number);
-    if (actor && actor._id != actorId)
-      throw new ApiError(`The model number(${name}) is already existed.`);
-    actor = await ActorService.findById(actorId);
-    if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
-      throw new ApiError(`The model is able to update only by owner.`)
-    await ActorService.updateActor(actorId, { number, name, ...params });
-    await AccountService.updateNumber(actorId, number);
+    const { action, ...params } = req.body;
+    let actor = await ActorService.findById(actorId);
+    if (!actor)
+      throw new ApiError("Model does not exist.");
+    switch (action) {
+      case "change":
+        const { number, name, ...others } = params;
+        let dup = await ActorService.findByName(name);
+        if (dup && dup._id != actorId)
+          throw new ApiError(`Model name(${name}) is already existed.`);
+        dup = await ActorService.findByNumber(req.manager._id, number);
+        if (dup && dup._id != actorId)
+          throw new ApiError(`Model number(${name}) is already existed.`);
+        if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
+          throw new ApiError(`The model is able to update only by owner.`)
+        await ActorService.changeActor(actorId, { number, name, ...others });
+        await AccountService.updateNumber(actorId, number);
+        break;
+      case "agency":
+        const { agency } = params;
+        if (req.manager.role != AdminRole.MANAGER)
+          throw new ApiError(`The model's owner is able to change only by admin.`)
+        await ActorService.changeAgency(actorId, agency)
+        await AccountService.changeAgency(actorId, agency);
+        break;
+      case "sync":
+        await AccountService.syncContents(actorId);
+        await ActorService.syncContents(actorId);
+        await NotifyUtils.sendMessage(
+          `${req.manager?.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
+          `${actor.number}. ${actor.name}`,
+          `UPDATE A MODEL'S CONTENT`);
+          break;
+      default:
+        throw new ApiError("Invalid model operation");
+    }
     sendResult(res);
   } catch (error) {
     sendError(res, error);
   }
 };
 
-const handleUpdateProfile = async (req, res) => {
+const handleUpdateActors = async (req, res) => {
   try {
-    const { actorId } = req.params;
-    const params = req.body;
-    const actor = await ActorService.findById(actorId);
-    if (!actor)
-      throw new ApiError(`The model does not exist.`);
-    if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
-      throw new ApiError(`The model is able to update only by owner.`)
-    await ActorService.updateProfile(actorId, params);
-    await AccountService.updateParamsForActor(actorId, { "params.profileUpdated": true });
+    const { action, actorIds, ...params } = req.body;
+    switch (action) {
+      default:
+        throw new ApiError("Invalid model operation");
+    }
     sendResult(res);
   } catch (error) {
     sendError(res, error);
   }
 };
 
-const handleChangeAgency = async (req, res) => {
-  try {
-    const { actorId } = req.params;
-    const { agency } = req.body;
-    const actor = await ActorService.findById(actorId);
-    if (!actor)
-      throw new ApiError(`The model does not exist.`);
-    if (req.manager.role != AdminRole.MANAGER)
-      throw new ApiError(`The model's owner is able to change only by admin.`)
-    await ActorService.changeAgency(actorId, agency)
-    await AccountService.changeAgency(actorId, agency);
-    sendResult(res);
-  } catch (error) {
-    sendError(res, error);
-  }
-};
+// const handleUpdateProfile = async (req, res) => {
+//   try {
+//     const { actorId } = req.params;
+//     const params = req.body;
+//     const actor = await ActorService.findById(actorId);
+//     if (!actor)
+//       throw new ApiError(`The model does not exist.`);
+//     if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
+//       throw new ApiError(`The model is able to update only by owner.`)
+//     await ActorService.updateProfile(actorId, params);
+//     await AccountService.updateParamsForActor(actorId, { "params.profileUpdated": true });
+//     sendResult(res);
+//   } catch (error) {
+//     sendError(res, error);
+//   }
+// };
 
 const handleGetContent = async (req, res) => {
   try {
@@ -234,7 +260,6 @@ const handleSyncContents = async (req, res) => {
 }
 
 const ActorCtrl = {
-  handleLoadAllModels,
   handleLoadActors,
   handleCreateActor,
   handleDeleteActor,
@@ -245,8 +270,10 @@ const ActorCtrl = {
   handleDeleteContent,
   handleClearContents,
   handleSyncContents,
-  handleUpdateProfile,
-  handleChangeAgency,
+  handleDeleteActors,
+  handleUpdateActors,
+  // handleUpdateProfile,
+  // handleChangeAgency,
 };
 
 module.exports = ActorCtrl;

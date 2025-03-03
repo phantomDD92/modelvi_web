@@ -3,26 +3,27 @@ import { Modal, Form, Select } from "antd";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-const OwnerDialog = ({ open, actor, onCancel, onUpdate }) => {
+const ModelOwnerDialog = ({ open, model, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
     const dispatch = useDispatch();
     const homeProps = useSelector(state => state.home);
+
     const handleOkClick = async () => {
         try {
             await form.validateFields();
-            const params = form.getFieldsValue();
-            onUpdate(actor, params);
+            const { owner } = form.getFieldsValue();
+            onUpdate && onUpdate(owner);
         } catch (e) {
 
         }
     }
     useEffect(() => {
-        if (actor && open) {
-            form.setFieldsValue({ owner: actor.owner?.id })
+        if (model && open) {
+            form.setFieldsValue({ owner: model.owner?._id })
         } else {
             form.resetFields();
         }
-    }, [open, actor]);
+    }, [open, model]);
 
     useEffect(() => {
         dispatch(loadAgencies());
@@ -32,9 +33,10 @@ const OwnerDialog = ({ open, actor, onCancel, onUpdate }) => {
         labelCol: { span: 8 },
         wrapperCol: { span: 16 },
     };
+
     return (
         <Modal
-            title={"Change owner"}
+            title={`Change ownership`}
             open={open}
             onOk={handleOkClick}
             onCancel={onCancel}>
@@ -59,4 +61,4 @@ const OwnerDialog = ({ open, actor, onCancel, onUpdate }) => {
     )
 }
 
-export default OwnerDialog;
+export default ModelOwnerDialog;

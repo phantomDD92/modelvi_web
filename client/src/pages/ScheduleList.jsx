@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, Table, Tooltip, Popconfirm, Button, Upload, Modal, Form, Input, Flex, Image, Tag, InputNumber, Select, DatePicker, TimePicker } from "antd";
 import { DeleteOutlined, PlusOutlined, EditOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { changeSchedule, createSchedule, deleteSchedule, loadAllModels, loadSchedules } from "@/redux/model/actions";
+import { changeSchedule, createSchedule, deleteSchedule, loadModels, loadSchedules } from "@/redux/model/actions";
 import { Platform, PostType as ScheduleType, SERVER_PATH } from "@/utils/const";
 import moment from "moment";
 import qs from 'query-string';
@@ -25,8 +25,8 @@ export const ScheduleList = () => {
   }, [loadSchedules, platform, actor, page])
 
   useEffect(() => {
-    dispatch(loadAllModels())
-  }, [loadAllModels]);
+    dispatch(loadModels())
+  }, [loadModels]);
 
   const columns = [
     {
@@ -188,7 +188,7 @@ export const ScheduleList = () => {
           <Form.Item name="actor" label="Model" rules={[{ required: true }]}>
             <Select
               disabled={schedule}
-              options={modelProps.allModels.map(model => ({
+              options={modelProps.models.map(model => ({
                 label: `${model.number}. ${model.name}`,
                 value: model._id
               }))}

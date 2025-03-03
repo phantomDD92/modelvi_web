@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createSearchParams, useLocation, useNavigate, useParams } from "react-router-dom";
 import qs from 'query-string';
 import { Modal } from "antd";
-import { createAccount, deleteAccount, loadAccounts, loadAllChatTeams, loadAllModels, setAccountStatus, startAllAccount, stopAllAccount, updateAccount, updateAccountParams } from "@/redux/model/actions";
+import { createAccount, deleteAccount, loadAccounts, loadAllChatTeams, loadModels, setAccountStatus, startAllAccount, stopAllAccount, updateAccount, updateAccountParams } from "@/redux/model/actions";
 import {
   AccountTable,
   AccountDialog,
@@ -25,11 +25,12 @@ export const AccountList = () => {
   const page = parseInt(qs.parse(location.search).page) || 1;
   const pageSize = parseInt(qs.parse(location.search).size) || 10;
   const modelProps = useSelector(state => state.model)
+  const models = useSelector(state => state.model.models);
   const homeProps = useSelector(state => state.home)
 
   useEffect(() => {
-    dispatch(loadAllModels())
-  }, [loadAllModels])
+    dispatch(loadModels())
+  }, [loadModels])
 
   useEffect(() => {
     setLoading(true);
@@ -147,7 +148,7 @@ export const AccountList = () => {
         open={visible}
         platform={platform}
         account={account}
-        models={modelProps.allModels}
+        models={models}
         chatTeams={modelProps.chatTeams}
         onCancel={() => setVisible(false)}
         onCreate={handleCreateAccount}

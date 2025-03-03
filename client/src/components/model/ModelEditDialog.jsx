@@ -2,7 +2,7 @@ import { Modal, Form, Input, Row, Col, InputNumber, DatePicker, Select } from "a
 import moment from "moment";
 import { useEffect } from "react";
 
-const ModelDialog = ({ open, model, onCancel, onCreate, onUpdate }) => {
+const ModelEditDialog = ({ open, model, onCancel, onCreate, onUpdate }) => {
     const [form] = Form.useForm();
     const layout = {
         labelCol: { span: 8 },
@@ -37,7 +37,7 @@ const ModelDialog = ({ open, model, onCancel, onCreate, onUpdate }) => {
 
     return (
         <Modal
-            title={model ? "Update model" : "Create model"}
+            title={model ? `Edit model (${model.name})` : "Create model"}
             width={600}
             open={open}
             onOk={handleOkClick}
@@ -94,4 +94,4 @@ const ModelDialog = ({ open, model, onCancel, onCreate, onUpdate }) => {
     )
 }
 
-export default ModelDialog;
+export default ModelEditDialog;

@@ -386,7 +386,7 @@ const handleBlockProxy = async (req, res) => {
     if (!account)
       throw new ApiError("unknown account");
     const { owner, platform, alias } = account.toJSON();
-    let proxy = await ProxyService.findByAccount(owner, platform, alias);
+    let proxy = await ProxyService.findProxyByAccount(owner, platform, alias);
     if (!proxy)
       throw new ApiError("proxy not found");
     await ProxyService.setProxyAccount(proxy._id, platform, "blocked");
@@ -402,9 +402,9 @@ const handlePickProxy = async (req, res) => {
     if (!account)
       throw new ApiError("unknown account");
     const { owner, platform, alias } = account.toJSON();
-    let proxy = await ProxyService.findByAccount(owner, platform, alias);
+    let proxy = await ProxyService.findProxyByAccount(owner, platform, alias);
     if (!proxy) {
-      proxy = await ProxyService.findByAccount(owner, platform);
+      proxy = await ProxyService.findProxyByAccount(owner, platform);
       if (!proxy)
         throw new ApiError("no proxy");
     }

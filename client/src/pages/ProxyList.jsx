@@ -1,73 +1,128 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addProxies, clearProxies, deleteProxy, loadProxies, setProxyStatus } from "@/redux/proxy/actions";
-import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
+import {
+  createSearchParams,
+  useLocation,
+  useNavigate
+} from "react-router-dom";
 import qs from 'query-string';
-import ProxyTable from "@/components/proxy/ProxyTable";
-import ProxyDialog from "@/components/proxy/ProxyDialog";
+import {
+  appendProxies,
+  clearProxies,
+  deleteProxy,
+  loadProxies,
+  changeProxyStatus,
+  deleteBulkProxies,
+  changeBulkProxiesStatus
+} from "@/redux/proxy/actions";
+import {
+  ProxyTable,
+  ProxyAppendDialog
+} from "@/components/proxy";
+import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
+import { Modal } from "antd";
 
-export const ProxyList = () => {
-  const [visible, setVisible] = useState(false);
+export const ProxyListPage = () => {
+  const [loading, setLoading] = useState(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [appendOpen, setAppendOpen] = useState(false);
+
   const dispatch = useDispatch()
-  const proxyProps = useSelector(state => state.proxy)
   const navigate = useNavigate();
   const location = useLocation();
-  const page = parseInt(qs.parse(location.search).page) || 1;
+  const proxyProps = useSelector(state => state.proxy)
+  const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
+  const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
+
+  const loadProxiesCallback = useCallback(() => {
+    setLoading(true);
+    dispatch(loadProxies(() => setLoading(false)));
+  }, [dispatch]);
 
   useEffect(() => {
-    dispatch(loadProxies({ page, pageSize: 10 }))
-  }, [loadProxies, page])
+    loadProxiesCallback();
+  }, [loadProxiesCallback])
 
-  const handleReloadData = () => {
-    dispatch(loadProxies({ page, pageSize: 10 }))
-    setVisible(false)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadProxiesCallback();
+    }, DEFAULT_REFRESH_TIMEOUT);
+    return () => clearInterval(interval);
+  });
+
+  const handleChangeProxyStatus = (proxy, status) => {
+    dispatch(changeProxyStatus(proxy, status, () => loadProxiesCallback()))
   }
 
-  const handleSetProxyStatus = (proxy, status) => {
-    dispatch(setProxyStatus(proxy, status, handleReloadData))
+  const handleChangeBulkProxiesStatus = (status) => {
+    Modal.confirm({
+      title: `Are you sure to ${status ? "enable" : "disable"} ${selectedRowKeys.length} proxies?`,
+      onOk: () => dispatch(changeBulkProxiesStatus(selectedRowKeys, status, () => { setSelectedRowKeys([]); loadProxiesCallback(); })),
+    });
   }
 
   const handleClearProxies = () => {
-    dispatch(clearProxies(handleReloadData))
+    Modal.confirm({
+      title: `Are you sure to clear all proxies?`,
+      onOk: () => dispatch(clearProxies(() => loadProxiesCallback())),
+    });
   }
 
   const handleDeleteProxy = (proxy) => {
-    dispatch(deleteProxy(proxy, handleReloadData));
+    Modal.confirm({
+      title: `Are you sure to delete the proxy (${proxy.url})?`,
+      onOk: () => dispatch(deleteProxy(proxy, () => loadProxiesCallback())),
+    });
+  }
+
+  const handleDeleteBulkProxies = () => {
+    Modal.confirm({
+      title: `Are you sure to delete ${selectedRowKeys.length} proxies?`,
+      onOk: () => dispatch(deleteBulkProxies(selectedRowKeys, () => { setSelectedRowKeys([]); loadProxiesCallback(); })),
+    });
   }
 
   const handleAppendProxies = (proxies, expiredAt) => {
-    dispatch(addProxies(proxies, expiredAt, handleReloadData))
-
+    dispatch(appendProxies(proxies, expiredAt, () => { setAppendOpen(false); loadProxiesCallback(); }))
   }
 
-  const handlePageChange = (pg) => {
+  const handleChangePagination = (pageValue, pageSizeValue) => {
     navigate({
       pathname: location.pathname,
-      search: createSearchParams({
-        page: pg
-      }).toString()
+      search: createSearchParams({ page: pageValue, size: pageSizeValue }).toString()
     }, { replace: true });
   }
 
   return (
-    <div>
+    <>
       <ProxyTable
-        proxies={proxyProps.proxies}
-        proxiesCount={proxyProps.proxiesCount}
-        page={page}
-        onPageChange={handlePageChange}
-        onStatusChange={handleSetProxyStatus}
-        onDelete={handleDeleteProxy}
-        onClear={handleClearProxies}
-        onAppend={() => setVisible(true)}
+        dataSource={proxyProps.proxies}
+        loading={loading}
+        pagination={{
+          current: page,
+          pageSize: pageSize,
+          onChange: handleChangePagination
+        }}
+        rowSelection={{
+          selectedRowKeys: selectedRowKeys,
+          onChange: (newSelectedRowKeys) => setSelectedRowKeys(newSelectedRowKeys),
+        }}
+        actions={{
+          onStatus: handleChangeProxyStatus,
+          onDelete: handleDeleteProxy,
+          onClear: handleClearProxies,
+          onAppend: () => setAppendOpen(true),
+          onBulkDelete: handleDeleteBulkProxies,
+          onBulkStatus: handleChangeBulkProxiesStatus,
+        }}
       />
-      <ProxyDialog
-        open={visible}
-        onCancel={() => setVisible(false)}
+      <ProxyAppendDialog
+        open={appendOpen}
+        onCancel={() => setAppendOpen(false)}
         onAppend={handleAppendProxies}
       />
-    </div>
+    </>
   );
 };
 
-export default ProxyList;
+export default ProxyListPage;

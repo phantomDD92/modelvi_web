@@ -1,9 +1,43 @@
-import { Card, Table, Button, Flex, Tag, Avatar, Dropdown } from "antd";
-import { DeleteOutlined, EditOutlined, UserOutlined, UserAddOutlined, ReadOutlined, SolutionOutlined } from "@ant-design/icons";
+import {
+    Avatar,
+    Button,
+    Card,
+    Dropdown,
+    Flex,
+    Space,
+    Table,
+    Tag,
+} from "antd";
+import {
+    DeleteOutlined,
+    EditOutlined,
+    ReadOutlined,
+    UserOutlined,
+    UserAddOutlined,
+    UploadOutlined,
+} from "@ant-design/icons";
 import moment from "moment";
-import { AdminRole, Platform } from "@/utils/const";
+import { AdminRole } from "@/utils/const";
+import { getPlatformName } from "@/utils/string";
 
-export const ModelTable = ({ auth, models, loading, modelsCount, page, pageSize, onPageChange, onAgencyChange, onDelete, onCreate, onEdit, onContent, onProfile }) => {
+export const ModelTable = ({
+    auth,
+    pagination,
+    rowSelection,
+    loading,
+    dataSource,
+    actions: {
+        onAgencyChange,
+        onDelete,
+        onCreate,
+        onEdit,
+        onBulkDelete,
+        onBulkSync,
+        onContent,
+        onSync,
+        // onProfile
+    }
+}) => {
     const hasPermission = (auth, record) => {
         if (auth.role == AdminRole.MANAGER)
             return true
@@ -15,25 +49,8 @@ export const ModelTable = ({ auth, models, loading, modelsCount, page, pageSize,
         return auth.role == AdminRole.MANAGER;
     }
 
-    const getPlatformTag = (platform) => {
-        switch (platform) {
-            case Platform.F2F:
-                return <Tag key={platform} color="processing">F2F</Tag>;
-            case Platform.FNC:
-                return <Tag key={platform} color="processing">Fancentro</Tag>;
-            case Platform.FAN:
-                return <Tag key={platform} color="processing">Fansly</Tag>;
-            case Platform.FANVUE:
-                return <Tag key={platform} color="processing">Fanvue</Tag>;
-            case Platform.KNKY:
-                return <Tag key={platform} color="processing">Knky</Tag>;
-            case Platform.MALOUM:
-                return <Tag key={platform} color="processing">Maloum</Tag>;
-            default:
-                break
-        }
-        return ""
-    }
+    const getPlatformTag = (platform) =>
+        <Tag key={platform} color="processing">{getPlatformName(platform)}</Tag>;
 
     const columns = [
         {
@@ -109,6 +126,12 @@ export const ModelTable = ({ auth, models, loading, modelsCount, page, pageSize,
                                     key: 'agency',
                                     icon: <UserOutlined />,
                                 },
+                                record.updated &&
+                                {
+                                    label: 'Sync Contents',
+                                    key: 'sync',
+                                    icon: <UploadOutlined />,
+                                },
                                 {
                                     label: 'Delete Model',
                                     key: 'delete',
@@ -122,6 +145,12 @@ export const ModelTable = ({ auth, models, loading, modelsCount, page, pageSize,
                                     key: 'content',
                                     icon: <ReadOutlined />,
                                 },
+                                record.updated &&
+                                {
+                                    label: 'Sync Contents',
+                                    key: 'sync',
+                                    icon: <UploadOutlined />,
+                                },
                                 {
                                     label: 'Delete Model',
                                     key: 'delete',
@@ -134,8 +163,11 @@ export const ModelTable = ({ auth, models, loading, modelsCount, page, pageSize,
                                 case "content":
                                     onContent(record)
                                     break;
-                                case "profile":
-                                    onProfile(record)
+                                // case "profile":
+                                //     onProfile(record)
+                                //     break;
+                                case "sync":
+                                    onSync(record)
                                     break;
                                 case "delete":
                                     onDelete(record)
@@ -165,18 +197,36 @@ export const ModelTable = ({ auth, models, loading, modelsCount, page, pageSize,
                 </Button>
             }
         >
+            <Space align='center' size="middle">
+                {rowSelection.selectedRowKeys && rowSelection.selectedRowKeys.length > 0 &&
+                    <>
+                        <h3>Bulk Actions : </h3>
+                        <Button
+                            key="disable"
+                            icon={<UploadOutlined />}
+                            onClick={onBulkSync}>
+                            {`Sync ${rowSelection.selectedRowKeys.length} models`}
+                        </Button>
+                        <Button
+                            key="delete"
+                            icon={<DeleteOutlined />}
+                            danger
+                            onClick={onBulkDelete}>
+                            {`Delete ${rowSelection.selectedRowKeys.length} models`}
+                        </Button>
+                    </>
+                }
+            </Space>
             <Table
                 pagination={{
+                    ...pagination,
                     position: ["topRight", "bottomRight"],
                     showTotal: total => `Total ${total} models`,
-                    current: page,
-                    pageSize: pageSize,
-                    total: modelsCount,
-                    onChange: onPageChange,
                 }}
                 loading={loading}
+                rowSelection={rowSelection}
                 rowKey={row => row._id}
-                dataSource={models}
+                dataSource={dataSource}
                 columns={columns}
             />
         </Card>

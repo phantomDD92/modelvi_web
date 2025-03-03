@@ -1,5 +1,10 @@
-import { Modal, Form, Input, DatePicker } from "antd";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
+import {
+    DatePicker,
+    Form,
+    Input,
+    Modal,
+} from "antd";
 
 const ProxyDialog = ({ open, onCancel, onAppend }) => {
 
@@ -9,9 +14,8 @@ const ProxyDialog = ({ open, onCancel, onAppend }) => {
         form.resetFields();
     }, [open]);
 
-    const handleOkClick = async () => {
-        try {
-            await form.validateFields();
+    const handleOkClick = () => {
+        form.validateFields().then(() => {
             const { proxiesText, expiredAt } = form.getFieldsValue();
             const proxies = []
             proxiesText.split("\n").forEach(entry => {
@@ -19,10 +23,9 @@ const ProxyDialog = ({ open, onCancel, onAppend }) => {
                     proxies.push(entry.trim())
                 }
             })
-            onAppend(proxies, expiredAt.toDate())
-        } catch (e) {
-
-        }
+            onAppend && onAppend(proxies, expiredAt.toDate())
+        })
+            .catch(() => { });
     }
 
     return (
@@ -45,7 +48,7 @@ const ProxyDialog = ({ open, onCancel, onAppend }) => {
                     label="Proxies"
                     rules={[{ required: true }]}>
                     <Input.TextArea
-                        placeholder="username:password@ipaddress:port"
+                        placeholder="username:password@ip:port"
                         autoSize={{ minRows: 20, maxRows: 30 }}
                         allowClear />
                 </Form.Item>

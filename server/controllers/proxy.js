@@ -4,18 +4,17 @@ const { sendResult, sendError, ApiError } = require("../utils/resp");
 
 const handleLoadProxies = async (req, res) => {
     try {
-        const { page, pageSize } = req.query;
-        const [proxies, proxiesCount] = await ProxyService.loadProxiesWithPage(req.manager, { page, pageSize: pageSize || "10" })
-        sendResult(res, { proxies, proxiesCount })
+        const proxies = await ProxyService.loadProxies(req.manager)
+        sendResult(res, { proxies })
     } catch (error) {
         sendError(res, error)
     }
 }
 
-const handleAddProxies = async (req, res) => {
+const handleAppendProxies = async (req, res) => {
     try {
         const { proxies, deadline } = req.body;
-        await ProxyService.addProxies(req.manager, proxies, deadline)
+        await ProxyService.appendProxies(req.manager, proxies, deadline)
         sendResult(res)
     } catch (error) {
         sendError(res, error);
@@ -24,38 +23,49 @@ const handleAddProxies = async (req, res) => {
 
 const handleClearProxies = async (req, res) => {
     try {
-        await ProxyService.clearProxies(req.manager);
         sendResult(res);
     } catch (error) {
         sendError(res, error);
     }
 }
 
-const handleChangeProxyStatus = async (req, res) => {
+const handleUpdateProxies = async (req, res) => {
     try {
-        const { id, status } = req.body
-        const proxy = await ProxyService.findById(id)
-        if (!proxy)
-            throw new ApiError("The specified proxy doesn't exist.")
-        if (req.manager.role != AdminRole.MANAGER && req.manager._id.toString() != proxy.owner.toString())
-            throw new ApiError("The specified proxy can be changed only by owner.")
-        await ProxyService.setProxyStatus(id, status)
-        sendResult(res)
+        const { action, ...params } = req.body
+        switch (action) {
+            case "clear":
+                await ProxyService.clearProxies(req.manager);
+                break;
+            case "status":
+                const { proxyIds, status } = params;
+                await ProxyService.changeBulkProxiesStatus(req.manager, proxyIds, status);
+                break;
+            default:
+                throw new ApiError("Invalid proxy operation");
+        }
+        sendResult(res);
     } catch (error) {
         sendError(res, error);
     }
 }
 
-const handleSetProxyStatus = async (req, res) => {
+const handleUpdateProxy = async (req, res) => {
     try {
-        const { id } = req.params
-        const { status } = req.body
-        const proxy = await ProxyService.findById(id)
+        const { id: proxyId } = req.params
+        const { action, ...params } = req.body
+        const proxy = await ProxyService.findProxyById(proxyId)
         if (!proxy)
-            throw new ApiError("The specified proxy doesn't exist.")
+            throw new ApiError("Proxy doesn't exist.")
         if (req.manager.role != AdminRole.MANAGER && req.manager._id.toString() != proxy.owner.toString())
             throw new ApiError("The specified proxy can be changed only by owner.")
-        await ProxyService.setProxyStatus(id, status)
+        switch (action) {
+            case "status":
+                const { status } = params;
+                await ProxyService.changeProxyStatus(proxyId, status);
+                break;
+            default:
+                throw new ApiError("Invalid proxy operation");
+        }
         sendResult(res)
     } catch (error) {
         sendError(res, error)
@@ -64,26 +74,38 @@ const handleSetProxyStatus = async (req, res) => {
 
 const handleDeleteProxy = async (req, res) => {
     try {
-        const { id } = req.params
-        const proxy = await ProxyService.findById(id)
+        const { id: proxyId } = req.params
+        const proxy = await ProxyService.findProxyById(proxyId)
         if (!proxy)
-            throw new ApiError("The specified proxy doesn't exist.")
+            throw new ApiError("Proxy doesn't exist")
         if (req.manager.role != AdminRole.MANAGER && req.manager._id.toString() != proxy.owner.toString())
-            throw new ApiError("The specified proxy can be deleted only by owner.")
-        await ProxyService.deleteProxy(id);
+            throw new ApiError("Proxy can be deleted only by owner.")
+        await ProxyService.deleteProxy(proxyId);
         sendResult(res);
     } catch (error) {
         sendError(res, error)
     }
 }
 
+const handleDeleteProxies = async (req, res) => {
+    try {
+        const { proxyIds } = req.body
+        await ProxyService.deleteBulkProxies(req.manager, proxyIds);
+        sendResult(res);
+    } catch (error) {
+        sendError(res, error)
+    }
+}
+
+
 const ProxyCtrl = {
     handleLoadProxies,
-    handleAddProxies,
+    handleAppendProxies,
     handleClearProxies,
-    handleChangeProxyStatus,
+    handleUpdateProxies,
     handleDeleteProxy,
-    handleSetProxyStatus,
+    handleUpdateProxy,
+    handleDeleteProxies,
 }
 
 module.exports = ProxyCtrl

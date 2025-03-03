@@ -4,7 +4,6 @@ const initialState = {
   allModels: [],
   // For Model List Page
   models: [],
-  modelsCount: 0,
   // For Model Content Page
   contents: [],
   contentsUpdated: false,
@@ -31,7 +30,6 @@ const modelReducer = (state = initialState, action) => {
       return {
         ...state,
         models: action.payload.actors,
-        modelsCount: action.payload.actorsCount,
       };
     case ACTIONS.LOAD_ALL_MODELS:
       return {

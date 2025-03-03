@@ -1,47 +1,63 @@
-import { toast } from "react-hot-toast";
 import ACTIONS from "./types";
-import { logoutManager } from "../dashboard/actions";
 import ApiRequest from "@/utils/api";
 
 export const clearProxies = (callback) => async (dispatch) => {
-  await ApiRequest.deleteAction(dispatch, {
-    path: `/proxy`,
-    inform: "successfully clear proxies",
-    callback
-  })
-};
-
-export const addProxies = (proxies, deadline, callback) => async (dispatch) => {
-  await ApiRequest.postAction(dispatch,{
-    path: `/proxy`,
-    data: { proxies, deadline },
-    inform: "successfully add proxies",
-    callback
-  })
-};
-
-export const loadProxies = ({ page, pageSize }) => async (dispatch) => {
-  await ApiRequest.getAction(dispatch, {
-    path: `/proxy`,
-    params: { page, pageSize },
-    action: ACTIONS.LOAD_PROXIES,
-  })
-};
-
-export const setProxyStatus = (proxy, status, callback) => async (dispatch) => {
   await ApiRequest.putAction(dispatch, {
     path: `/proxy`,
-    data: { id: proxy._id, status },
-    inform: "successfully change proxy status",
+    data: { action: "clear" },
+    inform: "All proxies are successfully cleared",
     callback
   })
 };
 
+export const appendProxies = (proxies, deadline, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/proxy`,
+    data: { proxies, deadline },
+    inform: `${proxies.length} proxies are successfully appended`,
+    callback
+  })
+};
+
+export const loadProxies = (callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/proxy`,
+    action: ACTIONS.LOAD_PROXIES,
+    callback
+  })
+};
+
+export const changeProxyStatus = (proxy, status, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/proxy/${proxy._id}`,
+    data: { action: "status", status },
+    inform: `Proxy(${proxy.url}) is successfully ${status ? "enabled" : "disabled"}`,
+    callback
+  })
+};
+
+export const changeBulkProxiesStatus = (proxyIds, status, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/proxy`,
+    data: { action: "status", status, proxyIds },
+    inform: `${proxyIds.length} proxies are successfully ${status ? "enabled" : "disabled"}`,
+    callback
+  })
+};
 
 export const deleteProxy = (proxy, callback) => async (dispatch) => {
   await ApiRequest.deleteAction(dispatch, {
     path: `/proxy/${proxy._id}`,
-    inform: "successfully remove proxy",
+    inform: `Proxy(${proxy.url}) is successfully deleted`,
+    callback
+  })
+};
+
+export const deleteBulkProxies = (proxyIds, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/proxy`,
+    data: { proxyIds },
+    inform: `${proxyIds.length} proxies are successfully deleted`,
     callback
   })
 };

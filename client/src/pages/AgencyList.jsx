@@ -23,11 +23,11 @@ import { AgencyRole, DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TI
 
 export const AgencyListPage = () => {
 
-  const [editOpen, setEditOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [editOpen, setEditOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [agency, setAgency] = useState();
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const dispatch = useDispatch()
   const location = useLocation();
@@ -95,12 +95,12 @@ export const AgencyListPage = () => {
   }
 
   const handleDeleteBulkAgencies = () => {
-    console.log(homeProps.modelStats)
-    console.log(homeProps.accountStats)
-    // Modal.confirm({
-    //   title: `Are you sure to delete ${selectedRowKeys.length} agencies?`,
-    //   onOk: () => { dispatch(deleteBulkAgencies(selectedRowKeys, () => { setSelectedRowKeys([]); loadAgenciesCallback() })); },
-    // });
+    // console.log(homeProps.modelStats)
+    // console.log(homeProps.accountStats)
+    Modal.confirm({
+      title: `Are you sure to delete ${selectedRowKeys.length} agencies?`,
+      onOk: () => { dispatch(deleteBulkAgencies(selectedRowKeys, () => { setSelectedRowKeys([]); loadAgenciesCallback() })); },
+    });
   }
 
   return (

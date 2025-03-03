@@ -9,6 +9,7 @@ const ActorSchema = new Schema({
   birthplace: { type: String }, // model name
   owner: { type: SchemaTypes.ObjectId, ref: "Manager" },
   accounts: [{ type: SchemaTypes.ObjectId, ref: "Account" }],
+  contentsLength: { type: Number, default: 0 },
   contents: [{
     image: String,
     folder: String,

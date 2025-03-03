@@ -1,35 +1,28 @@
+const { default: mongoose } = require("mongoose");
 const { Status, AdminRole } = require("../config/const")
-const ProxyModel = require("../models/proxy")
 const Proxy = require("../models/proxy")
 
-const loadProxiesWithPage = (agency, { page, pageSize }) =>
-    Promise.all([
-        Proxy.find(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id })
-            .skip((parseInt(page) - 1) * parseInt(pageSize))
-            .limit(parseInt(pageSize))
-            .populate('owner', 'name'),
-        ProxyModel.countDocuments(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id })
-    ])
+const loadProxies = (agency) =>
+    Proxy.find(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id })
+        .populate('owner', 'name');
 
 const loadProxiesForOwner = (owner) =>
     Proxy.find({ owner })
 
-const clearProxies = (agency) => {
-    return Proxy.deleteMany({ owner: agency._id })
-}
+const clearProxies = (agency) =>
+    Proxy.deleteMany({ owner: agency._id })
 
-const setProxyStatus = (id, status) => {
-    return Proxy.findByIdAndUpdate(id, { $set: { status } })
-}
+const changeProxyStatus = (proxyId, status) =>
+    Proxy.findByIdAndUpdate(proxyId, { $set: { status } })
 
 const getProxyStats = (agency) => {
     return Promise.all([
-        ProxyModel.count(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id }),
-        ProxyModel.count(agency.role == AdminRole.MANAGER ? { status: Status.ACTIVE } : { owner: agency._id, status: Status.ACTIVE })
+        Proxy.count(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id }),
+        Proxy.count(agency.role == AdminRole.MANAGER ? { status: Status.ACTIVE } : { owner: agency._id, status: Status.ACTIVE })
     ]);
 }
 
-const addProxies = (agency, proxies, deadline) => {
+const appendProxies = (agency, proxies, deadline) => {
     let ops = []
     for (proxy of proxies) {
         ops.push({
@@ -47,41 +40,53 @@ const addProxies = (agency, proxies, deadline) => {
     return Proxy.bulkWrite(ops);
 }
 
-const deleteProxy = (id) => {
-    return ProxyModel.deleteOne({ _id: id })
-}
+const deleteProxy = (proxyId) =>
+    Proxy.findByIdAndDelete(proxyId)
 
 const getCount = (agency) =>
     Promise.all([
-        ProxyModel.countDocuments(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id }),
-        ProxyModel.countDocuments(agency.role == AdminRole.MANAGER ? { expiredAt: { $lt: new Date() } } : { owner: agency._id, expiredAt: { $lt: new Date() } })
+        Proxy.countDocuments(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id }),
+        Proxy.countDocuments(agency.role == AdminRole.MANAGER ? { expiredAt: { $lt: new Date() } } : { owner: agency._id, expiredAt: { $lt: new Date() } })
     ]);
 
-const findById = (id) =>
-    ProxyModel.findById(id)
+const findProxyById = (proxyId) =>
+    Proxy.findById(proxyId)
 
-const findByAccount = (agencyId, platform, alias = undefined) => {
+const findProxyByAccount = (agencyId, platform, alias = undefined) => {
     const field = `usage.${platform}`;
-    return ProxyModel.findOne({ [field]: alias, owner: agencyId });
+    return Proxy.findOne({ [field]: alias, owner: agencyId });
 }
 
 const setProxyAccount = (proxyId, platform, alias) => {
     const field = `usage.${platform}`;
-    return ProxyModel.findByIdAndUpdate(proxyId, { $set: { [field]: alias } });
+    return Proxy.findByIdAndUpdate(proxyId, { $set: { [field]: alias } });
 }
 
+const changeBulkProxiesStatus = (agency, proxyIds, status) =>
+    agency.role == AdminRole.MANAGER
+        ? Proxy.updateMany({ _id: { $in: proxyIds } }, { $set: { status } })
+        : Proxy.updateMany({ _id: { $in: proxyIds }, owner: agency._id }, { $set: { status } });
+
+const deleteBulkProxies = (agency, proxyIds) =>
+    agency.role == AdminRole.MANAGER
+        ? Proxy.deleteMany({ _id: { $in: proxyIds } })
+        : Proxy.deleteMany({ _id: { $in: proxyIds }, owner: agency._id });
+
 const ProxyService = {
-    loadProxiesWithPage,
+    findProxyById,
+    loadProxies,
     loadProxiesForOwner,
+    appendProxies,
     clearProxies,
-    addProxies,
-    getProxyStats,
-    setProxyStatus,
+    changeProxyStatus,
+    changeBulkProxiesStatus,
     deleteProxy,
-    getCount,
-    findById,
-    findByAccount,
+    deleteBulkProxies,
+    findProxyByAccount,
     setProxyAccount,
+
+    getProxyStats,
+    getCount,
 }
 
 module.exports = ProxyService

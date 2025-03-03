@@ -29,22 +29,24 @@ const UserCtrl = require("../controllers/user.js");
 
 const router = express.Router();
 
+// Proxy related apis
 router.route("/proxy")
   .all(authenticate)
   .get(ProxyCtrl.handleLoadProxies)
-  .post(ProxyCtrl.handleAddProxies)
-  .put(ProxyCtrl.handleChangeProxyStatus)
-  .delete(ProxyCtrl.handleClearProxies);
+  .post(ProxyCtrl.handleAppendProxies)
+  .put(ProxyCtrl.handleUpdateProxies)
+  .delete(ProxyCtrl.handleDeleteProxies);
 
 router.route("/proxy/:id")
   .all(authenticate)
-  .put(ProxyCtrl.handleSetProxyStatus)
+  .put(ProxyCtrl.handleUpdateProxy)
   .delete(ProxyCtrl.handleDeleteProxy);
 
 router.route("/chat_all")
   .all(authenticate)
   .get(ChatTeamCtrl.handleLoadAllChatTeams)
 
+// Chat team related apis
 router.route("/chat")
   .all(authenticate, checkManager)
   .get(ChatTeamCtrl.handleLoadChatTeams)
@@ -94,22 +96,17 @@ router
   .put(AccountCtrl.handleAllStop)
 
 router
-  .route("/all")
-  .all(authenticate)
-  .get(ActorCtrl.handleLoadAllModels)
-
-router
   .route("/actor")
   .all(authenticate)
   .get(ActorCtrl.handleLoadActors)
   .post(ActorCtrl.handleCreateActor)
+  .put(ActorCtrl.handleUpdateActors)
+  .delete(ActorCtrl.handleDeleteActors)
 
 router
   .route("/actor/:actorId")
   .all(authenticate)
   .put(ActorCtrl.handleUpdateActor)
-  .post(ActorCtrl.handleChangeAgency)
-  // .post(ActorCtrl.handleUpdateProfile)
   .delete(ActorCtrl.handleDeleteActor);
 
 router

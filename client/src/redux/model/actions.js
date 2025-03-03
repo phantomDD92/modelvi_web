@@ -1,18 +1,11 @@
 import ACTIONS from "./types";
 import ApiRequest from "@/utils/api";
 
-export const loadModels = ({ page, pageSize }, callback) => async (dispatch) =>
+export const loadModels = (callback) => async (dispatch) =>
   ApiRequest.getAction(dispatch, {
     path: `/actor`,
-    params: { page, pageSize },
     action: ACTIONS.LOAD_MODELS,
     callback
-  })
-
-export const loadAllModels = () => async (dispatch) =>
-  ApiRequest.getAction(dispatch, {
-    path: `/all`,
-    action: ACTIONS.LOAD_ALL_MODELS,
   })
 
 
@@ -20,7 +13,7 @@ export const createModel = (params, callback) => async (dispatch) => {
   await ApiRequest.postAction(dispatch, {
     path: "/actor",
     data: params,
-    inform: "successfully create model",
+    inform: `Model (${params.name}) is successfully created`,
     callback
   })
 };
@@ -28,45 +21,64 @@ export const createModel = (params, callback) => async (dispatch) => {
 export const deleteModel = (model, callback) => async (dispatch) => {
   await ApiRequest.deleteAction(dispatch, {
     path: `/actor/${model._id}`,
-    inform: "successfully delete model",
+    inform: `Model (${model.name}) is successfully deleted`,
     callback
   })
 };
 
-export const updateModel = (model, params, callback) => async (dispatch) => {
+export const deleteBulkModels = (modelIds, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/actor`,
+    data: { modelIds },
+    inform: `${modelIds.length} models are successfully deleted`,
+    callback
+  })
+};
+
+export const syncBulkModels = (modelIds, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/actor`,
+    data: { action: "sync", modelIds },
+    inform: `${modelIds.length} models are successfully synchronized`,
+    callback
+  })
+};
+
+export const syncModel = (model, callback) => async (dispatch) => {
   await ApiRequest.putAction(dispatch, {
     path: `/actor/${model._id}`,
-    data: params,
-    inform: "successfully update model",
+    data: { action: "sync" },
+    inform: `Model (${model.name}) is successfully synchronized`,
     callback
   })
 };
 
-export const updateProfile = (actor, params, callback) => async (dispatch) => {
-  await ApiRequest.postAction(dispatch, {
-    path: `/actor/${actor._id}`,
-    data: params,
-    inform: "The model's profile is updated",
+export const changeModel = (model, params, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/actor/${model._id}`,
+    data: { action: "change", ...params },
+    inform: `Model (${model.name}) is successfully changed`,
     callback
   })
 };
 
-export const changeAgency = (actor, params, callback) => async (dispatch) => {
-  await ApiRequest.postAction(dispatch, {
+export const updateModelProfile = (actor, params, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
     path: `/actor/${actor._id}`,
-    data: params,
-    inform: "The model's agency is changed",
+    data: { action: "profile", ...params },
+    inform: `Model (${actor.name})'s profile is successfully updated`,
     callback
   })
 };
-// export const setModelStatus = (model, status, callback) => async (dispatch) => {
-//   await ApiRequest.putAction(dispatch, {
-//     path: `/actor/${model._id}`,
-//     data: { status },
-//     inform: "successfully set model status",
-//     callback
-//   })
-// };
+
+export const changeModelOwner = (actor, agency, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/actor/${actor._id}`,
+    data: { action: "agency", agency },
+    inform: `Model (${actor.name})'s agency is successfully changed`,
+    callback
+  })
+};
 
 export const loadAllChatTeams = () => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
@@ -74,7 +86,6 @@ export const loadAllChatTeams = () => async (dispatch) => {
     action: ACTIONS.LOAD_ALL_CHAT_TEAMS,
   });
 };
-
 
 export const loadChatTeams = (callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {

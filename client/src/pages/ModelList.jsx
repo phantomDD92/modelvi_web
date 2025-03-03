@@ -1,140 +1,171 @@
-import React, { useEffect, useState } from "react";
-import qs from 'query-string';
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { changeAgency, createModel, deleteModel, loadAllChatTeams, loadModels, updateModel, updateProfile } from "@/redux/model/actions";
 import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
-import ModelTable from "@/components/model/ModelTable";
-import ModelDialog from "@/components/model/ModelDialog";
-import ProfileDialog from "@/components/model/ProfileDialog";
+import qs from 'query-string';
 import { Modal } from "antd";
-import OwnerDialog from "@/components/account/OwnerDialog";
+import {
+  changeModelOwner,
+  createModel,
+  deleteModel,
+  loadModels,
+  changeModel,
+  deleteBulkModels,
+  syncBulkModels,
+  syncModelContents,
+  syncModel,
+  // updateModelProfile 
+} from "@/redux/model/actions";
+import {
+  ModelTable,
+  ModelEditDialog,
+  ModelOwnerDialog,
+} from "@/components/model";
+import {
+  DEFAULT_CURRENT_PAGE,
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_REFRESH_TIMEOUT
+} from "@/utils/const";
+import toast from "react-hot-toast";
 
-export const ModelList = () => {
-  const [visible, setVisible] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
-  const [agencyOpen, setAgencyOpen] = useState(false);
+export const ModelListPage = () => {
+
   const [loading, setLoading] = useState(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [editOpen, setEditOpen] = useState(false);
+  const [agencyOpen, setAgencyOpen] = useState(false);
   const [model, setModel] = useState();
+
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const location = useLocation();
-  const page = parseInt(qs.parse(location.search).page) || 1;
-  const pageSize = parseInt(qs.parse(location.search).size) || 10;
+
   const modelProps = useSelector(state => state.model)
   const homeProps = useSelector(state => state.home)
+  const models = useSelector(state => state.model.models);
+  const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
+  const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
+
+  const loadModelsCallback = useCallback(() => {
+    setLoading(true);
+    dispatch(loadModels(() => setLoading(false)));
+  }, [dispatch]);
 
   useEffect(() => {
-    setLoading(true);
-    dispatch(loadModels({ page, pageSize }, () => setLoading(false)));
-  }, [loadModels, page, pageSize])
+    loadModelsCallback();
+  }, [loadModelsCallback])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setLoading(true);
-      dispatch(loadModels({ page, pageSize }, () => setLoading(false)));
-    }, 60000);
+      loadModelsCallback();
+    }, DEFAULT_REFRESH_TIMEOUT);
     return () => clearInterval(interval);
   });
 
-  const handleProfileClick = (model) => {
-    setModel(model)
-    setProfileOpen(true);
-  }
-
-  const handleContentButtonClick = (model) => {
-    navigate(`/model/${model._id}`);
-  }
-
+  // const handleProfileClick = (model) => {
+  //   setModel(model)
+  //   setProfileOpen(true);
+  // }
 
   const handleDeleteModel = (model) => {
+    if (model.accounts && model.accounts.length > 0) {
+      toast.error(`Model (${model.name}) has some associated accounts`);
+      return;
+    }
     Modal.confirm({
-      title: "Are you sure to delete this model?",
-      onOk: () => { dispatch(deleteModel(model, handleReloadData)) },
+      title: `Are you sure to delete the model(${model.name})?`,
+      onOk: () => dispatch(deleteModel(model, () => loadModelsCallback())),
     });
   }
 
-  const handleReloadData = () => {
-    setLoading(true);
-    dispatch(loadModels({ page, pageSize }, () => setLoading(false)));
-    setVisible(false);
-    setProfileOpen(false);
-    setAgencyOpen(false);
+  const handleDeleteBulkModels = () => {
+    const nonEmptyModels = models.filter(model => selectedRowKeys.includes(model._id) && model.accounts?.length > 0);
+    if (nonEmptyModels.length > 0) {
+      toast.error(`${nonEmptyModels.length} models have some associated accounts`);
+      return;
+    }
+    Modal.confirm({
+      title: `Are you sure to delete ${selectedRowKeys.length} models?`,
+      onOk: () => dispatch(deleteBulkModels(selectedRowKeys, () => loadModelsCallback())),
+    });
+  }
+
+  const handleSyncBulkModels = () => {
+    Modal.confirm({
+      title: `Are you sure to sync ${selectedRowKeys.length} models' content?`,
+      onOk: () => dispatch(syncBulkModels(selectedRowKeys, () => loadModelsCallback())),
+    });
+  }
+
+  const handleSyncModel = (model) => {
+    dispatch(syncModel(model, () => { loadModelsCallback(); }))
   }
 
   const handleUpdateModel = (model, params) => {
-    dispatch(updateModel(model, params, handleReloadData))
+    dispatch(changeModel(model, params, () => { setEditOpen(false); loadModelsCallback(); }))
   }
 
   const handleCreateModel = (params) => {
-    dispatch(createModel(params, handleReloadData));
+    dispatch(createModel(params, () => { setEditOpen(false); loadModelsCallback(); }));
   }
 
-  const handleCreateButtonClick = () => {
-    setModel();
-    setVisible(true)
+  const handleChangeAgency = (params) => {
+    dispatch(changeModelOwner(model, params, () => { setAgencyOpen(false); loadModelsCallback(); }));
   }
 
-  const handleEditButtonClick = (model) => {
-    setModel(model);
-    setVisible(true);
-  }
-
-  const handleProfileUpdate = (model, params) => {
-    dispatch(updateProfile(model, params, handleReloadData));
-  }
-
-  const handlePageChange = (pg, pgSize) => {
+  const handleChangePagination = (pageValue, pageSizeValue) => {
     navigate({
       pathname: location.pathname,
-      search: createSearchParams({ page: pg, size: pgSize }).toString()
+      search: createSearchParams({ page: pageValue, size: pageSizeValue }).toString()
     }, { replace: true });
   }
-
-  const handleChangeAgency = (model, params) => {
-    dispatch(changeAgency(model, params, handleReloadData));
-  }
-
   return (
-    <div>
+    <>
       <ModelTable
-        loading={loading}
-        page={page}
-        pageSize={pageSize}
         auth={homeProps.auth}
-        models={modelProps.models}
-        modelsCount={modelProps.modelsCount}
-        onCreate={handleCreateButtonClick}
-        onPageChange={handlePageChange}
-        onEdit={handleEditButtonClick}
-        onDelete={handleDeleteModel}
-        onContent={handleContentButtonClick}
-        onProfile={handleProfileClick}
-        onAgencyChange={(model) => {
-          setModel(model);
-          setAgencyOpen(true);
+        dataSource={modelProps.models}
+        loading={loading}
+        pagination={{
+          current: page,
+          pageSize: pageSize,
+          onChange: handleChangePagination
+        }}
+        rowSelection={{
+          selectedRowKeys: selectedRowKeys,
+          onChange: (newSelectedRowKeys) => setSelectedRowKeys(newSelectedRowKeys),
+        }}
+        actions={{
+          onCreate: () => { setModel(); setEditOpen(true); },
+          onEdit: (model) => { setModel(model); setEditOpen(true); },
+          onDelete: handleDeleteModel,
+          onContent: (model) => navigate(`/model/${model._id}`),
+          onAgencyChange: (model) => { setModel(model); setAgencyOpen(true); },
+          onBulkDelete: handleDeleteBulkModels,
+          onBulkSync: handleSyncBulkModels,
+          onSync: handleSyncModel,
+          // onProfile: (model) => { setModel(model); setProfileOpen(true); },
         }}
       />
-      <ModelDialog
-        open={visible}
+      <ModelEditDialog
+        open={editOpen}
         model={model}
-        onCancel={() => setVisible(false)}
+        onCancel={() => setEditOpen(false)}
         onCreate={handleCreateModel}
         onUpdate={handleUpdateModel}
       />
-      <OwnerDialog
+      <ModelOwnerDialog
         open={agencyOpen}
         model={model}
         onCancel={() => setAgencyOpen(false)}
         onUpdate={handleChangeAgency}
       />
-      <ProfileDialog
+      {/* <ProfileDialog
         open={profileOpen}
         model={model}
         onCancel={() => setProfileOpen(false)}
         onUpdate={handleProfileUpdate}
-      />
-    </div>
+      /> */}
+    </>
   );
 };
 
-export default ModelList;
+export default ModelListPage;

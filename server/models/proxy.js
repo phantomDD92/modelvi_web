@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const { Protocol } = require("../config/const");
-const { Schema, SchemaTypes } = mongoose;
+const { SchemaTypes } = mongoose;
 require('./manager');
 
-const ProxySchema = new Schema({
+const ProxySchema = new mongoose.Schema({
   url: { type: String, required: true },
   owner: { type: SchemaTypes.ObjectId, ref: "Manager" },
   protocol: { type: String, default: Protocol.HTTP },

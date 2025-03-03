@@ -1,6 +1,6 @@
 import React from "react"
 import { UserOutlined, HomeOutlined, SolutionOutlined, SettingOutlined, WomanOutlined, EnvironmentOutlined, DiscordOutlined } from "@ant-design/icons";
-import {Home, ProxyList, ModelList, ChatTeamListPage, Settings} from "@/pages";
+import {Home, ProxyListPage, ModelListPage, ChatTeamListPage, Settings} from "@/pages";
 import AgencyListPage from "./pages/AgencyList";
 import AccountList from "./pages/AccountList";
 import ModelContent from "./pages/ModelContent";
@@ -25,7 +25,7 @@ const routes = [
         link: "/model",
         label: "Model",
         icon: <SolutionOutlined />,
-        component: <ModelList />,
+        component: <ModelListPage />,
         mode: "main"
     },
     {
@@ -77,7 +77,7 @@ const routes = [
         label: "Proxy",
         link: "/proxy",
         icon: <EnvironmentOutlined />,
-        component: <ProxyList />,
+        component: <ProxyListPage />,
         mode: "main",
     },
     {
