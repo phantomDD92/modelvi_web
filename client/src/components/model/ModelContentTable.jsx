@@ -1,9 +1,47 @@
-import { Card, Table, Tooltip, Popconfirm, Button, Flex, Image, Tag } from "antd";
-import { DeleteOutlined, PlusOutlined, UploadOutlined, RollbackOutlined, EditOutlined } from "@ant-design/icons";
-import { KnkyStoryType, Platform, SERVER_PATH, StoryType } from "@/utils/const";
+import {
+    Button,
+    Card,
+    Flex,
+    Image,
+    Popconfirm,
+    Space,
+    Table,
+    Tag,
+    Tooltip,
+} from "antd";
+import {
+    DeleteOutlined,
+    EditOutlined,
+    PlusOutlined,
+    RollbackOutlined,
+    UploadOutlined,
+} from "@ant-design/icons";
+import {
+    KnkyStoryType,
+    Platform,
+    SERVER_PATH,
+    StoryType
+} from "@/utils/const";
 import Media from "../common/Media";
+import { getPlatformName } from "@/utils/string";
 
-export const ModelContentTable = ({ loading, model, onDelete, onCreate, onEdit, onBack, onClear, onSync }) => {
+export const ModelContentTable = ({
+    pagination,
+    rowSelection,
+    loading,
+    // dataSource,
+    model,
+    actions: {
+        onDelete,
+        onCreate,
+        onEdit,
+        onBack,
+        onClear,
+        onSync,
+        onBulkDelete,
+        onBulkPlatform,
+    }
+}) => {
 
     const isFancentroStory = (record) => {
         return record.platforms && record.platforms.includes(Platform.FNC) && record.story != StoryType.NONE
@@ -41,25 +79,7 @@ export const ModelContentTable = ({ loading, model, onDelete, onCreate, onEdit, 
         return ""
     }
 
-    const getPlatformTag = (platform) => {
-        switch (platform) {
-            case Platform.F2F:
-                return <Tag key={platform} color="processing">F2F</Tag>;
-            case Platform.FNC:
-                return <Tag key={platform} color="processing">Fancentro</Tag>;
-            case Platform.FAN:
-                return <Tag key={platform} color="processing">Fansly</Tag>;
-            case Platform.FANVUE:
-                return <Tag key={platform} color="processing">Fanvue</Tag>;
-            case Platform.KNKY:
-                return <Tag key={platform} color="processing">Knky</Tag>;
-            case Platform.MALOUM:
-                return <Tag key={platform} color="processing">Maloum</Tag>;
-            default:
-                break
-        }
-        return ""
-    }
+    const getPlatformTag = (platform) => <Tag key={platform} color="processing">{getPlatformName(platform)}</Tag>;
 
     const columns = [
         {
@@ -120,19 +140,12 @@ export const ModelContentTable = ({ loading, model, onDelete, onCreate, onEdit, 
             render: (_, record) => (
                 <Flex gap="small">
                     <Tooltip title="Edit content">
-                        <Button icon={<EditOutlined />} onClick={() => onEdit(record)} />
+                        <Button icon={<EditOutlined />} onClick={() => onEdit && onEdit(record)} />
                     </Tooltip>
-                    <Popconfirm
-                        title="Confirm"
-                        description="Are you sure to delete this content?"
-                        okText="Yes"
-                        cancelText="No"
-                        onConfirm={() => onDelete(record)}
-                    >
-                        <Tooltip title="Delete content">
-                            <Button icon={<DeleteOutlined />} danger />
-                        </Tooltip>
-                    </Popconfirm>
+
+                    <Tooltip title="Delete content">
+                        <Button icon={<DeleteOutlined />} danger onClick={() => onDelete && onDelete(record)} />
+                    </Tooltip>
                 </Flex>
             )
         },
@@ -146,29 +159,22 @@ export const ModelContentTable = ({ loading, model, onDelete, onCreate, onEdit, 
                     <Button
                         key="create"
                         icon={<PlusOutlined />}
-                        onClick={onCreate}>
+                        onClick={() => onCreate && onCreate()}>
                         Create
                     </Button>
-                    <Popconfirm
-                        title="Confirm"
-                        description="Are you sure to clear all contents?"
-                        okText="Yes"
-                        cancelText="No"
-                        onConfirm={onClear}
-                    >
-                        <Button
-                            key="clear"
-                            icon={<DeleteOutlined />}
-                            danger>
-                            Clear
-                        </Button>
-                    </Popconfirm>
+                    <Button
+                        key="clear"
+                        icon={<DeleteOutlined />}
+                        onClick={() => onClear && onClear()}
+                        danger>
+                        Clear
+                    </Button>
                     {
                         model && model.updated &&
                         <Button
                             key="sync"
                             icon={<UploadOutlined />}
-                            onClick={onSync}>
+                            onClick={() => onSync && onSync()}>
                             Sync
                         </Button>
                     }
@@ -181,11 +187,35 @@ export const ModelContentTable = ({ loading, model, onDelete, onCreate, onEdit, 
                 </Flex>
             }
         >
+            <Space align='center' size="middle">
+                {rowSelection.selectedRowKeys && rowSelection.selectedRowKeys.length > 0 &&
+                    <>
+                        <h3>Bulk Actions : </h3>
+                        <Button
+                            key="disable"
+                            icon={<UploadOutlined />}
+                            onClick={() => onBulkPlatform && onBulkPlatform()}>
+                            {`Change ${rowSelection.selectedRowKeys.length} contents' platform`}
+                        </Button>
+                        <Button
+                            key="delete"
+                            icon={<DeleteOutlined />}
+                            danger
+                            onClick={() => onBulkDelete && onBulkDelete()}>
+                            {`Delete ${rowSelection.selectedRowKeys.length} contents`}
+                        </Button>
+                    </>
+                }
+            </Space>
             <Table
-                pagination={{ position: ["topRight", "bottomRight"], showTotal: total => `Total ${total} contents`, showSizeChanger: true }}
-                rowKey={row => row._id}
+                pagination={{
+                    ...pagination,
+                    position: ["topRight", "bottomRight"],
+                    showTotal: total => `Total ${total} contents`,
+                }}
                 loading={loading}
-                dataSource={model ? model.contents : []}
+                rowSelection={rowSelection} rowKey={row => row._id}
+                dataSource={model?.contents || []}
                 columns={columns}
             />
         </Card>

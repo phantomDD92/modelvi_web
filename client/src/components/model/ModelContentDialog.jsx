@@ -1,5 +1,15 @@
 import { useEffect, useState } from "react";
-import { Button, Upload, Modal, Form, Input, Checkbox, Flex, Radio, InputNumber } from "antd";
+import {
+    Button,
+    Checkbox,
+    Flex,
+    Form,
+    Input,
+    InputNumber,
+    Modal,
+    Radio,
+    Upload,
+} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { KnkyStoryType, Platform, SERVER_PATH, StoryType } from "@/utils/const";
 import Media from "../common/Media";

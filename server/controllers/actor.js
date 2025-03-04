@@ -126,7 +126,7 @@ const handleUpdateActor = async (req, res) => {
           `${req.manager?.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
           `${actor.number}. ${actor.name}`,
           `UPDATE A MODEL'S CONTENT`);
-          break;
+        break;
       default:
         throw new ApiError("Invalid model operation");
     }
@@ -166,12 +166,12 @@ const handleUpdateActors = async (req, res) => {
 //   }
 // };
 
-const handleGetContent = async (req, res) => {
+const handleGetContents = async (req, res) => {
   try {
     const { actorId } = req.params;
     let actor = await ActorService.findById(actorId);
     if (!actor)
-      throw new ApiError(`model does not exist.`);
+      throw new ApiError(`Model does not exist.`);
     sendResult(res, { actor });
   } catch (error) {
     sendError(res, error);
@@ -188,6 +188,7 @@ const handleAppendContent = async (req, res) => {
     if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
       throw new ApiError(`The model content is able to update only by owner.`)
     await ActorService.appendContent(actorId, params);
+    actor = await ActorService.findById(actorId);
     sendResult(res, { actor });
   } catch (error) {
     sendError(res, error);
@@ -197,13 +198,20 @@ const handleAppendContent = async (req, res) => {
 const handleUpdateContent = async (req, res) => {
   try {
     const { actorId, contentId } = req.params;
-    const params = req.body;
+    const { action, ...params } = req.body;
     let actor = await ActorService.findById(actorId, contentId);
     if (!actor)
-      throw new ApiError(`The model does not exist.`);
+      throw new ApiError(`Model does not exist.`);
     if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
-      throw new ApiError(`The model content is able to update only by owner.`)
-    await ActorService.updateContent(actorId, contentId, params);
+      throw new ApiError(`Model content is able to update only by owner.`)
+    switch (action) {
+      case "change":
+        await ActorService.updateContent(actorId, contentId, params);
+        break;
+      default:
+        throw new ApiError("Invalid content operations")
+    }
+    actor = await ActorService.findById(actorId, contentId);
     sendResult(res, { actor });
   } catch (error) {
     sendError(res, error);
@@ -213,46 +221,54 @@ const handleUpdateContent = async (req, res) => {
 const handleDeleteContent = async (req, res) => {
   try {
     const { actorId, contentId } = req.params;
+    let actor = await ActorService.findById(actorId);
+    if (!actor)
+      throw new ApiError(`The model does not exist.`);
+    if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
+      throw new ApiError(`The model is able to delete only by owner`)
     await ActorService.deleteContent(actorId, contentId);
-    let actor = await ActorService.findById(actorId);
-    if (!actor)
-      throw new ApiError(`The model does not exist.`);
-    if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
-      throw new ApiError(`The model is able to delete only by owner`)
-    sendResult(res, { actor });
-  } catch (error) {
-    sendError(res, error);
-  }
-}
-
-const handleClearContents = async (req, res) => {
-  try {
-    const { actorId } = req.params;
-    let actor = await ActorService.findById(actorId);
-    if (!actor)
-      throw new ApiError(`model does not exist.`);
-    if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
-      throw new ApiError(`The model is able to delete only by owner`)
-    await ActorService.clearContents(actorId);
-    sendResult(res, { actor });
-  } catch (error) {
-    sendError(res, error);
-  }
-}
-
-const handleSyncContents = async (req, res) => {
-  try {
-    const { actorId } = req.params;
-    let actor = await ActorService.findById(actorId);
-    if (!actor)
-      throw new ApiError(`The model does not exist.`);
-    await AccountService.syncContents(actorId);
-    await ActorService.syncContents(actorId);
     actor = await ActorService.findById(actorId);
-    await NotifyUtils.sendMessage(
-      `${req.manager?.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
-      `${actor.number}. ${actor.name}`,
-      `UPDATE CONTENTS`);
+    sendResult(res, { actor });
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
+const handleDeleteContents = async (req, res) => {
+  try {
+    const { actorId } = req.params;
+    let actor = await ActorService.findById(actorId);
+    if (!actor)
+      throw new ApiError(`Model does not exist.`);
+    if (req.manager.role != AdminRole.MANAGER && actor.owner.toString() != req.manager._id.toString())
+      throw new ApiError(`Model contents are able to delete only by owner`)
+    const { contentIds } = req.body;
+    await ActorService.deleteBulkContents(actorId, contentIds);
+    actor = await ActorService.findById(actorId);
+    sendResult(res, { actor });
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
+const handleUpdateContents = async (req, res) => {
+  try {
+    const { actorId } = req.params;
+    let actor = await ActorService.findById(actorId);
+    if (!actor)
+      throw new ApiError(`Model does not exist.`);
+    const { action, contentIds, ...params } = req.body;
+    switch (action) {
+      case "platform":
+        await ActorService.updateBulkContentsParams(actorId, contentIds, params);
+        break;
+      case "clear":
+        await ActorService.clearContents(actorId);
+        break;
+      default:
+        throw new ApiError("Invalid content action");
+    }
+    actor = await ActorService.findById(actorId);
     sendResult(res, { actor });
   } catch (error) {
     sendError(res, error);
@@ -264,12 +280,12 @@ const ActorCtrl = {
   handleCreateActor,
   handleDeleteActor,
   handleUpdateActor,
-  handleGetContent,
+  handleGetContents,
   handleAppendContent,
   handleUpdateContent,
   handleDeleteContent,
-  handleClearContents,
-  handleSyncContents,
+  handleDeleteContents,
+  handleUpdateContents,
   handleDeleteActors,
   handleUpdateActors,
   // handleUpdateProfile,

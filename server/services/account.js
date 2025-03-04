@@ -15,10 +15,15 @@ const loadAccounts = (agency, platform, { page, pageSize }) =>
   ])
 
 const loadDisabledAccounts = (agency) =>
-  AccountModel.find(agency.role == AdminRole.AGENCY ? { owner: agency._id, status: false } : { status: false })
-    .sort("-updatedAt")
-    .populate("owner", "name")
-    .populate("actor", "name");
+  agency.role == AdminRole.MANAGER ?
+    AccountModel.find({ status: false }, "-params")
+      .sort("-updatedAt")
+      .populate("owner", "name")
+      .populate("actor", "name")
+    : AccountModel.find({ owner: agency._id, status: false }, "-params")
+      .sort("-updatedAt")
+      .populate("owner", "name")
+      .populate("actor", "name");;
 
 const createAccount = (
   platform,

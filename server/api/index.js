@@ -110,12 +110,12 @@ router
   .delete(ActorCtrl.handleDeleteActor);
 
 router
-  .route("/contents/:actorId")
+  .route("/content/:actorId")
   .all(authenticate)
-  .get(ActorCtrl.handleGetContent)
+  .get(ActorCtrl.handleGetContents)
   .post(ActorCtrl.handleAppendContent)
-  .put(ActorCtrl.handleSyncContents)
-  .delete(ActorCtrl.handleClearContents);
+  .put(ActorCtrl.handleUpdateContents)
+  .delete(ActorCtrl.handleDeleteContents);
 
 router
   .route("/content/:actorId/:contentId")

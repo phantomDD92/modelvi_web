@@ -71,6 +71,9 @@ const appendContent = (id, params) =>
 const deleteContent = (id, contentId) =>
   ActorModel.findByIdAndUpdate(id, { $pull: { contents: { _id: contentId } }, $set: { updated: true } })
 
+const deleteBulkContents = (id, contentIds) =>
+  ActorModel.findByIdAndUpdate(id, { $pull: { contents: { _id: { $in: contentIds } } }, $set: { updated: true } })
+
 const clearContents = (id) =>
   ActorModel.findByIdAndUpdate(id, { $set: { contents: [], updated: true } })
 
@@ -115,6 +118,20 @@ const getEmptyActors = (agency, modelIds) =>
     ? ActorModel.find({ _id: { $in: modelIds }, accounts: { $size: 0 } }, "-contents")
     : ActorModel.find({ _id: { $in: modelIds }, accounts: { $size: 0 }, owner: agency._id }, "-contents")
 
+const updateBulkContentsParams = (actorId, contentIds, { platforms, story, knkyStoryType, knkyStoryPrice }) =>
+  ActorModel.updateOne(
+    { _id: actorId },
+    {
+      $set: {
+        'contents.$[elem].platforms': platforms,
+        'contents.$[elem].story': story,
+        'contents.$[elem].knkyStoryType': knkyStoryType,
+        'contents.$[elem].knkyStoryPrice': knkyStoryPrice
+      }
+    },
+    { arrayFilters: [{ 'elem._id': { $in: contentIds } }] }
+  )
+
 const ActorService = {
   createActor,
   changeActor,
@@ -128,6 +145,8 @@ const ActorService = {
   getCount,
   appendContent,
   deleteContent,
+  deleteBulkContents,
+  updateBulkContentsParams,
   clearContents,
   updateContent,
   syncContents,

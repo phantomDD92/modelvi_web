@@ -11,7 +11,6 @@ import {
   changeModel,
   deleteBulkModels,
   syncBulkModels,
-  syncModelContents,
   syncModel,
   // updateModelProfile 
 } from "@/redux/model/actions";
