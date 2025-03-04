@@ -1,15 +1,23 @@
 import React from "react"
 import { UserOutlined, HomeOutlined, SolutionOutlined, SettingOutlined, WomanOutlined, EnvironmentOutlined, DiscordOutlined } from "@ant-design/icons";
-import {Home, ProxyListPage, ModelListPage, ChatTeamListPage, Settings} from "@/pages";
+import { Home, ProxyListPage, ModelListPage, ChatTeamListPage, Settings } from "@/pages";
 import AgencyListPage from "./pages/AgencyList";
 import AccountList from "./pages/AccountList";
 import ModelContent from "./pages/ModelContent";
 import AccountHistory from "./pages/AccountHistory";
-import ScheduleList from "./pages/ScheduleList";
-import { AdminRole } from "./utils/const";
+// import ScheduleList from "./pages/ScheduleList";
 import CommentListPage from "./pages/CommentList";
+import LandingPage from "./pages/Landing";
+import { AdminRole } from "./utils/const";
 
 const routes = [
+    // {
+    //     key: "landing",
+    //     path: "/",
+    //     link: "/",
+    //     label: "Dashboard",
+    //     component: <LandingPage />,
+    // },
     {
         key: "dashboard",
         path: "/dashboard",

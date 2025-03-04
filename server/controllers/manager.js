@@ -1,10 +1,9 @@
 const jwt = require("jsonwebtoken");
-const bcrypte = require("bcryptjs");
+const bcryptjs = require("bcryptjs");
 const ManagerService = require("../services/manager.js");
 const dotenv = require("dotenv");
 const { sendResult, sendError, ApiError } = require("../utils/resp.js");
 const ActorService = require("../services/actor.js");
-const { Platform, StoryType } = require("../config/const.js");
 const AccountService = require("../services/account.js");
 const ActorModel = require("../models/actor.js");
 
@@ -31,7 +30,7 @@ const handleLoginManager = async (req, res) => {
     const agency = await ManagerService.findAgencyByName(name)
     if (!agency)
       throw new ApiError(`Agency(${name}) is not registered`)
-    const passwordCompare = await bcrypte.compare(password, agency.password);
+    const passwordCompare = await bcryptjs.compare(password, agency.password);
     if (!passwordCompare)
       throw new ApiError("The password is incorrect");
     const token = jwt.sign({ id: agency._id }, process.env.SECRET_KEY || "SECRET_KEY_FNC", { expiresIn: "1h" });
@@ -104,7 +103,7 @@ const handleChangePassword = async (req, res) => {
     const user = await ManagerService.findAgencyByName(name)
     if (!user)
       throw new ApiError(`Agency(${name}) is not registered`)
-    const passwordCompare = await bcrypte.compare(password, user.password);
+    const passwordCompare = await bcryptjs.compare(password, user.password);
     if (!passwordCompare)
       throw new ApiError("The old password is incorrect");
     await ManagerService.changeAgencyPassword(user._id, newPassword);

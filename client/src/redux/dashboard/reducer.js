@@ -73,7 +73,7 @@ const dashboardReducer = (state = initialState, action) => {
         auth: action.payload.auth,
       }
     case ACTIONS.LOGOUT_MANAGER:
-      localStorage.setItem("token", undefined)
+      localStorage.clear("token")
       return {
         ...state,
         token: undefined,

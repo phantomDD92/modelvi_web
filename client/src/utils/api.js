@@ -1,6 +1,7 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 import { API_PATH } from "./const";
+import { logoutManager } from "@/redux/dashboard/actions";
 
 const postAction = async (dispatch, {action, path, data, params, inform, callback}) => {
     try {

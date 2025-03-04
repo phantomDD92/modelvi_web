@@ -14,7 +14,7 @@ const createAgency = ({ name, password, maxActors, maxAccounts, email }) =>
     })
 
 const findAgencyByName = (name) =>
-    ManagerModel.findOne({ name }, 'name email role status maxAccounts maxActors createdAt')
+    ManagerModel.findOne({ name }, 'name email password role status maxAccounts maxActors createdAt')
 
 const loadAgencies = () =>
     ManagerModel.find({}, 'name email maxAccounts maxActors role status createdAt');
