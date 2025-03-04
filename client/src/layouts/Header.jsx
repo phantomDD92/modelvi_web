@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Avatar, Popover, Menu, Modal, Form, Input, Typography, Flex } from "antd";
+import { Layout, Avatar, Popover, Menu, Modal, Form, Input, Typography, Flex, theme } from "antd";
 import { LogoutOutlined, KeyOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { changePassword, logoutManager, reloadManager } from "@/redux/dashboard/actions";
@@ -12,6 +12,7 @@ const HeaderBar = () => {
     const dispatch = useDispatch();
     const homeProps = useSelector(state => state.home)
     const navigate = useNavigate()
+    const { token: { colorBgContainer } } = theme.useToken();
     const items = [{
         label: 'Change Password',
         key: 'password',
@@ -42,7 +43,7 @@ const HeaderBar = () => {
     }
 
     return (
-        <Layout.Header className="h-16 flex items-center justify-end">
+        <Layout.Header className="h-16 flex items-center justify-end" style={{ background: colorBgContainer }}>
             <Popover content={
                 <Menu items={items} onClick={handleMenuClick} />
             }
@@ -53,7 +54,7 @@ const HeaderBar = () => {
                         className="bg-green-400"
                         src={homeProps.auth.role == AdminRole.MANAGER ? "/img/manager.png" : "/img/agency.png"}
                     />
-                    <span style={{color:"white", fontSize: "1.15rem"}}>{homeProps.auth.name}</span>
+                    <span style={{ color: "white", fontSize: "1.15rem" }}>{homeProps.auth.name}</span>
                 </Flex>
             </Popover>
             <Modal

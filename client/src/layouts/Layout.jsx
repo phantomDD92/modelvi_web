@@ -1,4 +1,4 @@
-import { Layout } from "antd";
+import { FloatButton, Layout } from "antd";
 import React from "react";
 import SiderBar from "./SiderBar";
 import HeaderBar from "./Header";
@@ -11,10 +11,10 @@ const Layouts = ({ children }) => {
       <SiderBar />
       <Layout>
         <HeaderBar />
-        <Content className="m-4 max-h-full overflow-auto overflow-x-hidden">     
-            {children}
+        <Content className="m-4 max-h-full overflow-auto overflow-x-hidden">
+          {children}
         </Content>
-        <Footer className="text-center h-12">
+        <Footer className="text-center h-4">
           ModelVI ©{new Date().getFullYear()} Created by David
         </Footer>
       </Layout>

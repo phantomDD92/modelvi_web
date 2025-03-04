@@ -110,7 +110,7 @@ export const resetAgencyPassword = (agency, password, callback) => async (dispat
 export const changePassword = (name, password, newPassword, callback) => async (dispatch) => {
   await ApiRequest.putAction(dispatch, {
     path: `/auth`,
-    inform: `manager(${name})'s password is successfully changed.`,
+    inform: `${name}'s password is successfully changed`,
     data: { name, password, newPassword },
     callback
   })
@@ -121,14 +121,18 @@ export const loginManager = (name, password, callback) => async (dispatch) => {
     path: `/auth`,
     data: { name, password },
     action: ACTIONS.LOGIN_MANAGER,
-    inform: `manager(${name}) is successfully logged in.`,
+    inform: `${name} is successfully signed in`,
     callback
   })
 };
 
 export const logoutManager = () => async (dispatch) => {
   dispatch({ type: ACTIONS.LOGOUT_MANAGER });
-  toast.success(`successfully logged out`)
+  toast.success(`Agency is successfully signed out`)
+};
+
+export const changeTheme = (theme) => async (dispatch) => {
+  dispatch({ type: ACTIONS.CHANGE_THEME, payload: { theme } });
 };
 
 

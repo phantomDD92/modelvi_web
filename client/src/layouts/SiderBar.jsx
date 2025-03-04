@@ -1,5 +1,5 @@
 import React from "react";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Typography } from "antd";
 import routes from "@/routes";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -11,13 +11,13 @@ const SiderBar = () => {
         <Layout.Sider
             breakpoint="lg"
             collapsedWidth="0"
+            theme="light"
         >
             <div className="h-16 flex items-center justify-center">
-                <span className="text-white text-3xl">Model<b>VI</b></span>
+                <Typography className="text-3xl">Model<b>VI</b></Typography>
             </div>
             <Menu
                 className="text-base"
-                theme="dark"
                 mode="inline"
                 defaultSelectedKeys={[currentKey]}
                 onSelect={({ item }) => {

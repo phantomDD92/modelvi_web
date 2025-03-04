@@ -1,6 +1,8 @@
+import { theme } from "antd";
 import ACTIONS from "./types";
 
 const initialState = {
+  theme: localStorage.getItem("theme"),
   auth: {},
   token: localStorage.getItem("token"),
   stats: {
@@ -111,6 +113,12 @@ const dashboardReducer = (state = initialState, action) => {
       return {
         ...state,
         agencyComments: action.payload.comments,
+      }
+    case ACTIONS.CHANGE_THEME:
+      localStorage.setItem("theme", action.payload.theme)
+      return {
+        ...state,
+        theme: action.payload.theme,
       }
     default:
       return state;

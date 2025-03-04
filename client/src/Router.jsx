@@ -9,7 +9,6 @@ import LandingPage from "./pages/Landing";
 
 const Router = () => {
   const homeProps = useSelector(state => state.home);
-  console.log("Token :", homeProps.token);
   return (
     <BrowserRouter>
       <Routes>
