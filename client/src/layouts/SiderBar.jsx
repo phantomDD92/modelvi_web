@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 const SiderBar = () => {
     const currentKey = window.location.pathname ? window.location.pathname.split("/")[1] || "dashboard" : "dashboard"
     const navigate = useNavigate();
-    const homeProps = useSelector(state => state.home);
+    const auth = useSelector(state => state.home.auth);
     return (
         <Layout.Sider
             breakpoint="lg"
@@ -23,7 +23,7 @@ const SiderBar = () => {
                 onSelect={({ item }) => {
                     navigate(item.props.link);
                 }}
-                items={routes.filter(route => route.mode === "main" && (!route.visible || route.visible(homeProps.auth))).map(({ visible, ...data }) => ({ ...data }))} />
+                items={routes.filter(route => route.mode === "main" && (!route.visible || route.visible(auth))).map(({ visible, ...data }) => ({ ...data }))} />
         </Layout.Sider>
     )
 }

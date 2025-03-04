@@ -1,3 +1,5 @@
+import { Layout } from "antd";
+
 const LandingHeader = () => {
   return (
     <header className="fixed w-full">
@@ -54,9 +56,11 @@ const LandingFooter = () => {
 
 const LandingPage = () => {
   return <>
-    <LandingHeader />
-    <LandingBody />
-    <LandingFooter />
+    <Layout>
+      <Layout.Header>Header</Layout.Header>
+      <Layout.Content className="min-h-[500px]">Content</Layout.Content>
+      <Layout.Footer >Footer</Layout.Footer>
+    </Layout>
   </>
 }
 

@@ -140,6 +140,9 @@ const handleUpdateActors = async (req, res) => {
   try {
     const { action, actorIds, ...params } = req.body;
     switch (action) {
+      case "sync":
+        throw new ApiError("Unimplemented model operation");
+        break;
       default:
         throw new ApiError("Invalid model operation");
     }
