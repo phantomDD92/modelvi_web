@@ -5,6 +5,7 @@ import {
     Dropdown,
     Flex,
     Radio,
+    Space,
     Table,
     Tag,
     Switch,
@@ -14,7 +15,9 @@ import {
     EditOutlined,
     UserAddOutlined,
     ReadOutlined,
-    SolutionOutlined
+    SolutionOutlined,
+    EyeOutlined,
+    EyeInvisibleOutlined,
 } from "@ant-design/icons";
 import {
     AdminRole,
@@ -22,7 +25,26 @@ import {
 } from "@/utils/const"
 import moment from "moment";
 
-const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, platform, onPageChange, onStatusChange, onPlatformChange, onCreate, onStartAll, onStopAll, onEdit, onDelete, onParameter, onHistory }) => {
+const AccountTable = ({
+    pagination,
+    rowSelection,
+    dataSource,
+    auth,
+    loading,
+    platform,
+    actions: {
+        onStatus,
+        onPlatform,
+        onCreate,
+        onEdit,
+        onDelete,
+        onSetting,
+        onHistory,
+        onBulkStatus,
+        onBulkDelete,
+        onAllStatus,
+    }
+}) => {
     const hasPermission = (auth, record) => {
         if (auth.role == AdminRole.MANAGER)
             return true
@@ -109,7 +131,7 @@ const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, 
                     checked={value}
                     checkedChildren="Enabled"
                     unCheckedChildren="Disabled"
-                    onChange={(status) => onStatusChange(record, status)}
+                    onChange={(status) => onStatus && onStatus(record, status)}
                 />
             )
         },
@@ -119,7 +141,7 @@ const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, 
             width: 150,
             render: (_, record) => hasPermission(auth, record) ? (
                 <Dropdown.Button
-                    onClick={() => onEdit(record)}
+                    onClick={() => onEdit && onEdit(record)}
                     menu={{
                         items: [
                             {
@@ -142,13 +164,13 @@ const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, 
                         onClick: (e) => {
                             switch (e.key) {
                                 case "settings":
-                                    onParameter(record)
+                                    onSetting && onSetting(record)
                                     break;
                                 case "history":
-                                    onHistory(record)
+                                    onHistory && onHistory(record)
                                     break;
                                 case "delete":
-                                    onDelete(record)
+                                    onDelete && onDelete(record)
                                     break;
                                 default:
                                     break;
@@ -168,7 +190,7 @@ const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, 
                     <span className="mr-8">
                         Account List
                     </span>
-                    <Radio.Group onChange={(e) => onPlatformChange(e.target.value)} value={platform}>
+                    <Radio.Group onChange={(e) => onPlatform && onPlatform(e.target.value)} value={platform}>
                         <Radio.Button value={Platform.F2F}>F2F</Radio.Button>
                         <Radio.Button value={Platform.FNC}>Fancentro</Radio.Button>
                         <Radio.Button value={Platform.FAN}>Fansly</Radio.Button>
@@ -182,33 +204,56 @@ const AccountTable = ({ auth, accounts, accountsCount, loading, page, pageSize, 
                 <Flex gap="small">
                     <Button
                         icon={<UserAddOutlined />}
-                        onClick={onCreate}>
+                        onClick={() => onCreate && onCreate()}>
                         Create
                     </Button>
                     <Button
-                        onClick={onStartAll}>
-                        Start All
+                        onClick={() => onAllStatus && onAllStatus(true)}>
+                        Enable All
                     </Button>
                     <Button
-                        onClick={onStopAll}>
-                        Stop All
+                        onClick={() => onAllStatus && onAllStatus(false)}>
+                        Disable All
                     </Button>
                 </Flex>
             }
         >
+            <Space align='center' size="middle">
+                {rowSelection.selectedRowKeys && rowSelection.selectedRowKeys.length > 0 &&
+                    <>
+                        <h3>Bulk Actions : </h3>
+                        <Button
+                            key="enable"
+                            icon={<EyeOutlined />}
+                            onClick={() => onBulkStatus && onBulkStatus(true)}>
+                            {`Enable ${rowSelection.selectedRowKeys.length} agencies`}
+                        </Button>
+                        <Button
+                            key="disable"
+                            icon={<EyeInvisibleOutlined />}
+                            onClick={() => onBulkStatus && onBulkStatus(false)}>
+                            {`Disable ${rowSelection.selectedRowKeys.length} agencies`}
+                        </Button>
+                        <Button
+                            key="delete"
+                            icon={<DeleteOutlined />}
+                            danger
+                            onClick={() => onBulkDelete && onBulkDelete()}>
+                            {`Delete ${rowSelection.selectedRowKeys.length} agencies`}
+                        </Button>
+                    </>
+                }
+            </Space>
             <Table
                 pagination={{
+                    ...pagination,
                     position: ["topRight", "bottomRight"],
-                    showTotal: total => `Total ${total} accounts`,
-                    current: page,
-                    showSizeChanger: true,
-                    pageSize: pageSize,
-                    total: accountsCount,
-                    onChange: onPageChange,
+                    showTotal: total => `Total ${total} agencies`,
                 }}
+                rowSelection={rowSelection}
                 loading={loading}
                 rowKey={row => row._id}
-                dataSource={accounts}
+                dataSource={dataSource}
                 columns={columns}
             />
         </Card>

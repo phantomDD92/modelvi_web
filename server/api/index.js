@@ -90,12 +90,6 @@ router.route("/stats")
   .get(DashboardCtrl.handleGetStats)
 
 router
-  .route("/all/:platform")
-  .all(authenticate)
-  .post(AccountCtrl.handleAllStart)
-  .put(AccountCtrl.handleAllStop)
-
-router
   .route("/actor")
   .all(authenticate)
   .get(ActorCtrl.handleLoadActors)
@@ -127,14 +121,15 @@ router
   .route("/account/:platform")
   .all(authenticate)
   .get(AccountCtrl.handleLoadAccounts)
-  .put(AccountCtrl.handleUpdateStatus)
-  .post(AccountCtrl.handleCreateAccount);
+  .post(AccountCtrl.handleCreateAccount)
+  .put(AccountCtrl.handleUpdateAccounts)
+  .delete(AccountCtrl.handleDeleteAccounts);
 
 router
   .route("/account/:platform/:id")
   .all(authenticate)
   .put(AccountCtrl.handleUpdateAccount)
-  .post(AccountCtrl.handleUpdateParams)
+  // .post(AccountCtrl.handleUpdateParams)
   .delete(AccountCtrl.handleDeleteAccount);
 
 router
@@ -143,7 +138,6 @@ router
   .get(AccountCtrl.handleLoadHistory)
   .post(AccountCtrl.handleClearError)
   .delete(AccountCtrl.handleClearHistory);
-
 
 router
   .route("/comment")

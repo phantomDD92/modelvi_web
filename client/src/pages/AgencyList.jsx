@@ -127,7 +127,7 @@ export const AgencyListPage = () => {
           onDelete: handleDeleteAgency,
           onStatusChange: handleChangeStatus,
           onPasswordReset: (agency) => { setAgency(agency); setPasswordOpen(true) },
-          // onUpdateDB: handleUpdateDB
+          onUpdateDB: handleUpdateDB
         }} />
       <AgencyDialog
         agency={agency}

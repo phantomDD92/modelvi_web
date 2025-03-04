@@ -132,20 +132,37 @@ export const deleteBulkChatTeams = (teamIds, callback) => async (dispatch) => {
 
 const waitForTimeout = (secs) => new Promise(resolve => setTimeout(() => resolve(), secs * 1000));
 
-export const loadAccounts = (platform, { page, pageSize }, callback) => async (dispatch) => {
+export const loadAccounts = (platform, callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/account/${platform}`,
-    params: { page, pageSize },
     action: ACTIONS.LOAD_ACCOUNTS,
     callback
   });
 };
 
-export const setAccountStatus = (account, status, callback) => async (dispatch) => {
+export const updateBulkAccountsStatus = (platform, accountIds, status, callback) => async (dispatch) => {
   await ApiRequest.putAction(dispatch, {
-    path: `/account/${account.platform}`,
-    data: { id: account._id, status },
-    inform: "account status is successfully changed",
+    path: `/account/${platform}`,
+    data: { action: "status", accountIds, status },
+    inform: `${accountIds.length} accounts are successfully ${status ? "enabled" : "disabled"}`,
+    callback
+  });
+};
+
+export const deleteBulkAccounts = (platform, accountIds, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/account/${platform}`,
+    data: { accountIds },
+    inform: `${accountIds.length} accounts are successfully deleted`,
+    callback
+  });
+};
+
+export const updateAccountStatus = (account, status, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/account/${account.platform}/${account._id}`,
+    data: { action: "status", status },
+    inform: `Account (${account.alias}) is successfully ${status ? "enabled" : "disabled"}`,
     callback,
   });
 };
@@ -154,25 +171,25 @@ export const createAccount = (platform, params, callback) => async (dispatch) =>
   await ApiRequest.postAction(dispatch, {
     path: `/account/${platform}`,
     data: params,
-    inform: "account status is successfully changed",
+    inform: `Account (${params.alias}) is successfully created`,
     callback
   });
 };
 
-export const updateAccount = (platform, account, params, callback) => async (dispatch) => {
+export const changeAccount = (platform, account, params, callback) => async (dispatch) => {
   await ApiRequest.putAction(dispatch, {
     path: `/account/${platform}/${account._id}`,
-    data: params,
-    inform: "account is successfully updated",
+    data: { action: "change", ...params },
+    inform: `Account (${account.alias}) is successfully changed`,
     callback
   });
 };
 
-export const updateAccountParams = (platform, account, params, callback) => async (dispatch) => {
+export const updateAccountSettings = (platform, account, params, callback) => async (dispatch) => {
   await ApiRequest.postAction(dispatch, {
     path: `/account/${platform}/${account._id}`,
-    data: params,
-    inform: "successfully update account parameters.",
+    data: { action: "setting", ...params },
+    inform: `Account (${account.alias})'s setting is successfully changed`,
     callback
   })
 }
@@ -180,7 +197,7 @@ export const updateAccountParams = (platform, account, params, callback) => asyn
 export const deleteAccount = (platform, account, callback) => async (dispatch) => {
   await ApiRequest.deleteAction(dispatch, {
     path: `/account/${platform}/${account._id}`,
-    inform: "account is successfully deleted",
+    inform: `Account (${account.alias}) is successfully deleted`,
     callback
   })
 };
@@ -276,18 +293,11 @@ export const clearAccountError = (platform, accountId, callback) => async (dispa
   })
 }
 
-export const startAllAccount = (platform, callback) => async (dispatch) => {
-  await ApiRequest.postAction(dispatch, {
-    path: `/all/${platform}`,
-    inform: "successfully starts all bots",
-    callback
-  })
-}
-
-export const stopAllAccount = (platform, callback) => async (dispatch) => {
+export const changeAllStatus = (platform, status, callback) => async (dispatch) => {
   await ApiRequest.putAction(dispatch, {
-    path: `/all/${platform}`,
-    inform: "successfully stop all bots",
+    path: `/account/${platform}`,
+    data: { action: "all", status },
+    inform: `All accounts are successfully ${status ? "enabled" : "disabled"}`,
     callback
   })
 }

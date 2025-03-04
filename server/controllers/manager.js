@@ -6,6 +6,7 @@ const { sendResult, sendError, ApiError } = require("../utils/resp.js");
 const ActorService = require("../services/actor.js");
 const { Platform, StoryType } = require("../config/const.js");
 const AccountService = require("../services/account.js");
+const ActorModel = require("../models/actor.js");
 
 dotenv.config();
 
@@ -151,24 +152,11 @@ const handleUpdateAgency = async (req, res) => {
 const handleUpdateDB = async (req, res) => {
   try {
     // update actors content
-    // const actors = await ActorService.loadAll();
-    // for (let actor of actors) {
-    //   const { contents } = actor;
-    //   let newContents = [];
-    //   for (let content of contents) {
-    //     if (content.platforms.includes(Platform.FNC) && !content.platforms.includes(Platform.FNS)) {
-    //       let newContent = content;
-    //       let platforms = content.platforms;
-    //       platforms.push(Platform.FNS);
-    //       newContent.story = StoryType.PUBLIC
-    //       newContent.platforms = platforms;
-    //       newContents.push(newContent);
-    //     } else {
-    //       newContents.push(content);
-    //     }
-    //   }
-    //   await ActorService.setContents(actor.id, newContents);
-    // }
+    const actors = await ActorService.loadAll();
+    for (let actor of actors) {
+      const contents = actor.contents || [];
+      await ActorModel.findByIdAndUpdate(actor._id, { $set: { contentsLength: contents.length } })
+    }
     // // update accounts content
     // const accounts = await AccountService.loadAll(Platform.FNC);
     // for (let account of accounts) {

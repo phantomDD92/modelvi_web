@@ -50,7 +50,6 @@ const modelReducer = (state = initialState, action) => {
       return {
         ...state,
         accounts: action.payload.accounts,
-        accountsCount: action.payload.accountsCount,
       };
     case ACTIONS.GET_MODEL_CONTENT:
       return {

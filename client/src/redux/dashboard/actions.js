@@ -30,7 +30,7 @@ export const updateSetting = (params, callback) => async (dispatch) => {
 export const updateDB = (callback) => async (dispatch) => {
   await ApiRequest.postAction(dispatch, {
     path: `/temp`,
-    inform: `database is successfully updated.`,
+    inform: `Database is successfully updated.`,
     callback
   })
 };

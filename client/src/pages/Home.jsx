@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getStats } from "@/redux/dashboard/actions";
 import { TeamOutlined, UserOutlined, UserDeleteOutlined, UserSwitchOutlined, UsergroupDeleteOutlined, SyncOutlined, DisconnectOutlined } from '@ant-design/icons';
 import DisabledAccountTable from "@/components/dashboard/DisabledAccountTable";
-import { setAccountStatus } from "@/redux/model/actions";
+import { updateAccountStatus } from "@/redux/model/actions";
 import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
@@ -36,7 +36,7 @@ export const Home = () => {
   }
 
   const handleSetStatus = (account, status) => {
-    dispatch(setAccountStatus(account, status, handleReloadData))
+    dispatch(updateAccountStatus(account, status, handleReloadData))
   }
 
   return (

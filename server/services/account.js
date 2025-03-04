@@ -2,17 +2,19 @@ const { Platform, AdminRole } = require("../config/const");
 const AccountModel = require("../models/account");
 const moment = require('moment');
 
-const loadAccounts = (agency, platform, { page, pageSize }) =>
-  Promise.all([
-    AccountModel.find(agency.role == AdminRole.AGENCY ? { platform, owner: agency._id } : { platform })
+const loadAccounts = (agency, platform) =>
+  agency.role == AdminRole.MANAGER
+    ? AccountModel.find({ platform }, "-params.contents")
       .sort({ owner: 1, number: 1 })
-      .skip((parseInt(page) - 1) * parseInt(pageSize))
-      .limit(parseInt(pageSize))
       .populate("owner", "name")
       .populate("actor", "name")
-      .populate("chatTeam", "name"),
-    AccountModel.countDocuments(agency.role == AdminRole.AGENCY ? { platform, owner: agency._id } : { platform })
-  ])
+      .populate("chatTeam", "name")
+    : AccountModel.find({ platform, owner: agency._id }, "-params.contents")
+      .sort({ owner: 1, number: 1 })
+      .populate("owner", "name")
+      .populate("actor", "name")
+      .populate("chatTeam", "name")
+
 
 const loadDisabledAccounts = (agency) =>
   agency.role == AdminRole.MANAGER ?
@@ -113,11 +115,10 @@ const updateParameter = (accountId, params) =>
 const syncContents = (actorId) =>
   AccountModel.updateMany({ actor: actorId }, { $set: { "params.uploaded": false, "params.recent": false } })
 
-const setAllStatus = (platform, status) =>
-  AccountModel.updateMany({ platform }, { $set: { status } })
-
-const setAgencyStatus = (agency, platform, status) =>
-  AccountModel.updateMany({ platform, owner: agency._id }, { $set: { status } })
+const setAllStatus = (agency, platform, status) =>
+  agency.role == AdminRole.MANAGER
+    ? AccountModel.updateMany({ platform }, { $set: { status } })
+    : AccountModel.updateMany({ platform, owner: agency._id }, { $set: { status } })
 
 const findByActor = (platform, actorId) =>
   AccountModel.findOne({ platform, actor: actorId });
@@ -204,10 +205,30 @@ const updateNumber = (actorId, number) =>
 const setChatTeam = (accountId, teamId) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { chatTeam: teamId } })
 
+const deleteBulkAccounts = (agency, accountIds) =>
+  agency.role == AdminRole.MANAGER
+    ? AccountModel.deleteMany({ _id: { $in: accountIds } })
+    : AccountModel.deleteMany({ _id: { $in: accountIds }, owner: agency._id });
+
+const updateBulkAccountsStatus = (agency, accountIds, status) =>
+  agency.role == AdminRole.MANAGER
+    ? AccountModel.updateMany({ _id: { $in: accountIds } }, { $set: { status } })
+    : AccountModel.updateMany({ _id: { $in: accountIds }, owner: agency._id }, { $set: { status } });
+
+const getBulkAccounts = (agency, accountIds) =>
+  agency.role == AdminRole.MANAGER
+    ? AccountModel.find({ _id: { $in: accountIds } }, "platform alias actor chatTeam")
+      .populate("actor", "number name")
+    : AccountModel.find({ _id: { $in: accountIds }, owner: agency._id }, "platform alias actor chatTeam")
+      .populate("actor", "number name");
+
 const AccountService = {
   loadAccounts,
   createAccount,
   updateAccount,
+  updateBulkAccountsStatus,
+  deleteBulkAccounts,
+  getBulkAccounts,
   setStatus,
   deleteAccount,
   findById,
@@ -220,7 +241,6 @@ const AccountService = {
   setContents,
   clearError,
   setAllStatus,
-  setAgencyStatus,
   getAgencyCount,
   updateParamsForActor,
   findByIdAndUpdateTime,

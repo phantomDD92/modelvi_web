@@ -132,8 +132,8 @@ export const AgencyTable = ({
         <Card
             title="Agency List"
             extra={[
-                <Button key="create" icon={<UserAddOutlined />} onClick={onCreate}>Create</Button>,
-                // <Button key="db" icon={<DatabaseOutlined />} onClick={onUpdateDB}>UpdateDB</Button>
+                <Button key="create" icon={<UserAddOutlined />} onClick={() => onCreate && onCreate()}>Create</Button>,
+                <Button key="db" icon={<DatabaseOutlined />} onClick={() => onUpdateDB && onUpdateDB()}>UpdateDB</Button>
             ]}
         >
             <Space align='center' size="middle">

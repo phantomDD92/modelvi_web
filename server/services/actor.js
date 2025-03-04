@@ -66,16 +66,16 @@ const getCount = (agency) =>
   ]);
 
 const appendContent = (id, params) =>
-  ActorModel.findByIdAndUpdate(id, { $push: { contents: params }, $set: { updated: true } });
+  ActorModel.findByIdAndUpdate(id, { $push: { contents: params }, $set: { updated: true }, $inc: { contentsLength: 1 } });
 
 const deleteContent = (id, contentId) =>
-  ActorModel.findByIdAndUpdate(id, { $pull: { contents: { _id: contentId } }, $set: { updated: true } })
+  ActorModel.findByIdAndUpdate(id, { $pull: { contents: { _id: contentId } }, $set: { updated: true }, $inc: { contentsLength: -1 } })
 
 const deleteBulkContents = (id, contentIds) =>
-  ActorModel.findByIdAndUpdate(id, { $pull: { contents: { _id: { $in: contentIds } } }, $set: { updated: true } })
+  ActorModel.findByIdAndUpdate(id, { $pull: { contents: { _id: { $in: contentIds } } }, $set: { updated: true }, $inc: { contentsLength: -1 * contentIds.length } })
 
 const clearContents = (id) =>
-  ActorModel.findByIdAndUpdate(id, { $set: { contents: [], updated: true } })
+  ActorModel.findByIdAndUpdate(id, { $set: { contents: [], updated: true, contentsLength: 0 } })
 
 const setContents = (id, contents) =>
   ActorModel.findByIdAndUpdate(id, { $set: { contents } });
@@ -132,7 +132,11 @@ const updateBulkContentsParams = (actorId, contentIds, { platforms, story, knkyS
     { arrayFilters: [{ 'elem._id': { $in: contentIds } }] }
   )
 
+const loadAll = () =>
+  ActorModel.find();
+
 const ActorService = {
+  loadAll,
   createActor,
   changeActor,
   deleteActor,

@@ -89,9 +89,9 @@ export const ModelTable = ({
         {
             key: 'contents',
             title: 'Contents',
-            dataIndex: 'contents',
+            dataIndex: 'contentsLength',
             width: 150,
-            render: value => value ? value.length : '-'
+            render: value => value || "-"
         },
         {
             key: 'updated',
