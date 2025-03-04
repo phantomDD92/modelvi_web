@@ -62,7 +62,7 @@ const AccountTable = ({
         {
             key: 'name',
             title: 'Name',
-            width: 200,
+            width: 150,
             dataIndex: 'actor',
             render: value => <Flex gap="middle" align='center'><Avatar src="/img/actor.png" /><span>{value.name}</span></Flex>
         },
@@ -89,7 +89,7 @@ const AccountTable = ({
             key: 'chatTeam',
             title: 'Chat Team',
             dataIndex: 'chatTeam',
-            width: 150,
+            width: 120,
             render: value => value?.name || "-"
         },
         // {
@@ -103,7 +103,7 @@ const AccountTable = ({
             key: 'bot',
             title: 'Bot',
             dataIndex: 'updatedAt',
-            width: 300,
+            width: 250,
             render: (value, record) => {
                 if (value && moment().diff(moment(value), 'minute', false) < 10) {
                     const ops = ["posting"]
@@ -119,6 +119,7 @@ const AccountTable = ({
         {
             key: 'lastError',
             title: 'LastError',
+            width: 250,
             dataIndex: 'lastError',
         },
         {
