@@ -100,7 +100,7 @@ const handleUpdateAccount = async (req, res) => {
           `${status ? 'ENABLE' : 'DISABLE'} A BOT`);
         break;
       case "setting":
-        await AccountService.updateParams(id, { params: { ...account.params, ...params } });
+        await AccountService.updateParams(accountId, { params: { ...account.params, ...params } });
         break;
       default:
         throw new ApiError("Invalid account operation");

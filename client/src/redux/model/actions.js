@@ -186,7 +186,7 @@ export const changeAccount = (platform, account, params, callback) => async (dis
 };
 
 export const updateAccountSettings = (platform, account, params, callback) => async (dispatch) => {
-  await ApiRequest.postAction(dispatch, {
+  await ApiRequest.putAction(dispatch, {
     path: `/account/${platform}/${account._id}`,
     data: { action: "setting", ...params },
     inform: `Account (${account.alias})'s setting is successfully changed`,
