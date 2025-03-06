@@ -54,7 +54,7 @@ const HeaderBar = () => {
                         className="bg-green-400"
                         src={homeProps.auth.role == AdminRole.MANAGER ? "/img/manager.png" : "/img/agency.png"}
                     />
-                    <span style={{ color: "white", fontSize: "1.15rem" }}>{homeProps.auth.name}</span>
+                    <Typography className="text-lg">{homeProps.auth.name}</Typography>
                 </Flex>
             </Popover>
             <Modal
