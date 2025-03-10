@@ -1,3 +1,13 @@
+/* Plugin Base css */
+@import "swiper/swiper-bundle.css";
+/* @import "glightbox/dist/css/glightbox.min.css"; */
+
+/* Custom css */
+@import "custom/_reboot.css";
+@import "custom/_swiper.css";
+@import "custom/_gallery.css";
+@import "custom/_apexcharts.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

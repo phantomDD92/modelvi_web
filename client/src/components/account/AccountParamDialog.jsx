@@ -46,6 +46,7 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
     useEffect(() => {
         if (open) {
             if (account) {
+                console.log(account?.params?.postStart)
                 form.setFieldsValue({
                     postMode: account.params?.postMode || PostMode.INTERVAL,
                     postOffsets: (account.params?.postOffsets) ? account.params?.postOffsets.join(",") : DEFAULT_POST_OFFSETS,
@@ -99,18 +100,25 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
     const handleOkClick = async () => {
         try {
             await form.validateFields();
-            const { postOffsets, storyOffsets, ...params } = form.getFieldsValue();
+            const { postOffsets, storyOffsets, postStart, ...params } = form.getFieldsValue();
             const postOffsetsValue = (postOffsets || DEFAULT_POST_OFFSETS).split(",").map(str => parseInt(str.trim()));
             const storyOffsetsValue = (storyOffsets || DEFAULT_POST_OFFSETS).split(",").map(str => parseInt(str.trim()));
             onUpdate(account,
-                { ...params, postOffsets: postOffsetsValue, storyEnabled, storyOffsets: storyOffsetsValue, commentEnabled }
+                {
+                    ...params,
+                    postOffsets: postOffsetsValue,
+                    storyEnabled,
+                    storyOffsets: storyOffsetsValue,
+                    commentEnabled,
+                    postStart: postStart ? postStart.format("HH:mm") : undefined,
+                }
             );
         } catch (e) {
             console.error(e);
         }
     }
 
-    const hasCommentSupport = (platform) => (platform == Platform.F2F || platform == Platform.FNC || platform == Platform.FAN|| platform == Platform.MALOUM);
+    const hasCommentSupport = (platform) => (platform == Platform.F2F || platform == Platform.FNC || platform == Platform.FAN || platform == Platform.MALOUM);
 
     const hasStorySupport = (platform) => (platform == Platform.FNC || platform == Platform.KNKY);
 
