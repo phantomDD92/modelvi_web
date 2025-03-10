@@ -1,13 +1,5 @@
 import { LuComponent, LuLayers, LuLayoutGrid } from "react-icons/lu";
 
-import agency6 from "@/assets/images/landing/agency/img-6.jpg";
-import agency7 from "@/assets/images/landing/agency/img-7.jpg";
-import agency8 from "@/assets/images/landing/agency/img-8.jpg";
-import agency9 from "@/assets/images/landing/agency/img-9.jpg";
-import agency13 from "@/assets/images/landing/agency/img-13.jpg";
-import agency14 from "@/assets/images/landing/agency/img-14.jpg";
-import agency15 from "@/assets/images/landing/agency/img-15.jpg";
-
 const supportPlatforms = [
   "Fancentro",
   "F2F",
@@ -87,29 +79,6 @@ const services = [
   },
 ];
 
-const portfolioSlides = [
-  {
-    title: "Web Design",
-    subTitle: "Branding Process",
-    image: agency6,
-  },
-  {
-    title: "Web Design",
-    subTitle: "Digital Platform",
-    image: agency7,
-  },
-  {
-    title: "Brand",
-    subTitle: "Coder Studio",
-    image: agency8,
-  },
-  {
-    title: "Web Design",
-    subTitle: "New Gadgets",
-    image: agency9,
-  },
-];
-
 const faqContents = [
   {
     title: "What is Modelvi?",
@@ -140,30 +109,6 @@ const faqContents = [
     title: "How do I get started with Modelvi?",
     description:
       "Simply sign up, set up your models once, and let Modelvi handle the rest!",
-  },
-];
-
-const blogs = [
-  {
-    title: "Brilliant minds.",
-    description:
-      "Lorem ipsum dolor sit amet, proin gravida nibh vel velit auctor aliquet. Aenean sollictudin, lorem quis bibendum auctor...",
-    no: "06",
-    image: agency13,
-  },
-  {
-    title: "Digital Marketing.",
-    description:
-      "Lorem ipsum dolor sit amet, proin gravida nibh vel velit auctor aliquet. Aenean sollictudin, lorem quis bibendum auctor...",
-    no: "05",
-    image: agency14,
-  },
-  {
-    title: "Good thinking.",
-    description:
-      "Lorem ipsum dolor sit amet, proin gravida nibh vel velit auctor aliquet. Aenean sollictudin, lorem quis bibendum auctor...",
-    no: "04",
-    image: agency15,
   },
 ];
 
@@ -198,4 +143,4 @@ const features = [
   },
 ];
 
-export { homeSwiperSlides, services, portfolioSlides, faqContents, blogs, supportPlatforms, features, pricingPlans };
+export { homeSwiperSlides, services,  faqContents, supportPlatforms, features, pricingPlans };
