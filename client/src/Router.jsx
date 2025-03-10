@@ -6,7 +6,9 @@ import { useSelector } from "react-redux";
 import Layouts from "./layouts/Layout";
 import LoginPage from "./pages/auth/sign-in";
 import LandingPage from "./pages/Landing";
-import SignIn from "./pages/SignIn";
+import SignIn from "./pages/auth/SignIn";
+import SignUp from "./pages/auth/SignUp";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 
 const Router = () => {
   const homeProps = useSelector(state => state.home);
@@ -27,8 +29,9 @@ const Router = () => {
         {/* } */}
         <Route key="login" element={<LoginPage />} path="/auth/signin" />
         <Route key="landing" element={<LandingPage />} path="/landing" />
-        <Route key="signin" element={<SignIn />} path="/signin" />
-        <Route key="signup" element={<SignIn />} path="/signup" />
+        <Route key="sign-in" element={<SignIn />} path="/sign-in" />
+        <Route key="sign-up" element={<SignUp />} path="/sign-up" />
+        <Route key="forgot-pass" element={<ForgotPassword />} path="/forgot-pass" />
         {homeProps.token ? <Route path="*" element={<Navigate to="/dashboard" />} /> : <Route path="*" element={<Navigate to="/auth/signin" />} />}
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>

@@ -3,14 +3,14 @@ import PageMetaData from "@/components/common/PageMetaData";
 import useLogin from "./useLogin";
 import { Link } from "react-router-dom";
 import { PasswordFormInput, TextFormInput } from "@/components/form";
+import AuthLayout from "../AuthLayout";
 
 const SignIn = () => {
   const { loading, login, control } = useLogin();
 
   return (
-    <>
+    <AuthLayout>
       <PageMetaData title="Sign In" />
-
       <form className="mt-2 shrink" onSubmit={login}>
         <TextFormInput
           containerClassName="mb-4"
@@ -47,7 +47,7 @@ const SignIn = () => {
             </label>
           </div>
           <Link
-            to="/auth/forgot-pass"
+            to="/forgot-pass"
             className="border-b border-dashed text-zinc-200"
           >
             <small>Forgot your password?</small>
@@ -65,15 +65,15 @@ const SignIn = () => {
         </div>
       </form>
 
-      <ThirdPartyAuth />
+      {/* <ThirdPartyAuth /> */}
 
-      <p className="shrink text-center text-zinc-200">
+      <p className="mt-4 shrink text-center text-zinc-200">
         Don't have an account ?
-        <Link to="/auth/sign-up" className="ms-1 text-primary">
+        <Link to="/sign-up" className="ms-1 text-primary">
           <b>Register</b>
         </Link>
       </p>
-    </>
+    </AuthLayout>
   );
 };
 

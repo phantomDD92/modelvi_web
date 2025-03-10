@@ -1,8 +1,9 @@
-import { PageMetaData, PasswordFormInput, ThirdPartyAuth } from "@/components";
 import { Link } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
+import PageMetaData from "@/components/common/PageMetaData";
+import { PasswordFormInput } from "@/components/form";
 
 const ResetPassword = () => {
   const resetFormSchema = yup.object({
@@ -51,10 +52,10 @@ const ResetPassword = () => {
           </button>
         </div>
       </form>
-      <ThirdPartyAuth />
+      {/* <ThirdPartyAuth /> */}
       <p className="shrink text-center text-zinc-200">
         Back To ?
-        <Link to="/auth/sign-in" className="ms-1 text-primary">
+        <Link to="/sign-in" className="ms-1 text-primary">
           <b>Login</b>
         </Link>
       </p>

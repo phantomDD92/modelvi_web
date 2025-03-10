@@ -4,8 +4,7 @@ const PageMetaData = ({ title }) => {
   return (
     <Helmet>
       <title>
-        {title} | AeroPage React - Tailwind CSS Multipurpose One Page Landing
-        Template
+        {title} | Modelvi
       </title>
     </Helmet>
   );

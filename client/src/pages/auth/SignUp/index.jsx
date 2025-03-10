@@ -1,13 +1,11 @@
-import {
-  PageMetaData,
-  PasswordFormInput,
-  TextFormInput,
-  ThirdPartyAuth,
-} from "@/components";
+
+import PageMetaData from "@/components/common/PageMetaData";
+import { PasswordFormInput, TextFormInput } from "@/components/form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import * as yup from "yup";
+import AuthLayout from "../AuthLayout";
 
 const SignUp = () => {
   const registerFormSchema = yup.object({
@@ -22,7 +20,7 @@ const SignUp = () => {
     resolver: yupResolver(registerFormSchema),
   });
   return (
-    <>
+    <AuthLayout>
       <PageMetaData title="Sign Up" />
 
       <form onSubmit={handleSubmit(() => {})} className="mt-2 shrink">
@@ -81,15 +79,15 @@ const SignUp = () => {
         </div>
       </form>
 
-      <ThirdPartyAuth />
+      {/* <ThirdPartyAuth /> */}
 
       <p className="shrink text-center text-zinc-200">
         Already have an account ?
-        <Link to="/auth/sign-in" className="ms-1 text-primary">
+        <Link to="/sign-in" className="ms-1 text-primary">
           <b>Login</b>
         </Link>
       </p>
-    </>
+    </AuthLayout>
   );
 };
 

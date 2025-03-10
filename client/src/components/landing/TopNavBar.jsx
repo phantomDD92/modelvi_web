@@ -110,7 +110,7 @@ const TopNavBar = ({ menuItems, position}) => {
               </ul>
               <div className="ms-auto hidden shrink gap-2 lg:inline-flex">
                 <Link
-                  to=""
+                  to="/sign-in"
                   className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-1.5 text-base text-white transition-all hover:bg-primary-700"
                 >
                   <LuLogIn className="h-4 w-4 fill-white/40" />

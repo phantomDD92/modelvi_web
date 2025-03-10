@@ -2,7 +2,9 @@ import { Link } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import { PageMetaData, TextFormInput, ThirdPartyAuth } from "@/components";
+import PageMetaData from "@/components/common/PageMetaData";
+import { TextFormInput } from "@/components/form";
+import AuthLayout from "../AuthLayout";
 const ForgotPassword = () => {
   const resetFormSchema = yup.object({
     email: yup.string().required("Please enter your email"),
@@ -10,11 +12,11 @@ const ForgotPassword = () => {
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(resetFormSchema),
     defaultValues: {
-      email: "user@demo.com",
+      email: "",
     },
   });
   return (
-    <>
+    <AuthLayout>
       <PageMetaData title="Forgot Password" />
 
       <form onSubmit={handleSubmit(() => {})} className="mt-10 shrink">
@@ -36,7 +38,7 @@ const ForgotPassword = () => {
             Forgot Password
           </button>
           <Link
-            to="/auth/sign-in"
+            to="/sign-in"
             className="relative inline-flex w-full items-center justify-center rounded border border-primary px-6 py-3 text-base capitalize text-primary transition-all hover:bg-primary hover:text-white"
           >
             Go to Login
@@ -44,15 +46,13 @@ const ForgotPassword = () => {
         </div>
       </form>
 
-      <ThirdPartyAuth />
-
       <p className="shrink text-center text-zinc-200">
         Already have an account ?
-        <Link to="/auth/sign-in" className="ms-1 text-primary">
+        <Link to="/sign-in" className="ms-1 text-primary">
           <b>Login</b>
         </Link>
       </p>
-    </>
+    </AuthLayout>
   );
 };
 
