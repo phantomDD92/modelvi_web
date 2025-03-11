@@ -3,6 +3,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { Platform, SERVER_PATH } from "@/utils/const";
 import Media from "../common/Media";
+import StyledInput from "../common/StyledInput";
 
 const ScheduleContentDialog = ({ open, content, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
@@ -172,13 +173,13 @@ const ScheduleContentDialog = ({ open, content, onCancel, onUpdate }) => {
                     </Flex>
                 </Form.Item>}
                 <Form.Item name="title" label="Title" rules={[{ required: true }]}>
-                    <Input />
+                    <StyledInput />
                 </Form.Item>
                 <Form.Item name="tags" label="Tags">
-                    <Input placeholder="#tag1 #tag2 #tag3" />
+                    <StyledInput placeholder="#tag1 #tag2 #tag3" />
                 </Form.Item>
                 <Form.Item name="folder" label="Folder">
-                    <Input />
+                    <StyledInput />
                 </Form.Item>
             </Form>
         </Modal>

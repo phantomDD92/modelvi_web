@@ -4,6 +4,7 @@ import { Modal, Form, Input, Radio, InputNumber, Switch } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import StyledInput from "../common/StyledInput";
 
 const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
@@ -98,7 +99,7 @@ const FANParamDialog = ({ open, account, onCancel, onUpdate }) => {
                                 validator: handlePostingOffsetValidation
                             }
                         ]}>
-                        <Input addonAfter="min" />
+                        <StyledInput addonAfter="min" />
                     </Form.Item>
                 }
                 {postingMode == "interval" &&

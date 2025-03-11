@@ -6,6 +6,7 @@ import { changeSchedule, createSchedule, deleteSchedule, loadModels, loadSchedul
 import { Platform, PostType as ScheduleType, SERVER_PATH } from "@/utils/const";
 import moment from "moment";
 import qs from 'query-string';
+import StyledInput from "@/components/common/StyledInput";
 
 export const ScheduleList = () => {
   const dispatch = useDispatch()
@@ -240,13 +241,13 @@ export const ScheduleList = () => {
             <InputNumber disabled={schedType != ScheduleType.PAID} min={0} prefix="$" />
           </Form.Item>
           <Form.Item name="title" label="Title" rules={[{ required: true }]}>
-            <Input />
+            <StyledInput />
           </Form.Item>
           <Form.Item name="tags" label="Tags" >
             <Select mode="tags" />
           </Form.Item>
           <Form.Item name="folder" label="Folder">
-            <Input />
+            <StyledInput />
           </Form.Item>
           <Form.Item name="description" label="Description">
             <Input.TextArea />

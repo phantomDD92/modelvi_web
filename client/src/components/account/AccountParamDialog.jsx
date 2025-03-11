@@ -25,6 +25,7 @@ import {
 import { getPlatformName } from "@/utils/string";
 
 import { loadAgencyComments, loadAgencyUsers } from "@/redux/dashboard/actions";
+import StyledInput from "../common/StyledInput";
 
 const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
     const dispatch = useDispatch();
@@ -162,7 +163,7 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
                                 validator: handleOffsetsValidation
                             }
                         ]}>
-                        <Input addonAfter="min" />
+                        <StyledInput addonAfter="min" />
                     </Form.Item>
                 }
                 {postMode == PostMode.LIMITED &&
@@ -251,7 +252,7 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
                                         validator: handleOffsetsValidation
                                     }
                                 ]}>
-                                <Input addonAfter="min" disabled={!storyEnabled} />
+                                <StyledInput addonAfter="min" disabled={!storyEnabled} />
                             </Form.Item>
                         }
                         {storyMode == PostMode.INTERVAL &&

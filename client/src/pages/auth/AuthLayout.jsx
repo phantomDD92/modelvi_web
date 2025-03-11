@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { Link } from "react-router-dom";
 
 import authBgImg from "@/assets/images/auth-bg.jpg";
-import logoLight from "@/assets/images/logo-light.png";
 import otherAuthImg from "@/assets/images/auth-img.jpg";
 
 const AuthLayout = ({ children }) => {
@@ -22,7 +21,7 @@ const AuthLayout = ({ children }) => {
               </div>
             </div>
             <div>
-              <div className="p-6 pt-10 flex h-full flex-col">
+              <div className="p-6 pt-8 flex h-full flex-col">
                 <Link to="/signin" className="mb-8 block shrink">
                   {/* <img className="h-8" src={logoLight} alt="images" /> */}
                   <h3 className="font-bold uppercase text-3xl text-white text-center">Modelvi</h3>

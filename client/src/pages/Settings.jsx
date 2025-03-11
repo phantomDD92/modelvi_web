@@ -4,6 +4,7 @@ import { SaveOutlined } from "@ant-design/icons";
 
 import { useDispatch, useSelector } from "react-redux";
 import { loadSetting, updateSetting } from "@/redux/dashboard/actions";
+import StyledInput from "@/components/common/StyledInput";
 
 export const Settings = () => {
   const dispatch = useDispatch()
@@ -53,7 +54,7 @@ export const Settings = () => {
               <InputNumber />
             </Form.Item>
             <Form.Item name="captchaKey" label="Captcha Key" rules={[{ required: true }]}>
-              <Input />
+              <StyledInput />
             </Form.Item>
           </Form>
         </Col>

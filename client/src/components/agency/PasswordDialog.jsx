@@ -1,6 +1,7 @@
 import { Modal, Form, Input } from "antd";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import StyledInput from "../common/StyledInput";
 
 const PasswordDialog = ({ agency, open, onCancel, onUpdate }) => {
 
@@ -44,13 +45,13 @@ const PasswordDialog = ({ agency, open, onCancel, onUpdate }) => {
                     name="password"
                     label="New Password"
                     rules={[{ required: true }]}>
-                    <Input allowClear type="password"/>
+                    <StyledInput allowClear type="password"/>
                 </Form.Item>
                 <Form.Item
                     name="confirmPassword"
                     label="Confirm Password"
                     rules={[{ required: true }]}>
-                    <Input allowClear type="password"/>
+                    <StyledInput allowClear type="password"/>
                 </Form.Item>
             </Form>
         </Modal>

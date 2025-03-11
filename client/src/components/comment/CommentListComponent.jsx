@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Card, List, Flex, Input } from "antd";
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
+import StyledInput from "../common/StyledInput";
 
 const CommentListComponent = ({ comments, onAdd, onDelete }) => {
   const [comment, setComment] = useState('');
@@ -13,7 +14,7 @@ const CommentListComponent = ({ comments, onAdd, onDelete }) => {
   return (
     <Card title="Comment List">
       <Flex className="mb-3">
-        <Input
+        <StyledInput
           value={comment}
           onChange={e => setComment(e.target.value)}
           onPressEnter={handleAddClick} />

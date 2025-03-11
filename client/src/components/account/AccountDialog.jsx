@@ -1,6 +1,7 @@
 import { Platform } from "@/utils/const";
 import { Modal, Form, Input, Select } from "antd";
 import { useEffect } from "react";
+import StyledInput from "../common/StyledInput";
 
 const AccountDialog = ({ open, platform, models, chatTeams, account, onCancel, onCreate, onUpdate }) => {
     const [form] = Form.useForm();
@@ -56,19 +57,19 @@ const AccountDialog = ({ open, platform, models, chatTeams, account, onCancel, o
                     name="alias"
                     label="Alias"
                     rules={[{ required: true }]}>
-                    <Input />
+                    <StyledInput />
                 </Form.Item>
                 <Form.Item
                     name="email"
                     label="Email"
                     rules={[{ required: true }]}>
-                    <Input />
+                    <StyledInput />
                 </Form.Item>
                 <Form.Item
                     name="password"
                     label="Password"
                     rules={[{ required: true }]}>
-                    <Input />
+                    <StyledInput />
                 </Form.Item>
                 <Form.Item
                     name="chatTeam"
@@ -83,7 +84,7 @@ const AccountDialog = ({ open, platform, models, chatTeams, account, onCancel, o
                     <Form.Item
                         name="device"
                         label="Security Key" >
-                        <Input />
+                        <StyledInput />
                     </Form.Item>
                 }
             </Form>

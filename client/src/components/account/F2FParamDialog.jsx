@@ -23,6 +23,7 @@ import {
     loadAgencyComments,
     loadAgencyUsers
 } from "@/redux/dashboard/actions";
+import StyledInput from "../common/StyledInput";
 
 const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
@@ -129,7 +130,7 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
                                 validator: handlePostingOffsetValidation
                             }
                         ]}>
-                        <Input addonAfter="min" />
+                        <StyledInput addonAfter="min" />
                     </Form.Item>
                 }
                 {postingMode == PostMode.LIMITED &&

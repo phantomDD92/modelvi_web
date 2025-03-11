@@ -1,6 +1,7 @@
 import { Modal, Form, Input, Row, Col, InputNumber } from "antd";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import StyledInput from "../common/StyledInput";
 
 const AgencyDialog = ({
     open,
@@ -65,14 +66,14 @@ const AgencyDialog = ({
                             name="name"
                             label="Agency Name"
                             rules={[{ required: true }]}>
-                            <Input />
+                            <StyledInput />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
                             name="email"
                             label="Agency Email" >
-                            <Input />
+                            <StyledInput />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -83,7 +84,7 @@ const AgencyDialog = ({
                                 name="password"
                                 label="Password"
                                 rules={[{ required: true }]}>
-                                <Input type="password" />
+                                <StyledInput type="password" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
@@ -91,7 +92,7 @@ const AgencyDialog = ({
                                 name="passwordConfirm"
                                 label="Confirm Password"
                                 rules={[{ required: true }]}>
-                                <Input type="password" />
+                                <StyledInput type="password" />
                             </Form.Item>
                         </Col>
                     </Row>

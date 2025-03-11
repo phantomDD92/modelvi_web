@@ -205,9 +205,30 @@ const handleSendContact = async (req, res) => {
   }
 }
 
+const handleRegisterAgency = async (req, res) => {
+  try {
+    const {name, email, telegram, password} = req.body;
+    // check if name or email is registered.
+    let dupAgency = await ManagerService.findAgencyByEmail(email);
+    if (dupAgency)
+      throw new ApiError(`Agency with ${email} already existed`);
+    dupAgency = await ManagerService.findAgencyByName(name);
+    if (dupAgency) {
+      if (dupAgency.newVersion)
+        throw new ApiError(`Agency with ${name} already existed`);
+
+    } else {
+      await ManagerService.createAgency()
+    }
+
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
 const ManagerCtrl = {
   handleCreateAgency,
-  handleLoginManager,
   handleDeleteAgency,
   handleDeleteBulkAgencies,
   handleChangePassword,
@@ -217,6 +238,12 @@ const ManagerCtrl = {
   handleUpdateBulkAgencies,
   handleUpdateDB,
   handleSendContact,
+  // Auth related routes
+  handleLoginManager,
+  // handleUpdateAgency,
+  handleRegisterAgency,
+  // handleLoginAgency,
+  // handleLoginAgency,
 };
 
 module.exports = ManagerCtrl;

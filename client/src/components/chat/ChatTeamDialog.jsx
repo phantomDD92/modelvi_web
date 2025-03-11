@@ -4,6 +4,7 @@ import {
   Input,
   Modal,
 } from "antd";
+import StyledInput from "../common/StyledInput";
 
 const ChatTeamDialog = ({
   open,
@@ -52,7 +53,7 @@ const ChatTeamDialog = ({
           name="name"
           label="Name"
           rules={[{ required: true }]}>
-          <Input />
+          <StyledInput />
         </Form.Item>
         <Form.Item
           name="discord"

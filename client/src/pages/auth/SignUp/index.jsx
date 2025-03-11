@@ -9,29 +9,34 @@ import AuthLayout from "../AuthLayout";
 
 const SignUp = () => {
   const registerFormSchema = yup.object({
-    name: yup.string().required("Please enter your full name"),
+    name: yup.string().required("Please enter your name"),
     email: yup
       .string()
       .email("Please enter a valid email")
       .required("Please enter your email"),
+    telegram: yup.string().required("Please enter your telegram id"),
     password: yup.string().required("Please enter your password"),
   });
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(registerFormSchema),
   });
+
+  const handleRegister = (data) => {
+
+  }
+
   return (
     <AuthLayout>
       <PageMetaData title="Sign Up" />
-
-      <form onSubmit={handleSubmit(() => {})} className="mt-2 shrink">
+      <form onSubmit={handleSubmit(handleRegister)} className="mt-2 shrink">
         <TextFormInput
           containerClassName="mb-4"
-          label="Full Name"
+          label="Agency Name"
           name="name"
           labelClassName="block text-base/normal text-zinc-200 font-semibold"
           className="block rounded border-white/10 bg-transparent py-2.5 text-white/80 focus:border-white/25 focus:outline-0 focus:ring-0"
           fullWidth
-          placeholder="Enter your Full Name"
+          placeholder="Enter your Name"
           control={control}
         />
         <TextFormInput
@@ -41,6 +46,16 @@ const SignUp = () => {
           labelClassName="block text-base/normal text-zinc-200 font-semibold"
           className="block rounded border-white/10 bg-transparent py-2.5 text-white/80 focus:border-white/25 focus:outline-0 focus:ring-0"
           placeholder="Enter your email"
+          fullWidth
+          control={control}
+        />
+        <TextFormInput
+          containerClassName="mb-4"
+          label="Telegram"
+          name="telegram"
+          labelClassName="block text-base/normal text-zinc-200 font-semibold"
+          className="block rounded border-white/10 bg-transparent py-2.5 text-white/80 focus:border-white/25 focus:outline-0 focus:ring-0"
+          placeholder="Enter your telegram"
           fullWidth
           control={control}
         />

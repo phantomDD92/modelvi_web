@@ -6,12 +6,12 @@ import { createThemes } from 'tw-colors'
 
 /** @type {import('tailwindcss').Config} */
 export default {
+  important: false,
   content: [
     './index.html',
     './src/**/*.{css,js,ts,jsx,tsx}',
     './node_modules/preline/preline.js',
   ],
-
   darkMode: ['class'],
   safelist: [
     {
@@ -101,4 +101,7 @@ export default {
       }
     ),
   ],
+  corePlugins: {
+    preflight: true,
+  }
 }

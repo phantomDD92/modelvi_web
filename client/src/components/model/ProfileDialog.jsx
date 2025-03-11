@@ -2,6 +2,7 @@ import { Card, Flex, Modal, Form, Input, InputNumber, Image, Button, Row, Col, U
 import { UploadOutlined } from "@ant-design/icons";
 import { SERVER_PATH } from "@/utils/const";
 import { useEffect, useState } from "react";
+import StyledInput from "../common/StyledInput";
 
 const ProfileDialog = ({ model, open, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
@@ -147,7 +148,7 @@ const ProfileDialog = ({ model, open, onCancel, onUpdate }) => {
                             <Form.Item
                                 name="plan1Title"
                                 label="Title" >
-                                <Input />
+                                <StyledInput />
                             </Form.Item>
                             <Form.Item
                                 name="plan1Desc"
@@ -174,7 +175,7 @@ const ProfileDialog = ({ model, open, onCancel, onUpdate }) => {
                             title="Subscription Plan (3 Months)"
                             extra={[<Form.Item name="plan2Enabled"  ><Switch /></Form.Item>]}>
                             <Form.Item name="plan2Title" label="Title" >
-                                <Input />
+                                <StyledInput />
                             </Form.Item>
                             <Form.Item name="plan2Desc" label="Description" >
                                 <Input.TextArea autoSize={{ minRows: 3 }} />
@@ -195,7 +196,7 @@ const ProfileDialog = ({ model, open, onCancel, onUpdate }) => {
                             title="Subscription Plan (Lifetime)"
                             extra={[<Form.Item name="plan3Enabled"><Switch /></Form.Item>]}>
                             <Form.Item name="plan3Title" label="Title" >
-                                <Input />
+                                <StyledInput />
                             </Form.Item>
                             <Form.Item name="plan3Desc" label="Description" >
                                 <Input.TextArea />

@@ -23,6 +23,7 @@ import {
     DEFAULT_STORY_REPLACE,
     PostMode
 } from "@/utils/const";
+import StyledInput from "../common/StyledInput";
 
 const FancentroParamDialog = ({ open, account, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
@@ -127,7 +128,7 @@ const FancentroParamDialog = ({ open, account, onCancel, onUpdate }) => {
                                 validator: handleOffsetsValidation
                             }
                         ]}>
-                        <Input addonAfter="min" />
+                        <StyledInput addonAfter="min" />
                     </Form.Item>
                 }
                 {postingMode == PostMode.INTERVAL &&
@@ -192,7 +193,7 @@ const FancentroParamDialog = ({ open, account, onCancel, onUpdate }) => {
                                 validator: handleOffsetsValidation
                             }
                         ]}>
-                        <Input addonAfter="min" />
+                        <StyledInput addonAfter="min" />
                     </Form.Item>
                 }
                 {storyMode == PostMode.INTERVAL &&

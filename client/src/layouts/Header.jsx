@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { changePassword, logoutManager, reloadManager } from "@/redux/dashboard/actions";
 import { useNavigate } from "react-router-dom";
 import { AdminRole } from "@/utils/const";
+import StyledInput from "@/components/common/StyledInput";
 
 const HeaderBar = () => {
     const [visible, setVisible] = useState(false);
@@ -68,10 +69,10 @@ const HeaderBar = () => {
                     form={form}
                 >
                     <Form.Item name="password" label="Current Password" rules={[{ required: true }]}>
-                        <Input type="password" />
+                        <StyledInput type="password" />
                     </Form.Item>
                     <Form.Item name="newPassword" label="New Password" rules={[{ required: true }]}>
-                        <Input type="password" />
+                        <StyledInput type="password" />
                     </Form.Item>
                 </Form>
             </Modal>

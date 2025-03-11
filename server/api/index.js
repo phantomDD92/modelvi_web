@@ -83,6 +83,7 @@ router.route("/manager/:id")
 router.route("/auth")
   .post(ManagerCtrl.handleLoginManager)
   .put(ManagerCtrl.handleChangePassword)
+  // .patch(ManagerCtrl.handleUpdateManager)
   .get(authenticate, ManagerCtrl.handleReloadManager)
 
 router.route("/stats")

@@ -1,6 +1,7 @@
 import { Modal, Form, Input, Row, Col, InputNumber, DatePicker, Select } from "antd";
 import moment from "moment";
 import { useEffect } from "react";
+import StyledInput from "../common/StyledInput";
 
 const ModelEditDialog = ({ open, model, onCancel, onCreate, onUpdate }) => {
     const [form] = Form.useForm();
@@ -61,7 +62,7 @@ const ModelEditDialog = ({ open, model, onCancel, onCreate, onUpdate }) => {
                             name="name"
                             label="Name"
                             rules={[{ required: true }]}>
-                            <Input />
+                            <StyledInput />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -78,7 +79,7 @@ const ModelEditDialog = ({ open, model, onCancel, onCreate, onUpdate }) => {
                         <Form.Item
                             name="birthplace"
                             label="Birth Place">
-                            <Input placeholder="German" />
+                            <StyledInput placeholder="German" />
                         </Form.Item>
                     </Col>
                 </Row>
