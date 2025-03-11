@@ -188,4 +188,7 @@ router.route("/schedule/:id")
 router.route("/upload")
   .post(imageUpload.single('file'), (req, res) => { res.json({ file: req.file.filename }) })
 
+
+router.route("/contact")
+  .post(ManagerCtrl.handleSendContact)
 module.exports = router;

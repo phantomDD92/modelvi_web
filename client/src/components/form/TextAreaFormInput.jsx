@@ -39,7 +39,7 @@ const TextAreaFormInput = ({
               {...field}
               rows={rows ?? 3}
               className={cn(
-                "py-2 px-3 text-default-950 rounded-md  border-default-200 focus:ring-0 focus:border-default-200",
+                "py-2 px-3 text-black/80 rounded-md  border-default-200 focus:ring-0 focus:border-default-200",
                 className,
                 fullWidth && "w-full",
                 {

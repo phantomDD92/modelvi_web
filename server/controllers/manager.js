@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
+const nodemailer = require('nodemailer');
 const ManagerService = require("../services/manager.js");
 const dotenv = require("dotenv");
 const { sendResult, sendError, ApiError } = require("../utils/resp.js");
@@ -178,6 +179,32 @@ const handleUpdateDB = async (req, res) => {
   }
 };
 
+const handleSendContact = async (req, res) => {
+  try {
+    const { name, email, message, subject } = req.body;
+    console.log("#### : ", req.body);
+    if (!name || !email || !message || !subject)
+      throw new ApiError("All fields are required");
+    let transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      }
+    });
+    let mailOptions = {
+      from: email,
+      to: process.env.EMAIL_USER,
+      subject: subject,
+      text: `Name : ${name}\nEmail: ${email}\nMessage: ${message}`
+    };
+    await transporter.sendMail(mailOptions);
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
 const ManagerCtrl = {
   handleCreateAgency,
   handleLoginManager,
@@ -188,7 +215,8 @@ const ManagerCtrl = {
   handleReloadManager,
   handleUpdateAgency,
   handleUpdateBulkAgencies,
-  handleUpdateDB
+  handleUpdateDB,
+  handleSendContact,
 };
 
 module.exports = ManagerCtrl;

@@ -4,8 +4,11 @@ import { LuSend } from "react-icons/lu";
 import * as yup from "yup";
 import TextFormInput from "./TextFormInput";
 import TextAreaFormInput from "./TextAreaFormInput";
+import { useDispatch } from "react-redux";
+import { sendContact } from "@/redux/dashboard/actions";
 
 const ContactUs = () => {
+  const dispatch = useDispatch();
   const contactFormSchema = yup.object({
     name: yup.string().required("Please enter your name"),
     email: yup
@@ -16,9 +19,14 @@ const ContactUs = () => {
     message: yup.string().required("Please enter your message"),
   });
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(contactFormSchema),
   });
+
+  const handleSendContact = (formData) => {
+    dispatch(sendContact(formData, () => reset()));
+  }
+
   return (
     <section id="contact" className="py-20">
       <div className="container">
@@ -35,7 +43,7 @@ const ContactUs = () => {
         </div>
         <div className="mx-auto max-w-4xl">
           <div className="rounded-md border border-default-300 bg-white p-8 dark:bg-default-50">
-            <form onSubmit={handleSubmit(() => { })} className="relative">
+            <form onSubmit={handleSubmit(handleSendContact)} className="relative">
               <h2 className="mb-5 text-2xl font-medium text-default-950">
                 How can we help you?
               </h2>

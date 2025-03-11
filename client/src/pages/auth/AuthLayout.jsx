@@ -25,7 +25,7 @@ const AuthLayout = ({ children }) => {
               <div className="p-6 pt-10 flex h-full flex-col">
                 <Link to="/signin" className="mb-8 block shrink">
                   {/* <img className="h-8" src={logoLight} alt="images" /> */}
-                  <h3 className="uppercase text-3xl text-white text-center">Modelvi</h3>
+                  <h3 className="font-bold uppercase text-3xl text-white text-center">Modelvi</h3>
                 </Link>
                 <Suspense fallback={<div />}>{children}</Suspense>
               </div>

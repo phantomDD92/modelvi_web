@@ -219,3 +219,12 @@ export const loadAgencyComments = (agencyId) => async (dispatch, getState) => {
     });
   }
 };
+
+export const sendContact = (data, callback) => async (dispatch, getState) => {
+  await ApiRequest.postAction(dispatch, {
+    path:'/contact',
+    data,
+    inform: "Email sent successfully",
+    callback
+  })
+}
