@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 const { ApiError, sendError, sendResult } = require("../utils/resp");
 const ProxyService = require("../services/proxy");
 const HistoryService = require('../services/history');
-const LogService = require('../services/log');
 const ActionService = require('../services/action');
 const moment = require('moment');
 const ActorService = require('../services/actor');
@@ -114,17 +113,6 @@ const handleClearLastError = async (req, res) => {
   try {
     // await HistoryService.clearHistory(req.bot.id);
     await AccountService.updateParams(req.bot.id, { lastError: "", failures: 0 });
-    sendResult(res)
-  } catch (error) {
-    sendError(res, error)
-  }
-}
-
-
-const handleCreateLog = async (req, res) => {
-  try {
-    const { platform, alias, level, message, stack } = req.body;
-    await LogService.createLog({ platform, alias, level, message, stack })
     sendResult(res)
   } catch (error) {
     sendError(res, error)
@@ -474,7 +462,6 @@ const BotController = {
   handleCreateHistory,
   handleCreateLastError,
   handleClearLastError,
-  handleCreateLog,
   handleUpdateTime,
   handleFindCommentAction,
   handleCreateCommentAction,

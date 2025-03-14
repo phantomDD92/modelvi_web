@@ -34,11 +34,7 @@ router.route("/history")
 router.route("/time")
   .all(checkBot)
   .post(BotController.handleUpdateTime)
-
-router.route("/log")
-  // .all(checkBot)
-  .post(BotController.handleCreateLog)
-
+  
 router.route("/schedule")
   .all(checkBot)
 
