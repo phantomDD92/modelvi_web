@@ -227,20 +227,20 @@ const AccountTable = ({
                             key="enable"
                             icon={<EyeOutlined />}
                             onClick={() => onBulkStatus && onBulkStatus(true)}>
-                            {`Enable ${rowSelection.selectedRowKeys.length} agencies`}
+                            {`Enable ${rowSelection.selectedRowKeys.length} accounts`}
                         </Button>
                         <Button
                             key="disable"
                             icon={<EyeInvisibleOutlined />}
                             onClick={() => onBulkStatus && onBulkStatus(false)}>
-                            {`Disable ${rowSelection.selectedRowKeys.length} agencies`}
+                            {`Disable ${rowSelection.selectedRowKeys.length} accounts`}
                         </Button>
                         <Button
                             key="delete"
                             icon={<DeleteOutlined />}
                             danger
                             onClick={() => onBulkDelete && onBulkDelete()}>
-                            {`Delete ${rowSelection.selectedRowKeys.length} agencies`}
+                            {`Delete ${rowSelection.selectedRowKeys.length} accounts`}
                         </Button>
                     </>
                 }
@@ -249,7 +249,7 @@ const AccountTable = ({
                 pagination={{
                     ...pagination,
                     position: ["topRight", "bottomRight"],
-                    showTotal: total => `Total ${total} agencies`,
+                    showTotal: total => `Total ${total} accounts`,
                 }}
                 rowSelection={rowSelection}
                 loading={loading}

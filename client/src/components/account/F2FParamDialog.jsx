@@ -154,14 +154,14 @@ const F2FParamDialog = ({ open, account, onCancel, onUpdate }) => {
                         name="postLimit"
                         label="Posting Limit Per Day"
                         rules={[{ required: true }]}>
-                        <InputNumber addonAfter="articles" min={1} max={10} />
+                        <InputNumber addonAfter="posts" min={1} max={10} />
                     </Form.Item>
                 }
                 <Form.Item
                     name="postCount"
-                    label="Keeping Articles"
+                    label="Live Posts"
                     rules={[{ required: true }]}>
-                    <InputNumber addonAfter="articles" min={1} max={30} />
+                    <InputNumber addonAfter="posts" min={1} max={30} />
                 </Form.Item>
                 <div className="flex items-center mb-6 ml-3">
                     <span className="font-medium text-lg mr-3">Comment Settings</span>

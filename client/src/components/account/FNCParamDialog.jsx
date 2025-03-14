@@ -144,9 +144,9 @@ const FancentroParamDialog = ({ open, account, onCancel, onUpdate }) => {
                 }
                 <Form.Item
                     name="postCount"
-                    label="Keeping Articles"
+                    label="Live Posts"
                     rules={[{ required: true }]}>
-                    <InputNumber addonAfter="articles" min={1} max={10} />
+                    <InputNumber addonAfter="posts" min={1} max={10} />
                 </Form.Item>
                 <div className="flex items-center mb-6 ml-3">
                     <span className="font-medium text-lg mr-3">Comment Settings</span>

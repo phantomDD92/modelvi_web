@@ -190,14 +190,14 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
                         name="postLimit"
                         label="Posting Limit Per Day"
                         rules={[{ required: true }]}>
-                        <InputNumber addonAfter="articles" min={1} max={10} />
+                        <InputNumber addonAfter="posts" min={1} max={10} />
                     </Form.Item>
                 }
                 <Form.Item
                     name="postCount"
-                    label="Keeping Articles"
+                    label="Live Posts"
                     rules={[{ required: true }]}>
-                    <InputNumber addonAfter="articles" min={1} max={10} />
+                    <InputNumber addonAfter="posts" min={1} max={10} />
                 </Form.Item>
                 {hasCommentSupport(account?.platform) &&
                     <>
