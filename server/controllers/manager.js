@@ -181,11 +181,12 @@ const handleUpdateDB = async (req, res) => {
 const handleSendContact = async (req, res) => {
   try {
     const { name, email, message, subject } = req.body;
-    console.log("#### : ", req.body);
     if (!name || !email || !message || !subject)
       throw new ApiError("All fields are required");
     let transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: process.env.MAILER_HOST,
+      port: process.env.MAILER_PORT,
+      secure: process.env.MAILER_SECURE,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -195,7 +196,8 @@ const handleSendContact = async (req, res) => {
       from: email,
       to: process.env.EMAIL_USER,
       subject: subject,
-      text: `Name : ${name}\nEmail: ${email}\nMessage: ${message}`
+      text: `Name : ${name}\nEmail: ${email}\nMessage: ${message}`,
+      html: `<b>Name : ${name}</b><p>Email: ${email}</p><p>Message: ${message}</p>`
     };
     await transporter.sendMail(mailOptions);
     sendResult(res);
@@ -206,7 +208,7 @@ const handleSendContact = async (req, res) => {
 
 const handleRegisterAgency = async (req, res) => {
   try {
-    const {name, email, telegram, password} = req.body;
+    const { name, email, telegram, password } = req.body;
     // check if name or email is registered.
     let dupAgency = await ManagerService.findAgencyByEmail(email);
     if (dupAgency)
