@@ -80,16 +80,15 @@ const AccountDialog = ({ open, platform, models, chatTeams, account, onCancel, o
                             value: team._id
                         }))} />
                 </Form.Item>
-                {(platform == Platform.FAN || platform == Platform.KNKY) &&
+                {((platform == Platform.FAN) || (platform == Platform.KNKY)) &&
                     <Form.Item
                         name="device"
-                        label="Security Key" >
+                        label={(platform == Platform.FAN) ? "Security Key" : "Magic Link"} >
                         <StyledInput />
                     </Form.Item>
                 }
             </Form>
         </Modal>
-
     )
 }
 
