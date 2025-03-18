@@ -27,6 +27,8 @@ const ScheduleCtrl = require("../controllers/schedule.js");
 const checkManager = require("../middleware/manager.js");
 const UserCtrl = require("../controllers/user.js");
 
+const apiRouterV2 = require("./v2");
+
 const router = express.Router();
 
 // Proxy related apis
@@ -192,4 +194,6 @@ router.route("/upload")
 
 router.route("/contact")
   .post(ManagerCtrl.handleSendContact)
+
+router.use("/v2", apiRouterV2);
 module.exports = router;

@@ -22,7 +22,7 @@ const SignUp = () => {
   });
 
   const handleRegister = (data) => {
-
+    console.log(data);
   }
 
   return (
