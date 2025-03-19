@@ -1,21 +1,28 @@
-import { 
-    Button, 
-    Card, 
+import {
+    Button,
+    Card,
+    Select,
     Space,
-    Switch, 
-    Table, 
-    Tag, 
+    Switch,
+    Table,
+    Tag,
 } from "antd";
-import { 
+import {
     ClearOutlined,
     EyeOutlined,
     EyeInvisibleOutlined,
-    DeleteOutlined, 
-    UploadOutlined, 
+    DeleteOutlined,
+    UploadOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
+import { Platform } from "@/utils/const";
 
 const ProxyTable = ({
+    filters: {
+        agencies,
+        current,
+        onChange: onFilterChange,
+    },
     pagination,
     rowSelection,
     loading,
@@ -26,26 +33,28 @@ const ProxyTable = ({
         onAppend,
         onStatus,
         onBulkDelete,
-        onBulkStatus
+        onBulkStatus,
+        onReset,
     }
 }) => {
     const columns = [
         {
             key: 'url',
             title: 'Proxy',
+            width: 200,
             dataIndex: 'url'
         },
         {
             key: 'agency',
             title: 'Agency',
-            width: 150,
+            width: 120,
             dataIndex: 'owner',
             render: value => value && value.name ? value.name : '-'
         },
         {
             key: 'expiry',
             title: 'Expiry',
-            width: 250,
+            width: 200,
             dataIndex: 'expiredAt',
             render: (value) => (
                 <div className="flex">
@@ -65,26 +74,40 @@ const ProxyTable = ({
             title: 'F2F',
             width: 100,
             dataIndex: 'usage',
-            render: value => value?.F2F || '-'
+            render: (value, record) => value?.F2F ? <Space><span>{value?.F2F}</span><ClearOutlined onClick={() => onReset && onReset(record, Platform.F2F)} /></Space> : <span>-</span>
         },
-        {
-            key: 'fan',
-            title: 'Fancentro',
-            width: 100,
-            dataIndex: 'usage',
-            render: value => value?.FNC || '-'
-        },
+        // {
+        //     key: 'fan',
+        //     title: 'Fancentro',
+        //     width: 100,
+        //     dataIndex: 'usage',
+        //     render: value => value?.FNC || '-'
+        // },
         {
             key: 'fan',
             title: 'Fansly',
             width: 100,
             dataIndex: 'usage',
-            render: value => value?.FAN || '-'
+            render: (value, record) => value?.FAN ? <Space><span>{value?.FAN}</span><ClearOutlined onClick={() => onReset && onReset(record, Platform.FAN)} /></Space> : <span>-</span>
         },
+        {
+            key: 'fan',
+            title: 'Knky',
+            width: 100,
+            dataIndex: 'usage',
+            render: (value, record) => value?.KNKY ? <Space><span>{value?.KNKY}</span><ClearOutlined onClick={() => onReset && onReset(record, Platform.KNKY)} /></Space> : <span>-</span>
+        },
+        // {
+        //     key: 'fan',
+        //     title: 'Fansly',
+        //     width: 100,
+        //     dataIndex: 'usage',
+        //     render: value => value?.FAN || '-'
+        // },
         {
             key: 'status',
             title: 'Status',
-            width: 250,
+            width: 200,
             dataIndex: 'status',
             render: (value, record) => (
                 <Switch
@@ -98,7 +121,7 @@ const ProxyTable = ({
         {
             key: 'action',
             title: 'Action',
-            width: 250,
+            width: 200,
             render: (_, record) => (
                 <Button
                     danger
@@ -122,6 +145,17 @@ const ProxyTable = ({
             }
             extra={
                 <Space align='center' size="middle">
+                    {agencies && agencies.length > 0 &&
+                        <Select
+                            className="min-w-[200px]"
+                            value={current}
+                            onChange={value => onFilterChange && onFilterChange(value)}
+                            options={[{ name: "All", _id: 0 }].concat(agencies).map(agency => ({
+                                label: `${agency.name}`,
+                                value: agency._id
+                            }))}
+                        />
+                    }
                     <Button
                         key="clear"
                         danger

@@ -62,7 +62,6 @@ const handleUpdateBulkAgencies = async (req, res) => {
     switch (action) {
       case 'status':
         const { status } = params;
-        console.log(agencyIds);
         await ManagerService.updateBulkAgenciesStatus(agencyIds, status);
         break;
       default:

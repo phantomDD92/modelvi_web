@@ -4,7 +4,8 @@ const { sendResult, sendError, ApiError } = require("../utils/resp");
 
 const handleLoadProxies = async (req, res) => {
     try {
-        const proxies = await ProxyService.loadProxies(req.manager)
+        const { agency: filter } = req.query;
+        const proxies = await ProxyService.loadProxies(req.manager, filter)
         sendResult(res, { proxies })
     } catch (error) {
         sendError(res, error)
@@ -62,6 +63,10 @@ const handleUpdateProxy = async (req, res) => {
             case "status":
                 const { status } = params;
                 await ProxyService.changeProxyStatus(proxyId, status);
+                break;
+            case "reset":
+                const { platform } = params;
+                await ProxyService.clearProxyAccount(proxyId, platform);
                 break;
             default:
                 throw new ApiError("Invalid proxy operation");

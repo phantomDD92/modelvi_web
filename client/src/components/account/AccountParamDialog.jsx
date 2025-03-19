@@ -47,7 +47,6 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
     useEffect(() => {
         if (open) {
             if (account) {
-                console.log(account?.params?.postStart)
                 form.setFieldsValue({
                     postMode: account.params?.postMode || PostMode.INTERVAL,
                     postOffsets: (account.params?.postOffsets) ? account.params?.postOffsets.join(",") : DEFAULT_POST_OFFSETS,

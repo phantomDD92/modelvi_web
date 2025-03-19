@@ -13,45 +13,56 @@ import {
   loadProxies,
   changeProxyStatus,
   deleteBulkProxies,
-  changeBulkProxiesStatus
+  changeBulkProxiesStatus,
+  resetProxy
 } from "@/redux/proxy/actions";
 import {
   ProxyTable,
   ProxyAppendDialog
 } from "@/components/proxy";
-import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
+import { AdminRole, DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
 import { Modal } from "antd";
+import { loadAgencies } from "@/redux/dashboard/actions";
 
 export const ProxyListPage = () => {
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [appendOpen, setAppendOpen] = useState(false);
+  const [agency, setAgency] = useState(0);
 
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const location = useLocation();
-  const proxyProps = useSelector(state => state.proxy)
+  const proxies = useSelector(state => state.proxy.proxies)
+  const auth = useSelector(state => state.home.auth);
+  const managers = useSelector(state => state.home.managers);
+
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
 
-  const loadProxiesCallback = useCallback(() => {
+  const loadProxiesCallback = useCallback((agency) => {
     setLoading(true);
-    dispatch(loadProxies(() => setLoading(false)));
-  }, [dispatch]);
+    dispatch(loadProxies(agency, () => setLoading(false)));
+  }, [dispatch,]);
 
   useEffect(() => {
-    loadProxiesCallback();
-  }, [loadProxiesCallback])
+    loadProxiesCallback(agency);
+  }, [loadProxiesCallback, agency])
+
+  useEffect(() => {
+    if (auth.role == AdminRole.MANAGER)
+      dispatch(loadAgencies());
+  }, [loadAgencies]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      loadProxiesCallback();
+      loadProxiesCallback(agency);
     }, DEFAULT_REFRESH_TIMEOUT);
     return () => clearInterval(interval);
   });
 
   const handleChangeProxyStatus = (proxy, status) => {
-    dispatch(changeProxyStatus(proxy, status, () => loadProxiesCallback()))
+    dispatch(changeProxyStatus(proxy, status, () => loadProxiesCallback(agency)))
   }
 
   const handleChangeBulkProxiesStatus = (status) => {
@@ -64,26 +75,26 @@ export const ProxyListPage = () => {
   const handleClearProxies = () => {
     Modal.confirm({
       title: `Are you sure to clear all proxies?`,
-      onOk: () => dispatch(clearProxies(() => loadProxiesCallback())),
+      onOk: () => dispatch(clearProxies(() => loadProxiesCallback(agency))),
     });
   }
 
   const handleDeleteProxy = (proxy) => {
     Modal.confirm({
       title: `Are you sure to delete the proxy (${proxy.url})?`,
-      onOk: () => dispatch(deleteProxy(proxy, () => loadProxiesCallback())),
+      onOk: () => dispatch(deleteProxy(proxy, () => loadProxiesCallback(agency))),
     });
   }
 
   const handleDeleteBulkProxies = () => {
     Modal.confirm({
       title: `Are you sure to delete ${selectedRowKeys.length} proxies?`,
-      onOk: () => dispatch(deleteBulkProxies(selectedRowKeys, () => { setSelectedRowKeys([]); loadProxiesCallback(); })),
+      onOk: () => dispatch(deleteBulkProxies(selectedRowKeys, () => { setSelectedRowKeys([]); loadProxiesCallback(agency); })),
     });
   }
 
   const handleAppendProxies = (proxies, expiredAt) => {
-    dispatch(appendProxies(proxies, expiredAt, () => { setAppendOpen(false); loadProxiesCallback(); }))
+    dispatch(appendProxies(proxies, expiredAt, () => { setAppendOpen(false); loadProxiesCallback(agency); }))
   }
 
   const handleChangePagination = (pageValue, pageSizeValue) => {
@@ -93,10 +104,20 @@ export const ProxyListPage = () => {
     }, { replace: true });
   }
 
+  const handleResetProxy = (proxy, platform) => {
+    // console.log(proxy, platform);
+    dispatch(resetProxy(proxy, platform, () => loadProxiesCallback(agency)));
+  }
+
   return (
     <>
       <ProxyTable
-        dataSource={proxyProps.proxies}
+        filters={{
+          agencies: auth.role == AdminRole.MANAGER ? managers : [],
+          current: agency,
+          onChange: value => setAgency(value),
+        }}
+        dataSource={proxies}
         loading={loading}
         pagination={{
           current: page,
@@ -114,6 +135,7 @@ export const ProxyListPage = () => {
           onAppend: () => setAppendOpen(true),
           onBulkDelete: handleDeleteBulkProxies,
           onBulkStatus: handleChangeBulkProxiesStatus,
+          onReset: handleResetProxy,
         }}
       />
       <ProxyAppendDialog
