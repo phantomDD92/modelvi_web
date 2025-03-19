@@ -24,6 +24,7 @@ const HeaderBar = () => {
         key: 'logout',
         icon: <LogoutOutlined />,
     }]
+    
     useEffect(() => {
         dispatch(reloadManager(homeProps.token));
     }, [homeProps.auth.name])

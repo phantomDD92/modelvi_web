@@ -14,8 +14,10 @@ const postAction = async (dispatch, {action, path, data, params, inform, callbac
             action && dispatch({ type: action, payload: payload });
             inform && toast.success(inform);
             callback && callback()
+            return payload;
         } else {
             toast.error(message);
+            return undefined
         }
     } catch (error) {
         if (error.response?.status === 401) {
@@ -23,6 +25,7 @@ const postAction = async (dispatch, {action, path, data, params, inform, callbac
         } else {
             toast.error("network failed");
         }
+        return undefined
     }
 }
 
@@ -37,8 +40,10 @@ const patchAction = async (dispatch, {action, path, data, params, inform, callba
             action && dispatch({ type: action, payload: payload });
             inform && toast.success(inform);
             callback && callback()
+            return payload;
         } else {
             toast.error(message);
+            return undefined
         }
     } catch (error) {
         if (error.response?.status === 401) {
@@ -46,6 +51,7 @@ const patchAction = async (dispatch, {action, path, data, params, inform, callba
         } else {
             toast.error("network failed");
         }
+        return undefined
     }
 }
 

@@ -1,45 +1,56 @@
-import { createContext, useContext, useState, useMemo } from "react";
+import { createContext, useContext, useState, useMemo, useEffect } from "react";
 import { deleteCookie, hasCookie, getCookie, setCookie } from "cookies-next";
+import { loginAgency, refreshToken } from "@/redux/v2/actions";
+import { useDispatch } from "react-redux";
 
-const AuthContext = createContext(undefined);
-
-export function useAuthContext() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuthContext must be used within an AuthProvider");
-  }
-  return context;
-}
-
-const authSessionKey = "__AERO_PAGE_REACT_AUTH__";
+const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [session, setSession] = useState(
-    getCookie(authSessionKey)
-      ? JSON.parse(getCookie(authSessionKey) ?? "{}")
-      : undefined
-  );
+  const dispatch = useDispatch();
+  const [session, setSession] = useState();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const saveSession = (user) => {
-    setCookie(authSessionKey, JSON.stringify(user));
-    setSession(user);
-  };
-
-  const removeSession = () => {
-    if (session) {
-      deleteCookie(authSessionKey);
-      setSession(undefined);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      dispatch(refreshToken((payload) => {
+        if (payload) {
+          console.log(payload);
+          setSession(payload.auth);
+        } else {
+          setSession()
+          localStorage.removeItem("token");
+        }
+      }))
     }
+  }, []);
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+    setSession();
   };
+
+  const login = (params) => {
+    console.log("HERE", params);
+    dispatch(loginAgency(params, (payload) => {
+      if (payload) {
+        localStorage.setItem("token", payload.token);
+        setSession(payload.auth)
+      } else {
+        localStorage.removeItem("token", payload.token);
+        setSession();
+      }
+    }));
+  }
 
   return (
     <AuthContext.Provider
       value={useMemo(
         () => ({
+          login,
+          logout,
           session,
-          isAuthenticated: hasCookie(authSessionKey),
-          saveSession,
-          removeSession,
         }),
         [session]
       )}
@@ -48,3 +59,8 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+
+export const useAuth = () => {
+  return useContext(AuthContext)
+};
+

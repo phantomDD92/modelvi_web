@@ -10,6 +10,8 @@ const ManagerSchema = new mongoose.Schema({
   maxActors: { type: Number, default: 3 }, // max model count
   maxAccounts: { type: Number, default: 3 }, // max account count
   version: { type: Number, default: 1 },
+  verified: { type: Boolean, default: false },
+
   status: { type: Boolean, default: true }, // status
   createdAt: { type: Date, default: Date.now },
 });

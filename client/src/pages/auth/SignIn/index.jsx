@@ -1,17 +1,62 @@
 
-import PageMetaData from "@/components/common/PageMetaData";
-import useLogin from "./useLogin";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import PageMetaData from "@/components/common/PageMetaData";
 import { PasswordFormInput, TextFormInput } from "@/components/form";
 import AuthLayout from "../AuthLayout";
+import { useAuth } from "@/contexts";
+
 
 const SignIn = () => {
-  const { loading, login, control } = useLogin();
+
+  const { login } = useAuth();
+
+  const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const loginFormSchema = yup.object({
+    email: yup
+      .string()
+      .email("Please enter a valid email")
+      .required("Please enter your email"),
+    password: yup.string().required("Please enter your password"),
+  });
+
+  const { control, handleSubmit, reset } = useForm({
+    resolver: yupResolver(loginFormSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("email");
+    const savedPassword = localStorage.getItem("password");
+    if (savedEmail && savedPassword) {
+      reset({ email: savedEmail, password: savedPassword });
+      setRememberMe(true);
+    }
+  }, []);
+
+  const handleLogin = (data) => {
+    const { email, password } = data;
+    if (rememberMe) {
+      localStorage.setItem("email", email);
+      localStorage.setItem("password", password);
+    }
+    // console.log(data);
+    login(data);
+    // dispatch(registerAgency(data, () => { reset(); }))
+  }
 
   return (
     <AuthLayout>
       <PageMetaData title="Sign In" />
-      <form className="mt-2 shrink" onSubmit={login}>
+      <form className="mt-2 shrink" onSubmit={handleSubmit(handleLogin)}>
         <TextFormInput
           containerClassName="mb-4"
           label="Email Address"
@@ -21,7 +66,6 @@ const SignIn = () => {
           fullWidth
           control={control}
         />
-
         <PasswordFormInput
           label="Password"
           containerClassName="mb-4"
@@ -38,6 +82,8 @@ const SignIn = () => {
               type="checkbox"
               className="size-4 rounded border-white/20 bg-white/20 text-primary shadow-sm focus:border-primary focus:ring focus:ring-primary/60 focus:ring-offset-0"
               id="checkbox-signin"
+              value={rememberMe}
+              onChange={e => setRememberMe(e.target.value)}
             />
             <label
               className="ms-2 select-none align-middle text-base/none text-zinc-200"

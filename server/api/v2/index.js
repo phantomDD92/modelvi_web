@@ -1,5 +1,6 @@
 const express = require("express");
 const AgencyCtrlV2 = require("../../controllers/v2/agency");
+const authenticate = require("../../middleware/auth");
 
 const router = express.Router();
 
@@ -9,5 +10,8 @@ router.route("/version")
 
 router.route("/auth")
   .put(AgencyCtrlV2.handleRegisterAgency)
+  .post(AgencyCtrlV2.handleLoginAgency)
+  .patch(authenticate, AgencyCtrlV2.handleRefreshToken)
+  
 
 module.exports = router;

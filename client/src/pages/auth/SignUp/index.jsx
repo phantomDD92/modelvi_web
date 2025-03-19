@@ -1,13 +1,20 @@
 
-import PageMetaData from "@/components/common/PageMetaData";
-import { PasswordFormInput, TextFormInput } from "@/components/form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import PageMetaData from "@/components/common/PageMetaData";
+import { PasswordFormInput, TextFormInput } from "@/components/form";
 import AuthLayout from "../AuthLayout";
+import { registerAgency } from "@/redux/v2/actions";
 
 const SignUp = () => {
+
+  const [rememberMe, setRememberMe] = useState(false);
+  const dispatch = useDispatch();
+
   const registerFormSchema = yup.object({
     name: yup.string().required("Please enter your name"),
     email: yup
@@ -17,12 +24,17 @@ const SignUp = () => {
     telegram: yup.string().required("Please enter your telegram id"),
     password: yup.string().required("Please enter your password"),
   });
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(registerFormSchema),
   });
 
   const handleRegister = (data) => {
-    console.log(data);
+    const { email, password } = data;
+    if (rememberMe) {
+      localStorage.setItem("email", email);
+      localStorage.setItem("password", password);
+    }
+    dispatch(registerAgency(data, () => { reset(); }))
   }
 
   return (
@@ -75,6 +87,8 @@ const SignUp = () => {
               type="checkbox"
               className="size-4 rounded border-white/20 bg-white/20 text-primary shadow-sm focus:border-primary focus:ring focus:ring-primary/60 focus:ring-offset-0"
               id="checkbox-signin"
+              value={rememberMe}
+              onChange={e => { console.log("HERE"); setRememberMe(e.target.value) }}
             />
             <label
               className="ms-2 select-none align-middle text-base/none text-zinc-200"

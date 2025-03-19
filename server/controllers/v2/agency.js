@@ -12,31 +12,56 @@ const handleRegisterAgency = async (req, res) => {
     if (!dupAgency) {
       dupAgency = await ManagerModel.findOne({ name }, 'name email version')
     }
-    if (dupAgency || dupAgency.version > 1) {
+    if (dupAgency && dupAgency.version > 1) {
       throw new ApiError(`Agency with ${name}, ${email} already exists`);
     }
     if (dupAgency) { // update agency
       await ManagerModel.findByIdAndUpdate(dupAgency._id, {
         $set: {
-          name, email, telegram, password: bcryptjs.hashSync(password, 12), version: 2,
+          name, email, telegram, password: bcryptjs.hashSync(password, 12), version: 2, verified: false,
         }
       });
     } else {
       // create new agency
       await ManagerModel.create({
-        name, email, telegram, password: bcryptjs.hashSync(password, 12), version: 2,
+        name, email, telegram, password: bcryptjs.hashSync(password, 12), version: 2, verified: false,
       })
     }
-    const token = authenticator.generate(secret);
-    console.log("OPT Token : ", token);
     sendResult(res);
   } catch (error) {
     sendError(res, error)
   }
 }
 
+const handleLoginAgency = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const agency = await ManagerModel.findOne({ email }, "password status");
+    if (!agency)
+      throw new ApiError(`Agency(${email}) is not registerd`);
+    const passwordCompare = await bcryptjs.compare(password, agency.password);
+    if (!passwordCompare)
+      throw new ApiError("Password is incorrect");
+    const token = jwt.sign({ id: agency._id }, process.env.SECRET_KEY || "SECRET_KEY_MODELVI", { expiresIn: "1h" });
+    const auth = await ManagerModel.findById(agency._id, "name email telegram role verified maxAccounts maxActors")
+    sendResult(res, { token, auth });
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
+const handleRefreshToken = async (req, res) => {
+  try {
+    sendResult(res, { auth: req.manager })
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
 const AgencyCtrlV2 = {
   handleRegisterAgency,
+  handleLoginAgency,
+  handleRefreshToken,
 };
 
 module.exports = AgencyCtrlV2
