@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PageMetaData from "@/components/common/PageMetaData";
@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts";
 const SignIn = () => {
 
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -49,7 +50,7 @@ const SignIn = () => {
       localStorage.setItem("password", password);
     }
     // console.log(data);
-    login(data);
+    login(data, () => navigate("/"));
     // dispatch(registerAgency(data, () => { reset(); }))
   }
 

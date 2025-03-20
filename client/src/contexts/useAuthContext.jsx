@@ -8,7 +8,6 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const dispatch = useDispatch();
   const [session, setSession] = useState();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -31,12 +30,12 @@ export function AuthProvider({ children }) {
     setSession();
   };
 
-  const login = (params) => {
-    console.log("HERE", params);
+  const login = (params, callback) => {
     dispatch(loginAgency(params, (payload) => {
       if (payload) {
         localStorage.setItem("token", payload.token);
-        setSession(payload.auth)
+        setSession(payload.auth);
+        callback && callback();
       } else {
         localStorage.removeItem("token", payload.token);
         setSession();
@@ -51,6 +50,8 @@ export function AuthProvider({ children }) {
           login,
           logout,
           session,
+          needVerified: session?.status && !session?.verified,
+          isAuthenticated: session?.status && session?.verified
         }),
         [session]
       )}

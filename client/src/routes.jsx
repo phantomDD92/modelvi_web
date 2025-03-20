@@ -11,13 +11,6 @@ import LandingPage from "./pages/Landing";
 import { AdminRole } from "./utils/const";
 
 const routes = [
-    // {
-    //     key: "landing",
-    //     path: "/",
-    //     link: "/",
-    //     label: "Dashboard",
-    //     component: <LandingPage />,
-    // },
     {
         key: "dashboard",
         path: "/dashboard",
