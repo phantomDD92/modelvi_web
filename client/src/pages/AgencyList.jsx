@@ -95,8 +95,6 @@ export const AgencyListPage = () => {
   }
 
   const handleDeleteBulkAgencies = () => {
-    // console.log(homeProps.modelStats)
-    // console.log(homeProps.accountStats)
     Modal.confirm({
       title: `Are you sure to delete ${selectedRowKeys.length} agencies?`,
       onOk: () => { dispatch(deleteBulkAgencies(selectedRowKeys, () => { setSelectedRowKeys([]); loadAgenciesCallback() })); },

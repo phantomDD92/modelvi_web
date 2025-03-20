@@ -1,44 +1,52 @@
 import { createContext, useContext, useState, useMemo, useEffect } from "react";
-import { deleteCookie, hasCookie, getCookie, setCookie } from "cookies-next";
 import { loginAgency, refreshToken } from "@/redux/v2/actions";
 import { useDispatch } from "react-redux";
+import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
+
   const dispatch = useDispatch();
   const [session, setSession] = useState();
+  const [auth, setAuth] = useState();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
+      const { id, role, name } = jwtDecode(token);
+      setSession({id, role, name});
       dispatch(refreshToken((payload) => {
         if (payload) {
-          console.log(payload);
-          setSession(payload.auth);
+          setAuth(payload.auth);
         } else {
-          setSession()
+          setAuth();
+          setSession();
           localStorage.removeItem("token");
         }
       }))
     }
   }, []);
 
-  const logout = () => {
+  const logout = (callback) => {
     localStorage.removeItem("token");
-    setIsAuthenticated(false);
     setSession();
+    setAuth();
+    callback && callback();
   };
 
   const login = (params, callback) => {
     dispatch(loginAgency(params, (payload) => {
       if (payload) {
         localStorage.setItem("token", payload.token);
-        setSession(payload.auth);
+        const session = jwtDecode(payload.token);
+        setSession(session);
+        setAuth(payload.auth);
         callback && callback();
       } else {
         localStorage.removeItem("token", payload.token);
         setSession();
+        setAuth();
       }
     }));
   }
@@ -50,8 +58,9 @@ export function AuthProvider({ children }) {
           login,
           logout,
           session,
-          needVerified: session?.status && !session?.verified,
-          isAuthenticated: session?.status && session?.verified
+          auth,
+          isAuthenticated: localStorage.getItem("token") != undefined,
+          role: session?.role,
         }),
         [session]
       )}

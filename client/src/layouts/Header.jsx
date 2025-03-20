@@ -6,13 +6,19 @@ import { changePassword, logoutManager, reloadManager } from "@/redux/dashboard/
 import { useNavigate } from "react-router-dom";
 import { AdminRole } from "@/utils/const";
 import StyledInput from "@/components/common/StyledInput";
+import { useAuth } from "@/contexts";
 
 const HeaderBar = () => {
+
     const [visible, setVisible] = useState(false);
     const [form] = Form.useForm()
+
+    const { isAuthenticated, session, logout } = useAuth();
+
     const dispatch = useDispatch();
-    const homeProps = useSelector(state => state.home)
     const navigate = useNavigate()
+
+    console.log("@@@" , session);
     const { token: { colorBgContainer } } = theme.useToken();
     const items = [{
         label: 'Change Password',
@@ -24,23 +30,27 @@ const HeaderBar = () => {
         key: 'logout',
         icon: <LogoutOutlined />,
     }]
-    
+
+    // useEffect(() => {
+    //     dispatch(reloadManager(homeProps.token));
+    // }, [homeProps.auth.name])
     useEffect(() => {
-        dispatch(reloadManager(homeProps.token));
-    }, [homeProps.auth.name])
+        if (!isAuthenticated)
+            navigate("/sign-in");
+    }, [isAuthenticated])
 
     const handleMenuClick = (e) => {
         if (e.key === "password") {
             form.resetFields();
             setVisible(true);
         } else if (e.key === "logout") {
-            dispatch(logoutManager())
-            navigate("/")
+           logout(() => navigate("/sign-in"));
         }
     }
+
     const handleChangePassword = () => {
         const { password, newPassword } = form.getFieldsValue()
-        dispatch(changePassword(homeProps.auth.name, password, newPassword));
+        dispatch(changePassword(session?.name, password, newPassword));
         setVisible(false);
     }
 
@@ -54,9 +64,9 @@ const HeaderBar = () => {
                     <Avatar
                         size="large"
                         className="bg-green-400"
-                        src={homeProps.auth.role == AdminRole.MANAGER ? "/img/manager.png" : "/img/agency.png"}
+                        src={session?.role == AdminRole.MANAGER ? "/img/manager.png" : "/img/agency.png"}
                     />
-                    <Typography className="text-lg">{homeProps.auth.name}</Typography>
+                    <Typography className="text-lg">{session?.name}</Typography>
                 </Flex>
             </Popover>
             <Modal

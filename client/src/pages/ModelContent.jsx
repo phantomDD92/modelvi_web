@@ -96,7 +96,6 @@ export const ModelContent = () => {
   return (
     <div>
       <ModelContentTable
-        auth={auth}
         model={model}
         loading={loading}
         pagination={{

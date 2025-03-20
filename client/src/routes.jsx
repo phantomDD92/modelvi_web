@@ -7,7 +7,6 @@ import ModelContent from "./pages/ModelContent";
 import AccountHistory from "./pages/AccountHistory";
 // import ScheduleList from "./pages/ScheduleList";
 import CommentListPage from "./pages/CommentList";
-import LandingPage from "./pages/Landing";
 import { AdminRole } from "./utils/const";
 
 const routes = [
@@ -89,16 +88,8 @@ const routes = [
         icon: <DiscordOutlined />,
         component: <ChatTeamListPage />,
         mode: "main",
-        visible: auth => auth.role == AdminRole.MANAGER,
+        visible: role => role == AdminRole.MANAGER,
     },
-    // {
-    //     key: "settings",
-    //     path: "/settings",
-    //     label: "Settings",
-    //     icon: <SettingOutlined />,
-    //     component: <Settings />,
-    //     mode: "main"
-    // },
     {
         key: "agency",
         path: "/agency",
@@ -107,7 +98,7 @@ const routes = [
         icon: <UserOutlined />,
         component: <AgencyListPage />,
         mode: "main",
-        visible: auth => auth.role == AdminRole.MANAGER,
+        visible: role => role == AdminRole.MANAGER,
     },
 ]
 

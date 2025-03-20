@@ -37,13 +37,13 @@ const handleRegisterAgency = async (req, res) => {
 const handleLoginAgency = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const agency = await ManagerModel.findOne({ email }, "password status");
+    const agency = await ManagerModel.findOne({ email }, "password status role name");
     if (!agency)
       throw new ApiError(`Agency(${email}) is not registerd`);
     const passwordCompare = await bcryptjs.compare(password, agency.password);
     if (!passwordCompare)
       throw new ApiError("Password is incorrect");
-    const token = jwt.sign({ id: agency._id }, process.env.SECRET_KEY || "SECRET_KEY_MODELVI", { expiresIn: "1h" });
+    const token = jwt.sign({ id: agency._id, role: agency.role, name: agency.name }, process.env.SECRET_KEY || "SECRET_KEY_MODELVI", { expiresIn: "1d" });
     const auth = await ManagerModel.findById(agency._id, "name email telegram role status verified maxAccounts maxActors")
     sendResult(res, { token, auth });
   } catch (error) {

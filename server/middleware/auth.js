@@ -14,7 +14,7 @@ const authenticate = async (req, res, next) => {
             return
         }
         const { id } = jwt.verify(tokens[1], process.env.SECRET_KEY || "SECRET_KEY_MODELVI");
-        const manager = await ManagerModel.findById(id, "name email telegram maxActors maxAccounts status verified");
+        const manager = await ManagerModel.findById(id, "name email telegram maxActors maxAccounts role status verified");
         if (!manager || !manager.status) {
             res.status(401).json();
             return

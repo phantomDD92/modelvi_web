@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import routes from "./routes";
-import { useSelector } from "react-redux";
 import Layouts from "./layouts/Layout";
 import LoginPage from "./pages/auth/sign-in";
 import LandingPage from "./pages/Landing";
@@ -12,22 +11,20 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import { useAuth } from "./contexts";
 
 const Router = () => {
-  const { isAuthenticated, needVerified, session } = useAuth();
-  console.log(isAuthenticated, session);
-  const homeProps = useSelector(state => state.home);
+  const { isAuthenticated, session } = useAuth();
   return (
     <BrowserRouter>
       <Routes>
         {isAuthenticated &&
-          routes.filter(route => !route.visible || route.visible(homeProps.auth)).map(route => (
+          routes.filter(route => !route.visible || route.visible(session?.role)).map(route => (
             <Route
               key={route.key}
               exact
               element={route.component ? <Layouts>{route.component}</Layouts> : <Home />}
               path={route.path}
             />
-          ))
-        }
+          ))}
+
         {/* } */}
         <Route key="login" element={<LoginPage />} path="/auth/signin" />
         <Route key="landing" element={<LandingPage />} path="/landing" />
@@ -37,8 +34,8 @@ const Router = () => {
         <Route key="verify" element={<ForgotPassword />} path="/verify" />
         {isAuthenticated
           ? <Route path="*" element={<Navigate to="/dashboard" />} />
-          : <Route path="*" element={<Navigate to="/auth/signin" />} />}
-        {/* <Route path="*" element={<Navigate to="/dashboard" />} /> */}
+          : <Route path="*" element={<Navigate to="/sign-in" />} />}
+        {/* {isAuthenticated && <Route path="*" element={<Navigate to="/dashboard" />} />} */}
       </Routes>
     </BrowserRouter>
   );

@@ -88,7 +88,7 @@ const SignUp = () => {
               className="size-4 rounded border-white/20 bg-white/20 text-primary shadow-sm focus:border-primary focus:ring focus:ring-primary/60 focus:ring-offset-0"
               id="checkbox-signin"
               value={rememberMe}
-              onChange={e => { console.log("HERE"); setRememberMe(e.target.value) }}
+              onChange={e =>  setRememberMe(e.target.value) }
             />
             <label
               className="ms-2 select-none align-middle text-base/none text-zinc-200"
