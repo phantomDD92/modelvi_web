@@ -19,9 +19,10 @@ export const appendProxies = (proxies, deadline, callback) => async (dispatch) =
   })
 };
 
-export const loadProxies = (callback) => async (dispatch) => {
+export const loadProxies = (agency, callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/proxy`,
+    params: { agency },
     action: ACTIONS.LOAD_PROXIES,
     callback
   })
@@ -49,6 +50,15 @@ export const deleteProxy = (proxy, callback) => async (dispatch) => {
   await ApiRequest.deleteAction(dispatch, {
     path: `/proxy/${proxy._id}`,
     inform: `Proxy(${proxy.url}) is successfully deleted`,
+    callback
+  })
+};
+
+export const resetProxy = (proxy, platform, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/proxy/${proxy._id}`,
+    data: { action: 'reset', platform },
+    inform: `Proxy(${proxy.url}) is successfully reset`,
     callback
   })
 };

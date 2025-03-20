@@ -120,7 +120,7 @@ export const AgencyListPage = () => {
         actions={{
           onBulkDelete: handleDeleteBulkAgencies,
           onBulkStatus: (status) => handleStatusBulkAgencies(status),
-          // onCreate: () => { setAgency(); setEditOpen(true); },
+          onCreate: () => { setAgency(); setEditOpen(true); },
           onEdit: (agency) => { setAgency(agency); setEditOpen(true) },
           onDelete: handleDeleteAgency,
           onStatusChange: handleChangeStatus,

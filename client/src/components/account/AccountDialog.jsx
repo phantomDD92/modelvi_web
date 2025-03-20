@@ -62,13 +62,13 @@ const AccountDialog = ({ open, platform, models, chatTeams, account, onCancel, o
                 <Form.Item
                     name="email"
                     label="Email"
-                    rules={[{ required: true }]}>
+                    rules={platform == Platform.KNKY ? [] : [{ required: true }]}>
                     <StyledInput />
                 </Form.Item>
                 <Form.Item
                     name="password"
                     label="Password"
-                    rules={[{ required: true }]}>
+                    rules={platform == Platform.KNKY ? [] : [{ required: true }]}>
                     <StyledInput />
                 </Form.Item>
                 <Form.Item

@@ -2,9 +2,12 @@ const { default: mongoose } = require("mongoose");
 const { Status, AdminRole } = require("../config/const")
 const Proxy = require("../models/proxy")
 
-const loadProxies = (agency) =>
-    Proxy.find(agency.role == AdminRole.MANAGER ? {} : { owner: agency._id })
-        .populate('owner', 'name');
+const loadProxies = (agency, filter) =>
+    agency.role == AdminRole.MANAGER
+        ? filter != "0"
+            ? Proxy.find({ owner: filter }).populate('owner', 'name')
+            : Proxy.find({}).populate('owner', 'name')
+        : Proxy.find({ owner: agency._id }).populate('owner', 'name');
 
 const loadProxiesForOwner = (owner) =>
     Proxy.find({ owner })
@@ -62,6 +65,11 @@ const setProxyAccount = (proxyId, platform, alias) => {
     return Proxy.findByIdAndUpdate(proxyId, { $set: { [field]: alias } });
 }
 
+const clearProxyAccount = (proxyId, platform) => {
+    const field = `usage.${platform}`;
+    return Proxy.findByIdAndUpdate(proxyId, { $unset: { [field]: "" } });
+}
+
 const changeBulkProxiesStatus = (agency, proxyIds, status) =>
     agency.role == AdminRole.MANAGER
         ? Proxy.updateMany({ _id: { $in: proxyIds } }, { $set: { status } })
@@ -84,7 +92,7 @@ const ProxyService = {
     deleteBulkProxies,
     findProxyByAccount,
     setProxyAccount,
-
+    clearProxyAccount,
     getProxyStats,
     getCount,
 }
