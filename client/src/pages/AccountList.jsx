@@ -127,7 +127,6 @@ export const AccountList = () => {
   return (
     <div>
       <AccountTable
-        auth={homeProps.auth}
         platform={platform}
         dataSource={modelProps.accounts}
         loading={loading}

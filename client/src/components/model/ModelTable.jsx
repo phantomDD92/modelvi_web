@@ -19,9 +19,9 @@ import {
 import moment from "moment";
 import { AdminRole } from "@/utils/const";
 import { getPlatformName } from "@/utils/string";
+import { useAuth } from "@/contexts";
 
 export const ModelTable = ({
-    auth,
     pagination,
     rowSelection,
     loading,
@@ -38,15 +38,17 @@ export const ModelTable = ({
         // onProfile
     }
 }) => {
-    const hasPermission = (auth, record) => {
-        if (auth.role == AdminRole.MANAGER)
+    const { session } = useAuth();
+
+    const hasPermission = (record) => {
+        if (session?.role == AdminRole.MANAGER)
             return true
-        if (record.owner && record.owner._id == auth._id)
+        if (record.owner && record.owner._id == session?.id)
             return true
         return false
     }
-    const isAdmin = (auth) => {
-        return auth.role == AdminRole.MANAGER;
+    const isAdmin = () => {
+        return session?.role == AdminRole.MANAGER;
     }
 
     const getPlatformTag = (platform) =>
@@ -110,11 +112,11 @@ export const ModelTable = ({
             key: 'action',
             title: 'Action',
             width: 150,
-            render: (_, record) => hasPermission(auth, record) ? (
+            render: (_, record) => hasPermission(record) ? (
                 <Dropdown.Button
                     onClick={() => onEdit(record)}
                     menu={{
-                        items: isAdmin(auth) ?
+                        items: isAdmin() ?
                             [
                                 {
                                     label: 'View Contents',

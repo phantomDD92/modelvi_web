@@ -7,7 +7,6 @@ import {
     Form,
     Radio,
     Switch,
-    Input,
     InputNumber,
     TimePicker,
 } from "antd";
@@ -26,9 +25,11 @@ import { getPlatformName } from "@/utils/string";
 
 import { loadAgencyComments, loadAgencyUsers } from "@/redux/dashboard/actions";
 import StyledInput from "../common/StyledInput";
+import { useAuth } from "@/contexts";
 
 const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
     const dispatch = useDispatch();
+    const { session } = useAuth();
     const homeProps = useSelector(state => state.home);
 
     const [postMode, setPostMode] = useState(PostMode.INTERVAL);
@@ -212,7 +213,7 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
                         <Form.Item
                             // name="commentBlockLists"
                             label="Block Users List">
-                            {account?.owner?._id === homeProps.auth._id ?
+                            {account?.owner?._id === session?.id ?
                                 <Link to={"/comment"}>{homeProps.agencyUsers.filter(user => user.status == "block").length} Users Blocked</Link> :
                                 <span>{homeProps.agencyUsers.filter(user => user.status == "block").length} Users Blocked</span>
                             }
@@ -220,7 +221,7 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
                         <Form.Item
                             // name="commentLists"
                             label="Comments List">
-                            {account?.owner?._id === homeProps.auth._id ?
+                            {account?.owner?._id === session?.id ?
                                 <Link to={"/comment"}>{homeProps.agencyComments.length} Comments Available</Link> :
                                 <span>{homeProps.agencyComments.length} Comments Available</span>
                             }

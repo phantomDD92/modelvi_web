@@ -11,7 +11,7 @@ const ManagerSchema = new mongoose.Schema({
   maxAccounts: { type: Number, default: 3 }, // max account count
   version: { type: Number, default: 1 },
   verified: { type: Boolean, default: false },
-
+  balance: { type: Number, default: 0 },
   status: { type: Boolean, default: true }, // status
   createdAt: { type: Date, default: Date.now },
 });

@@ -33,7 +33,6 @@ export const ModelContent = () => {
   const location = useLocation();
 
   const model = useSelector(state => state.model.contentModel);
-  const auth = useSelector(state => state.home.auth)
   const routeParams = useParams()
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;

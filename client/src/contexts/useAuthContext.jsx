@@ -15,16 +15,8 @@ export function AuthProvider({ children }) {
     const token = localStorage.getItem("token");
     if (token) {
       const { id, role, name } = jwtDecode(token);
-      setSession({id, role, name});
-      dispatch(refreshToken((payload) => {
-        if (payload) {
-          setAuth(payload.auth);
-        } else {
-          setAuth();
-          setSession();
-          localStorage.removeItem("token");
-        }
-      }))
+      setSession({ id, role, name });
+      dispatch(refreshToken());
     }
   }, []);
 
@@ -41,7 +33,6 @@ export function AuthProvider({ children }) {
         localStorage.setItem("token", payload.token);
         const session = jwtDecode(payload.token);
         setSession(session);
-        setAuth(payload.auth);
         callback && callback();
       } else {
         localStorage.removeItem("token", payload.token);

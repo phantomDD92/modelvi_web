@@ -23,6 +23,7 @@ import {
 import { AdminRole, DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
 import { Modal } from "antd";
 import { loadAgencies } from "@/redux/dashboard/actions";
+import { useAuth } from "@/contexts";
 
 export const ProxyListPage = () => {
   const [loading, setLoading] = useState(false);
@@ -33,8 +34,8 @@ export const ProxyListPage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const location = useLocation();
+  const { session } = useAuth();
   const proxies = useSelector(state => state.proxy.proxies)
-  const auth = useSelector(state => state.home.auth);
   const managers = useSelector(state => state.home.managers);
 
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
@@ -50,7 +51,7 @@ export const ProxyListPage = () => {
   }, [loadProxiesCallback, agency])
 
   useEffect(() => {
-    if (auth.role == AdminRole.MANAGER)
+    if (session?.role == AdminRole.MANAGER)
       dispatch(loadAgencies());
   }, [loadAgencies]);
 
@@ -113,7 +114,7 @@ export const ProxyListPage = () => {
     <>
       <ProxyTable
         filters={{
-          agencies: auth.role == AdminRole.MANAGER ? managers : [],
+          agencies: session?.role == AdminRole.MANAGER ? managers : [],
           current: agency,
           onChange: value => setAgency(value),
         }}

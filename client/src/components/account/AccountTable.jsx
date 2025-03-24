@@ -24,12 +24,12 @@ import {
     Platform
 } from "@/utils/const"
 import moment from "moment";
+import { useAuth } from "@/contexts";
 
 const AccountTable = ({
     pagination,
     rowSelection,
     dataSource,
-    auth,
     loading,
     platform,
     actions: {
@@ -45,10 +45,12 @@ const AccountTable = ({
         onAllStatus,
     }
 }) => {
-    const hasPermission = (auth, record) => {
-        if (auth.role == AdminRole.MANAGER)
+    const { session } = useAuth();
+
+    const hasPermission = (record) => {
+        if (session?.role == AdminRole.MANAGER)
             return true
-        if (record.owner && record.owner._id == auth._id)
+        if (record.owner && record.owner._id == session.id)
             return true
         return false
     }
@@ -140,7 +142,7 @@ const AccountTable = ({
             key: 'action',
             title: 'Action',
             width: 150,
-            render: (_, record) => hasPermission(auth, record) ? (
+            render: (_, record) => hasPermission(record) ? (
                 <Dropdown.Button
                     onClick={() => onEdit && onEdit(record)}
                     menu={{

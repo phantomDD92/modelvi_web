@@ -18,7 +18,6 @@ const HeaderBar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate()
 
-    console.log("@@@" , session);
     const { token: { colorBgContainer } } = theme.useToken();
     const items = [{
         label: 'Change Password',
@@ -31,9 +30,6 @@ const HeaderBar = () => {
         icon: <LogoutOutlined />,
     }]
 
-    // useEffect(() => {
-    //     dispatch(reloadManager(homeProps.token));
-    // }, [homeProps.auth.name])
     useEffect(() => {
         if (!isAuthenticated)
             navigate("/sign-in");

@@ -1,5 +1,5 @@
 const bcryptjs = require('bcryptjs')
-const { authenticator } = require('otplib');
+// const { authenticator } = require('otplib');
 const jwt = require('jsonwebtoken');
 
 const ManagerModel = require("../../models/manager");
@@ -44,8 +44,8 @@ const handleLoginAgency = async (req, res) => {
     if (!passwordCompare)
       throw new ApiError("Password is incorrect");
     const token = jwt.sign({ id: agency._id, role: agency.role, name: agency.name }, process.env.SECRET_KEY || "SECRET_KEY_MODELVI", { expiresIn: "1d" });
-    const auth = await ManagerModel.findById(agency._id, "name email telegram role status verified maxAccounts maxActors")
-    sendResult(res, { token, auth });
+    const profile = await ManagerModel.findById(agency._id, "name email telegram role balance status verified maxAccounts maxActors")
+    sendResult(res, { token, profile });
   } catch (error) {
     sendError(res, error)
   }
@@ -53,7 +53,7 @@ const handleLoginAgency = async (req, res) => {
 
 const handleRefreshToken = async (req, res) => {
   try {
-    sendResult(res, { auth: req.manager })
+    sendResult(res, { profile: req.manager })
   } catch (error) {
     sendError(res, error);
   }

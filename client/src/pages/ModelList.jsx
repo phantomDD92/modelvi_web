@@ -120,7 +120,6 @@ export const ModelListPage = () => {
   return (
     <>
       <ModelTable
-        auth={homeProps.auth}
         dataSource={modelProps.models}
         loading={loading}
         pagination={{
