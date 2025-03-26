@@ -41,7 +41,6 @@ export const AccountList = () => {
 
   const modelProps = useSelector(state => state.model)
   const models = useSelector(state => state.model.models);
-  const homeProps = useSelector(state => state.home)
 
   const loadAccountsCallback = useCallback(() => {
     setLoading(true);

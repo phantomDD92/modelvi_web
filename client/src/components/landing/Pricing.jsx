@@ -1,6 +1,5 @@
 import { pricingPlans } from "./data";
 import { useState } from "react";
-import { LuArrowUpRight } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
 const Pricing = () => {

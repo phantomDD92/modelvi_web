@@ -11,8 +11,8 @@ const Platform = {
     F2F: "F2F", // f2f posting
     FAN: "FAN", // fansly posting
     FNS: "FNS", // fancentro storying
-    KNKY: "KNKY", 
-    FANVUE: "FANVUE", 
+    KNKY: "KNKY",
+    FANVUE: "FANVUE",
     MALOUM: "MALOUM",
 }
 
@@ -45,6 +45,17 @@ const AgencyRole = {
     AGENCY: 2,
 }
 
+const PaymentStatus = {
+    WAITING: "waiting",
+    CONFIRMING: "confirming",
+    CONFIRMED: "confirmed",
+    SENDING: "sending",
+    PARTIALLY_PAID: "partially_paid",
+    FINISHED: "finished",
+    EXPIRED: "expired",
+    CANCEL: "cancel",
+}
+
 module.exports = {
     Status,
     Platform,
@@ -53,4 +64,5 @@ module.exports = {
     AdminRole: AgencyRole,
     StoryType,
     PostMode,
+    PaymentStatus,
 }

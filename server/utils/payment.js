@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { ApiError } = require('./resp');
 
 const getApiStatus = async () => {
   try {
@@ -15,36 +16,35 @@ const getAvailableCurrencies = async () => {
     const resp = await axios.get("https://api-sandbox.nowpayments.io/v1/currencies", { headers: { 'x-api-key': process.env.NOWPAYMENT_API_KEY } });
     return resp.data?.currencies;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new ApiError("NowPayment service not available");
   }
 }
 
 const createPayment = async (agency, orderId, currency) => {
   try {
     const resp = await axios.post(
-      "https://api-sandbox.nowpayments.io/v1/payment",
+      "https://api.nowpayments.io/v1/payment",
       {
         "price_amount": 100,
         "price_currency": "usd",
         "pay_amount": 10,
         "pay_currency": currency,
-        "ipn_callback_url": "https://modelvi.com/api/payment",
+        "ipn_callback_url": "https://modelvi.com/api/v2/payment_callback",
         "order_id": `${orderId}`,
         "order_description": `Modelvi payment from ${agency.name}`
       },
       { headers: { 'x-api-key': process.env.NOWPAYMENT_API_KEY } });
-      return res.data;
+    return resp.data;
   } catch (error) {
     console.error(error);
-    throw error;
+    throw ApiError("NowPayment service unavailable");
   }
 }
 
-const NowPaymentUtils = {
+const PaymentUtils = {
   getApiStatus,
   getAvailableCurrencies,
   createPayment,
 };
 
-module.exports = NowPaymentUtils;
+module.exports = PaymentUtils;

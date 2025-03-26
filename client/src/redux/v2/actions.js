@@ -19,10 +19,52 @@ export const loginAgency = (params, callback) => async (dispatch) => {
   callback && callback(payload);
 };
 
-export const refreshToken = (callback) => async (dispatch) => {
-  await ApiRequest.patchAction(dispatch, {
-    path: `/v2/auth`,
+export const getProfile = (callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/profile`,
     action: ACTIONS.LOAD_PROFILE,
     callback,
   })
 };
+
+
+export const createPayment = (currency, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/v2/agency/payment`,
+    data: { currency },
+    action: ACTIONS.GET_PAYMENT,
+    callback
+  })
+}
+
+export const loadPayments = (callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/agency/payment`,
+    action: ACTIONS.LOAD_PAYMENTS,
+    callback,
+  })
+}
+
+export const cancelPayment = (paymentID, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/agency/payment/${paymentID}`,
+    inform: `Payment is canceled`,
+    callback,
+  })
+}
+
+export const getPayment = (paymentID, callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/agency/payment/${paymentID}`,
+    action: ACTIONS.GET_PAYMENT,
+    callback,
+  })
+}
+
+export const loadTransactions = (callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/agency/transaction`,
+    action: ACTIONS.LOAD_TRANSACTIONS,
+    callback,
+  })
+}

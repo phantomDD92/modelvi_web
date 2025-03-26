@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useMemo, useEffect } from "react";
-import { loginAgency, refreshToken } from "@/redux/v2/actions";
+import { loginAgency, getProfile } from "@/redux/v2/actions";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from 'jwt-decode';
 
@@ -16,7 +16,7 @@ export function AuthProvider({ children }) {
     if (token) {
       const { id, role, name } = jwtDecode(token);
       setSession({ id, role, name });
-      dispatch(refreshToken());
+      dispatch(getProfile());
     }
   }, []);
 

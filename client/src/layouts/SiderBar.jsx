@@ -12,8 +12,7 @@ const SiderBar = () => {
         <Layout.Sider
             breakpoint="lg"
             collapsedWidth="0"
-            theme="light"
-        >
+            theme="light">
             <div className="h-16 flex items-center justify-center">
                 <Typography className="text-3xl">Model<b>VI</b></Typography>
             </div>

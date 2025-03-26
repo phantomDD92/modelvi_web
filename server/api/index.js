@@ -60,11 +60,6 @@ router.route("/chat/:id")
   .put(ChatTeamCtrl.handleUpdateChatTeam)
   .delete(ChatTeamCtrl.handleDeleteChatTeam)
 
-// router.route("/setting")
-//   .all(authenticate)
-//   .get(SettingCtrl.handleLoadSetting)
-//   .post(SettingCtrl.handleUpdateSetting)
-
 router.route("/temp")
   .all(authenticate, checkManager)
   .post(ManagerCtrl.handleUpdateDB);

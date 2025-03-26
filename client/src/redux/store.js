@@ -5,6 +5,7 @@ import modalReducer from "./reducers/modalReducer";
 import dashboardReducer from "./dashboard/reducer";
 import proxyReducer from "./proxy/reducer";
 import modelReducer from "./model/reducer";
+import v2Reducer from "./v2/reducer";
 
 const initialState = {};
 
@@ -13,7 +14,8 @@ const reducers = combineReducers({
   modal: modalReducer,
   home: dashboardReducer,
   proxy: proxyReducer,
-  model: modelReducer
+  model: modelReducer,
+  v2: v2Reducer,
 });
 
 const store = createStore(

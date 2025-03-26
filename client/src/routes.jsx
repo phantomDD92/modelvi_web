@@ -1,6 +1,6 @@
 import React from "react"
 import { UserOutlined, HomeOutlined, SolutionOutlined, SettingOutlined, WomanOutlined, EnvironmentOutlined, DiscordOutlined } from "@ant-design/icons";
-import { Home, ProxyListPage, ModelListPage, ChatTeamListPage, Settings } from "@/pages";
+import { Home, ProxyListPage, ModelListPage, ChatTeamListPage, SettingsPage } from "@/pages";
 import AgencyListPage from "./pages/AgencyList";
 import AccountList from "./pages/AccountList";
 import ModelContent from "./pages/ModelContent";
@@ -8,6 +8,7 @@ import AccountHistory from "./pages/AccountHistory";
 // import ScheduleList from "./pages/ScheduleList";
 import CommentListPage from "./pages/CommentList";
 import { AdminRole } from "./utils/const";
+import { LuSettings } from "react-icons/lu";
 
 const routes = [
     {
@@ -45,15 +46,6 @@ const routes = [
         component: <AccountList />,
         mode: "main"
     },
-    // {
-    //     key: "schedule",
-    //     path: "/schedule",
-    //     link: "/schedule",
-    //     label: "Schedules",
-    //     icon: <SolutionOutlined />,
-    //     component: <ScheduleList />,
-    //     mode: "main",
-    // },
     {
         key: "history",
         path: "/account/:platform/:accountId",
@@ -99,6 +91,15 @@ const routes = [
         component: <AgencyListPage />,
         mode: "main",
         visible: role => role == AdminRole.MANAGER,
+    },
+    {
+        key: "settings",
+        path: "/settings/:key",
+        label: "Settings",
+        link: "/settings/overview",
+        icon: <LuSettings />,
+        component: <SettingsPage />,
+        mode: "main",
     },
 ]
 

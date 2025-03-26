@@ -51,7 +51,7 @@ const handleLoginAgency = async (req, res) => {
   }
 }
 
-const handleRefreshToken = async (req, res) => {
+const handleGetProfile = async (req, res) => {
   try {
     sendResult(res, { profile: req.manager })
   } catch (error) {
@@ -59,10 +59,10 @@ const handleRefreshToken = async (req, res) => {
   }
 }
 
-const AgencyCtrlV2 = {
+const AuthCtrl = {
   handleRegisterAgency,
   handleLoginAgency,
-  handleRefreshToken,
+  handleGetProfile,
 };
 
-module.exports = AgencyCtrlV2
+module.exports = AuthCtrl
