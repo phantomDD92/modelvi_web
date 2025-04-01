@@ -196,6 +196,16 @@ const getStats = () =>
     }
   ])
 
+const getFeeStats = () =>
+  AccountModel.aggregate([
+    {
+      $group: {
+        _id: "$owner",
+        monthlyFee: { $sum: { $ifNull: ["$fee", 50] } },        // Count the number of documents in each group
+      }
+    },
+  ])
+
 // Update account number for a model
 const updateNumber = (actorId, number) =>
   AccountModel.updateMany(
@@ -255,6 +265,7 @@ const AccountService = {
   loadDisabledAccounts,
 
   getStats,
+  getFeeStats,
   updateNumber, // update accounts' number for model
   setChatTeam,
 };

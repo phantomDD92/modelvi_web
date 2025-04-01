@@ -91,7 +91,8 @@ const handleLoadAgencies = async (req, res) => {
     const managers = await ManagerService.loadAgencies();
     const modelStats = await ActorService.getStats();
     const accountStats = await AccountService.getStats();
-    sendResult(res, { managers, modelStats, accountStats });
+    const feeStats = await AccountService.getFeeStats();
+    sendResult(res, { managers, modelStats, accountStats, feeStats });
   } catch (error) {
     console.error(error)
     sendError(res, error);

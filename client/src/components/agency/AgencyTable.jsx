@@ -7,6 +7,7 @@ export const AgencyTable = ({
     rowSelection,
     dataSource,
     modelStats,
+    feeStats,
     accountStats,
     loading,
     actions: {
@@ -49,6 +50,18 @@ export const AgencyTable = ({
             title: 'Balance',
             dataIndex: 'balance',
             render: value => value || 0
+        },
+        {
+            key: 'feeStats',
+            title: 'Monthly Fee',
+            render: (value, record) => {
+                const feeInfo = feeStats.find(item => item._id == record._id);
+                if (feeInfo) {
+                    return `${feeInfo.monthlyFee}`
+                } else {
+                    return ``;
+                }
+            }
         },
         {
             key: 'accountStats',

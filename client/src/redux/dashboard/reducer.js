@@ -40,6 +40,7 @@ const initialState = {
   managers: [],
   modelStats: [],
   accountStats: [],
+  feeStats: [],
   comments: [],
   users: [],
   agencyUsers: [],
@@ -66,6 +67,7 @@ const dashboardReducer = (state = initialState, action) => {
         managers: action.payload.managers,
         modelStats: action.payload.modelStats,
         accountStats: action.payload.accountStats,
+        feeStats: action.payload.feeStats,
       };
     case ACTIONS.LOGIN_MANAGER:
       localStorage.setItem("token", action.payload.token)

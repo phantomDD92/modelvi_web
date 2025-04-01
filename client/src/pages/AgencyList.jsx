@@ -107,6 +107,7 @@ export const AgencyListPage = () => {
         dataSource={homeProps.managers.filter(manager => manager.role == AgencyRole.AGENCY)}
         modelStats={homeProps.modelStats}
         accountStats={homeProps.accountStats}
+        feeStats={homeProps.feeStats}
         loading={loading}
         pagination={{
           current: page,

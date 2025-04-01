@@ -22,7 +22,7 @@ const findAgencyByEmail = (email) =>
     ManagerModel.findOne({ email }, 'name email password role status maxAccounts maxActors createdAt');
 
 const loadAgencies = () =>
-    ManagerModel.find({}, 'name email maxAccounts maxActors role status createdAt');
+    ManagerModel.find({}, 'name email balance telegram role status createdAt');
 
 const deleteAgency = (agencyId) =>
     ManagerModel.findByIdAndRemove(agencyId)
