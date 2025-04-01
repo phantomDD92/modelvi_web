@@ -23,7 +23,7 @@ export const getPlatformName = (platform) => {
 }
 
 export const getDateTime = (value) => moment(value).format("YYYY-MM-DD hh:mm");
-
+export const getDate = (value) => moment(value).format("YYYY-MM-DD");
 export const getCurrencyName = (code) => cryptoCurrencies.find(currency => currency.code == code)?.name || "-";
 
 export const getCurrencyAmount = (value, code, status) => {

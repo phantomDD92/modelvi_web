@@ -7,6 +7,7 @@ const { sendResult, sendError, ApiError } = require("../utils/resp.js");
 const ActorService = require("../services/actor.js");
 const AccountService = require("../services/account.js");
 const ActorModel = require("../models/actor.js");
+const NotifyUtils = require("../utils/notifiy.js");
 
 dotenv.config();
 
@@ -156,22 +157,6 @@ const handleUpdateDB = async (req, res) => {
       const contents = actor.contents || [];
       await ActorModel.findByIdAndUpdate(actor._id, { $set: { contentsLength: contents.length } })
     }
-    // // update accounts content
-    // const accounts = await AccountService.loadAll(Platform.FNC);
-    // for (let account of accounts) {
-    //   if (!account.params)
-    //     continue;
-    //   const { contents } = account.params;
-    //   if (!contents)
-    //     continue;
-    //   let newContents = [];
-    //   for (let content of contents) {
-    //     let newContent = content;
-    //     newContent.story = StoryType.PUBLIC;
-    //     newContents.push(newContent);
-    //   }
-    //   await AccountService.replaceContents(account._id, newContents);
-    // }
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -183,50 +168,13 @@ const handleSendContact = async (req, res) => {
     const { name, email, message, subject } = req.body;
     if (!name || !email || !message || !subject)
       throw new ApiError("All fields are required");
-    let transporter = nodemailer.createTransport({
-      host: process.env.MAILER_HOST,
-      port: process.env.MAILER_PORT,
-      secure: process.env.MAILER_SECURE,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      }
-    });
-    let mailOptions = {
-      from: email,
-      to: process.env.EMAIL_USER,
-      subject: subject,
-      text: `Name : ${name}\nEmail: ${email}\nMessage: ${message}`,
-      html: `<b>Name : ${name}</b><p>Email: ${email}</p><p>Message: ${message}</p>`
-    };
-    await transporter.sendMail(mailOptions);
+    await NotifyUtils.sendContactMail(email, subject, `<b>Name : ${name}</b><p>Email: ${email}</p><p>Message: ${message}</p>`)
     sendResult(res);
   } catch (error) {
     sendError(res, error)
   }
 }
 
-const handleRegisterAgency = async (req, res) => {
-  try {
-    const { name, email, telegram, password } = req.body;
-    // check if name or email is registered.
-    let dupAgency = await ManagerService.findAgencyByEmail(email);
-    if (dupAgency)
-      throw new ApiError(`Agency with ${email} already existed`);
-    dupAgency = await ManagerService.findAgencyByName(name);
-    if (dupAgency) {
-      if (dupAgency.newVersion)
-        throw new ApiError(`Agency with ${name} already existed`);
-
-    } else {
-      await ManagerService.createAgency()
-    }
-
-    sendResult(res);
-  } catch (error) {
-    sendError(res, error);
-  }
-}
 
 const ManagerCtrl = {
   handleCreateAgency,
@@ -242,7 +190,6 @@ const ManagerCtrl = {
   // Auth related routes
   handleLoginManager,
   // handleUpdateAgency,
-  handleRegisterAgency,
   // handleLoginAgency,
   // handleLoginAgency,
 };

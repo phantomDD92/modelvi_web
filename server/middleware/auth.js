@@ -19,7 +19,7 @@ const authenticate = async (req, res, next) => {
             res.status(401).json();
             return
         }
-        req.manager = manager;
+        req.manager = manager.toJSON();
         next();
     } catch (error) {
         console.error(error);

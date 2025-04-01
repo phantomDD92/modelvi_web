@@ -23,15 +23,31 @@ const getPaymentById = (id, fields) =>
 const cancelPayment = (paymentId) =>
   PaymentModel.findByIdAndUpdate(paymentId, { $set: { status: PaymentStatus.CANCEL } });
 
+const updatePayment = (id, data) =>
+  PaymentModel.findByIdAndUpdate(id, {
+    status: data["payment_status"],
+    payAddress: data["pay_address"],
+    payAmount: data["pay_amount"],
+    payCurrency: data["pay_currency"],
+    priceAmount: data["price_amount"],
+    priceCurrency: data["price_currency"],
+    actuallyPaid: data["actually_paid"],
+  })
+
 const loadPayments = (agency) =>
   PaymentModel.find({ agency: agency._id, status: { $ne: PaymentStatus.CANCEL } })
     .sort("-createdAt")
 
+const getPayment = (paymentId) =>
+  PaymentModel.findOne({ paymentId });
+
 const PaymentService = {
   createPayment,
   getPaymentById,
+  updatePayment,
   cancelPayment,
   loadPayments,
+  getPayment,
 };
 
 module.exports = PaymentService;

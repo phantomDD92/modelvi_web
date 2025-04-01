@@ -34,7 +34,7 @@ router.route("/history")
 router.route("/time")
   .all(checkBot)
   .post(BotController.handleUpdateTime)
-  
+
 router.route("/schedule")
   .all(checkBot)
 
@@ -46,5 +46,8 @@ router.route("/action")
   .put(BotController.handleFindCommentAction)
   .post(BotController.handleCreateCommentAction)
 
+router.route("/balance")
+  .all(checkBot)
+  .post(BotController.handleCheckBalance)
 
 module.exports = router;

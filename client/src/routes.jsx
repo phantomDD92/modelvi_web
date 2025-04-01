@@ -94,9 +94,9 @@ const routes = [
     },
     {
         key: "settings",
-        path: "/settings/:key",
-        label: "Settings",
-        link: "/settings/overview",
+        path: "/billing/:key",
+        label: "Billing",
+        link: "/billing/payments",
         icon: <LuSettings />,
         component: <SettingsPage />,
         mode: "main",

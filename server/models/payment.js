@@ -10,6 +10,7 @@ const PaymentSchema = new Schema({
   payAddress: { type: String },
   payCurrency: { type: String },
   payAmount: { type: Number },
+  actuallyPaid: { type: Number },
   network: { type: String },
   priceCurrency: { type: String },
   priceAmount: { type: Number },

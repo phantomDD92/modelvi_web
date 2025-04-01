@@ -13,6 +13,9 @@ router.route("/payment")
   .get(PaymentCtrl.handleLoadPayments)
   .post(PaymentCtrl.handleCreatePayment)
 
+router.route("payment_callback")
+  .post(PaymentCtrl.handleProcessPayment)
+  
 router.route("/payment/:id")
   .all(authenticate)
   .get(PaymentCtrl.handleGetPayment)

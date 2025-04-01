@@ -35,31 +35,20 @@ export const AgencyTable = ({
             render: value => value == AdminRole.MANAGER ? "Manager" : "Agency"
         },
         {
-            key: 'maxActors',
-            title: 'Model Count / Limit',
-            dataIndex: 'maxActors',
-            render: (value, record) => {
-                const modelInfos = modelStats.filter(item => item.creator == record._id);
-                if (modelInfos.length > 0) {
-                    return `${modelInfos[0].count} / ${value}`
-                } else {
-                    return `0 / ${value}`;
-                }
-            }
+            key: 'email',
+            title: 'Email',
+            dataIndex: 'email',
         },
         {
-            key: 'maxAccounts',
-            title: 'Account Count / Limit',
-            dataIndex: 'maxAccounts',
-            render: (value, record) => {
-                const accountInfos = accountStats.filter(item => item.creator == record._id);
-                if (accountInfos.length > 0) {
-                    const count = accountInfos.reduce((sum, item) => sum + item.count, 0);
-                    return `${count} / ${value}`
-                } else {
-                    return `0 / ${value}`;
-                }
-            }
+            key: 'telegram',
+            title: 'Telegram',
+            dataIndex: 'telegram',
+        },
+        {
+            key: 'balance',
+            title: 'Balance',
+            dataIndex: 'balance',
+            render: value => value || 0
         },
         {
             key: 'accountStats',

@@ -1,5 +1,8 @@
+const { PaymentStatus } = require("../../config/const");
+const AgencyService2 = require("../../services/v2/agency");
 const CounterService = require("../../services/v2/counter");
 const PaymentService = require("../../services/v2/payment");
+const TransactionService2 = require("../../services/v2/transaction");
 const PaymentUtils = require("../../utils/payment");
 const { sendError, sendResult } = require("../../utils/resp");
 
@@ -45,6 +48,42 @@ const handleGetPayment = async (req, res) => {
   }
 }
 
+function sortObject(obj) {
+  return Object.keys(obj).sort().reduce(
+    (result, key) => {
+      result[key] = (obj[key] && typeof obj[key] === 'object') ? sortObject(obj[key]) : obj[key]
+      return result
+    },
+    {}
+  )
+}
+
+
+const handleProcessPayment = async (req, res) => {
+  try {
+    const data = req.body;
+    const sig = req.header("x-nowpayments-sig");
+    const hmac = crypto.createHmac('sha512', process.env.NOWPAYMENT_IPN_KEY);
+    hmac.update(JSON.stringify(sortObject(data)));
+    const signature = hmac.digest('hex');
+    if (sig != signature)
+      throw new BotError("Signature checking failed");
+    const payment = await PaymentService.getPayment(data["payment_id"]);
+    if (!payment)
+      throw new BotError("Invalid payment id");
+    await PaymentService.updatePayment(payment._id, data);
+    if (data["payment_status"] == PaymentStatus.FINISHED) {
+      const agency = await AgencyService2.updateBalance(payment.agency, data["actually_paid"]);
+      const from = agency.balance || 0;
+      const to = from + data["actually_paid"];
+      await TransactionService2.createTransaction(payment.agency, data["actually_paid"], from, to, payment.description);
+    }
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
 const handleProcess = async (req, res) => {
   try {
     sendResult(res);
@@ -53,11 +92,14 @@ const handleProcess = async (req, res) => {
   }
 }
 
+
+
 const PaymentCtrl = {
   handleCreatePayment,
   handleGetPayment,
   handleLoadPayments,
   handleCancelPayment,
+  handleProcessPayment
 };
 
 module.exports = PaymentCtrl

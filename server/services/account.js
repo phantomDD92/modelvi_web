@@ -74,7 +74,7 @@ const updateAccount = (
   });
 
 const setStatus = (id, status) =>
-  AccountModel.findByIdAndUpdate(id, { $set: { status } });
+  AccountModel.findByIdAndUpdate(id, { $set: { status, "params.balanceNextTime": new Date() } });
 
 const clearError = (id) => AccountModel.findByIdAndUpdate(id, { $set: { lastError: "" } })
 
@@ -82,7 +82,8 @@ const deleteAccount = (id) =>
   AccountModel.findByIdAndDelete(id);
 
 const findById = (id) =>
-  AccountModel.findById(id).populate("actor", "number name");
+  AccountModel.findById(id)
+    .populate("actor", "number name");
 
 const getCount = (agency) =>
   Promise.all([
@@ -255,7 +256,7 @@ const AccountService = {
 
   getStats,
   updateNumber, // update accounts' number for model
-  setChatTeam
+  setChatTeam,
 };
 
 module.exports = AccountService;

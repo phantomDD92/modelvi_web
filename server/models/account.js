@@ -19,6 +19,9 @@ const AccountSchema = new Schema({
   owner: { type: SchemaTypes.ObjectId, ref: "Manager" },
   creator: { type: SchemaTypes.ObjectId, ref: "Manager" },
   chatTeam: { type: SchemaTypes.ObjectId, ref: "ChatTeam" },
+  revenue: { type: Number, default: -1 },
+  fee: { type: Number, default: 50 },
+  expiredAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now },
 });

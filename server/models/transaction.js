@@ -4,7 +4,6 @@ require('./manager');
 require('./account');
 
 const TransactionSchema = new Schema({
-  _id: { type: Number },
   agency: { type: SchemaTypes.ObjectId, ref: "Manager" },
   account: { type: SchemaTypes.ObjectId, ref: "Account" },
   amount: { type: Number },

@@ -1,13 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Card, Form, Input, Row, Col, Switch, InputNumber, Button, Avatar, Typography, Tag, Alert, Divider, Tabs } from "antd";
-import { SaveOutlined } from "@ant-design/icons";
 
 import { useDispatch, useSelector } from "react-redux";
-import { loadSetting, updateSetting } from "@/redux/dashboard/actions";
 import { AdminRole } from "@/utils/const";
-import { LuGroup, LuUser, LuUsers, LuWallet } from "react-icons/lu";
-import { Router, useNavigate, useParams } from "react-router-dom";
-import SettingsOverview from "./SettingsOverview";
+import { LuCircleDollarSign, LuReceipt, LuUser, LuUsers, LuWallet } from "react-icons/lu";
+import { useNavigate, useParams } from "react-router-dom";
 import SettingsPayment from "./SettingsPayment";
 import SettingsTransaction from "./SettingsTransaction";
 
@@ -27,7 +24,6 @@ const DetailItem = ({ label, value }) =>
   </div>
 
 const profileTabs = [
-  { key: "overview", label: "Overview" },
   { key: "payments", label: "Payments" },
   { key: "transactions", label: "Transactions" },
 ]
@@ -36,10 +32,10 @@ export const SettingsPage = () => {
   const params = useParams();
   const navigate = useNavigate();
   const profile = useSelector(state => state.v2.profile);
-  const key = params?.key || "overview";
+  const key = params?.key || "payments";
 
   const handleTabChange = (item) => {
-    navigate(`/settings/${item}`);
+    navigate(`/billing/${item}`);
   }
 
   return (
@@ -54,22 +50,39 @@ export const SettingsPage = () => {
               src={profile?.role == AdminRole.MANAGER ? "/img/manager.png" : "/img/agency.png"} />
             <Typography.Title level={4}>{profile.name}</Typography.Title>
             <Tag className="text-lg" color={profile?.role == AdminRole.MANAGER ? 'success' : 'info'}>{profile?.role == AdminRole.MANAGER ? "Manager" : "Agency"}</Tag>
-            <Tag className="text-lg" color="warning">{`Available balance : $${profile?.balance || 0}`}</Tag>
+            {/* <Tag className="text-lg" color="warning">{`Available balance : $${profile?.balance || 0}`}</Tag> */}
+            <div className="flex justify-center my-2">
+              <FeatureItem
+                icon={<LuWallet size={30} />}
+                label="Balance"
+                value={`$${profile.balance || 0}`}
+              />
+              <FeatureItem
+                icon={<LuReceipt size={30} />}
+                label="Monthly Estimate"
+                value={`$${profile.monthlyFee}`}
+              />
+              {/* <FeatureItem
+                icon={<LuUser size={30} />}
+                label="Proxies"
+                value={profile.proxyCount || "-"}
+              /> */}
+            </div>
             <div className="flex justify-center my-2">
               <FeatureItem
                 icon={<LuUsers size={30} />}
                 label="Models"
-                value={10}
+                value={profile.modelCount || "-"}
               />
               <FeatureItem
                 icon={<LuUser size={30} />}
                 label="Accounts"
-                value={10}
+                value={profile.accountCount || "-"}
               />
               <FeatureItem
                 icon={<LuUser size={30} />}
                 label="Proxies"
-                value={10}
+                value={profile.proxyCount || "-"}
               />
             </div>
             <div className="flex flex-col justify-start w-full gap-2">
@@ -92,13 +105,13 @@ export const SettingsPage = () => {
             onChange={handleTabChange}
           />
           {
-            key == "overview"
-              ? <SettingsOverview />
-              : key == "payments"
-                ? <SettingsPayment />
-                : key == "transactions"
-                  ? <SettingsTransaction />
-                  : <></>
+            key == "payments"
+              ? <SettingsPayment />
+              : key == "transactions"
+                ? <SettingsTransaction />
+                // : key == "overview"
+                //   ? <SettingsOverview />
+                : <></>
           }
         </div>
       </Col>

@@ -28,7 +28,7 @@ const deleteAgency = (agencyId) =>
     ManagerModel.findByIdAndRemove(agencyId)
 
 const findAgencyById = (id) => {
-    return ManagerModel.findById(id, "name email role status maxAccounts maxActors createdAt");
+    return ManagerModel.findById(id, "name email role status balance maxAccounts maxActors createdAt");
 }
 
 const changeAgencyPassword = (id, password) => {

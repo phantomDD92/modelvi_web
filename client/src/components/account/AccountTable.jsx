@@ -25,6 +25,7 @@ import {
 } from "@/utils/const"
 import moment from "moment";
 import { useAuth } from "@/contexts";
+import { getDate, getDateTime } from "@/utils/string";
 
 const AccountTable = ({
     pagination,
@@ -64,7 +65,7 @@ const AccountTable = ({
         {
             key: 'name',
             title: 'Name',
-            width: 150,
+            width: 200,
             dataIndex: 'actor',
             render: value => <Flex gap="middle" align='center'><Avatar src="/img/actor.png" /><span>{value.name}</span></Flex>
         },
@@ -78,15 +79,15 @@ const AccountTable = ({
         {
             key: 'alias',
             title: 'Alias',
-            width: 120,
+            width: 150,
             dataIndex: 'alias',
         },
-        {
-            key: 'email',
-            title: 'Email',
-            width: 150,
-            dataIndex: 'email',
-        },
+        // {
+        //     key: 'email',
+        //     title: 'Email',
+        //     width: 150,
+        //     dataIndex: 'email',
+        // },
         {
             key: 'chatTeam',
             title: 'Chat Team',
@@ -94,13 +95,27 @@ const AccountTable = ({
             width: 120,
             render: value => value?.name || "-"
         },
-        // {
-        //     key: 'password',
-        //     title: 'Password',
-        //     dataIndex: 'password',
-        //     width: 100,
-        //     render: value => value.substr(0, 2) + "***" + value.substr(value.length - 2, 2)
-        // },
+        {
+            key: 'revenue',
+            title: 'Revenue',
+            dataIndex: 'revenue',
+            width: 100,
+            render: value => value >= 0 ? value.toFixed(2) : "-"
+        },
+        {
+            key: 'fee',
+            title: 'Monthly Fee',
+            dataIndex: 'fee',
+            width: 100,
+            render: value => value ? value.toFixed(2) : "-"
+        },
+        {
+            key: 'expiredAt',
+            title: 'Expiration',
+            dataIndex: 'expiredAt',
+            width: 120,
+            render: value => value ? getDate(value) : "-"
+        },
         {
             key: 'bot',
             title: 'Bot',

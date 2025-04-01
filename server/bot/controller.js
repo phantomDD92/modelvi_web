@@ -8,11 +8,16 @@ const HistoryService = require('../services/history');
 const ActionService = require('../services/action');
 const moment = require('moment');
 const ActorService = require('../services/actor');
-const { DEFAULT_FOLLOW_INTERVAL, DEFAULT_COMMENT_INTERVAL, DEFAULT_STORY_INTERVAL, DEFAULT_STORY_OFFSETS, DEFAULT_POST_OFFSETS } = require('../utils/const');
+const { DEFAULT_FOLLOW_INTERVAL, DEFAULT_COMMENT_INTERVAL, DEFAULT_STORY_INTERVAL, DEFAULT_STORY_OFFSETS, DEFAULT_POST_OFFSETS, DEFAULT_CHAT_INTERVAL } = require('../utils/const');
 const { default: mongoose } = require('mongoose');
 const CommentService = require('../services/comment');
 const UserService = require('../services/user');
 const { PostMode } = require('../config/const');
+const ManagerService = require('../services/manager');
+const { getPricePlan, getDateDelta, hasSufficientBalance } = require('../utils/helper');
+const AccountService2 = require('../services/v2/account');
+const AgencyService2 = require('../services/v2/agency');
+const TransactionService2 = require('../services/v2/transaction');
 
 const handleLoginAccount = async (req, res) => {
   try {
@@ -53,7 +58,7 @@ const handleLoadAccounts = async (req, res) => {
 const handleGetAccount = async (req, res) => {
   try {
     await AccountService.updateParams(req.bot.id, { updatedAt: new Date() });
-    const account = await AccountService.findById(req.bot.id);
+    const account = await AccountService2.getAccountWithModelChat(req.bot.id);
     if (!account)
       throw new ApiError("unknown account")
     // const { ...params } = account.toJSON()
@@ -167,18 +172,17 @@ const handleUpdateMedia = async (req, res) => {
   }
 }
 
-const handleUpdateFollowSetting = async (req, res) => {
+const handleUpdateChatSetting = async (req, res) => {
   try {
     const account = await AccountService.findById(req.bot.id);
     if (!account)
-      throw new ApiError("unknown account")
+      throw new ApiError("Invalid account");
     const accountJson = account.toJSON();
-    const { followInterval } = accountJson.params;
-    const followNextTime = moment().add(followInterval || DEFAULT_FOLLOW_INTERVAL, "minute").toDate();
-    await AccountService.updateParams(account, { "params.followNextTime": followNextTime });
+    const chatNextTime = moment().add(accountJson.params?.chatInterval || DEFAULT_CHAT_INTERVAL, "minute").toDate();
+    await AccountService.updateParams(account, { "params.chatNextTime": chatNextTime });
     sendResult(res);
   } catch (error) {
-    sendError(res, error)
+    sendError(res, error);
   }
 }
 
@@ -328,8 +332,8 @@ const handleUpdateAccount = async (req, res) => {
       case "post_setting":
         handleUpdatePostSetting(req, res);
         break;
-      case "follow_setting":
-        handleUpdateFollowSetting(req, res);
+      case "chat_setting":
+        handleUpdateChatSetting(req, res);
         break;
       case "comment_setting":
         handleUpdateCommentSetting(req, res);
@@ -450,6 +454,45 @@ const handleReleaseAccounts = async (req, res) => {
   }
 }
 
+const handleCheckBalance = async (req, res) => {
+  try {
+    let available = true;
+    const { revenue } = req.body;
+    // calculate price
+    const price = getPricePlan(revenue);
+    // first check if account and agency is valid
+    const account = await AccountService2.findAccountById(req.bot.id);
+    if (!account)
+      throw new ApiError("Invalid bot account")
+    const agency = await ManagerService.findAgencyById(req.bot.owner);
+    if (!agency)
+      throw new ApiError("Invalid bot agency");
+    // get valid dates
+    const dateDelta = getDateDelta(account.expiredAt);
+    if (dateDelta <= 0) { // if account is expired
+      // if (hasSufficientBalance(agency, price)) {
+      // remove balance and create transaction, extend account
+      const { balance } = await AgencyService2.updateBalance(agency._id, -1 * price);
+      await TransactionService2.createTransaction(agency._id, -1 * price, balance, balance - price, `payout for ${account.platform} ${account.alias}`);
+      await AccountService2.extendAccount(account._id)
+      // } else {
+      //   available = false;
+      //   // disable account
+      //   await AccountService2.disableAccount(account._id, "insufficient balance");
+      // }
+    } else if (dateDelta == 7) {
+      // send notification
+    } else if (dateDelta == 1) {
+      // send notification
+    }
+    await AccountService2.updateRevenue(req.bot.id, revenue, price);
+    sendResult(res, { available });
+  } catch (error) {
+    console.error(error);
+    sendError(res, error)
+  }
+}
+
 const BotController = {
   handleLoginAccount,
   handleLoadAccounts,
@@ -469,6 +512,7 @@ const BotController = {
   // bot console
   handleGetIdleAccounts,
   handleReleaseAccounts,
+  handleCheckBalance,
 };
 
 module.exports = BotController

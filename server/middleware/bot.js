@@ -15,7 +15,7 @@ const checkBot = async (req, res, next) => {
       return
     }
     const { id, owner, actor } = jwt.decode(tokens[1]);
-    req.bot = {id, owner, actor};
+    req.bot = { id, owner, actor };
     next();
   } catch (error) {
     console.error(error)
