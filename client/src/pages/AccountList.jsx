@@ -22,6 +22,7 @@ import {
   AccountParamDialog
 } from "@/components/account";
 import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
+import PageMetaData from "@/components/common/PageMetaData";
 
 export const AccountList = () => {
 
@@ -124,7 +125,8 @@ export const AccountList = () => {
   }
 
   return (
-    <div>
+    <>
+      <PageMetaData title="Accounts" />
       <AccountTable
         platform={platform}
         dataSource={modelProps.accounts}
@@ -167,7 +169,7 @@ export const AccountList = () => {
         onCancel={() => setSettingOpen(false)}
         onUpdate={handleUpdateSetting}
       />
-    </div>
+    </>
   );
 };
 

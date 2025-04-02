@@ -7,6 +7,7 @@ import { LuCircleDollarSign, LuReceipt, LuUser, LuUsers, LuWallet } from "react-
 import { useNavigate, useParams } from "react-router-dom";
 import SettingsPayment from "./SettingsPayment";
 import SettingsTransaction from "./SettingsTransaction";
+import PageMetaData from "@/components/common/PageMetaData";
 
 const FeatureItem = ({ icon, label, value }) =>
   <div className="flex gap-2 justify-center items-center mx-4">
@@ -39,6 +40,8 @@ export const SettingsPage = () => {
   }
 
   return (
+    <>
+    <PageMetaData title="Billing"/>
     <Row className="p-4">
       <Col span={6}>
         <Card className="m-4">
@@ -116,6 +119,7 @@ export const SettingsPage = () => {
         </div>
       </Col>
     </Row>
+    </>
   );
 };
 

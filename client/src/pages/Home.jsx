@@ -6,6 +6,7 @@ import { TeamOutlined, UserOutlined, UserDeleteOutlined, UserSwitchOutlined, Use
 import DisabledAccountTable from "@/components/dashboard/DisabledAccountTable";
 import { updateAccountStatus } from "@/redux/model/actions";
 import { useNavigate } from "react-router-dom";
+import PageMetaData from "@/components/common/PageMetaData";
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -40,6 +41,8 @@ export const Home = () => {
   }
 
   return (
+    <>
+    <PageMetaData title="Dashboard"/>
     <Card title="Dashboard">
       <Row gutter={[16, 16]}>
         <Col md={8} sm={12} >
@@ -168,6 +171,7 @@ export const Home = () => {
         />
       </Row>
     </Card>
+    </>
   );
 };
 

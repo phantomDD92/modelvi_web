@@ -24,6 +24,7 @@ import { AdminRole, DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIM
 import { Modal } from "antd";
 import { loadAgencies } from "@/redux/dashboard/actions";
 import { useAuth } from "@/contexts";
+import PageMetaData from "@/components/common/PageMetaData";
 
 export const ProxyListPage = () => {
   const [loading, setLoading] = useState(false);
@@ -112,6 +113,7 @@ export const ProxyListPage = () => {
 
   return (
     <>
+      <PageMetaData title="Proxies" />
       <ProxyTable
         filters={{
           agencies: session?.role == AdminRole.MANAGER ? managers : [],

@@ -1,3 +1,4 @@
+import PageMetaData from "@/components/common/PageMetaData";
 import { 
   TopNavBar, 
   Hero, 
@@ -13,6 +14,7 @@ import {
 const LandingPage = () => {
   return (
     <>
+    <PageMetaData title="Home"/>
       <TopNavBar
         position="fixed"
         menuItems={[

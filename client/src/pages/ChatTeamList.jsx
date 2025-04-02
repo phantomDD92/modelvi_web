@@ -16,6 +16,7 @@ import {
 import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
 import { Modal } from "antd";
 import toast from "react-hot-toast";
+import PageMetaData from "@/components/common/PageMetaData";
 
 export const ChatTeamListPage = () => {
 
@@ -65,7 +66,7 @@ export const ChatTeamListPage = () => {
 
   const handleBulkDeleteTeams = () => {
     const nonEmptyTeams = modelProps.teams
-    .filter(team => selectedRowKeys.includes(team._id) && team.accounts && team.accounts.length > 0);
+      .filter(team => selectedRowKeys.includes(team._id) && team.accounts && team.accounts.length > 0);
     if (nonEmptyTeams.length > 0) {
       toast.error(`Chat teams (${nonEmptyTeams.map(team => team.name).join(", ")}) are associated with some accounts`);
       return;
@@ -89,6 +90,7 @@ export const ChatTeamListPage = () => {
 
   return (
     <>
+      <PageMetaData title="Chat teams" />
       <ChatTeamTable
         loading={loading}
         dataSource={modelProps.teams}

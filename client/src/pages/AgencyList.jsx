@@ -22,6 +22,7 @@ import {
   AgencyBalanceDialog
 } from "@/components/agency";
 import { AgencyRole, DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
+import PageMetaData from "@/components/common/PageMetaData";
 
 export const AgencyListPage = () => {
 
@@ -102,7 +103,7 @@ export const AgencyListPage = () => {
     if (agency)
       dispatch(appendAgencyBalance(agency, balance, () => { setBalanceOpen(false); loadAgenciesCallback(); }))
   }
-  
+
   const handleDeleteBulkAgencies = () => {
     Modal.confirm({
       title: `Are you sure to delete ${selectedRowKeys.length} agencies?`,
@@ -112,6 +113,7 @@ export const AgencyListPage = () => {
 
   return (
     <>
+      <PageMetaData title="Agencies" />
       <AgencyTable
         dataSource={homeProps.managers.filter(manager => manager.role == AgencyRole.AGENCY)}
         modelStats={homeProps.modelStats}

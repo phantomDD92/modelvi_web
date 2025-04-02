@@ -25,6 +25,7 @@ import {
   DEFAULT_REFRESH_TIMEOUT
 } from "@/utils/const";
 import toast from "react-hot-toast";
+import PageMetaData from "@/components/common/PageMetaData";
 
 export const ModelListPage = () => {
 
@@ -119,6 +120,7 @@ export const ModelListPage = () => {
   }
   return (
     <>
+      <PageMetaData title="Models" />
       <ModelTable
         dataSource={modelProps.models}
         loading={loading}

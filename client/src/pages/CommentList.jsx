@@ -2,11 +2,13 @@ import React from "react";
 import { Row, Col } from "antd";
 import CommentListView from "@/views/comment/CommentListView";
 import CommentBlockListView from "@/views/comment/CommentBlockListView";
+import PageMetaData from "@/components/common/PageMetaData";
 
 export const CommentListPage = () => {
 
   return (
-    <div>
+    <>
+      <PageMetaData title="Comments" />
       <Row gutter={[32, 32]}>
         <Col span={12}>
           <CommentListView />
@@ -15,7 +17,7 @@ export const CommentListPage = () => {
           <CommentBlockListView />
         </Col>
       </Row>
-    </div>
+    </>
   );
 };
 
