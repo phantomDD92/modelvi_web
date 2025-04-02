@@ -1,6 +1,7 @@
 import { AdminRole } from '@/utils/const'
 import { Card, Table, Button, Flex, Switch, Avatar, Dropdown, Space, Typography } from "antd";
 import { DeleteOutlined, UserAddOutlined, EditOutlined, KeyOutlined, DatabaseOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import { LuWallet } from 'react-icons/lu';
 
 export const AgencyTable = ({
     pagination,
@@ -18,6 +19,7 @@ export const AgencyTable = ({
         onEdit,
         onStatusChange,
         onPasswordReset,
+        onBalance,
         onUpdateDB,
     },
 }) => {
@@ -100,6 +102,11 @@ export const AgencyTable = ({
                     menu={{
                         items: [
                             {
+                                label: 'Add Balance',
+                                key: 'balance',
+                                icon: <LuWallet />,
+                            },
+                            {
                                 label: 'Reset Password',
                                 key: 'password',
                                 icon: <KeyOutlined />,
@@ -115,6 +122,9 @@ export const AgencyTable = ({
                             switch (e.key) {
                                 case "password":
                                     onPasswordReset(record)
+                                    break;
+                                case "balance":
+                                    onBalance && onBalance(record)
                                     break;
                                 case "delete":
                                     onDelete(record)

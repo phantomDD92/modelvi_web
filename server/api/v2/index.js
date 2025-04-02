@@ -22,7 +22,7 @@ router.route("/profile")
 
 router.use("/agency", agencyRouter);
 
-router.use("/manager", managerRouter);
+router.use("/admin", managerRouter);
 
 router.use("/bot", botRouter);
 

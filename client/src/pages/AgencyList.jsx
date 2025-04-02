@@ -12,12 +12,14 @@ import {
   resetAgencyPassword,
   updateDB,
   deleteBulkAgencies,
-  updateBulkAgenciesStatus
+  updateBulkAgenciesStatus,
+  appendAgencyBalance
 } from "@/redux/dashboard/actions";
 import {
   AgencyTable,
   AgencyDialog,
-  PasswordDialog
+  PasswordDialog,
+  AgencyBalanceDialog
 } from "@/components/agency";
 import { AgencyRole, DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
 
@@ -27,6 +29,7 @@ export const AgencyListPage = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [editOpen, setEditOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
+  const [balanceOpen, setBalanceOpen] = useState(false);
   const [agency, setAgency] = useState();
 
   const dispatch = useDispatch()
@@ -94,6 +97,12 @@ export const AgencyListPage = () => {
     });
   }
 
+  const handleAddBalance = (balance) => {
+    console.log("### : ", agency, balance)
+    if (agency)
+      dispatch(appendAgencyBalance(agency, balance, () => { setBalanceOpen(false); loadAgenciesCallback(); }))
+  }
+  
   const handleDeleteBulkAgencies = () => {
     Modal.confirm({
       title: `Are you sure to delete ${selectedRowKeys.length} agencies?`,
@@ -126,6 +135,7 @@ export const AgencyListPage = () => {
           onDelete: handleDeleteAgency,
           onStatusChange: handleChangeStatus,
           onPasswordReset: (agency) => { setAgency(agency); setPasswordOpen(true) },
+          onBalance: (agency) => { setAgency(agency); setBalanceOpen(true) }
           // onUpdateDB: handleUpdateDB
         }} />
       <AgencyDialog
@@ -134,6 +144,12 @@ export const AgencyListPage = () => {
         onCancel={() => setEditOpen(false)}
         onCreate={handleCreateAgency}
         onUpdate={handleUpdateAgency}
+      />
+      <AgencyBalanceDialog
+        agency={agency}
+        open={balanceOpen}
+        onCancel={() => setBalanceOpen(false)}
+        onAppend={handleAddBalance}
       />
       <PasswordDialog
         agency={agency}
