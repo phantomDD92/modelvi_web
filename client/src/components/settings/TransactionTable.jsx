@@ -9,6 +9,7 @@ const TransactionTable = ({
     loading,
     dataSource,
 }) => {
+    console.log(dataSource);
     const columns = [
         {
             key: 'createdAt',

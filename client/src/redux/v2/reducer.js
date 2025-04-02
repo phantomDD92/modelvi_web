@@ -27,7 +27,7 @@ const v2Reducer = (state = initialState, action) => {
     case ACTIONS.LOAD_TRANSACTIONS:
       return {
         ...state,
-        payments: action.payload.payments,
+        transactions: action.payload.transactions,
       };
     default:
       return state;
