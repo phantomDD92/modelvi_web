@@ -7,11 +7,15 @@ function getPricePlan(revenue) {
     return 75;
   else if (revenue < 5000)
     return 100;
+  else if (revenue < 7500)
+    return 150;
   else if (revenue < 10000)
     return 175;
   else if (revenue < 15000)
-    return 250;
-  return 300;
+    return 200;
+  else if (revenue < 20000)
+    return 225;
+  return 250;
 }
 
 function getDateDelta(date) {

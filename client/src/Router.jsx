@@ -34,7 +34,7 @@ const Router = () => {
         <Route key="verify" element={<ForgotPassword />} path="/verify" />
         {isAuthenticated
           ? <Route path="*" element={<Navigate to="/dashboard" />} />
-          : <Route path="*" element={<Navigate to="/sign-in" />} />}
+          : <Route path="*" element={<Navigate to="/landing" />} />}
         {/* {isAuthenticated && <Route path="*" element={<Navigate to="/dashboard" />} />} */}
       </Routes>
     </BrowserRouter>

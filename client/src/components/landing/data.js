@@ -13,10 +13,11 @@ const pricingPlans = [
   { id: 0, price: 50.00, earnings: "$0 ~ $1000" },
   { id: 1, price: 75.00, earnings: "$1000 ~ $2500" },
   { id: 2, price: 100.00, earnings: "$2500 ~ $5000" },
-  { id: 3, price: 175.00, earnings: "$5000 ~ $7500" },
-  { id: 4, price: 250.00, earnings: "$10000 ~ $15000" },
-  { id: 5, price: 300.00, earnings: "$15000 ~ $20000" },
-  { id: 6, price: 300.00, earnings: "$20000 +" }
+  { id: 3, price: 150.00, earnings: "$5000 ~ $7500" },
+  { id: 4, price: 175.00, earnings: "$7500 ~ $10000" },
+  { id: 5, price: 200.00, earnings: "$10000 ~ $15000" },
+  { id: 6, price: 225.00, earnings: "$15000 ~ $20000" },
+  { id: 7, price: 250.00, earnings: "$20000 +" }
 ];
 
 const homeSwiperSlides = [
