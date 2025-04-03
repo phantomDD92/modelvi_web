@@ -44,7 +44,8 @@ const SettingsPayment = () => {
   }, [dispatch]);
 
   const getPaymentCallback = useCallback(() => {
-    dispatch(getPayment(currentPayment?._id));
+    if (currentPayment?._id)
+      dispatch(getPayment(currentPayment?._id));
   }, [dispatch]);
 
   useEffect(() => {
@@ -56,7 +57,7 @@ const SettingsPayment = () => {
       loadPaymentsCallback();
       if (step == 2)
         getPaymentCallback()
-    }, 60000);
+    }, 30000);
     return () => clearInterval(interval);
   });
 
