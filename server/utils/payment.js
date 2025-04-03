@@ -29,7 +29,7 @@ const createPayment = async (agency, orderId, currency) => {
         "price_currency": "usd",
         "pay_amount": 10,
         "pay_currency": currency,
-        "ipn_callback_url": "https://modelvi.com/api/v2/payment_callback",
+        "ipn_callback_url": "https://modelvi.com/api/v2/agency/payment_callback",
         "order_id": `${orderId}`,
         "order_description": `Modelvi payment from ${agency.name}`
       },

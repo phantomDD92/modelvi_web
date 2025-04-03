@@ -3,6 +3,7 @@ const AgencyService2 = require("../../services/v2/agency");
 const CounterService = require("../../services/v2/counter");
 const PaymentService = require("../../services/v2/payment");
 const TransactionService2 = require("../../services/v2/transaction");
+const NotifyUtils = require("../../utils/notifiy");
 const PaymentUtils = require("../../utils/payment");
 const { sendError, sendResult } = require("../../utils/resp");
 
@@ -63,16 +64,22 @@ const handleProcessPayment = async (req, res) => {
   try {
     const data = req.body;
     const sig = req.header("x-nowpayments-sig");
+    await NotifyUtils.sendMessage("NOWPayment", "payment callback", JSON.stringify(sortObject(data)));
     const hmac = crypto.createHmac('sha512', process.env.NOWPAYMENT_IPN_KEY);
     hmac.update(JSON.stringify(sortObject(data)));
     const signature = hmac.digest('hex');
-    if (sig != signature)
+    if (sig != signature) {
+      await NotifyUtils.sendMessage("NOWPayment", "payment callback", "Signature checking failed");
       throw new BotError("Signature checking failed");
+    }
     const payment = await PaymentService.getPayment(data["payment_id"]);
-    if (!payment)
+    if (!payment) {
+      await NotifyUtils.sendMessage("NOWPayment", "payment callback", "Invalid payment id");
       throw new BotError("Invalid payment id");
+    }
     await PaymentService.updatePayment(payment._id, data);
     if (data["payment_status"] == PaymentStatus.FINISHED) {
+      await NotifyUtils.sendMessage("NOWPayment", "payment callback", "Finish payment");
       const agency = await AgencyService2.updateBalance(payment.agency, data["actually_paid"]);
       const from = agency.balance || 0;
       const to = from + data["actually_paid"];
