@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useMemo, useEffect } from "react";
 import { loginAgency, getProfile } from "@/redux/v2/actions";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from 'jwt-decode';
+import { DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
 
 const AuthContext = createContext();
 
@@ -19,6 +20,13 @@ export function AuthProvider({ children }) {
       dispatch(getProfile());
     }
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      dispatch(getProfile());
+    }, DEFAULT_REFRESH_TIMEOUT);
+    return () => clearInterval(interval);
+  });
 
   const logout = (callback) => {
     localStorage.removeItem("token");

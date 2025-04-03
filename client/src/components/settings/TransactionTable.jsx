@@ -2,7 +2,8 @@ import {
     Card,
     Table,
 } from "antd";
-import { getDateTime } from "@/utils/string";
+import { getDateTime, getFiatAmount } from "@/utils/string";
+import { render } from "react-dom";
 
 const TransactionTable = ({
     pagination,
@@ -29,12 +30,14 @@ const TransactionTable = ({
             title: 'Amount',
             width: 100,
             dataIndex: 'amount',
+            value: value => getFiatAmount(value),
         },
         {
             key: 'to',
             title: 'Balance',
             width: 100,
             dataIndex: 'to',
+            render: value => getFiatAmount(value)
         },
     ]
 

@@ -8,6 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import SettingsPayment from "./SettingsPayment";
 import SettingsTransaction from "./SettingsTransaction";
 import PageMetaData from "@/components/common/PageMetaData";
+import { getFiatAmount } from "@/utils/string";
 
 const FeatureItem = ({ icon, label, value }) =>
   <div className="flex gap-2 justify-center items-center mx-4">
@@ -58,12 +59,12 @@ export const SettingsPage = () => {
                 <FeatureItem
                   icon={<LuWallet size={30} />}
                   label="Balance"
-                  value={`$${profile.balance || 0}`}
+                  value={getFiatAmount(profile.balance || 0, "$0")}
                 />
                 <FeatureItem
                   icon={<LuReceipt size={30} />}
                   label="Monthly Estimate"
-                  value={`$${profile.monthlyFee}`}
+                  value={getFiatAmount(profile.monthlyFee, "$0")}
                 />
                 {/* <FeatureItem
                 icon={<LuUser size={30} />}

@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import qs from 'query-string';
 import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
 import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE } from "@/utils/const";
+import { LoadingOutlined, ClockCircleOutlined, CheckCircleOutlined, SmileOutlined, SyncOutlined, CloseCircleOutlined } from "@ant-design/icons";
 
 const pricingPlans = [
   { key: "0", price: 50.00, earnings: "$0 ~ $1000" },
@@ -24,7 +25,7 @@ const pricingPlans = [
 const SettingsPayment = () => {
   const [planKey, setPlanKey] = useState("0");
   const [coin, setCoin] = useState("usdttrc20")
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(2);
   const [waiting, setWaiting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [paymentId, setPaymentId] = useState();
@@ -38,6 +39,23 @@ const SettingsPayment = () => {
 
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "waiting":
+        return <LoadingOutlined />
+      case "confirming":
+        return <SyncOutlined />
+      case "confirmed":
+        return <CheckCircleOutlined />
+      case "finished":
+        return <SmileOutlined />
+      case "failed":
+        return <CloseCircleOutlined />
+      default:
+        return <ClockCircleOutlined />
+    }
+  }
 
   const loadPaymentsCallback = useCallback(() => {
     setLoading(true);
@@ -175,12 +193,12 @@ const SettingsPayment = () => {
                     Cancel
                   </Button>
                 </div>
-
               </div>
             }
             {step == 2 &&
               <Result
                 title={currentPayment?.status}
+                icon={getStatusIcon(currentPayment?.status)}
               />
             }
           </div>

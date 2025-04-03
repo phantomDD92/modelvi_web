@@ -36,6 +36,11 @@ export const getCurrencyAmount = (value, code, status) => {
   return value.toFixed(2);
 }
 
-export const getFiatAmount = (amount, defValue = "-") => amount >= 0 ? `$${(amount || 0).toFixed(2)}`: defValue;
+export const getFiatAmount = (amount, defValue = "-") => amount >= 0 ? `$${(amount || 0).toFixed(2)}` : defValue;
 
-export const getCryptoAmount = (amount, ticker, defValue = "-") => amount > 0 ? `$${(amount || 0).toFixed(5)} ${ticker}`: defValue;
+export const getCryptoAmount = (amount, ticker, defValue = "-") =>
+  amount > 0
+    ? (ticker == "USDT" || ticker == "USDC")
+      ? `${(amount || 0).toFixed(2)} ${ticker}`
+      : `${(amount || 0).toFixed(5)} ${ticker}`
+    : defValue;

@@ -14,14 +14,14 @@ const PaymentTable = ({
         {
             key: 'createdAt',
             title: 'Date/Time',
-            width: 250,
+            width: 200,
             dataIndex: 'createdAt',
             render: value => getDateTime(value)
         },
         {
             key: 'payCurrency',
             title: 'Currency',
-            width: 300,
+            width: 250,
             dataIndex: 'payCurrency',
             render: value => getCurrencyName(value)
         },
@@ -34,14 +34,14 @@ const PaymentTable = ({
         {
             key: 'paidAmount',
             title: 'Amount',
-            width: 100,
+            width: 150,
             dataIndex: 'paidAmount',
             render: (value, record) => record.status == "cancel" || record.status == "waiting" ? "-" : getCurrencyAmount(value, record.payCurrency, record.status)
         },
         {
             key: 'outcomeAmount',
-            title: 'Balance',
-            width: 100,
+            title: 'Balance Charge',
+            width: 150,
             dataIndex: 'outcomeAmount',
             render: (value, record) => record.status == "finished" ? getFiatAmount(value) : "-"
         },
