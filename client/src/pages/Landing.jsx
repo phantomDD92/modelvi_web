@@ -1,7 +1,7 @@
 import PageMetaData from "@/components/common/PageMetaData";
-import { 
-  TopNavBar, 
-  Hero, 
+import {
+  TopNavBar,
+  Hero,
   ServicesMarquee,
   ContactUs,
   FAQs,
@@ -14,7 +14,7 @@ import {
 const LandingPage = () => {
   return (
     <>
-    <PageMetaData title="Home"/>
+      <PageMetaData title="Home" />
       <TopNavBar
         position="fixed"
         menuItems={[

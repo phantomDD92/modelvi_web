@@ -41,84 +41,84 @@ export const SettingsPage = () => {
 
   return (
     <>
-    <PageMetaData title="Billing"/>
-    <Row className="p-4">
-      <Col span={6}>
-        <Card className="m-4">
-          <div className="flex flex-col justify-center items-center gap-2">
-            <Avatar
-              size={120}
-              className="bg-green-400"
-              shape="square"
-              src={profile?.role == AdminRole.MANAGER ? "/img/manager.png" : "/img/agency.png"} />
-            <Typography.Title level={4}>{profile.name}</Typography.Title>
-            <Tag className="text-lg" color={profile?.role == AdminRole.MANAGER ? 'success' : 'info'}>{profile?.role == AdminRole.MANAGER ? "Manager" : "Agency"}</Tag>
-            {/* <Tag className="text-lg" color="warning">{`Available balance : $${profile?.balance || 0}`}</Tag> */}
-            <div className="flex justify-center my-2">
-              <FeatureItem
-                icon={<LuWallet size={30} />}
-                label="Balance"
-                value={`$${profile.balance || 0}`}
-              />
-              <FeatureItem
-                icon={<LuReceipt size={30} />}
-                label="Monthly Estimate"
-                value={`$${profile.monthlyFee}`}
-              />
-              {/* <FeatureItem
+      <PageMetaData title="Billing" />
+      <Row className="p-4">
+        <Col span={6}>
+          <Card className="m-4">
+            <div className="flex flex-col justify-center items-center gap-2">
+              <Avatar
+                size={120}
+                className="bg-green-400"
+                shape="square"
+                src={profile?.role == AdminRole.MANAGER ? "/img/manager.png" : "/img/agency.png"} />
+              <Typography.Title level={4}>{profile.name}</Typography.Title>
+              <Tag className="text-lg" color={profile?.role == AdminRole.MANAGER ? 'success' : 'info'}>{profile?.role == AdminRole.MANAGER ? "Manager" : "Agency"}</Tag>
+              {/* <Tag className="text-lg" color="warning">{`Available balance : $${profile?.balance || 0}`}</Tag> */}
+              <div className="flex justify-center my-2">
+                <FeatureItem
+                  icon={<LuWallet size={30} />}
+                  label="Balance"
+                  value={`$${profile.balance || 0}`}
+                />
+                <FeatureItem
+                  icon={<LuReceipt size={30} />}
+                  label="Monthly Estimate"
+                  value={`$${profile.monthlyFee}`}
+                />
+                {/* <FeatureItem
                 icon={<LuUser size={30} />}
                 label="Proxies"
                 value={profile.proxyCount || "-"}
               /> */}
+              </div>
+              <div className="flex justify-center my-2">
+                <FeatureItem
+                  icon={<LuUsers size={30} />}
+                  label="Models"
+                  value={profile.modelCount || "-"}
+                />
+                <FeatureItem
+                  icon={<LuUser size={30} />}
+                  label="Accounts"
+                  value={profile.accountCount || "-"}
+                />
+                <FeatureItem
+                  icon={<LuUser size={30} />}
+                  label="Proxies"
+                  value={profile.proxyCount || "-"}
+                />
+              </div>
+              <div className="flex flex-col justify-start w-full gap-2">
+                <div className="text-xl font-semibold">Details</div>
+                <Divider className="my-2" />
+                <DetailItem label="Name" value={profile?.name} />
+                <DetailItem label="Role" value={profile?.role == AdminRole.MANAGER ? "Manager" : "Agency"} />
+                <DetailItem label="Email" value={profile?.email} />
+                <DetailItem label="Telegram" value={profile?.telegram} />
+              </div>
             </div>
-            <div className="flex justify-center my-2">
-              <FeatureItem
-                icon={<LuUsers size={30} />}
-                label="Models"
-                value={profile.modelCount || "-"}
-              />
-              <FeatureItem
-                icon={<LuUser size={30} />}
-                label="Accounts"
-                value={profile.accountCount || "-"}
-              />
-              <FeatureItem
-                icon={<LuUser size={30} />}
-                label="Proxies"
-                value={profile.proxyCount || "-"}
-              />
-            </div>
-            <div className="flex flex-col justify-start w-full gap-2">
-              <div className="text-xl font-semibold">Details</div>
-              <Divider className="my-2" />
-              <DetailItem label="Name" value={profile?.name} />
-              <DetailItem label="Role" value={profile?.role == AdminRole.MANAGER ? "Manager" : "Agency"} />
-              <DetailItem label="Email" value={profile?.email} />
-              <DetailItem label="Telegram" value={profile?.telegram} />
-            </div>
+          </Card>
+        </Col>
+        <Col span={18}>
+          <div className="m-4">
+            <Tabs
+              type="card"
+              activeKey={key}
+              items={profileTabs}
+              onChange={handleTabChange}
+            />
+            {
+              key == "payments"
+                ? <SettingsPayment />
+                : key == "transactions"
+                  ? <SettingsTransaction />
+                  // : key == "overview"
+                  //   ? <SettingsOverview />
+                  : <></>
+            }
           </div>
-        </Card>
-      </Col>
-      <Col span={18}>
-        <div className="m-4">
-          <Tabs
-            type="card"
-            activeKey={key}
-            items={profileTabs}
-            onChange={handleTabChange}
-          />
-          {
-            key == "payments"
-              ? <SettingsPayment />
-              : key == "transactions"
-                ? <SettingsTransaction />
-                // : key == "overview"
-                //   ? <SettingsOverview />
-                : <></>
-          }
-        </div>
-      </Col>
-    </Row>
+        </Col>
+      </Row>
     </>
   );
 };
