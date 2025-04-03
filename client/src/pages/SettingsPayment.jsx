@@ -27,6 +27,7 @@ const SettingsPayment = () => {
   const [step, setStep] = useState(0);
   const [waiting, setWaiting] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [paymentId, setPaymentId] = useState();
 
   const location = useLocation();
   const dispatch = useDispatch();
@@ -44,20 +45,25 @@ const SettingsPayment = () => {
   }, [dispatch]);
 
   const getPaymentCallback = useCallback(() => {
-    if (currentPayment?._id)
-      dispatch(getPayment(currentPayment?._id));
-  }, [dispatch]);
+    if (paymentId)
+      dispatch(getPayment(paymentId));
+  }, [dispatch, paymentId]);
 
   useEffect(() => {
     loadPaymentsCallback()
   }, [loadPaymentsCallback])
 
+  // useEffect(() => {
+  //   if (paymentId)
+  //     loadPaymentsCallback();
+  // }, [paymentId]);
+
   useEffect(() => {
     const interval = setInterval(() => {
-      loadPaymentsCallback();
       if (step == 2)
         getPaymentCallback()
-    }, 30000);
+      loadPaymentsCallback();
+    }, 10000);
     return () => clearInterval(interval);
   });
 
@@ -80,13 +86,18 @@ const SettingsPayment = () => {
 
   const handleAssetSelected = () => {
     setWaiting(true);
-    dispatch(createPayment(coin, () => { setWaiting(false); setStep(1); loadPaymentsCallback(); }))
+    dispatch(createPayment(coin, (id) => {
+      setWaiting(false);
+      setStep(1);
+      if (id)
+        setPaymentId(id);
+    }))
   }
 
   const handleCancelDeposit = () => {
-    if (currentPayment?._id) {
+    if (paymentId) {
       setWaiting(true);
-      dispatch(cancelPayment(currentPayment._id, () => { setWaiting(false); setStep(0) }))
+      dispatch(cancelPayment(paymentId, () => { setWaiting(false); setStep(0) }))
     }
   }
 
@@ -143,8 +154,8 @@ const SettingsPayment = () => {
                 <DepositAddress
                   address={currentPayment?.payAddress}
                   currency={getCurrency(currentPayment?.payCurrency)}
-                  minAmount={currentPayment?.minAmount}
-                  minFiat={currentPayment?.minFiat}
+                  payAmount={currentPayment?.payAmount}
+                  priceAmount={currentPayment?.priceAmount}
                 />
                 <div className="flex gap-8">
                   <Button

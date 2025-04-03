@@ -31,7 +31,11 @@ export const getCurrencyAmount = (value, code, status) => {
     return "-";
   const currency = cryptoCurrencies.find(currency => currency.code == code)
   if (currency) {
-    return `${value.toFixed(2)} ${currency.ticker}`;
+    return getCryptoAmount(value, currency.ticker);
   }
   return value.toFixed(2);
 }
+
+export const getFiatAmount = (amount, defValue = "-") => amount >= 0 ? `$${(amount || 0).toFixed(2)}`: defValue;
+
+export const getCryptoAmount = (amount, ticker, defValue = "-") => amount > 0 ? `$${(amount || 0).toFixed(5)} ${ticker}`: defValue;

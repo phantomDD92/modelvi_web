@@ -25,9 +25,9 @@ const createPayment = async (agency, orderId, currency, minAmount, minFiat) => {
     const resp = await axios.post(
       "https://api.nowpayments.io/v1/payment",
       {
-        "price_amount": minFiat,
+        "price_amount": minFiat * 1.05,
         "price_currency": "usd",
-        "pay_amount": minAmount,
+        "pay_amount": minAmount * 1.05,
         "pay_currency": currency,
         "ipn_callback_url": "https://modelvi.com/api/v2/agency/payment_callback",
         "order_id": `${orderId}`,

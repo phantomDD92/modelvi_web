@@ -1,8 +1,9 @@
 import { cryptoNetworkColors } from '@/data/crypto';
+import { getCryptoAmount, getFiatAmount } from '@/utils/string';
 import { Button, QRCode } from 'antd';
 import { LuCopy } from 'react-icons/lu';
 
-const DepositAddress = ({ address, currency, minAmount, minFiat }) => {
+const DepositAddress = ({ address, currency, payAmount, priceAmount }) => {
 
   const handleCopyAddress = () => {
     navigator.clipboard.writeText(address)
@@ -33,7 +34,7 @@ const DepositAddress = ({ address, currency, minAmount, minFiat }) => {
           <Button icon={<LuCopy />} type='text' onClick={handleCopyAddress} />
         </div>
         <div>
-          {`Minimum amount: ${(minAmount || 0).toFixed(5)} ${currency?.ticker} ($${(minFiat || 0).toFixed(5)})`}
+          {`Minimum amount: ${getCryptoAmount(payAmount || 0, currency?.ticker)} (${getFiatAmount(priceAmount)})`}
         </div>
       </div>
     </div>

@@ -31,7 +31,8 @@ const updatePayment = (id, data) =>
     payCurrency: data["pay_currency"],
     priceAmount: data["price_amount"],
     priceCurrency: data["price_currency"],
-    actuallyPaid: data["actually_paid"],
+    paidAmount: data["actually_paid"],
+    outcomeAmount: data["outcome_amount"],
   })
 
 const loadPayments = (agency) =>

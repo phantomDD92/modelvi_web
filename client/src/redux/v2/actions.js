@@ -29,12 +29,17 @@ export const getProfile = (callback) => async (dispatch) => {
 
 
 export const createPayment = (currency, callback) => async (dispatch) => {
-  await ApiRequest.postAction(dispatch, {
-    path: `/v2/agency/payment`,
-    data: { currency },
-    action: ACTIONS.GET_PAYMENT,
-    callback
-  })
+  try {
+    const payload = await ApiRequest.postAction(dispatch, {
+      path: `/v2/agency/payment`,
+      data: { currency },
+      action: ACTIONS.GET_PAYMENT,
+    })
+    callback && callback(payload.payment?._id);
+  } catch (error) {
+    callback && callback();
+  }
+
 }
 
 export const loadPayments = (callback) => async (dispatch) => {

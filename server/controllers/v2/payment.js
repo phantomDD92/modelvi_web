@@ -13,13 +13,10 @@ const handleCreatePayment = async (req, res) => {
     const { currency } = req.body;
     // first create payment order
     const id = await CounterService.getNextSequence("payment");
-    const { min_amount, fiat_equivalent } = await PaymentUtils.getMinimumPaymentAmount(currency);
-    const minAmount = min_amount * 1.05;
-    const minFiat = fiat_equivalent * 1.05;
+    const { min_amount: minAmount, fiat_equivalent: minFiat } = await PaymentUtils.getMinimumPaymentAmount(currency);
     const data = await PaymentUtils.createPayment(req.manager, id, currency, minAmount, minFiat);
     const payment = await PaymentService.createPayment(id, req.manager, data);
-    const paymentJson = payment.toJSON();
-    sendResult(res, { payment: { ...paymentJson, minAmount, minFiat } });
+    sendResult(res, { payment });
   } catch (error) {
     console.error(error);
     sendError(res, error);
@@ -86,10 +83,10 @@ const handleProcessPayment = async (req, res) => {
     await PaymentService.updatePayment(payment._id, data);
     if (data["payment_status"] == PaymentStatus.FINISHED) {
       await NotifyUtils.sendMessage("NOWPayment", "payment callback", "Finish payment");
-      const agency = await AgencyService2.updateBalance(payment.agency, data["actually_paid"]);
+      const agency = await AgencyService2.updateBalance(payment.agency, data["outcome_amount"]);
       const from = agency.balance || 0;
-      const to = from + data["actually_paid"];
-      await TransactionService2.createTransaction(payment.agency, data["actually_paid"], from, to, payment.description);
+      const to = from + data["outcome_amount"];
+      await TransactionService2.createTransaction(payment.agency, data["outcome_amount"], from, to, payment.description);
     }
     sendResult(res);
   } catch (error) {

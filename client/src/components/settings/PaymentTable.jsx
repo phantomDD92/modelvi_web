@@ -2,7 +2,7 @@ import {
     Card,
     Table,
 } from "antd";
-import { getCurrencyAmount, getCurrencyName, getDateTime } from "@/utils/string";
+import { getCurrencyAmount, getCurrencyName, getDateTime, getFiatAmount } from "@/utils/string";
 import { render } from "react-dom";
 
 const PaymentTable = ({
@@ -26,24 +26,24 @@ const PaymentTable = ({
             render: value => getCurrencyName(value)
         },
         {
-            key: 'payAmount',
-            title: 'Amount',
-            width: 100,
-            dataIndex: 'payAmount',
-            render: (value, record) => getCurrencyAmount(value, record.payCurrency, record.status)
-        },
-        {
             key: 'payAddress',
             title: 'Address',
             width: 500,
             dataIndex: 'payAddress',
         },
         {
-            key: 'priceAmount',
+            key: 'paidAmount',
+            title: 'Amount',
+            width: 100,
+            dataIndex: 'paidAmount',
+            render: (value, record) => record.status == "cancel" || record.status == "waiting" ? "-" : getCurrencyAmount(value, record.payCurrency, record.status)
+        },
+        {
+            key: 'outcomeAmount',
             title: 'Balance',
             width: 100,
-            dataIndex: 'priceAmount',
-            render: (value, record) => record.status == "cancel" || record.status == "waiting" ? "-" : value
+            dataIndex: 'outcomeAmount',
+            render: (value, record) => record.status == "finished" ? getFiatAmount(value) : "-"
         },
         {
             key: 'status',
