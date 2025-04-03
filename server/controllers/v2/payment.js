@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const { PaymentStatus } = require("../../config/const");
 const AgencyService2 = require("../../services/v2/agency");
 const CounterService = require("../../services/v2/counter");
@@ -12,7 +13,6 @@ const handleCreatePayment = async (req, res) => {
     const { currency } = req.body;
     // first create payment order
     const id = await CounterService.getNextSequence("payment");
-    console.log(currency);
     const { min_amount, fiat_equivalent } = await PaymentUtils.getMinimumPaymentAmount(currency);
     const minAmount = min_amount * 1.05;
     const minFiat = fiat_equivalent * 1.05;
@@ -20,7 +20,6 @@ const handleCreatePayment = async (req, res) => {
     const payment = await PaymentService.createPayment(id, req.manager, data);
     const paymentJson = payment.toJSON();
     sendResult(res, { payment: { ...paymentJson, minAmount, minFiat } });
-    // sendResult(res, {payment})
   } catch (error) {
     console.error(error);
     sendError(res, error);
@@ -94,6 +93,7 @@ const handleProcessPayment = async (req, res) => {
     }
     sendResult(res);
   } catch (error) {
+    await NotifyUtils.sendMessage("NOWPayment", "payment callback error", error.message);
     sendError(res, error);
   }
 }
