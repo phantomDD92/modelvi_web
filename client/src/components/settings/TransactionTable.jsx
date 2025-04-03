@@ -29,7 +29,7 @@ const TransactionTable = ({
             title: 'Amount',
             width: 100,
             dataIndex: 'amount',
-            value: value => getFiatAmount(value),
+            render: value => getFiatAmount(value),
         },
         {
             key: 'to',

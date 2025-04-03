@@ -8,6 +8,7 @@ import { AdminRole } from "@/utils/const";
 import StyledInput from "@/components/common/StyledInput";
 import { useAuth } from "@/contexts";
 import { LuKey, LuLogOut, LuSettings } from "react-icons/lu";
+import { getFiatAmount } from "@/utils/string";
 
 const HeaderBar = () => {
 
@@ -39,7 +40,7 @@ const HeaderBar = () => {
             icon: <LuLogOut />,
         }
     ];
-    
+
     useEffect(() => {
         if (!isAuthenticated)
             navigate("/sign-in");
@@ -75,7 +76,7 @@ const HeaderBar = () => {
                                 <Typography>{profile?.telegram}</Typography>
                             </div>
                         </div>
-                        <Alert message={`Available balance : ${profile?.balance || "0"}`} type="success" />
+                        <Alert message={`Available balance : ${getFiatAmount(profile?.balance, "$0")}`} type="success" />
                     </div>
                 }
                 content={<Menu items={items} onClick={handleMenuClick} />}

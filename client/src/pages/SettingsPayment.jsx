@@ -1,15 +1,16 @@
+import { useCallback, useEffect, useState } from "react";
+import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import qs from 'query-string';
+import { Button, Card, Col, Result, Row, Select, Steps, Typography } from "antd";
+import { LoadingOutlined, ClockCircleOutlined, CheckCircleOutlined, SmileOutlined, SyncOutlined, CloseCircleOutlined } from "@ant-design/icons";
+
 import { DepositAddress } from "@/components/settings";
 import CryptoSelect from "@/components/settings/CryptoSelect";
 import PaymentTable from "@/components/settings/PaymentTable";
 import { cryptoCurrencies } from "@/data/crypto";
 import { cancelPayment, createPayment, getPayment, loadPayments } from "@/redux/v2/actions";
-import { Button, Card, Col, Result, Row, Select, Steps, Table, Typography } from "antd";
-import { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import qs from 'query-string';
-import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
 import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE } from "@/utils/const";
-import { LoadingOutlined, ClockCircleOutlined, CheckCircleOutlined, SmileOutlined, SyncOutlined, CloseCircleOutlined } from "@ant-design/icons";
 
 const pricingPlans = [
   { key: "0", price: 50.00, earnings: "$0 ~ $1000" },
@@ -36,7 +37,7 @@ const vipPricingPlans = [
 const SettingsPayment = ({ vip }) => {
   const [planKey, setPlanKey] = useState("0");
   const [coin, setCoin] = useState("usdttrc20")
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(0);
   const [waiting, setWaiting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [paymentId, setPaymentId] = useState();

@@ -1,9 +1,9 @@
 import React from "react";
-import { Card, Form, Input, Row, Col, Switch, InputNumber, Button, Avatar, Typography, Tag, Alert, Divider, Tabs } from "antd";
+import { Card, Row, Col, Avatar, Typography, Tag, Divider, Tabs } from "antd";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { AdminRole } from "@/utils/const";
-import { LuCircleDollarSign, LuReceipt, LuUser, LuUsers, LuWallet } from "react-icons/lu";
+import { LuReceipt, LuUser, LuUsers, LuWallet } from "react-icons/lu";
 import { useNavigate, useParams } from "react-router-dom";
 import SettingsPayment from "./SettingsPayment";
 import SettingsTransaction from "./SettingsTransaction";
