@@ -9,7 +9,7 @@ const sendResult = (res, payload) => {
 };
 
 const sendError = (res, error) => {
-    if (error.name == "ApiError") {
+    if (error?.name == "ApiError") {
         res.json({success: false, message: error.message})
     } else {
         console.error(error)

@@ -12,10 +12,17 @@ const handleCreatePayment = async (req, res) => {
     const { currency } = req.body;
     // first create payment order
     const id = await CounterService.getNextSequence("payment");
-    const data = await PaymentUtils.createPayment(req.manager, id, currency);
+    console.log(currency);
+    const { min_amount, fiat_equivalent } = await PaymentUtils.getMinimumPaymentAmount(currency);
+    const minAmount = min_amount * 1.05;
+    const minFiat = fiat_equivalent * 1.05;
+    const data = await PaymentUtils.createPayment(req.manager, id, currency, minAmount, minFiat);
     const payment = await PaymentService.createPayment(id, req.manager, data);
-    sendResult(res, { payment });
+    const paymentJson = payment.toJSON();
+    sendResult(res, { payment: { ...paymentJson, minAmount, minFiat } });
+    // sendResult(res, {payment})
   } catch (error) {
+    console.error(error);
     sendError(res, error);
   }
 }
