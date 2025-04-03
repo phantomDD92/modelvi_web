@@ -10,7 +10,7 @@ const CryptoSelect = (params) => {
       <div className="mx-3">
         <div className="leading-5">
           <span className="mr-2 font-medium">{currency.ticker}</span>
-          <span className={`uppercase bg-red-600 py-[1px] px-[8px] text-xs text-white rounded-sm ${getNetworkColor(currency.network)}`}>{currency.network}</span>
+          <span className={`uppercase py-[1px] px-[8px] text-xs text-white rounded-sm ${getNetworkColor(currency.network)}`}>{currency.network}</span>
         </div>
         <div className="leading-5">{currency.name}</div>
       </div>

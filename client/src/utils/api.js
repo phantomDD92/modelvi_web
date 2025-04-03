@@ -17,6 +17,7 @@ const postAction = async (dispatch, {action, path, data, params, inform, callbac
             return payload;
         } else {
             toast.error(message);
+            callback && callback()
             return undefined
         }
     } catch (error) {
@@ -25,6 +26,7 @@ const postAction = async (dispatch, {action, path, data, params, inform, callbac
         } else {
             toast.error("network failed");
         }
+        callback && callback()
         return undefined
     }
 }

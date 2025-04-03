@@ -142,6 +142,8 @@ const SettingsPayment = () => {
                 <DepositAddress
                   address={currentPayment?.payAddress}
                   currency={getCurrency(currentPayment?.payCurrency)}
+                  minAmount={currentPayment?.minAmount}
+                  minFiat={currentPayment?.minFiat}
                 />
                 <div className="flex gap-8">
                   <Button
