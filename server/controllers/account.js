@@ -32,8 +32,6 @@ const handleCreateAccount = async (req, res) => {
     if (req.manager.role != AdminRole.MANAGER && currActor.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`Account is able to create only by owner`);
     const count = await AccountService.getAgencyCount(req.manager._id)
-    if (req.manager.role == AdminRole.AGENCY && count >= req.manager.maxAccounts)
-      throw new ApiError(`Account amount is limited by website`);
     const account = await AccountService.createAccount(platform, currActor, { ...params, chatTeam, owner: currActor.owner, creator: req.manager._id });
     await ActorService.appendAccount(actor, account._id)
     if (chatTeam)

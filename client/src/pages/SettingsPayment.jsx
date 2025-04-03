@@ -22,7 +22,18 @@ const pricingPlans = [
   { key: "7", price: 250.00, earnings: "$20000 +" }
 ];
 
-const SettingsPayment = () => {
+const vipPricingPlans = [
+  { key: "0", price: 50.00, earnings: "$0 ~ $1000" },
+  { key: "1", price: 75.00, earnings: "$1000 ~ $2500" },
+  { key: "2", price: 80.00, earnings: "$2500 ~ $5000" },
+  { key: "3", price: 120.00, earnings: "$5000 ~ $7500" },
+  { key: "4", price: 140.00, earnings: "$7500 ~ $10000" },
+  { key: "5", price: 160.00, earnings: "$10000 ~ $15000" },
+  { key: "6", price: 180.00, earnings: "$15000 ~ $20000" },
+  { key: "7", price: 200.00, earnings: "$20000 +" }
+];
+
+const SettingsPayment = ({ vip }) => {
   const [planKey, setPlanKey] = useState("0");
   const [coin, setCoin] = useState("usdttrc20")
   const [step, setStep] = useState(2);
@@ -90,10 +101,7 @@ const SettingsPayment = () => {
     return currency;
   }
 
-  const getPrice = (key) => {
-    const item = pricingPlans.find(plan => plan.key == key);
-    return (item?.price || 50.00).toFixed(2);
-  }
+
 
   const handleChangePagination = (pageValue, pageSizeValue) => {
     navigate({
@@ -124,6 +132,18 @@ const SettingsPayment = () => {
     setStep(2);
   }
 
+  const getPricePlanOptions = (vip) =>
+    vip
+      ? vipPricingPlans.map(plan => ({ value: plan.key, label: plan.earnings }))
+      : pricingPlans.map(plan => ({ value: plan.key, label: plan.earnings }));
+
+  const getPrice = (key, vip) => {
+    const item = vip
+      ? vipPricingPlans.find(plan => plan.key == key)
+      : pricingPlans.find(plan => plan.key == key);
+    return (item?.price || 50.00).toFixed(2);
+  }
+
   return (
     <Card>
       <Row>
@@ -136,12 +156,12 @@ const SettingsPayment = () => {
               className="w-full my-2"
               value={planKey}
               onChange={value => setPlanKey(value)}
-              options={pricingPlans.map(plan => ({ value: plan.key, label: plan.earnings }))}
+              options={getPricePlanOptions(vip)}
             />
             <p>Starting at just</p>
             <div className="flex text-default-950">
               <span className="text-xl font-semibold">$</span>
-              <span className="text-3xl font-semibold">{getPrice(planKey)}</span>
+              <span className="text-3xl font-semibold">{getPrice(planKey, vip)}</span>
               <span className="text-xl font-semibold self-end">/mo</span>
             </div>
           </div>

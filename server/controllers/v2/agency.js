@@ -1,5 +1,6 @@
 const AgencyService2 = require("../../services/v2/agency");
 const TransactionService2 = require("../../services/v2/transaction");
+const { getPricePlan } = require("../../utils/helper");
 const { sendError, sendResult, ApiError } = require("../../utils/resp");
 
 const handleUpdateAgencyForAdmin = async (req, res) => {
@@ -13,6 +14,10 @@ const handleUpdateAgencyForAdmin = async (req, res) => {
         const from = agency.balance || 0;
         const to = from + balance;
         await TransactionService2.createTransaction(agencyId, balance, from, to, "Modelvi payment");
+        break;
+      case 'vip':
+        const { vip } = params;
+        await AgencyService2.updateVip(agencyId, vip);
         break;
       default:
         throw new ApiError("Invalid agency action");

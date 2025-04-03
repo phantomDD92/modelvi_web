@@ -1,21 +1,13 @@
 const moment = require("moment");
+const { VIP_PRICE_PLANS, NORMAL_PRICE_PLANS } = require("./const");
 
-function getPricePlan(revenue) {
-  if (revenue < 1000)
-    return 50;
-  else if (revenue < 2500)
-    return 75;
-  else if (revenue < 5000)
-    return 100;
-  else if (revenue < 7500)
-    return 150;
-  else if (revenue < 10000)
-    return 175;
-  else if (revenue < 15000)
-    return 200;
-  else if (revenue < 20000)
-    return 225;
-  return 250;
+function getPricePlan(agency, revenue) {
+  const pricePlans = agency.vip ? VIP_PRICE_PLANS : NORMAL_PRICE_PLANS;
+  for (var i = 0; i < pricePlans.length; i++) {
+    if (revenue < pricePlans[i].revenue)
+      return pricePlans[i].price;
+  }
+  return pricePlans[pricePlans.length - 1].price;
 }
 
 function getDateDelta(date) {

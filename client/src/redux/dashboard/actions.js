@@ -70,15 +70,6 @@ export const updateBulkAgenciesStatus = (agencyIds, status, callback) => async (
   })
 };
 
-export const appendAgencyBalance = (agency, balance, callback) => async (dispatch) => {
-  await ApiRequest.putAction(dispatch, {
-    path: `/v2/admin/agency/${agency._id}`,
-    data: { action: 'balance', balance },
-    inform: `Agency(${agency.name}) balance is successfully updated.`,
-    callback
-  })
-}
-
 export const deleteAgency = (agency, callback) => async (dispatch) => {
   await ApiRequest.deleteAction(dispatch, {
     path: `/manager/${agency._id}`,
@@ -233,6 +224,24 @@ export const sendContact = (data, callback) => async (dispatch, getState) => {
     path: '/contact',
     data,
     inform: "Email sent successfully",
+    callback
+  })
+}
+
+export const changeAgencyVIP = (agency, vip, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/agency/${agency._id}`,
+    data: { vip, action: 'vip' },
+    inform: `Agency(${agency.name}) is successfully changed'}`,
+    callback
+  })
+};
+
+export const appendAgencyBalance = (agency, balance, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/agency/${agency._id}`,
+    data: { action: 'balance', balance },
+    inform: `Agency(${agency.name}) balance is successfully updated.`,
     callback
   })
 }

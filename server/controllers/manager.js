@@ -136,6 +136,10 @@ const handleUpdateAgency = async (req, res) => {
         const { status } = params;
         await ManagerService.changeAgencyStatus(agencyId, status);
         break;
+      case "vip":
+        const { vip } = params;
+        await ManagerService.changeAgencyVIP(agencyId, vip);
+        break;
       case "password":
         const { password } = params;
         await ManagerService.changeAgencyPassword(agencyId, password);

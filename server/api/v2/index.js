@@ -1,6 +1,6 @@
 const express = require("express");
 const agencyRouter = require("./agency");
-const managerRouter = require("./manager");
+const managerRouter = require("./admin");
 const botRouter = require("./bot");
 const AuthCtrl = require("../../controllers/v2/auth");
 const authenticate = require("../../middleware/auth");

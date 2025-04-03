@@ -53,7 +53,13 @@ export const SettingsPage = () => {
                 shape="square"
                 src={profile?.role == AdminRole.MANAGER ? "/img/manager.png" : "/img/agency.png"} />
               <Typography.Title level={4}>{profile.name}</Typography.Title>
-              <Tag className="text-lg" color={profile?.role == AdminRole.MANAGER ? 'success' : 'info'}>{profile?.role == AdminRole.MANAGER ? "Manager" : "Agency"}</Tag>
+              <Tag className="text-lg" color={profile?.role == AdminRole.MANAGER ? 'success' : 'info'}>
+                {profile?.role == AdminRole.MANAGER
+                  ? "Manager"
+                  : profile?.vip
+                    ? "VIP Agency"
+                    : "Agency"}
+              </Tag>
               {/* <Tag className="text-lg" color="warning">{`Available balance : $${profile?.balance || 0}`}</Tag> */}
               <div className="flex justify-center my-2">
                 <FeatureItem
@@ -110,7 +116,7 @@ export const SettingsPage = () => {
             />
             {
               key == "payments"
-                ? <SettingsPayment />
+                ? <SettingsPayment vip={profile?.vip} />
                 : key == "transactions"
                   ? <SettingsTransaction />
                   // : key == "overview"

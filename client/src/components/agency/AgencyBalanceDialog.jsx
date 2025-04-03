@@ -13,7 +13,6 @@ const AgencyBalanceDialog = ({
         form.validateFields()
             .then(() => {
                 const { balance } = form.getFieldsValue();
-                console.log(balance)
                 if (balance > 0)
                     onAppend && onAppend(balance);
             })

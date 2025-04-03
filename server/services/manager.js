@@ -2,33 +2,31 @@ const { AdminRole } = require("../config/const")
 const ManagerModel = require("../models/manager")
 const bcrypt = require('bcryptjs')
 
-const createAgency = ({ name, email, telegram, password, maxActors, maxAccounts }) =>
+const createAgency = ({ name, email, telegram, password }) =>
     ManagerModel.create({
         name,
         email,
         telegram,
         password: bcrypt.hashSync(password, 12),
-        maxAccounts,
-        maxActors,
         role: AdminRole.AGENCY,
         status: true,
         newVersion: true,
     })
 
 const findAgencyByName = (name) =>
-    ManagerModel.findOne({ name }, 'name email password role status maxAccounts maxActors createdAt')
+    ManagerModel.findOne({ name }, 'name email password role status vip createdAt')
 
 const findAgencyByEmail = (email) =>
-    ManagerModel.findOne({ email }, 'name email password role status maxAccounts maxActors createdAt');
+    ManagerModel.findOne({ email }, 'name email password role status vip createdAt');
 
 const loadAgencies = () =>
-    ManagerModel.find({}, 'name email balance telegram role status createdAt');
+    ManagerModel.find({}, 'name email balance telegram role vip status createdAt');
 
 const deleteAgency = (agencyId) =>
     ManagerModel.findByIdAndRemove(agencyId)
 
 const findAgencyById = (id) => {
-    return ManagerModel.findById(id, "name email role status balance maxAccounts maxActors createdAt");
+    return ManagerModel.findById(id, "name email role status balance vip createdAt");
 }
 
 const changeAgencyPassword = (id, password) => {
@@ -37,6 +35,9 @@ const changeAgencyPassword = (id, password) => {
 
 const changeAgencyStatus = (id, status) =>
     ManagerModel.findByIdAndUpdate(id, { $set: { status } })
+
+const changeAgencyVIP = (id, vip) =>
+    ManagerModel.findByIdAndUpdate(id, { $set: { vip } })
 
 const changeAgency = (id, params) =>
     ManagerModel.findByIdAndUpdate(id, { $set: params })
@@ -58,7 +59,8 @@ const ManagerService = {
     deleteAgency,
     changeAgencyPassword,
     changeAgencyStatus,
-    changeAgency
+    changeAgency,
+    changeAgencyVIP,
 }
 
 module.exports = ManagerService

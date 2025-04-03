@@ -1,7 +1,7 @@
 import { AdminRole } from '@/utils/const'
 import { Card, Table, Button, Flex, Switch, Avatar, Dropdown, Space, Typography } from "antd";
 import { DeleteOutlined, UserAddOutlined, EditOutlined, KeyOutlined, DatabaseOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-import { LuWallet } from 'react-icons/lu';
+import { LuGlobe, LuWallet } from 'react-icons/lu';
 
 export const AgencyTable = ({
     pagination,
@@ -20,6 +20,7 @@ export const AgencyTable = ({
         onStatusChange,
         onPasswordReset,
         onBalance,
+        onVIP,
         onUpdateDB,
     },
 }) => {
@@ -28,23 +29,26 @@ export const AgencyTable = ({
             key: 'name',
             title: 'Name',
             dataIndex: 'name',
-            width: 200,
+            width: 150,
             render: value => <Flex gap="middle" align='center'><Avatar src="/img/agency.png" /><span>{value}</span></Flex>
         },
         {
             key: 'role',
             title: 'Role',
             dataIndex: 'role',
-            render: value => value == AdminRole.MANAGER ? "Manager" : "Agency"
+            width: 120,
+            render: (value, record) => value == AdminRole.MANAGER ? "Manager" : record.vip ? "VIP Agency" : "Agency"
         },
         {
             key: 'email',
             title: 'Email',
+            width: 150,
             dataIndex: 'email',
         },
         {
             key: 'telegram',
             title: 'Telegram',
+            width: 120,
             dataIndex: 'telegram',
         },
         {
@@ -107,6 +111,11 @@ export const AgencyTable = ({
                                 icon: <LuWallet />,
                             },
                             {
+                                label: record.vip ? 'Disable VIP' : 'Enable VIP',
+                                key: 'vip',
+                                icon: <LuGlobe />,
+                            },
+                            {
                                 label: 'Reset Password',
                                 key: 'password',
                                 icon: <KeyOutlined />,
@@ -121,13 +130,16 @@ export const AgencyTable = ({
                         onClick: (e) => {
                             switch (e.key) {
                                 case "password":
-                                    onPasswordReset(record)
+                                    onPasswordReset && onPasswordReset(record)
                                     break;
                                 case "balance":
                                     onBalance && onBalance(record)
                                     break;
+                                case "vip":
+                                    onVIP && onVIP(record, record.vip != true)
+                                    break;
                                 case "delete":
-                                    onDelete(record)
+                                    onDelete && onDelete(record)
                                     break;
                                 default:
                                     break;

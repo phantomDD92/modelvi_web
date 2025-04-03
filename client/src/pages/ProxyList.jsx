@@ -107,7 +107,6 @@ export const ProxyListPage = () => {
   }
 
   const handleResetProxy = (proxy, platform) => {
-    // console.log(proxy, platform);
     dispatch(resetProxy(proxy, platform, () => loadProxiesCallback(agency)));
   }
 

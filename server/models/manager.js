@@ -7,11 +7,10 @@ const ManagerSchema = new mongoose.Schema({
   password: { type: String, required: true }, // password
   telegram: { type: String }, // telegram id
   role: { type: String, default: AdminRole.AGENCY },  // role : manager, agency
-  maxActors: { type: Number, default: 3 }, // max model count
-  maxAccounts: { type: Number, default: 3 }, // max account count
   version: { type: Number, default: 1 },
   verified: { type: Boolean, default: false },
   balance: { type: Number, default: 0 },
+  vip: { type: Boolean, default: false },
   status: { type: Boolean, default: true }, // status
   createdAt: { type: Date, default: Date.now },
 });

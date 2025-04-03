@@ -13,7 +13,8 @@ import {
   updateDB,
   deleteBulkAgencies,
   updateBulkAgenciesStatus,
-  appendAgencyBalance
+  appendAgencyBalance,
+  changeAgencyVIP
 } from "@/redux/dashboard/actions";
 import {
   AgencyTable,
@@ -83,6 +84,10 @@ export const AgencyListPage = () => {
     dispatch(changeAgencyStatus(agency, status, () => { loadAgenciesCallback() }));
   }
 
+  const handleChangeVIP = (agency, vip) => {
+    dispatch(changeAgencyVIP(agency, vip, () => { loadAgenciesCallback() }));
+  }
+
   const handleUpdateDB = () => {
     dispatch(updateDB());
   }
@@ -99,7 +104,6 @@ export const AgencyListPage = () => {
   }
 
   const handleAddBalance = (balance) => {
-    console.log("### : ", agency, balance)
     if (agency)
       dispatch(appendAgencyBalance(agency, balance, () => { setBalanceOpen(false); loadAgenciesCallback(); }))
   }
@@ -137,7 +141,8 @@ export const AgencyListPage = () => {
           onDelete: handleDeleteAgency,
           onStatusChange: handleChangeStatus,
           onPasswordReset: (agency) => { setAgency(agency); setPasswordOpen(true) },
-          onBalance: (agency) => { setAgency(agency); setBalanceOpen(true) }
+          onBalance: (agency) => { setAgency(agency); setBalanceOpen(true) },
+          onVIP: handleChangeVIP,
           // onUpdateDB: handleUpdateDB
         }} />
       <AgencyDialog

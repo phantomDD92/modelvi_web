@@ -458,8 +458,7 @@ const handleCheckBalance = async (req, res) => {
   try {
     let available = true;
     const { revenue } = req.body;
-    // calculate price
-    const price = getPricePlan(revenue);
+
     // first check if account and agency is valid
     const account = await AccountService2.findAccountById(req.bot.id);
     if (!account)
@@ -467,6 +466,8 @@ const handleCheckBalance = async (req, res) => {
     const agency = await ManagerService.findAgencyById(req.bot.owner);
     if (!agency)
       throw new ApiError("Invalid bot agency");
+    // calculate price
+    const price = getPricePlan(agency, revenue);
     // get valid dates
     const dateDelta = getDateDelta(account.expiredAt);
     if (dateDelta <= 0) { // if account is expired

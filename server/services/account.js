@@ -9,7 +9,7 @@ const loadAccounts = (agency, platform) =>
       .populate("owner", "name")
       .populate("actor", "name")
       .populate("chatTeam", "name")
-    : AccountModel.find({ platform, owner: agency._id }, "-params.contents")
+    : AccountModel.find({ platform, owner: agency._id }, "-params.contents -revenue")
       .sort({ owner: 1, number: 1 })
       .populate("owner", "name")
       .populate("actor", "name")

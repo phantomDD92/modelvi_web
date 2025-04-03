@@ -49,7 +49,6 @@ const SignIn = () => {
       localStorage.setItem("email", email);
       localStorage.setItem("password", password);
     }
-    // console.log(data);
     login(data, () => navigate("/"));
     // dispatch(registerAgency(data, () => { reset(); }))
   }

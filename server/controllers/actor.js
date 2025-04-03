@@ -20,8 +20,6 @@ const handleCreateActor = async (req, res) => {
 
     // check agency limit
     const count = await ActorService.getActorCount(agency._id);
-    if (agency.role == AdminRole.AGENCY && count >= agency.maxActors)
-      throw new ApiError(`Model amount is limited by website`);
 
     // check if model name is duplicated
     let actor = await ActorService.findByName(name);
