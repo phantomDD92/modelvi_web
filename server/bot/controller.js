@@ -18,6 +18,8 @@ const { getPricePlan, getDateDelta, hasSufficientBalance } = require('../utils/h
 const AccountService2 = require('../services/v2/account');
 const AgencyService2 = require('../services/v2/agency');
 const TransactionService2 = require('../services/v2/transaction');
+const NotifyUtils = require('../utils/notifiy');
+
 
 const handleLoginAccount = async (req, res) => {
   try {
@@ -460,7 +462,7 @@ const handleCheckBalance = async (req, res) => {
     const { revenue } = req.body;
 
     // first check if account and agency is valid
-    const account = await AccountService2.findAccountById(req.bot.id);
+    const account = await AccountService2.getAccountWithModel(req.bot.id);
     if (!account)
       throw new ApiError("Invalid bot account")
     const agency = await ManagerService.findAgencyById(req.bot.owner);
@@ -476,6 +478,7 @@ const handleCheckBalance = async (req, res) => {
       const { balance } = await AgencyService2.updateBalance(agency._id, -1 * price);
       await TransactionService2.createTransaction(agency._id, -1 * price, balance, balance - price, `payout for ${account.platform} ${account.alias}`);
       await AccountService2.extendAccount(account._id)
+      NotifyUtils.sendExpenseMessage(agency, account, `Monthly Revenue: ${account.revenue}\nPrice: ${price}\nBalance:$${balance.toFixed(2)} => $${(balance - price).toFixed(2)}\n`)
       // } else {
       //   available = false;
       //   // disable account

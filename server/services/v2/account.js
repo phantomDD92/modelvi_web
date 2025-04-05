@@ -3,8 +3,8 @@ const AccountModel = require("../../models/account");
 const updateRevenue = (accountId, revenue, fee) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { revenue, fee, "params.balanceNextTime": new Date(Date.now() + (3600 * 1000 * 24)) } })
 
-const findAccountById = (accountId, fields) =>
-  AccountModel.findById(accountId, fields);
+const getAccountWithModel = (accountId, fields) =>
+  AccountModel.findById(accountId, fields).populate("actor", "number name");
 
 const disableAccount = (accountId, reason) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { status: false, lastError: reason } })
@@ -21,7 +21,7 @@ const findAgencyAccounts = (agencyId) =>
   AccountModel.find({ owner: agencyId });
 
 const AccountService2 = {
-  findAccountById,
+  getAccountWithModel,
   getAccountWithModelChat,
   updateRevenue,
   disableAccount,

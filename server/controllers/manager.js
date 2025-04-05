@@ -173,6 +173,7 @@ const handleSendContact = async (req, res) => {
     const { name, email, message, subject } = req.body;
     if (!name || !email || !message || !subject)
       throw new ApiError("All fields are required");
+    NotifyUtils.sendDebugMessage("Contact", "Send Contact Mail", `Email:${email}\nSubject: ${subject}\nContent:\n${message}`)
     await NotifyUtils.sendContactMail(email, subject, `<b>Name : ${name}</b><p>Email: ${email}</p><p>Message: ${message}</p>`)
     sendResult(res);
   } catch (error) {

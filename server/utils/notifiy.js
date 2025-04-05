@@ -53,10 +53,47 @@ const sendMail = async (to, subject, content) => {
   await transporter.sendMail(mailOptions);
 }
 
+const sendDebugMessage = (who, what, message) => {
+  if (process.env.DISCORD_WEBHOOK_DEBUG) {
+    axios.post(process.env.DISCORD_WEBHOOK_DEBUG, {
+      username: `${who}`,
+      content: `[ ${moment().format("YYYY-MM-DD HH:mm:ss")} ]\n**${what}**\n${message}`
+    })
+      .then(() => { })
+      .catch(() => { })
+  }
+}
+
+const sendPaymentMessage = (agency, subject, message) => {
+  if (process.env.DISCORD_WEBHOOK_PAYMENT) {
+    axios.post(process.env.DISCORD_WEBHOOK_PAYMENT, {
+      username: `${agency?.name}`,
+      content: `[ ${moment().format("YYYY-MM-DD HH:mm:ss")} ]\n**${subject}**\n${message}`
+    })
+      .then(() => { })
+      .catch(() => { })
+  }
+}
+
+
+const sendExpenseMessage = (agency, account, message) => {
+  if (process.env.DISCORD_WEBHOOK_PAYMENT) {
+    axios.post(process.env.DISCORD_WEBHOOK_PAYMENT, {
+      username: `${agency?.name}${agency.vip ? '(VIP)' : ''}`,
+      content: `[ ${moment().format("YYYY-MM-DD HH:mm:ss")} ]\n**Expense for ${account.platform} - ${account.alias}**\n${message}`
+    })
+      .then(() => { })
+      .catch(() => { })
+  }
+}
+
 const NotifyUtils = {
-  sendMessage,
   sendContactMail,
   sendMail,
+  sendMessage,
+  sendDebugMessage,  // send debug information
+  sendPaymentMessage,
+  sendExpenseMessage,
 }
 
 module.exports = NotifyUtils;
