@@ -53,7 +53,7 @@ const ContactUs = () => {
                   label="Name"
                   labelClassName="text-default-500"
                   className="text-sm"
-                  placeholder="Your first name..."
+                  placeholder="Your name..."
                   control={control}
                   fullWidth
                 />

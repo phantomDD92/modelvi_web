@@ -27,14 +27,14 @@ const Router = () => {
 
         {/* } */}
         <Route key="login" element={<LoginPage />} path="/auth/signin" />
-        <Route key="landing" element={<LandingPage />} path="/landing" />
+        <Route key="landing" element={<LandingPage />} exact path="/" />
         <Route key="sign-in" element={<SignIn />} path="/sign-in" />
         <Route key="sign-up" element={<SignUp />} path="/sign-up" />
         <Route key="forgot-pass" element={<ForgotPassword />} path="/forgot-pass" />
         <Route key="verify" element={<ForgotPassword />} path="/verify" />
         {isAuthenticated
           ? <Route path="*" element={<Navigate to="/dashboard" />} />
-          : <Route path="*" element={<Navigate to="/landing" />} />}
+          : <Route path="*" element={<Navigate to="/" />} />}
         {/* {isAuthenticated && <Route path="*" element={<Navigate to="/dashboard" />} />} */}
       </Routes>
     </BrowserRouter>
