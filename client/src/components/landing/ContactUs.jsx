@@ -6,8 +6,10 @@ import TextFormInput from "./TextFormInput";
 import TextAreaFormInput from "./TextAreaFormInput";
 import { useDispatch } from "react-redux";
 import { sendContact } from "@/redux/dashboard/actions";
-
+import { useState } from "react";
+import { LoadingOutlined } from "@ant-design/icons";
 const ContactUs = () => {
+  const [waiting, setWaiting] = useState(false);
   const dispatch = useDispatch();
   const contactFormSchema = yup.object({
     name: yup.string().required("Please enter your name"),
@@ -24,7 +26,8 @@ const ContactUs = () => {
   });
 
   const handleSendContact = (formData) => {
-    dispatch(sendContact(formData, () => reset()));
+    setWaiting(true);
+    dispatch(sendContact(formData, () => { setWaiting(false); reset(); }));
   }
 
   return (
@@ -98,7 +101,9 @@ const ContactUs = () => {
                 className="flex items-center rounded-md bg-primary/90 px-6 py-2 text-white transition-all hover:bg-primary"
               >
                 Send Messages
-                <LuSend className="ms-2 size-5 rotate-45" />
+                {waiting
+                  ? <LoadingOutlined className="ms-2 size-5" />
+                  : <LuSend className="ms-2 size-5 rotate-45" />}
               </button>
             </form>
           </div>
