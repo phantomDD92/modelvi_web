@@ -1,5 +1,5 @@
 import React from "react"
-import { UserOutlined, HomeOutlined, SolutionOutlined, SettingOutlined, WomanOutlined, EnvironmentOutlined, DiscordOutlined } from "@ant-design/icons";
+import { UserOutlined, HomeOutlined, SolutionOutlined, EnvironmentOutlined, DiscordOutlined } from "@ant-design/icons";
 import { Home, ProxyListPage, ModelListPage, ChatTeamListPage, SettingsPage } from "@/pages";
 import AgencyListPage from "./pages/AgencyList";
 import AccountList from "./pages/AccountList";
@@ -13,8 +13,8 @@ import { LuSettings } from "react-icons/lu";
 const routes = [
     {
         key: "dashboard",
-        path: "/dashboard",
-        link: "/dashboard",
+        path: "/",
+        link: "/",
         label: "Dashboard",
         icon: <HomeOutlined />,
         component: <Home />,

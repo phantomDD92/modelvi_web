@@ -47,7 +47,7 @@ export const ModelContentTable = ({
     }
 
     const isKnkyStory = (record) => {
-        return record.platforms && record.platforms.includes(Platform.KNKY) && record.knkyStoryType
+        return record.platforms && record.platforms.includes(Platform.KNKY) && record.knkyStoryType != KnkyStoryType.NONE
     }
 
     const getFancentroStoryTag = (record) => {

@@ -1,4 +1,5 @@
 const moment = require("moment");
+const crypto = require("crypto");
 const { VIP_PRICE_PLANS, NORMAL_PRICE_PLANS } = require("./const");
 
 function getPricePlan(agency, revenue) {
@@ -16,6 +17,23 @@ function getDateDelta(date) {
 
 function hasSufficientBalance(agency, price) {
   return ((agency.balance || 0) >= price)
+}
+
+function generateReferralCode(length = 10) {
+  // Define the character set to use
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  
+  // Create a cryptographically strong random values array
+  const randomValues = new Uint32Array(length);
+  crypto.getRandomValues(randomValues);
+  
+  // Build the string
+  randomValues.forEach((value) => {
+    result += chars[value % chars.length];
+  });
+  
+  return result;
 }
 
 module.exports = {
