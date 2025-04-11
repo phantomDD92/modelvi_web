@@ -34,7 +34,7 @@ const vipPricingPlans = [
   { key: "7", price: 200.00, earnings: "$20000 +" }
 ];
 
-const SettingsPayment = ({ vip }) => {
+const BillingPaymentPage = ({ vip }) => {
   const [planKey, setPlanKey] = useState("0");
   const [coin, setCoin] = useState("usdttrc20")
   const [step, setStep] = useState(0);
@@ -238,4 +238,4 @@ const SettingsPayment = ({ vip }) => {
   )
 }
 
-export default SettingsPayment;
+export default BillingPaymentPage;

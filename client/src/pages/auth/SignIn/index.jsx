@@ -14,6 +14,15 @@ const SignIn = () => {
 
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [refCode, setRefCode] = useState();
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const referralCode = queryParams.get('ref');
+    if (referralCode) {
+      setRefCode(referralCode)
+    }
+  }, [navigate]);
 
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -115,7 +124,9 @@ const SignIn = () => {
 
       <p className="mt-4 shrink text-center text-zinc-200">
         Don't have an account ?
-        <Link to="/sign-up" className="ms-1 text-primary">
+        <Link
+          to={refCode ? `/sign-up?ref=${refCode}` : "/sign-up"}
+          className="ms-1 text-primary">
           <b>Register</b>
         </Link>
       </p>

@@ -7,7 +7,7 @@ import { loadTransactions } from "@/redux/v2/actions";
 import TransactionTable from "@/components/settings/TransactionTable";
 
 
-const SettingsTransaction = () => {
+const BillingTransactionPage = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -56,4 +56,4 @@ const SettingsTransaction = () => {
   )
 }
 
-export default SettingsTransaction;
+export default BillingTransactionPage;

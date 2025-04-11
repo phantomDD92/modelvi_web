@@ -20,6 +20,11 @@ router.route("/auth")
 router.route("/profile")
   .get(authenticate, AuthCtrl.handleGetProfile)
 
+router.route("/affiliate")
+  .get(authenticate, AuthCtrl.handleGetAffiliate)
+  .post(AuthCtrl.handleCreateAffiliateClick)
+  .put(AuthCtrl.handleUpdateAffiliateRegistration)
+  
 router.use("/agency", agencyRouter);
 
 router.use("/admin", managerRouter);

@@ -1,17 +1,19 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Home from "./pages/Home";
-import routes from "./routes";
+import DashboardPage from "./pages/agency/DashboardPage";
 import Layouts from "./layouts/Layout";
-import LoginPage from "./pages/auth/sign-in";
-import LandingPage from "./pages/Landing";
+import HomePage from "./pages/HomePage";
 import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import { useAuth } from "./contexts";
+import { AdminRole } from "./utils/const";
+import routes from "./routes/agencyRoutes";
+import adminRoutes from "./routes/adminRoutes";
 
 const Router = () => {
   const { isAuthenticated, session } = useAuth();
+  console.log(isAuthenticated, session?.role == AdminRole.MANAGER)
   return (
     <BrowserRouter>
       <Routes>
@@ -20,21 +22,26 @@ const Router = () => {
             <Route
               key={route.key}
               exact
-              element={route.component ? <Layouts>{route.component}</Layouts> : <Home />}
+              element={route.component ? <Layouts>{route.component}</Layouts> : <DashboardPage />}
               path={route.path}
             />
           ))}
-
-        {/* } */}
-        <Route key="login" element={<LoginPage />} path="/auth/signin" />
-        {!isAuthenticated && <Route key="landing" element={<LandingPage />} exact path="/" />}
+        {isAuthenticated && session?.role == AdminRole.MANAGER &&
+          adminRoutes.map(route => (
+            <Route
+              key={route.key}
+              exact
+              element={route.component ? <Layouts>{route.component}</Layouts> : <DashboardPage />}
+              path={route.path}
+            />
+          ))}
+        {!isAuthenticated && <Route key="landing" element={<HomePage />} exact path="/" />}
         <Route key="sign-in" element={<SignIn />} path="/sign-in" />
         <Route key="sign-up" element={<SignUp />} path="/sign-up" />
         <Route key="forgot-pass" element={<ForgotPassword />} path="/forgot-pass" />
         <Route key="verify" element={<ForgotPassword />} path="/verify" />
-      
         <Route path="*" element={<Navigate to="/" />} />
-        {/* {isAuthenticated && <Route path="*" element={<Navigate to="/dashboard" />} />} */}
+        {/* {isAuthenticated && session?.role == AdminRole.MANAGER && } */}
       </Routes>
     </BrowserRouter>
   );

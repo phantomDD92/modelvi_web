@@ -9,7 +9,7 @@ import logoDark from "@/assets/images/logo-dark.png";
 import logoLight from "@/assets/images/logo-light.png";
 
 
-const TopNavBar = ({ menuItems, position}) => {
+const TopNavBar = ({ menuItems, position, referralCode }) => {
   const navbarRef = useRef(null);
   const { hash, pathname } = useLocation();
 
@@ -110,14 +110,14 @@ const TopNavBar = ({ menuItems, position}) => {
               </ul>
               <div className="ms-auto shrink gap-2 lg:inline-flex">
                 <Link
-                  to="/sign-in"
+                  to={referralCode ? `/sign-in?ref=${referralCode}` : "/sign-in"}
                   className="mr-4 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-1.5 text-base text-white transition-all hover:bg-primary-700"
                 >
                   <LuLogIn className="h-4 w-4 fill-white/40" />
                   <span className="hidden sm:block">Log In</span>
                 </Link>
                 <Link
-                  to="/sign-in"
+                  to={referralCode ? `/sign-up?ref=${referralCode}` : "/sign-up"}
                   className="inline-flex items-center gap-2 rounded-full bg-purple-600 px-6 py-1.5 text-base text-white transition-all hover:bg-purple-700"
                 >
                   <LuUserPlus className="h-4 w-4 fill-white/40" />

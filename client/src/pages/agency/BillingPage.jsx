@@ -5,8 +5,8 @@ import { useSelector } from "react-redux";
 import { AdminRole } from "@/utils/const";
 import { LuReceipt, LuUser, LuUsers, LuWallet } from "react-icons/lu";
 import { useNavigate, useParams } from "react-router-dom";
-import SettingsPayment from "./SettingsPayment";
-import SettingsTransaction from "./SettingsTransaction";
+import BillingPaymentPage from "./BillingPaymentPage";
+import BillingTransactionPage from "./BillingTransactionPage";
 import PageMetaData from "@/components/common/PageMetaData";
 import { getFiatAmount } from "@/utils/string";
 
@@ -30,7 +30,7 @@ const profileTabs = [
   { key: "transactions", label: "Transactions" },
 ]
 
-export const SettingsPage = () => {
+export const BillingPage = () => {
   const params = useParams();
   const navigate = useNavigate();
   const profile = useSelector(state => state.v2.profile);
@@ -116,9 +116,9 @@ export const SettingsPage = () => {
             />
             {
               key == "payments"
-                ? <SettingsPayment vip={profile?.vip} />
+                ? <BillingPaymentPage vip={profile?.vip} />
                 : key == "transactions"
-                  ? <SettingsTransaction />
+                  ? <BillingTransactionPage />
                   // : key == "overview"
                   //   ? <SettingsOverview />
                   : <></>
@@ -130,4 +130,4 @@ export const SettingsPage = () => {
   );
 };
 
-export default SettingsPage;
+export default BillingPage;

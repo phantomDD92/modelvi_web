@@ -2,7 +2,7 @@ import { pricingPlans } from "./data";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const Pricing = () => {
+const Pricing = ({ referralCode }) => {
   const [selected, setSelected] = useState(0);
   return (
     <section id="pricing" className="lg:py-20 py-10">
@@ -71,7 +71,7 @@ const Pricing = () => {
                       CONTACT SALES
                     </a>
                     <Link
-                      to="/sign-up"
+                      to={referralCode ? `/sign-up?ref=${referralCode}` : "/sign-up"}
                       className="inline-flex items-center min-w-[144px] justify-center gap-2 border border-purple-700 text-purple p-2 rounded-md bg-purple-600 text-center text-base text-white transition-all hover:bg-purple-700"
                     >
                       SIGN UP

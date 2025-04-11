@@ -18,7 +18,7 @@ import { Modal } from "antd";
 import toast from "react-hot-toast";
 import PageMetaData from "@/components/common/PageMetaData";
 
-export const ChatTeamListPage = () => {
+export const AdminChatTeamListPage = () => {
 
   const [editOpen, setEditOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -123,4 +123,4 @@ export const ChatTeamListPage = () => {
   );
 };
 
-export default ChatTeamListPage;
+export default AdminChatTeamListPage;

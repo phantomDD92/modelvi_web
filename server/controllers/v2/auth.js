@@ -7,10 +7,14 @@ const { sendError, sendResult, ApiError } = require("../../utils/resp");
 const ProxyService2 = require('../../services/v2/proxy');
 const ModelService2 = require('../../services/v2/model');
 const AccountService2 = require('../../services/v2/account');
+const { generateReferralCode, getClientIp } = require('../../utils/helper');
+const AffiliateService2 = require('../../services/v2/affiliate');
+const AgencyService2 = require('../../services/v2/agency');
+const TransactionService2 = require('../../services/v2/transaction');
 
 const handleRegisterAgency = async (req, res) => {
   try {
-    const { name, email, telegram, password } = req.body;
+    const { name, email, telegram, password, referralCode } = req.body;
     // first check if duplicated one already exists
     let dupAgency = await ManagerModel.findOne({ email }, 'name email version')
     if (!dupAgency) {
@@ -26,10 +30,20 @@ const handleRegisterAgency = async (req, res) => {
         }
       });
     } else {
+      let referrer;
+      if (referralCode) {
+        referrer = await AgencyService2.findAgencyByReferralCode(referralCode);
+      }
       // create new agency
       await ManagerModel.create({
-        name, email, telegram, password: bcryptjs.hashSync(password, 12), version: 2, verified: false,
+        name, email, telegram, password: bcryptjs.hashSync(password, 12), version: 2, verified: false, referrer
       })
+      if (referralCode) {
+        const ipAddress = getClientIp(req);
+        const agency = await AgencyService2.findAgencyByReferralCode(referralCode)
+        const affiliate = await AffiliateService2.findOrCreateAffiliate(agency._id, referralCode, ipAddress);
+        await AffiliateService2.setAffiliateCompleted(affiliate._id);
+      }
     }
     sendResult(res);
   } catch (error) {
@@ -77,10 +91,68 @@ const handleGetProfile = async (req, res) => {
   }
 }
 
+const handleGetAffiliate = async (req, res) => {
+  try {
+    // first get referral code
+    let referralCode = req.manager.referralCode;
+    if (!referralCode) {
+      referralCode = generateReferralCode(12);
+      await AgencyService2.setReferralCode(req.manager._id, referralCode);
+    }
+    // get clicks, attempted registrations, finalized registrations statistics
+    referrals = await AffiliateService2.getTotalAffiliateStats(req.manager._id);
+    referralStats = await AffiliateService2.getMonthlyAffiliateStats(req.manager._id, new Date().getFullYear());
+    // get affiliate sales statistics
+    const referees = await AgencyService2.findReferees(req.manager._id)
+    const refereeIds = referees.map(referee => referee._id);
+    const earnings = await TransactionService2.getTotalEarningsByReferees(refereeIds);
+    const earningStats = await TransactionService2.getMonthlyEarningsByReferees(refereeIds, new Date().getFullYear());
+    sendResult(res, { referralCode, referrals: referrals[0], referralStats, earnings: earnings[0], earningStats })
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
+const handleCreateAffiliateClick = async (req, res) => {
+  try {
+    const { referralCode } = req.body;
+    const ipAddress = getClientIp(req);
+    if (referralCode) {
+      const agency = await AgencyService2.findAgencyByReferralCode(referralCode);
+      if (agency) {
+        await AffiliateService2.findOrCreateAffiliate(agency._id, referralCode, ipAddress)
+      }
+    }
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
+const handleUpdateAffiliateRegistration = async (req, res) => {
+  try {
+    const { referralCode } = req.body;
+    const ipAddress = getClientIp(req);
+    if (referralCode) {
+      const agency = await AgencyService2.findAgencyByReferralCode(referralCode);
+      if (agency) {
+        const affiliate = await AffiliateService2.findOrCreateAffiliate(agency._id, referralCode, ipAddress);
+        await AffiliateService2.setAffiliateAttempted(affiliate._id)
+      }
+    }
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
 const AuthCtrl = {
   handleRegisterAgency,
   handleLoginAgency,
   handleGetProfile,
+  handleGetAffiliate,
+  handleCreateAffiliateClick,
+  handleUpdateAffiliateRegistration
 };
 
 module.exports = AuthCtrl

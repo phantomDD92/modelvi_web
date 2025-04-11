@@ -10,7 +10,7 @@ const initialState = {
   referralCode: undefined,
 }
 
-const v2Reducer = (state = initialState, action) => {
+const adminReducer = (state = initialState, action) => {
   switch (action.type) {
     case ACTIONS.LOAD_PROFILE:
       return {
@@ -49,4 +49,4 @@ const v2Reducer = (state = initialState, action) => {
   }
 };
 
-export default v2Reducer;
+export default adminReducer;

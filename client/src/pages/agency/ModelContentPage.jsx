@@ -20,7 +20,7 @@ import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE } from "@/utils/const";
 import { Modal } from "antd";
 import ModelPlatformDialog from "@/components/model/ModelPlatformDialog";
 
-export const ModelContent = () => {
+export const ModelContentPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -132,4 +132,4 @@ export const ModelContent = () => {
   );
 };
 
-export default ModelContent;
+export default ModelContentPage;

@@ -11,6 +11,7 @@ dotenv.config();
 
 const app = express();
 const buildPath = path.join(__dirname, 'client')
+app.set('trust proxy', true);
 app.use(express.static(buildPath));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 app.use(bodyParser.json({ limit: "30mb", extended: true }));

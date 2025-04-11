@@ -8,7 +8,7 @@ import { updateAccountStatus } from "@/redux/model/actions";
 import { useNavigate } from "react-router-dom";
 import PageMetaData from "@/components/common/PageMetaData";
 
-export const Home = () => {
+export const AdminDashboardPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const homeProps = useSelector(state => state.home)
@@ -175,4 +175,4 @@ export const Home = () => {
   );
 };
 
-export default Home;
+export default AdminDashboardPage;

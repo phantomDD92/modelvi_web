@@ -25,7 +25,7 @@ import {
 import { AgencyRole, DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
 import PageMetaData from "@/components/common/PageMetaData";
 
-export const AgencyListPage = () => {
+export const AdminAgencyListPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -168,4 +168,4 @@ export const AgencyListPage = () => {
   );
 };
 
-export default AgencyListPage;
+export default AdminAgencyListPage;

@@ -23,21 +23,31 @@ function generateReferralCode(length = 10) {
   // Define the character set to use
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
-  
+
   // Create a cryptographically strong random values array
   const randomValues = new Uint32Array(length);
   crypto.getRandomValues(randomValues);
-  
+
   // Build the string
   randomValues.forEach((value) => {
     result += chars[value % chars.length];
   });
-  
+
   return result;
+}
+
+function getClientIp(req) {
+  return req.headers['x-forwarded-for']?.split(',')[0] ||
+    req.headers['x-real-ip'] ||
+    req.connection?.remoteAddress ||
+    req.socket?.remoteAddress ||
+    req.connection?.socket?.remoteAddress;
 }
 
 module.exports = {
   getPricePlan,
   getDateDelta,
-  hasSufficientBalance
+  hasSufficientBalance,
+  generateReferralCode,
+  getClientIp,
 }

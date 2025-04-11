@@ -1,6 +1,7 @@
 const { AdminRole } = require("../config/const")
 const ManagerModel = require("../models/manager")
 const bcrypt = require('bcryptjs')
+const { generateReferralCode } = require("../utils/helper")
 
 const createAgency = ({ name, email, telegram, password }) =>
     ManagerModel.create({
@@ -10,7 +11,8 @@ const createAgency = ({ name, email, telegram, password }) =>
         password: bcrypt.hashSync(password, 12),
         role: AdminRole.AGENCY,
         status: true,
-        newVersion: true,
+        version: 2,
+        referralCode: generateReferralCode(12),
     })
 
 const findAgencyByName = (name) =>

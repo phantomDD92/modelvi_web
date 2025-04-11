@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const ManagerModel = require("../models/manager");
+const AgencyService2 = require("../services/v2/agency");
 
 const authenticate = async (req, res, next) => {
     try {
@@ -14,7 +15,7 @@ const authenticate = async (req, res, next) => {
             return
         }
         const { id } = jwt.verify(tokens[1], process.env.SECRET_KEY || "SECRET_KEY_MODELVI");
-        const manager = await ManagerModel.findById(id, "name email telegram role balance status vip verified");
+        const manager = await AgencyService2.getAgency(id);
         if (!manager || !manager.status) {
             res.status(401).json();
             return
@@ -22,7 +23,6 @@ const authenticate = async (req, res, next) => {
         req.manager = manager.toJSON();
         next();
     } catch (error) {
-        console.error(error);
         res.status(401).json();
         return
     }

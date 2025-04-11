@@ -2,13 +2,17 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const AffiliateSchema = new Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Manager', required: true },
-  code: { type: String, unique: true, required: true },
-  clicks: { type: Number, default: 0 },
-  registrations: { type: Number, default: 0 },
-  earnings: { type: Number, default: 0 },
+  referrer: { type: mongoose.Schema.Types.ObjectId, ref: 'Manager', required: true },
+  referralCode: { type: String, unique: true, required: true },
+  ipAddress: { type: String },
+  attempted: { type: Boolean, default: false },
+  completed: { type: Boolean, default: false },
+  clickedAt: { type: Date, default: Date.now },
+  attemptedAt: { type: Date },
+  completedAt: { type: Date },
 });
 
+AffiliateSchema.index({ referrer: 1 });
 
 const AffiliateModel = mongoose.model("Affiliate", AffiliateSchema);
 module.exports = AffiliateModel;

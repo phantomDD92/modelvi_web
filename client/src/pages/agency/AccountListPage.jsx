@@ -24,7 +24,7 @@ import {
 import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
 import PageMetaData from "@/components/common/PageMetaData";
 
-export const AccountList = () => {
+export const AccountListPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -173,4 +173,4 @@ export const AccountList = () => {
   );
 };
 
-export default AccountList;
+export default AccountListPage;

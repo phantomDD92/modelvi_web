@@ -1,19 +1,30 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PageMetaData from "@/components/common/PageMetaData";
 import { PasswordFormInput, TextFormInput } from "@/components/form";
 import AuthLayout from "../AuthLayout";
-import { registerAgency } from "@/redux/v2/actions";
+import { registerAgency, setAffiliateRegistration } from "@/redux/v2/actions";
 
 const SignUp = () => {
 
   const [rememberMe, setRememberMe] = useState(false);
+  const [refCode, setRefCode] = useState();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const referralCode = queryParams.get('ref');
+    if (referralCode) {
+      setRefCode(referralCode)
+      dispatch(setAffiliateRegistration(referralCode));
+    }
+  }, [navigate]);
 
   const registerFormSchema = yup.object({
     name: yup.string().required("Please enter your name"),
@@ -34,7 +45,7 @@ const SignUp = () => {
       localStorage.setItem("email", email);
       localStorage.setItem("password", password);
     }
-    dispatch(registerAgency(data, () => { reset(); }))
+    dispatch(registerAgency({ ...data, referralCode: refCode }, () => { reset(); }))
   }
 
   return (
@@ -88,7 +99,7 @@ const SignUp = () => {
               className="size-4 rounded border-white/20 bg-white/20 text-primary shadow-sm focus:border-primary focus:ring focus:ring-primary/60 focus:ring-offset-0"
               id="checkbox-signin"
               value={rememberMe}
-              onChange={e =>  setRememberMe(e.target.value) }
+              onChange={e => setRememberMe(e.target.value)}
             />
             <label
               className="ms-2 select-none align-middle text-base/none text-zinc-200"
@@ -112,7 +123,7 @@ const SignUp = () => {
 
       <p className="shrink text-center text-zinc-200">
         Already have an account ?
-        <Link to="/sign-in" className="ms-1 text-primary">
+        <Link to={refCode ? `/sign-in?ref=${refCode}` : "/sign-in"} className="ms-1 text-primary">
           <b>Login</b>
         </Link>
       </p>

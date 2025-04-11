@@ -7,7 +7,7 @@ import moment from "moment";
 import { createSearchParams, useLocation, useNavigate, useParams } from "react-router-dom";
 import qs from 'query-string';
 
-export const AccountHistory = () => {
+export const AccountHistoryPage = () => {
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false);
   const modelProps = useSelector(state => state.model)
@@ -107,4 +107,4 @@ export const AccountHistory = () => {
   );
 };
 
-export default AccountHistory;
+export default AccountHistoryPage;

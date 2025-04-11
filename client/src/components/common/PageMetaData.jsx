@@ -1,10 +1,10 @@
 import { Helmet } from "react-helmet-async";
 
-const PageMetaData = ({ title }) => {
+const PageMetaData = ({ title, admin}) => {
   return (
     <Helmet>
       <title>
-        {title} | Modelvi
+        {`${title} | ModelVI${admin ? " Admin" : ""}`}
       </title>
     </Helmet>
   );

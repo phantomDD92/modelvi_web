@@ -1,12 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Menu, Typography } from "antd";
-import routes from "@/routes";
-import { useNavigate } from "react-router-dom";
+import routes from "@/routes/agencyRoutes";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts";
+import { adminMenus, agencyMenus } from "./SideMenus";
 
 const SiderBar = () => {
-    const currentKey = window.location.pathname ? window.location.pathname.split("/")[1] || "dashboard" : "dashboard"
-    const navigate = useNavigate();
+    const location = useLocation();
+    const [isAdmin, setAdmin] = useState(false);
+    const [key, setKey] = useState('dashboard');
+
+    useEffect(() => {
+        const pathname = location.pathname;
+        const segments = pathname.split("/");
+        console.log(segments)
+        if (segments[1] == "admin") {
+            setAdmin(true);
+            setKey(`admin_${segments[2] || "dashboard"}`)
+        } else {
+            setAdmin(false)
+            setKey(segments[1] || "dashboard")
+        }
+    }, [location.pathname])
     const { session } = useAuth();
     return (
         <Layout.Sider
@@ -19,11 +34,12 @@ const SiderBar = () => {
             <Menu
                 className="text-base"
                 mode="inline"
-                defaultSelectedKeys={[currentKey]}
-                onSelect={({ item }) => {
-                    navigate(item.props.link);
-                }}
-                items={routes.filter(route => route.mode === "main" && (!route.visible || route.visible(session?.role))).map(({ visible, ...data }) => ({ ...data }))} />
+                selectedKeys={[key]}
+                items={isAdmin
+                    ? adminMenus.map(({ key, icon, label, path }) => ({ key, icon, label: <Link to={path}>{label}</Link> }))
+                    : agencyMenus.filter(menu => !menu.visible || menu.visible(session?.role)).map(({ key, icon, label, path }) => ({ key, icon, label: <Link to={path}>{label}</Link> }))
+                }
+            />
         </Layout.Sider>
     )
 }
