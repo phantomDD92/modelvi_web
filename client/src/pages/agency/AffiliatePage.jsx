@@ -10,7 +10,6 @@ const AffiliatePage = () => {
   const dispatch = useDispatch();
   const referralCode = useSelector(state => state.v2.referralCode);
   const affiliate = useSelector(state => state.v2.affiliate);
-  console.log(affiliate)
   useEffect(() => {
     dispatch(getAffiliate());
   }, [getAffiliate]);

@@ -100,8 +100,8 @@ const handleGetAffiliate = async (req, res) => {
       await AgencyService2.setReferralCode(req.manager._id, referralCode);
     }
     // get clicks, attempted registrations, finalized registrations statistics
-    referrals = await AffiliateService2.getTotalAffiliateStats(req.manager._id);
-    referralStats = await AffiliateService2.getMonthlyAffiliateStats(req.manager._id, new Date().getFullYear());
+    referrals = await AffiliateService2.getAgencyTotalAffiliateStats(req.manager._id);
+    referralStats = await AffiliateService2.getAgencyMonthlyAffiliateStats(req.manager._id, new Date().getFullYear());
     // get affiliate sales statistics
     const referees = await AgencyService2.findReferees(req.manager._id)
     const refereeIds = referees.map(referee => referee._id);

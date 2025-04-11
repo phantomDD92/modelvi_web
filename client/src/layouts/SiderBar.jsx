@@ -13,7 +13,6 @@ const SiderBar = () => {
     useEffect(() => {
         const pathname = location.pathname;
         const segments = pathname.split("/");
-        console.log(segments)
         if (segments[1] == "admin") {
             setAdmin(true);
             setKey(`admin_${segments[2] || "dashboard"}`)

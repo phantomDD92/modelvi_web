@@ -2,6 +2,7 @@ const express = require("express");
 const authenticate = require("../../middleware/auth");
 const checkManager = require("../../middleware/manager");
 const AgencyCtrl2 = require("../../controllers/v2/agency");
+const AffiliateCtrl2 = require("../../controllers/v2/affiliate");
 
 const router = express.Router();
 
@@ -11,4 +12,9 @@ router.route("/version")
 router.route("/agency/:id")
   .all(authenticate, checkManager)
   .put(AgencyCtrl2.handleUpdateAgencyForAdmin)
+
+router.route("/affiliate")
+  .all(authenticate, checkManager)
+  .get(AffiliateCtrl2.handleLoadAffiliatesForAdmin)
+
 module.exports = router;

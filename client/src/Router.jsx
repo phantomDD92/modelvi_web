@@ -13,7 +13,6 @@ import adminRoutes from "./routes/adminRoutes";
 
 const Router = () => {
   const { isAuthenticated, session } = useAuth();
-  console.log(isAuthenticated, session?.role == AdminRole.MANAGER)
   return (
     <BrowserRouter>
       <Routes>

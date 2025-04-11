@@ -34,6 +34,10 @@ const findReferees = (agencyId) =>
 const setReferralCode = (agencyId, referralCode) =>
   ManagerModel.findByIdAndUpdate(agencyId, { $set: { referralCode } });
 
+const loadAgenciesForAffiliate = () =>
+  ManagerModel.find({}, "name email referrer commission referralCode")
+    .populate("referrer", "name")
+    
 const AgencyService2 = {
   createAgency,
   findReferees,
@@ -43,6 +47,7 @@ const AgencyService2 = {
   findAgencyByReferralCode,
   getAgency,
   setReferralCode,
+  loadAgenciesForAffiliate,
 }
 
 module.exports = AgencyService2

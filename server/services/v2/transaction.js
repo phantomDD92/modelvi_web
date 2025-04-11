@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const moment = require("moment");
 const TransactionModel = require("../../models/transaction");
 
 const loadTransactions = (agency) =>
@@ -16,11 +17,10 @@ const createTransaction = (agencyId, amount, from, to, desc, accountId = undefin
 
 const getTotalEarningsByReferees = (refereeIds) =>
   TransactionModel.aggregate([
-    // Match transactions from the specified referees with positive amounts
     {
       $match: {
         agency: { $in: refereeIds.map(id => new mongoose.Types.ObjectId(id)) },
-        amount: { $gte: 0 }
+        amount: { $lt: 0 }
       }
     },
     {
@@ -82,7 +82,7 @@ const getMonthlyEarningsByReferees = (refereeIds, year) =>
     {
       $match: {
         agency: { $in: refereeIds.map(id => new mongoose.Types.ObjectId(id)) },
-        amount: { $gt: 0 },
+        amount: { $lt: 0 },
         createdAt: { $gte: new Date(`${year}-01-01`), $lt: new Date(`${year + 1}-01-01`) }
       }
     },
@@ -140,11 +140,155 @@ const getMonthlyEarningsByReferees = (refereeIds, year) =>
     { $sort: { month: 1 } }
   ]);
 
+const getTotalStatsByAgency = async () => {
+  return await TransactionModel.aggregate([
+    { $match: { amount: { $lt: 0 } } },
+    {
+      $lookup: {
+        from: "managers",
+        localField: "agency",
+        foreignField: "_id",
+        as: "agencyData"
+      }
+    },
+    { $unwind: "$agencyData" },
+    { $match: { "agencyData.referrer": { $exists: true, $ne: null } } },
+    {
+      $lookup: {
+        from: "managers",
+        localField: "agencyData.referrer",
+        foreignField: "_id",
+        as: "referrerData"
+      }
+    },
+    { $unwind: "$referrerData" },
+    {
+      $addFields: {
+        commission: {
+          $multiply: [
+            "$amount",
+            {
+              $divide: [
+                { $ifNull: ["$referrerData.commission", 10] }, // Default to 10 if null
+                100
+              ]
+            }
+          ]
+        }
+      }
+    },
+
+    // Group by agency and referrer
+    {
+      $group: {
+        _id: "$agencyData.referrer",
+        totalAmount: { $sum: "$amount" },
+        totalCommission: { $sum: "$commission" },
+        transactionCount: { $sum: 1 },
+      }
+    },
+    {
+      $project: {
+        totalAmount: 1,
+        totalCommission: 1,
+        transactionCount: 1,
+      }
+    },
+    { $sort: { totalCommission: -1 } }
+  ]);
+};
+
+const getTotalStatsByTime = async (timePeriod = 'day') => {
+  let dateFormat, dateFilter;
+  switch (timePeriod) {
+    case 'day':
+      dateFormat = { day: { $dayOfMonth: "$createdAt" }, month: { $month: "$createdAt" }, year: { $year: "$createdAt" } };
+      break;
+    case 'month':
+      dateFormat = { month: { $month: "$createdAt" }, year: { $year: "$createdAt" } };
+      break;
+    case 'week':
+      dateFormat = { week: { $week: "$createdAt" }, year: { $year: "$createdAt" } }
+      break;
+    default:
+      dateFormat = { day: { $dayOfMonth: "$createdAt" }, month: { $month: "$createdAt" }, year: { $year: "$createdAt" } };
+  }
+  switch (timePeriod) {
+    case 'day':
+      dateFilter = { createdAt: { $gte: moment().startOf("day").subtract(15, "day").toDate(), $lte: moment().endOf("day").toDate() } }
+      break;
+    case 'month':
+      dateFilter = { createdAt: { $gte: moment().startOf("month").subtract(12, "month").toDate(), $lte: moment().endOf("month").toDate() } }
+      break;
+    case 'week':
+      dateFilter = { createdAt: { $gte: moment().startOf("week").subtract(10, "week").toDate(), $lte: moment().endOf("week").toDate() } }
+      break;
+    default:
+      dateFilter = { createdAt: { $gte: moment().startOf("day").subtract(15, "day").toDate(), $lte: moment().endOf("day").toDate() } }
+  }
+  return await TransactionModel.aggregate([
+    { $match: { ...dateFilter, amount: { $lt: 0 } } },
+    {
+      $lookup: {
+        from: "managers",
+        localField: "agency",
+        foreignField: "_id",
+        as: "agencyData"
+      }
+    },
+    { $unwind: "$agencyData" },
+    { $match: { "agencyData.referrer": { $exists: true, $ne: null } } },
+    {
+      $lookup: {
+        from: "managers",
+        localField: "agencyData.referrer",
+        foreignField: "_id",
+        as: "referrerData"
+      }
+    },
+    { $unwind: "$referrerData" },
+    {
+      $addFields: {
+        commission: {
+          $multiply: [
+            "$amount",
+            {
+              $divide: [
+                { $ifNull: ["$referrerData.commission", 10] }, // Default to 10 if null
+                100
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      $group: {
+        _id: { ...dateFormat },
+        totalAmount: { $sum: "$amount" },
+        totalCommission: { $sum: "$commission" },
+        transactionCount: { $sum: 1 },
+      }
+    },
+    {
+      $project: {
+        date: "$_id",
+        totalAmount: 1,
+        totalCommission: 1,
+        transactionCount: 1,
+      }
+    },
+    { $sort: { "_id.year": 1, "_id.month": 1, "_id.week": 1, "_id.day": 1 } }
+  ]);
+};
+
 const TransactionService2 = {
   loadTransactions,
   createTransaction,
   getTotalEarningsByReferees,
   getMonthlyEarningsByReferees,
+  getTotalStatsByAgency,
+  getTotalStatsByTime,
 }
 
 module.exports = TransactionService2;

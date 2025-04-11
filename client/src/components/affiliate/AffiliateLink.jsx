@@ -5,7 +5,7 @@ import { LuCheck, LuCopy, LuCopyCheck } from "react-icons/lu";
 const AffiliateLink = ({ referralCode }) => {
 
   const [copied, setCopied] = useState(false);
-  const getReferralLink = (code) => code ? `http://localhost:5173?ref=${code}` : 'http://localhost:5173'
+  const getReferralLink = (code) => code ? `https://modelvi.com?ref=${code}` : 'https://modelvi.com'
   const handleCopyClick = () => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);

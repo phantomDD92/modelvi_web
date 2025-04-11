@@ -1,4 +1,6 @@
-import { Card, Table, Flex, Switch, Avatar, Dropdown, Space, Typography } from "antd";
+import { getFiatAmount } from "@/utils/string";
+import { Card, Table, Flex, Avatar, Dropdown } from "antd";
+import { render } from "react-dom";
 import { LuPencil } from "react-icons/lu";
 
 export const AffiliateAgencyTable = ({
@@ -13,36 +15,46 @@ export const AffiliateAgencyTable = ({
             key: 'name',
             title: 'Name',
             dataIndex: 'name',
-            width: 150,
+            width: 200,
             render: value => <Flex gap="middle" align='center'><Avatar src="/img/agency.png" /><span>{value}</span></Flex>
+        },
+        {
+            key: 'referralCode',
+            title: 'Affiliate Link',
+            dataIndex: 'referralCode',
+            render: value => value ? `https://modelvi.com?ref=${value}`: '-'
         },
         {
             key: 'commission',
             title: 'Commission',
+            width: 120,
             dataIndex: 'commission',
+            render: value => `${value} %`
         },
         {
             key: 'referrer',
             title: 'Referrer',
             dataIndex: 'referrer',
+            width: 200,
+            render: value => value?.name || "-"
         },
         {
             key: 'clicks',
             title: 'Clicks',
             width: 120,
-            dataIndex: 'referrer',
+            dataIndex: 'clicks',
         },
         {
             key: 'attempts',
             title: 'Attempted Registrations',
             width: 120,
-            dataIndex: 'referrer',
+            dataIndex: 'attempts',
         },
         {
             key: 'completions',
             title: 'Finalized Registrations',
             width: 120,
-            dataIndex: 'referrer',
+            dataIndex: 'completions',
         },
         {
             key: 'referees',
@@ -54,6 +66,7 @@ export const AffiliateAgencyTable = ({
             key: 'earnings',
             title: 'Earnings',
             dataIndex: 'earnings',
+            render: value => getFiatAmount(value)
         },
         {
             key: 'action',
@@ -73,7 +86,7 @@ export const AffiliateAgencyTable = ({
                             }
                         }
                     }}>
-                    <LuPencil /> Change Commission
+                    <LuPencil /> Commission
                 </Dropdown.Button>
             )
         },
