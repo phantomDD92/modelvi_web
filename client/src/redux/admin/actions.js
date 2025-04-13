@@ -4,8 +4,17 @@ import ACTIONS from "./types";
 export const loadAffiliatesForAdmin = (time = "day", callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/v2/admin/affiliate`,
-    params: {time},
+    params: { time },
     action: ACTIONS.LOAD_AFFILIATES,
     callback
   })
 }
+
+export const loadProxiesForAdmin = (agency, callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/admin/proxy`,
+    params: { agency },
+    action: ACTIONS.LOAD_PROXIES,
+    callback
+  })
+};

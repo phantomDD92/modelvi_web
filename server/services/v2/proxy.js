@@ -1,13 +1,15 @@
 const ProxyModel = require("../../models/proxy")
 
-const findAgencyProxies = (agencyId) =>
-  ProxyModel.find({ owner: agencyId });
-
 const getAgencyProxyCount = (agencyId) =>
   ProxyModel.countDocuments({ owner: agencyId });
 
+const loadAgencyProxies = (agencyId) =>
+  agencyId == "0"
+    ? ProxyModel.find({})
+    : ProxyModel.find({ owner: agencyId })
+
 const ProxyService2 = {
-  findAgencyProxies,
+  loadAgencyProxies,
   getAgencyProxyCount,
 }
 

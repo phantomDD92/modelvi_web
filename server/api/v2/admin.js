@@ -17,4 +17,8 @@ router.route("/affiliate")
   .all(authenticate, checkManager)
   .get(AffiliateCtrl2.handleLoadAffiliatesForAdmin)
 
+route.route("/proxy")
+  .all(authenticate, checkManager)
+  .get(ProxyCtrl2.handleLoadProxiesForAdmin)
+  
 module.exports = router;
