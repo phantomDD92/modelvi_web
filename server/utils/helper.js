@@ -4,7 +4,7 @@ const { DEFAULT_PRICE_PLANS, REVENUE_THRESHOLDS } = require("./const");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const ModelVI_DOMAIN = process.env.ModelVI_DOMAIN ?? 'https://modelvi.com/'
+const ModelVI_DOMAIN = process.env.ModelVI_DOMAIN ?? 'https://modelvi.com'
 
 function getPricePlan(agency, platform, revenue) {
   const pricePlans = (agency?.pricePlans && agency.pricePlans[platform]) ? agency.pricePlans[platform] || DEFAULT_PRICE_PLANS : DEFAULT_PRICE_PLANS;
