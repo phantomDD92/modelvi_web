@@ -31,8 +31,19 @@ const handleUpdateAgencyForAdmin = async (req, res) => {
   }
 }
 
+
+const handleLoadAgenciesForAdmin = async (req, res) => {
+  try {
+    const agencies = await AgencyService2.loadAgencies();
+    sendResult(res, { agencies })
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
 const AgencyCtrl2 = {
   handleUpdateAgencyForAdmin,
+  handleLoadAgenciesForAdmin,
 }
 
 module.exports = AgencyCtrl2;

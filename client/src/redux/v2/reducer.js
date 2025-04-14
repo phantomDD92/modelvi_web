@@ -8,6 +8,8 @@ const initialState = {
   currentPayment: undefined,
   affiliate: {},
   referralCode: undefined,
+
+  proxies: [],
 }
 
 const v2Reducer = (state = initialState, action) => {
@@ -43,6 +45,12 @@ const v2Reducer = (state = initialState, action) => {
           earningStats: action.payload.earningStats,
         },
 
+      };
+
+    case ACTIONS.LOAD_PROXIES:
+      return {
+        ...state,
+        proxies: action.payload.proxies,
       };
     default:
       return state;

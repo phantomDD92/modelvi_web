@@ -15,7 +15,7 @@ const handleLoadProxies = async (req, res) => {
 const handleAppendProxies = async (req, res) => {
     try {
         const { proxies, deadline } = req.body;
-        await ProxyService.appendProxies(req.manager, proxies, deadline)
+        await ProxyService.appendProxies(req.manager, proxies, deadline);
         sendResult(res)
     } catch (error) {
         sendError(res, error);

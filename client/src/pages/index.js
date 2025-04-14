@@ -3,7 +3,7 @@ export * from "@/pages/agency/ModelListPage";
 export * from "@/pages/agency/ModelContentPage";
 export * from "@/pages/agency/AccountListPage";
 export * from "@/pages/agency/AccountHistoryPage";
-export * from "@/pages/agency/ProxyListPage";
+export * from "@/pages/agency/AgencyProxyPage";
 export * from "@/pages/agency/CommentListPage";
 export * from "@/pages/agency/BillingPage";
 export * from "@/pages/agency/BillingOverviewPage";

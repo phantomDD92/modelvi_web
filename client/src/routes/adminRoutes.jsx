@@ -7,10 +7,11 @@ import {
   CommentListPage,
   ModelContentPage,
   ModelListPage,
-  ProxyListPage
 } from "@/pages"
 import AccountHistoryPage from "@/pages/agency/AccountHistoryPage"
 import AdminAffiliatePage from "@/pages/admin/AdminAffiliatePage"
+import AdminProxyStatPage from "@/pages/admin/AdminProxyStatPage"
+import AdminProxyAgencyPage from "@/pages/admin/AdminProxyAgencyPage"
 
 const adminRoutes = [
   { key: "admin_dashboard", path: "/admin", component: <AdminDashboardPage />, },
@@ -20,7 +21,8 @@ const adminRoutes = [
   { key: "admin_account", path: "/admin/account/:platform", component: <AccountListPage />, },
   { key: "admin_history", path: "/admin/account/:platform/:accountId", component: <AccountHistoryPage /> },
   { key: "admin_comment", path: "/admin/comment", component: <CommentListPage />, },
-  { key: "admin_proxy", path: "/admin/proxy", component: <ProxyListPage />, },
+  { key: "admin_proxy", path: "/admin/proxy", component: <AdminProxyStatPage />, },
+  { key: "admin_agency_proxy", path: "/admin/proxy/:agencyId", component: <AdminProxyAgencyPage />, },
   { key: "admin_chat", path: "/admin/chat", component: <AdminChatTeamListPage />, },
   { key: "admin_finance", path: "/admin/finance", component: <div>Admin Finance Page</div>, },
   { key: "admin_affiliate", path: "/admin/affiliate", component: <AdminAffiliatePage />, },

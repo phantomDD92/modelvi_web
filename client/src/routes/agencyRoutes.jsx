@@ -5,7 +5,7 @@ import {
     ModelContentPage,
     AccountListPage,
     AccountHistoryPage,
-    ProxyListPage,
+    AgencyProxyPage,
     CommentListPage,
     BillingPage,
 } from "@/pages";
@@ -18,7 +18,7 @@ const routes = [
     { key: "account", path: "/account/:platform", component: <AccountListPage />, },
     { key: "history", path: "/account/:platform/:accountId", component: <AccountHistoryPage /> },
     { key: "comment", path: "/comment", component: <CommentListPage />, },
-    { key: "proxy", path: "/proxy", component: <ProxyListPage />, },
+    { key: "proxy", path: "/proxy", component: <AgencyProxyPage />, },
     { key: "billing", path: "/billing/:key", component: <BillingPage />, },
     { key: "affiliate", path: "/affiliate", component: <AffiliatePage />, },
 ]

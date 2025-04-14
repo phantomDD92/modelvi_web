@@ -16,8 +16,10 @@ import {
 } from "@ant-design/icons";
 import moment from "moment";
 import { Platform } from "@/utils/const";
+import { LuBrush, LuCornerDownLeft, LuUpload } from "react-icons/lu";
 
-const ProxyTable = ({
+const AgencyProxyTable = ({
+    agency,
     pagination,
     rowSelection,
     loading,
@@ -30,6 +32,7 @@ const ProxyTable = ({
         onBulkDelete,
         onBulkStatus,
         onReset,
+        onBack,
     }
 }) => {
     const columns = [
@@ -131,7 +134,7 @@ const ProxyTable = ({
         <Card
             title={
                 <div>
-                    Proxy List&nbsp;(
+                    {`${agency?.name || ''} `}Proxy List&nbsp;(
                     <a href="https://proxy-seller.com/?partner=JRKRDS2FS7PGXQ" target="_blank">Proxy Seller</a>
                     &nbsp;-&nbsp;
                     <a href="https://billing.rayobyte.com/hosting/aff.php?aff=2556&redirectTo=https://rayobyte.com" target="_blank">Rayobyte Proxy</a>
@@ -143,15 +146,21 @@ const ProxyTable = ({
                     <Button
                         key="clear"
                         danger
-                        icon={<ClearOutlined />}
+                        icon={<LuBrush />}
                         onClick={onClear}>
                         Clear
                     </Button>
                     <Button
                         key="append"
-                        icon={<UploadOutlined />}
+                        icon={<LuUpload />}
                         onClick={onAppend}>
                         Append
+                    </Button>
+                    <Button
+                        key="back"
+                        icon={<LuCornerDownLeft />}
+                        onClick={onBack}>
+                        Back
                     </Button>
                 </Space>
             }
@@ -199,4 +208,4 @@ const ProxyTable = ({
     )
 }
 
-export default ProxyTable
+export default AgencyProxyTable

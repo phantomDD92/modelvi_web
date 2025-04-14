@@ -15,56 +15,47 @@ import {
   deleteBulkProxies,
   changeBulkProxiesStatus,
   resetProxy
-} from "@/redux/proxy/actions";
+} from "@/redux/v2/actions";
 import {
   ProxyTable,
   ProxyAppendDialog
 } from "@/components/proxy";
-import { AdminRole, DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
+import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
 import { Modal } from "antd";
-import { loadAgencies } from "@/redux/dashboard/actions";
-import { useAuth } from "@/contexts";
 import PageMetaData from "@/components/common/PageMetaData";
 
-export const ProxyListPage = () => {
+export const AgencyProxyPage = () => {
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [appendOpen, setAppendOpen] = useState(false);
-  const [agency, setAgency] = useState(0);
 
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const location = useLocation();
-  const { session } = useAuth();
-  const proxies = useSelector(state => state.proxy.proxies)
-  const managers = useSelector(state => state.home.managers);
+
+  const proxies = useSelector(state => state.v2.proxies)
 
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
 
-  const loadProxiesCallback = useCallback((agency) => {
+  const loadProxiesCallback = useCallback(() => {
     setLoading(true);
-    dispatch(loadProxies(agency, () => setLoading(false)));
+    dispatch(loadProxies(() => setLoading(false)));
   }, [dispatch,]);
 
   useEffect(() => {
-    loadProxiesCallback(agency);
-  }, [loadProxiesCallback, agency])
-
-  useEffect(() => {
-    if (session?.role == AdminRole.MANAGER)
-      dispatch(loadAgencies());
-  }, [loadAgencies]);
+    loadProxiesCallback();
+  }, [loadProxiesCallback])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      loadProxiesCallback(agency);
+      loadProxiesCallback();
     }, DEFAULT_REFRESH_TIMEOUT);
     return () => clearInterval(interval);
   });
 
   const handleChangeProxyStatus = (proxy, status) => {
-    dispatch(changeProxyStatus(proxy, status, () => loadProxiesCallback(agency)))
+    dispatch(changeProxyStatus(proxy, status, () => loadProxiesCallback()))
   }
 
   const handleChangeBulkProxiesStatus = (status) => {
@@ -77,26 +68,26 @@ export const ProxyListPage = () => {
   const handleClearProxies = () => {
     Modal.confirm({
       title: `Are you sure to clear all proxies?`,
-      onOk: () => dispatch(clearProxies(() => loadProxiesCallback(agency))),
+      onOk: () => dispatch(clearProxies(() => loadProxiesCallback())),
     });
   }
 
   const handleDeleteProxy = (proxy) => {
     Modal.confirm({
       title: `Are you sure to delete the proxy (${proxy.url})?`,
-      onOk: () => dispatch(deleteProxy(proxy, () => loadProxiesCallback(agency))),
+      onOk: () => dispatch(deleteProxy(proxy, () => loadProxiesCallback())),
     });
   }
 
   const handleDeleteBulkProxies = () => {
     Modal.confirm({
       title: `Are you sure to delete ${selectedRowKeys.length} proxies?`,
-      onOk: () => dispatch(deleteBulkProxies(selectedRowKeys, () => { setSelectedRowKeys([]); loadProxiesCallback(agency); })),
+      onOk: () => dispatch(deleteBulkProxies(selectedRowKeys, () => { setSelectedRowKeys([]); loadProxiesCallback(); })),
     });
   }
 
   const handleAppendProxies = (proxies, expiredAt) => {
-    dispatch(appendProxies(proxies, expiredAt, () => { setAppendOpen(false); loadProxiesCallback(agency); }))
+    dispatch(appendProxies(proxies, expiredAt, () => { setAppendOpen(false); loadProxiesCallback(); }))
   }
 
   const handleChangePagination = (pageValue, pageSizeValue) => {
@@ -107,18 +98,13 @@ export const ProxyListPage = () => {
   }
 
   const handleResetProxy = (proxy, platform) => {
-    dispatch(resetProxy(proxy, platform, () => loadProxiesCallback(agency)));
+    dispatch(resetProxy(proxy, platform, () => loadProxiesCallback()));
   }
 
   return (
     <>
       <PageMetaData title="Proxies" />
       <ProxyTable
-        filters={{
-          agencies: session?.role == AdminRole.MANAGER ? managers : [],
-          current: agency,
-          onChange: value => setAgency(value),
-        }}
         dataSource={proxies}
         loading={loading}
         pagination={{
@@ -149,4 +135,4 @@ export const ProxyListPage = () => {
   );
 };
 
-export default ProxyListPage;
+export default AgencyProxyPage;
