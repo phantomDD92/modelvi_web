@@ -1,6 +1,10 @@
 const moment = require("moment");
 const crypto = require("crypto");
 const { VIP_PRICE_PLANS, NORMAL_PRICE_PLANS } = require("./const");
+const dotenv = require("dotenv");
+dotenv.config();
+
+const ModelVI_DOMAIN = process.env.ModelVI_DOMAIN ?? 'https://modelvi.com/'
 
 function getPricePlan(agency, revenue) {
   const pricePlans = agency.vip ? VIP_PRICE_PLANS : NORMAL_PRICE_PLANS;
@@ -44,10 +48,59 @@ function getClientIp(req) {
     req.connection?.socket?.remoteAddress;
 }
 
+function getVerifyEmailTemplate(verifyLink) {
+  return `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>ModelVI Email Verification</title>
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              background-color: #f4f4f4;
+              margin: 0;
+              padding: 20px;
+          }
+          .container {
+              background-color: #ffffff;
+              padding: 20px;
+              border-radius: 5px;
+              max-width: 600px;
+              margin: 0 auto;
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          }
+          .button {
+              display: inline-block;
+              padding: 10px 20px;
+              margin-top: 20px;
+              background-color: #007bff;
+              color: #ffffff;
+              text-decoration: none;
+              border-radius: 5px;
+          }
+          a {
+            color: #ffffff !important;
+          }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <h2>Verify Your Email Address</h2>
+          <p>Thank you for registering with our service! To complete your registration, please verify your email address by clicking the button below:</p>
+          <a href="${ModelVI_DOMAIN}${verifyLink}" class="button">Verify Email</a>
+          <p>If you did not create an account, you can safely ignore this email.</p>
+          <p>Thank you,<br>The ModelVI Team</p>
+      </div>
+  </body>
+  </html>`  
+}
+
 module.exports = {
   getPricePlan,
   getDateDelta,
   hasSufficientBalance,
   generateReferralCode,
   getClientIp,
+  getVerifyEmailTemplate
 }

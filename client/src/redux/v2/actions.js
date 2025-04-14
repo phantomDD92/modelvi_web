@@ -165,3 +165,13 @@ export const deleteBulkProxies = (proxyIds, callback) => async (dispatch) => {
     callback
   })
 };
+export const verifyAgency = (params, callback) => async (dispatch) => {
+  try {
+    const payload = await ApiRequest.postAction(dispatch, {
+      path: `/v2/verify?token=${params.token}`,
+    })
+    callback && callback(payload.success);
+  } catch (error) {
+    callback && callback(false);
+  }  
+};

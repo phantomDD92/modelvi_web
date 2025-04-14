@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
 import ForgotPassword from "./pages/auth/ForgotPassword";
+import Verification from "./pages/auth/Verification";
 import { useAuth } from "./contexts";
 import { AdminRole } from "./utils/const";
 import routes from "./routes/agencyRoutes";
@@ -38,7 +39,7 @@ const Router = () => {
         <Route key="sign-in" element={<SignIn />} path="/sign-in" />
         <Route key="sign-up" element={<SignUp />} path="/sign-up" />
         <Route key="forgot-pass" element={<ForgotPassword />} path="/forgot-pass" />
-        <Route key="verify" element={<ForgotPassword />} path="/verify" />
+        <Route key="verify" element={<Verification />} path="/verify" />
         <Route path="*" element={<Navigate to="/" />} />
         {/* {isAuthenticated && session?.role == AdminRole.MANAGER && } */}
       </Routes>

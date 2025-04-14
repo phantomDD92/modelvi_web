@@ -1,54 +1,64 @@
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
+import { Link } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import PageMetaData from "@/components/common/PageMetaData";
-import { TextFormInput } from "@/components/form";
+import AuthLayout from "../AuthLayout";
+import { verifyAgency } from "@/redux/v2/actions";
 
 const Verification = () => {
-  const resetFormSchema = yup.object({
-    code: yup.string().required("Please enter your email verification code"),
-  });
-  const { control, handleSubmit } = useForm({
-    resolver: yupResolver(resetFormSchema),
-    defaultValues: {
-      code: "",
-    },
-  });
+  const [sec, setSec] = useState(-10);
+  const [verified, setVerified] = useState(false)
+  const location = useLocation();
+  const nativate = useNavigate();
+  const dispatch = useDispatch();
+  const params = new URLSearchParams(location.search);
+  const token = params.get('token');
 
-  const handleVerification = (data) => {
-    const { email, password } = data;
-    if (rememberMe) {
-      localStorage.setItem("email", email);
-      localStorage.setItem("password", password);
+  useEffect(() => {
+    if (!token || verified) return;
+    dispatch(verifyAgency( { token }, (result) => {
+      setSec(5)
+      setVerified(result)
+    }));
+    }, [token, verified]);
+
+  useEffect(() => {
+    if(!verified) return
+  
+    if (sec === 0) {
+      nativate('/sign-in');
+      return;
     }
-    dispatch(registerAgency(data, () => { reset(); }))
-  }
+  
+    const timer = setTimeout(() => {
+      setSec(prev => prev - 1);
+    }, 1000);
+  
+    return () => clearTimeout(timer);
+  }, [sec, verified]);
 
   return (
-    <>
+    <AuthLayout>
       <PageMetaData title="Email Verification" />
+      <p className="shrink text-center text-zinc-200 text-[20px]">
+        {verified === true ? 'Verified!' : 'Failed to verify your email'}
+      </p>
+      {verified === true &&
+        <p className="shrink text-center text-zinc-200">
+          Page will redirect automatically after <b className='text-red-600'>{sec}</b> seconds
+        </p>
+      }
+      {verified === false && 
+        <p className="shrink text-center text-zinc-200 mt-4">
+          Go to
+          <Link to="/sign-in" className="ms-1 text-primary">
+            <b>Login</b>
+          </Link>
+        </p>
+      }
 
-      <form onSubmit={handleSubmit(handleVerification)} className="mt-10 shrink">
-        <TextFormInput
-          label="Verfication"
-          containerClassName="mb-4"
-          name="code"
-          labelClassName="block text-base/normal text-zinc-200 font-semibold"
-          fullWidth
-          className="block w-full rounded border-white/10 py-2.5 bg-transparent text-white/80 focus:border-white/25 focus:outline-0 focus:ring-0"
-          control={control}
-        />
-
-        <div className="mb-6 flex flex-col justify-center gap-4">
-          <button
-            type="submit"
-            className="relative inline-flex w-full items-center justify-center rounded bg-primary px-6 py-3 text-base capitalize text-white transition-all hover:bg-primary-700"
-          >
-            Confirm
-          </button>
-        </div>
-      </form>
-    </>
+    </AuthLayout>
   );
 };
 
