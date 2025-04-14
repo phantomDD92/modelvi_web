@@ -4,7 +4,7 @@ const { VIP_PRICE_PLANS, NORMAL_PRICE_PLANS } = require("./const");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const ModelVI_DOMAIN = process.env.ModelVI_DOMAIN ?? 'https://modelvi.com/'
+const ModelVI_DOMAIN = process.env.ModelVI_DOMAIN ?? 'https://modelvi.com'
 
 function getPricePlan(agency, revenue) {
   const pricePlans = agency.vip ? VIP_PRICE_PLANS : NORMAL_PRICE_PLANS;

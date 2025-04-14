@@ -24,7 +24,9 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      dispatch(getProfile());
+      const token = localStorage.getItem("token");
+      if (token)
+        dispatch(getProfile());
     }, DEFAULT_REFRESH_TIMEOUT);
     return () => clearInterval(interval);
   });
