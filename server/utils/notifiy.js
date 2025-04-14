@@ -19,7 +19,7 @@ const sendContactMail = async (from, subject, content) => {
   let transporter = nodemailer.createTransport({
     host: process.env.MAILER_HOST,
     port: process.env.MAILER_PORT,
-    secure: process.env.MAILER_SECURE,
+    secure: process.env.MAILER_SECURE == "true",
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
@@ -38,7 +38,7 @@ const sendMail = async (to, subject, content) => {
   let transporter = nodemailer.createTransport({
     host: process.env.MAILER_HOST,
     port: process.env.MAILER_PORT,
-    secure: process.env.MAILER_SECURE,
+    secure: process.env.MAILER_SECURE == "true",
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
