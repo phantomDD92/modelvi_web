@@ -31,5 +31,7 @@ router.use("/admin", managerRouter);
 
 router.use("/bot", botRouter);
 
+router.route("/verify")
+  .post(AuthCtrl.handleVerifyAgency)
 
 module.exports = router;

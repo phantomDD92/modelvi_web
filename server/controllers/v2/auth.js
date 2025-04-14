@@ -11,6 +11,8 @@ const { generateReferralCode, getClientIp } = require('../../utils/helper');
 const AffiliateService2 = require('../../services/v2/affiliate');
 const AgencyService2 = require('../../services/v2/agency');
 const TransactionService2 = require('../../services/v2/transaction');
+const { sendMail } = require('../../utils/notifiy');
+const { getVerifyEmailTemplate } = require('../../utils/helper');
 
 const handleRegisterAgency = async (req, res) => {
   try {
@@ -54,9 +56,15 @@ const handleRegisterAgency = async (req, res) => {
 const handleLoginAgency = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const agency = await ManagerModel.findOne({ email }, "password status role name");
+    const agency = await ManagerModel.findOne({ email }, "password status role name verified");
     if (!agency)
       throw new ApiError(`Agency(${email}) is not registerd`);
+    if (!agency.verified) {
+      const verifyToken = jwt.sign({ id: agency._id }, process.env.SECRET_KEY || "SECRET_KEY_MODELVI", { expiresIn: "600s" });
+      const emailContent = getVerifyEmailTemplate(`/verify?token=${verifyToken}`)
+      await sendMail(email, 'ModelVI Email Verification', emailContent)
+      throw new ApiError(`Please verify your email`);
+    }
     const passwordCompare = await bcryptjs.compare(password, agency.password);
     if (!passwordCompare)
       throw new ApiError("Password is incorrect");
@@ -146,13 +154,31 @@ const handleUpdateAffiliateRegistration = async (req, res) => {
   }
 }
 
+const handleVerifyAgency = async (req, res) => {
+  try {
+    const { token } = req.query;
+    const { id } = jwt.verify(token, process.env.SECRET_KEY || "SECRET_KEY_MODELVI");
+    
+    await ManagerModel.findByIdAndUpdate(id, {
+      $set: {
+        verified: true,
+      }
+    });
+    sendResult(res, { success: true });
+  } catch (error) {
+    sendResult(res, { success: false });
+    // sendError(res, error)
+  }
+}
+
 const AuthCtrl = {
   handleRegisterAgency,
   handleLoginAgency,
   handleGetProfile,
   handleGetAffiliate,
   handleCreateAffiliateClick,
-  handleUpdateAffiliateRegistration
+  handleUpdateAffiliateRegistration,
+  handleVerifyAgency
 };
 
 module.exports = AuthCtrl

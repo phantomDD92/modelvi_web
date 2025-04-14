@@ -95,3 +95,14 @@ export const setAffiliateRegistration = (referralCode) => async (dispatch) => {
     data: { referralCode }
   })
 }
+
+export const verifyAgency = (params, callback) => async (dispatch) => {
+  try {
+    const payload = await ApiRequest.postAction(dispatch, {
+      path: `/v2/verify?token=${params.token}`,
+    })
+    callback && callback(payload.success);
+  } catch (error) {
+    callback && callback(false);
+  }  
+};
