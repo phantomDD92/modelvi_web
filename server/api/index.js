@@ -19,7 +19,6 @@ const ActorCtrl = require("../controllers/actor.js");
 const AccountCtrl = require("../controllers/account.js");
 const ChatTeamCtrl = require("../controllers/chatteam.js");
 const DashboardCtrl = require("../controllers/dashboard.js");
-const ProxyCtrl = require("../controllers/proxy.js");
 const ManagerCtrl = require("../controllers/manager.js");
 const CommentCtrl = require("../controllers/comment.js");
 const HistoryCtrl = require("../controllers/history.js");
@@ -30,19 +29,6 @@ const UserCtrl = require("../controllers/user.js");
 const apiRouterV2 = require("./v2");
 
 const router = express.Router();
-
-// Proxy related apis
-router.route("/proxy")
-  .all(authenticate)
-  .get(ProxyCtrl.handleLoadProxies)
-  .post(ProxyCtrl.handleAppendProxies)
-  .put(ProxyCtrl.handleUpdateProxies)
-  .delete(ProxyCtrl.handleDeleteProxies);
-
-router.route("/proxy/:id")
-  .all(authenticate)
-  .put(ProxyCtrl.handleUpdateProxy)
-  .delete(ProxyCtrl.handleDeleteProxy);
 
 router.route("/chat_all")
   .all(authenticate)

@@ -127,12 +127,19 @@ const deleteProxy = (proxyId) =>
 const deleteProxies = (proxyIds) =>
   ProxyModel.deleteMany({ _id: { $in: proxyIds } })
 
+const getAgencyStats = (agencyId) =>
+  Promise.all([
+    Proxy.countDocuments({ owner: agency._id }),
+    Proxy.countDocuments({ owner: agency._id, expiredAt: { $lt: new Date() } })
+  ]);
+
 const ProxyService2 = {
   loadAgencyProxies,
   clearAgencyProxies,
   appendAgencyProxies,
   getAgencyProxyCount,
-
+  getAgencyStats,
+  
   findProxyById,
   changeProxyStatus,
   changeProxiesStatus,
