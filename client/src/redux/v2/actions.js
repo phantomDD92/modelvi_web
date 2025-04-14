@@ -173,5 +173,5 @@ export const verifyAgency = (params, callback) => async (dispatch) => {
     callback && callback(payload.success);
   } catch (error) {
     callback && callback(false);
-  }  
+  }
 };

@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
+import { LoadingOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PageMetaData from "@/components/common/PageMetaData";
 import { PasswordFormInput, TextFormInput } from "@/components/form";
@@ -14,6 +15,8 @@ const SignUp = () => {
 
   const [rememberMe, setRememberMe] = useState(false);
   const [refCode, setRefCode] = useState();
+  const [loading, setLoading] = useState(false);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -45,7 +48,8 @@ const SignUp = () => {
       localStorage.setItem("email", email);
       localStorage.setItem("password", password);
     }
-    dispatch(registerAgency({ ...data, referralCode: refCode }, () => { reset(); }))
+    setLoading(true);
+    dispatch(registerAgency({ ...data, referralCode: refCode }, () => { setLoading(false); navigate("/sign-in"); }))
   }
 
   return (
@@ -114,6 +118,7 @@ const SignUp = () => {
             className="group mt-5 inline-flex w-full items-center justify-center rounded bg-primary px-6 py-2.5 text-white backdrop-blur-2xl transition-all hover:bg-primary-700 hover:text-white"
             type="submit"
           >
+            {loading && <LoadingOutlined className="mr-4" />}
             Register
           </button>
         </div>

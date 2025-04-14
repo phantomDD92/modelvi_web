@@ -3,6 +3,7 @@ import { loginAgency, getProfile } from "@/redux/v2/actions";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from 'jwt-decode';
 import { DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
+import toast from "react-hot-toast";
 
 const AuthContext = createContext();
 
@@ -38,14 +39,20 @@ export function AuthProvider({ children }) {
   const login = (params, callback) => {
     dispatch(loginAgency(params, (payload) => {
       if (payload) {
-        localStorage.setItem("token", payload.token);
-        const session = jwtDecode(payload.token);
-        setSession(session);
-        callback && callback();
+        if (payload.needVerify) {
+          toast.success("Please verify your email");
+          callback && callback(false);
+        } else {
+          localStorage.setItem("token", payload.token);
+          const session = jwtDecode(payload.token);
+          setSession(session);
+          callback && callback(true);
+        }
       } else {
         localStorage.removeItem("token", payload.token);
         setSession();
         setAuth();
+        callback && callback(false);
       }
     }));
   }

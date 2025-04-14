@@ -62,8 +62,9 @@ const handleLoginAgency = async (req, res) => {
     if (!agency.verified) {
       const verifyToken = jwt.sign({ id: agency._id }, process.env.SECRET_KEY || "SECRET_KEY_MODELVI", { expiresIn: "600s" });
       const emailContent = getVerifyEmailTemplate(`/verify?token=${verifyToken}`)
-      await sendMail(email, 'ModelVI Email Verification', emailContent)
-      throw new ApiError(`Please verify your email`);
+      await sendMail(email, 'ModelVI Email Verification', emailContent);
+      sendResult(res, { needVerify: true });
+      return
     }
     const passwordCompare = await bcryptjs.compare(password, agency.password);
     if (!passwordCompare)
@@ -158,7 +159,7 @@ const handleVerifyAgency = async (req, res) => {
   try {
     const { token } = req.query;
     const { id } = jwt.verify(token, process.env.SECRET_KEY || "SECRET_KEY_MODELVI");
-    
+
     await ManagerModel.findByIdAndUpdate(id, {
       $set: {
         verified: true,

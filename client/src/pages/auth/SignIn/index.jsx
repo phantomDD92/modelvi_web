@@ -7,6 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import PageMetaData from "@/components/common/PageMetaData";
 import { PasswordFormInput, TextFormInput } from "@/components/form";
 import AuthLayout from "../AuthLayout";
+import { LoadingOutlined } from "@ant-design/icons";
 import { useAuth } from "@/contexts";
 
 
@@ -58,8 +59,12 @@ const SignIn = () => {
       localStorage.setItem("email", email);
       localStorage.setItem("password", password);
     }
-    login(data, () => navigate("/"));
-    // dispatch(registerAgency(data, () => { reset(); }))
+    setLoading(true);
+    login(data, (success) => {
+      setLoading(false);
+      if (success)
+        navigate("/");
+    });
   }
 
   return (
@@ -112,9 +117,9 @@ const SignIn = () => {
         <div className="text-center">
           <button
             type="submit"
-            disabled={loading}
             className="group mt-5 inline-flex w-full items-center justify-center rounded bg-primary px-6 py-2.5 text-white backdrop-blur-2xl transition-all hover:bg-primary-700 hover:text-white"
           >
+            {loading && <LoadingOutlined className="mr-4"/>}
             Log In
           </button>
         </div>
