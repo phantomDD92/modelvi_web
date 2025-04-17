@@ -55,7 +55,7 @@ const loadActors = (agency) =>
 const findByNumber = (agencyId, number) =>
   ActorModel.findOne({ owner: agencyId, number });
 
-const findByName = (name) => ActorModel.findOne({ name });
+const findByName = (agencyId, name) => ActorModel.findOne({ owner: agencyId, name });
 
 const findById = (id) => ActorModel.findById(id);
 

@@ -18,11 +18,9 @@ const handleCreateActor = async (req, res) => {
     const { number, name, ...params } = req.body;
     const agency = req.manager;
 
-    // check agency limit
-    const count = await ActorService.getActorCount(agency._id);
 
     // check if model name is duplicated
-    let actor = await ActorService.findByName(name);
+    let actor = await ActorService.findByName(req.manager._id, name);
     if (actor) throw new ApiError(`The model name(${name}) is already existed.`);
 
     // check if model number is duplicated
@@ -99,7 +97,7 @@ const handleUpdateActor = async (req, res) => {
     switch (action) {
       case "change":
         const { number, name, ...others } = params;
-        let dup = await ActorService.findByName(name);
+        let dup = await ActorService.findByName(req.manager._id, name);
         if (dup && dup._id != actorId)
           throw new ApiError(`Model name(${name}) is already existed.`);
         dup = await ActorService.findByNumber(req.manager._id, number);
