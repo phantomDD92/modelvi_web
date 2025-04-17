@@ -1,13 +1,15 @@
 const mongoose = require("mongoose");
 const moment = require("moment");
 const TransactionModel = require("../../models/transaction");
+const { TransactionType } = require("../../config/const");
 
 const loadTransactions = (agency) =>
   TransactionModel.find({ agency: agency._id }).sort("-createdAt");
 
-const createTransaction = (agencyId, amount, from, to, desc, accountId = undefined) =>
+const createTransaction = (agencyId, type, amount, from, to, desc, accountId = undefined) =>
   TransactionModel.create({
     agency: agencyId,
+    type,
     account: accountId,
     amount,
     from,
@@ -15,12 +17,34 @@ const createTransaction = (agencyId, amount, from, to, desc, accountId = undefin
     description: desc
   })
 
+const createChargeTransaction = (agencyId, amount, from, to, desc) =>
+  TransactionModel.create({
+    agency: agencyId,
+    type: TransactionType.CHARGE,
+    amount,
+    from,
+    to,
+    description: desc
+  });
+
+const createExpenseTransaction = (agencyId, accountId, amount, from, to, desc, commission) =>
+  TransactionModel.create({
+    agency: agencyId,
+    account: accountId,
+    type: TransactionType.EXPENSE,
+    amount: -1 * amount,
+    from,
+    to,
+    description: desc,
+    commission,
+  });
+
 const getTotalEarningsByReferees = (refereeIds) =>
   TransactionModel.aggregate([
     {
       $match: {
         agency: { $in: refereeIds.map(id => new mongoose.Types.ObjectId(id)) },
-        amount: { $lt: 0 }
+        type: TransactionType.EXPENSE,
       }
     },
     {
@@ -33,22 +57,11 @@ const getTotalEarningsByReferees = (refereeIds) =>
     },
     // Unwind the agency details array
     { $unwind: "$agencyDetails" },
-    // Calculate earnings for each transaction (amount * commission%)
-    {
-      $addFields: {
-        earnings: {
-          $multiply: [
-            "$amount",
-            { $divide: ["$agencyDetails.commission", 100] }
-          ]
-        }
-      }
-    },
     // Group all transactions to get totals
     {
       $group: {
         _id: null,
-        totalEarnings: { $sum: "$earnings" },
+        totalEarnings: { $sum: "$commission" },
         totalTransactions: { $sum: 1 },
         totalAmount: { $sum: "$amount" },
         // Optional: breakdown by agency
@@ -56,7 +69,7 @@ const getTotalEarningsByReferees = (refereeIds) =>
           $push: {
             agencyId: "$agency",
             agencyName: "$agencyDetails.name",
-            earnings: "$earnings",
+            commission: "$commission",
             amount: "$amount",
             transactionId: "$_id",
             date: "$createdAt"
@@ -82,7 +95,7 @@ const getMonthlyEarningsByReferees = (refereeIds, year) =>
     {
       $match: {
         agency: { $in: refereeIds.map(id => new mongoose.Types.ObjectId(id)) },
-        amount: { $lt: 0 },
+        type: TransactionType.EXPENSE,
         createdAt: { $gte: new Date(`${year}-01-01`), $lt: new Date(`${year + 1}-01-01`) }
       }
     },
@@ -96,34 +109,13 @@ const getMonthlyEarningsByReferees = (refereeIds, year) =>
       }
     },
     { $unwind: "$agencyDetails" },
-    // Calculate earnings
-    {
-      $addFields: {
-        earnings: {
-          $multiply: [
-            "$amount",
-            { $divide: ["$agencyDetails.commission", 100] }
-          ]
-        },
-        month: { $month: "$createdAt" }
-      }
-    },
     // Group by month
     {
       $group: {
         _id: "$month",
-        totalEarnings: { $sum: "$earnings" },
+        totalEarnings: { $sum: "$commission" },
         transactionCount: { $sum: 1 },
         totalAmount: { $sum: "$amount" },
-        // Optional: include sample transactions
-        sampleTransactions: {
-          $push: {
-            amount: "$amount",
-            earnings: "$earnings",
-            date: "$createdAt",
-            agencyName: "$agencyDetails.name"
-          }
-        }
       }
     },
     // Format output
@@ -134,7 +126,6 @@ const getMonthlyEarningsByReferees = (refereeIds, year) =>
         totalEarnings: { $round: ["$totalEarnings", 2] },
         transactionCount: 1,
         totalAmount: { $round: ["$totalAmount", 2] },
-        avgEarningsPerTx: { $round: [{ $divide: ["$totalEarnings", "$transactionCount"] }, 2] },
       }
     },
     { $sort: { month: 1 } }
@@ -142,7 +133,7 @@ const getMonthlyEarningsByReferees = (refereeIds, year) =>
 
 const getTotalStatsByAgency = async () => {
   return await TransactionModel.aggregate([
-    { $match: { amount: { $lt: 0 } } },
+    { $match: { type: TransactionType.EXPENSE, } },
     {
       $lookup: {
         from: "managers",
@@ -162,22 +153,6 @@ const getTotalStatsByAgency = async () => {
       }
     },
     { $unwind: "$referrerData" },
-    {
-      $addFields: {
-        commission: {
-          $multiply: [
-            "$amount",
-            {
-              $divide: [
-                { $ifNull: ["$referrerData.commission", 10] }, // Default to 10 if null
-                100
-              ]
-            }
-          ]
-        }
-      }
-    },
-
     // Group by agency and referrer
     {
       $group: {
@@ -227,7 +202,7 @@ const getTotalStatsByTime = async (timePeriod = 'day') => {
       dateFilter = { createdAt: { $gte: moment().startOf("day").subtract(15, "day").toDate(), $lte: moment().endOf("day").toDate() } }
   }
   return await TransactionModel.aggregate([
-    { $match: { ...dateFilter, amount: { $lt: 0 } } },
+    { $match: { ...dateFilter, type: TransactionType.EXPENSE, } },
     {
       $lookup: {
         from: "managers",
@@ -247,21 +222,6 @@ const getTotalStatsByTime = async (timePeriod = 'day') => {
       }
     },
     { $unwind: "$referrerData" },
-    {
-      $addFields: {
-        commission: {
-          $multiply: [
-            "$amount",
-            {
-              $divide: [
-                { $ifNull: ["$referrerData.commission", 10] }, // Default to 10 if null
-                100
-              ]
-            }
-          ]
-        }
-      }
-    },
     {
       $group: {
         _id: { ...dateFormat },
@@ -285,6 +245,8 @@ const getTotalStatsByTime = async (timePeriod = 'day') => {
 const TransactionService2 = {
   loadTransactions,
   createTransaction,
+  createChargeTransaction,
+  createExpenseTransaction,
   getTotalEarningsByReferees,
   getMonthlyEarningsByReferees,
   getTotalStatsByAgency,

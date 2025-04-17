@@ -129,8 +129,8 @@ const deleteProxies = (proxyIds) =>
 
 const getAgencyStats = (agencyId) =>
   Promise.all([
-    Proxy.countDocuments({ owner: agency._id }),
-    Proxy.countDocuments({ owner: agency._id, expiredAt: { $lt: new Date() } })
+    ProxyModel.countDocuments({ owner: agencyId }),
+    ProxyModel.countDocuments({ owner: agencyId, expiredAt: { $lt: new Date() } })
   ]);
 
 const ProxyService2 = {

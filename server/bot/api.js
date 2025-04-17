@@ -49,5 +49,6 @@ router.route("/action")
 router.route("/balance")
   .all(checkBot)
   .post(BotController.handleCheckBalance)
+  .put(BotController.handleTestBalance)
 
 module.exports = router;

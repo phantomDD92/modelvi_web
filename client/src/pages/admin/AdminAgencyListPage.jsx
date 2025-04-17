@@ -4,40 +4,37 @@ import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
 import qs from 'query-string';
 import { Modal } from "antd";
 import {
-  changeAgencyStatus,
-  createAgency,
-  deleteAgency,
-  updateAgency,
-  loadAgencies,
-  resetAgencyPassword,
-  updateDB,
-  deleteBulkAgencies,
-  updateBulkAgenciesStatus,
-  appendAgencyBalance,
-  changeAgencyVIP
-} from "@/redux/dashboard/actions";
-import {
   AgencyTable,
-  AgencyDialog,
-  PasswordDialog,
-  AgencyBalanceDialog
+  AgencyBalanceDialog,
+  AgencyPricePlanDialog,
+  AgencyReferrerDialog
 } from "@/components/agency";
 import { AgencyRole, DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
 import PageMetaData from "@/components/common/PageMetaData";
+import {
+  appendAgencyBalanceForAdmin,
+  changeAgenciesStatusForAdmin,
+  changeAgencyPricePlansForAdmin,
+  changeAgencyReferrerForAdmin,
+  changeAgencyStatusForAdmin,
+  deleteAgenciesForAdmin,
+  deleteAgencyForAdmin,
+  loadAgenciesForAdmin
+} from "@/redux/admin/actions";
 
 export const AdminAgencyListPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [editOpen, setEditOpen] = useState(false);
-  const [passwordOpen, setPasswordOpen] = useState(false);
   const [balanceOpen, setBalanceOpen] = useState(false);
+  const [planOpen, setPlanOpen] = useState(false);
+  const [referrerOpen, setReferrerOpen] = useState(false);
   const [agency, setAgency] = useState();
 
   const dispatch = useDispatch()
   const location = useLocation();
   const navigate = useNavigate();
-  const homeProps = useSelector(state => state.home)
+  const agencies = useSelector(state => state.admin.agencies);
 
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
@@ -51,7 +48,7 @@ export const AdminAgencyListPage = () => {
 
   const loadAgenciesCallback = useCallback(() => {
     setLoading(true);
-    dispatch(loadAgencies(() => setLoading(false)));
+    dispatch(loadAgenciesForAdmin(() => setLoading(false)));
   }, [dispatch]);
 
   useEffect(() => {
@@ -68,61 +65,56 @@ export const AdminAgencyListPage = () => {
   const handleDeleteAgency = (agency) => {
     Modal.confirm({
       title: `Are you sure to delete the agency (${agency.name})?`,
-      onOk: () => { dispatch(deleteAgency(agency, () => { loadAgenciesCallback() })); },
+      onOk: () => { dispatch(deleteAgencyForAdmin(agency, () => { loadAgenciesCallback() })); },
     });
   }
 
-  const handleUpdateAgency = (agency, params) => {
-    dispatch(updateAgency(agency, params, () => { loadAgenciesCallback(); setEditOpen(false); }))
-  }
-
-  const handleCreateAgency = (agency) => {
-    dispatch(createAgency(agency, () => { loadAgenciesCallback(); setEditOpen(false); }))
-  }
-
   const handleChangeStatus = (agency, status) => {
-    dispatch(changeAgencyStatus(agency, status, () => { loadAgenciesCallback() }));
+    dispatch(changeAgencyStatusForAdmin(agency, status, () => { loadAgenciesCallback() }));
   }
 
-  const handleChangeVIP = (agency, vip) => {
-    dispatch(changeAgencyVIP(agency, vip, () => { loadAgenciesCallback() }));
-  }
+  // const handleChangeVIP = (agency, vip) => {
+  //   dispatch(changeAgencyVIP(agency, vip, () => { loadAgenciesCallback() }));
+  // }
 
-  const handleUpdateDB = () => {
-    dispatch(updateDB());
-  }
-
-  const handleResetPassword = (agency, password) => {
-    dispatch(resetAgencyPassword(agency, password, () => setPasswordOpen(false)));
-  }
+  // const handleResetPassword = (agency, password) => {
+  //   dispatch(resetAgencyPassword(agency, password, () => setPasswordOpen(false)));
+  // }
 
   const handleStatusBulkAgencies = (status) => {
     Modal.confirm({
       title: `Are you sure to ${status ? "enable" : "disable"} ${selectedRowKeys.length} agencies?`,
-      onOk: () => { dispatch(updateBulkAgenciesStatus(selectedRowKeys, status, () => { setSelectedRowKeys([]); loadAgenciesCallback() })); },
+      onOk: () => { dispatch(changeAgenciesStatusForAdmin(selectedRowKeys, status, () => { setSelectedRowKeys([]); loadAgenciesCallback() })); },
     });
   }
 
   const handleAddBalance = (balance) => {
     if (agency)
-      dispatch(appendAgencyBalance(agency, balance, () => { setBalanceOpen(false); loadAgenciesCallback(); }))
+      dispatch(appendAgencyBalanceForAdmin(agency, balance, () => { setBalanceOpen(false); loadAgenciesCallback(); }))
   }
 
   const handleDeleteBulkAgencies = () => {
     Modal.confirm({
       title: `Are you sure to delete ${selectedRowKeys.length} agencies?`,
-      onOk: () => { dispatch(deleteBulkAgencies(selectedRowKeys, () => { setSelectedRowKeys([]); loadAgenciesCallback() })); },
+      onOk: () => { dispatch(deleteAgenciesForAdmin(selectedRowKeys, () => { setSelectedRowKeys([]); loadAgenciesCallback() })); },
     });
   }
 
+  const handleUpdatePricePlans = (plans) => {
+    if (agency)
+      dispatch(changeAgencyPricePlansForAdmin(agency, plans, () => { setPlanOpen(false) }))
+  }
+
+  const handleChangeReferrer = (referrer) => {
+    if (agency)
+      dispatch(changeAgencyReferrerForAdmin(agency, referrer, () => { setReferrerOpen(false); loadAgenciesCallback() }))
+  }
+  
   return (
     <>
       <PageMetaData title="Agencies" />
       <AgencyTable
-        dataSource={homeProps.managers.filter(manager => manager.role == AgencyRole.AGENCY)}
-        modelStats={homeProps.modelStats}
-        accountStats={homeProps.accountStats}
-        feeStats={homeProps.feeStats}
+        dataSource={agencies.filter(agency => agency.role == AgencyRole.AGENCY)}
         loading={loading}
         pagination={{
           current: page,
@@ -136,34 +128,44 @@ export const AdminAgencyListPage = () => {
         actions={{
           onBulkDelete: handleDeleteBulkAgencies,
           onBulkStatus: (status) => handleStatusBulkAgencies(status),
-          onCreate: () => { setAgency(); setEditOpen(true); },
-          onEdit: (agency) => { setAgency(agency); setEditOpen(true) },
           onDelete: handleDeleteAgency,
           onStatusChange: handleChangeStatus,
-          onPasswordReset: (agency) => { setAgency(agency); setPasswordOpen(true) },
           onBalance: (agency) => { setAgency(agency); setBalanceOpen(true) },
-          onVIP: handleChangeVIP,
-          // onUpdateDB: handleUpdateDB
+          onPricePlans: (agency) => { setAgency(agency); setPlanOpen(true) },
+          onReferrer: (agency) => { setAgency(agency); setReferrerOpen(true) },
         }} />
-      <AgencyDialog
+      {/* <AgencyDialog
         agency={agency}
         open={editOpen}
         onCancel={() => setEditOpen(false)}
         onCreate={handleCreateAgency}
         onUpdate={handleUpdateAgency}
-      />
+      /> */}
       <AgencyBalanceDialog
         agency={agency}
         open={balanceOpen}
         onCancel={() => setBalanceOpen(false)}
         onAppend={handleAddBalance}
       />
-      <PasswordDialog
+      <AgencyPricePlanDialog
+        open={planOpen}
+        agency={agency}
+        onUpdate={handleUpdatePricePlans}
+        onCancel={() => setPlanOpen(false)}
+      />
+      <AgencyReferrerDialog
+        open={referrerOpen}
+        agency={agency}
+        agencies={agencies}
+        onUpdate={handleChangeReferrer}
+        onCancel={() => setReferrerOpen(false)}
+      />
+      {/* <PasswordDialog
         agency={agency}
         open={passwordOpen}
         onCancel={() => setPasswordOpen(false)}
         onUpdate={handleResetPassword}
-      />
+      /> */}
     </>
   );
 };

@@ -86,7 +86,7 @@ const handleProcessPayment = async (req, res) => {
       const agency = await AgencyService2.updateBalance(payment.agency, data["outcome_amount"]);
       const from = agency.balance || 0;
       const to = from + data["outcome_amount"];
-      await TransactionService2.createTransaction(payment.agency, data["outcome_amount"], from, to, payment.description);
+      await TransactionService2.createChargeTransaction(payment.agency, data["outcome_amount"], from, to, payment.description);
       NotifyUtils.sendPaymentMessage(agency, "Payment By NOWPayment",
         `Currency: ${data["pay_currency"]}\nAmount: ${data["actually_paid"]}\nCharge: $${data["outcome_amount"]}\nBalance:$${from} => $${to}`
       )

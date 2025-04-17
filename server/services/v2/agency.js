@@ -40,6 +40,32 @@ const loadAgenciesForAffiliate = () =>
 
 const loadAgencies = () =>
   ManagerModel.find({})
+    .populate("referrer", "name")
+
+const deleteAgency = (agencyId) =>
+  ManagerModel.findByIdAndDelete(agencyId)
+
+const deleteAgencies = (agencyIds) =>
+  ManagerModel.deleteMany({ _id: { $in: agencyIds } });
+
+const changeStatus = (agencyId, status) =>
+  ManagerModel.findByIdAndUpdate(agencyId, { $set: { status } });
+
+const changeStatuses = (agencyIds, status) =>
+  ManagerModel.updateMany({ _id: { $in: agencyIds } }, { $set: { status } });
+
+const changePricePlans = (agencyId, pricePlans) =>
+  ManagerModel.findByIdAndUpdate(agencyId, { $set: { pricePlans } });
+
+const changeReferrer = (agencyId, referrer) =>
+  ManagerModel.findByIdAndUpdate(agencyId, { $set: { referrer } });
+
+const changeCommission = (agencyId, commission) =>
+  ManagerModel.findByIdAndUpdate(agencyId, { $set: { commission } });
+
+const getAgencyWithReferrer = (agencyId) =>
+  ManagerModel.findById(agencyId, "name email role status balance referrer pricePlans createdAt")
+    .populate("referrer", "commission")
 
 const AgencyService2 = {
   createAgency,
@@ -49,9 +75,17 @@ const AgencyService2 = {
   findAgencyById,
   findAgencyByReferralCode,
   getAgency,
+  getAgencyWithReferrer,
   setReferralCode,
   loadAgenciesForAffiliate,
   loadAgencies,
+  deleteAgency,
+  deleteAgencies,
+  changeStatus,
+  changeStatuses,
+  changePricePlans,
+  changeReferrer,
+  changeCommission
 }
 
 module.exports = AgencyService2

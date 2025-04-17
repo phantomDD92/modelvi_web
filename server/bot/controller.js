@@ -465,18 +465,27 @@ const handleCheckBalance = async (req, res) => {
     const account = await AccountService2.getAccountWithModel(req.bot.id);
     if (!account)
       throw new ApiError("Invalid bot account")
-    const agency = await ManagerService.findAgencyById(req.bot.owner);
+    const agency = await AgencyService2.getAgencyWithReferrer(req.bot.owner);
     if (!agency)
       throw new ApiError("Invalid bot agency");
     // calculate price
-    const price = getPricePlan(agency, revenue);
+    const price = getPricePlan(agency, account.platform, revenue);
     // get valid dates
     const dateDelta = getDateDelta(account.expiredAt);
     if (dateDelta <= 0) { // if account is expired
       // if (hasSufficientBalance(agency, price)) {
       // remove balance and create transaction, extend account
       const { balance } = await AgencyService2.updateBalance(agency._id, -1 * price);
-      await TransactionService2.createTransaction(agency._id, -1 * price, balance, balance - price, `payout for ${account.platform} ${account.alias}`);
+      const commission = price * (agency.referrer?.commission || 0) / 100;
+      await TransactionService2.createExpenseTransaction(
+        agency._id,
+        account._id,
+        price,
+        balance,
+        balance - price,
+        `payout for ${account.platform} ${account.alias}`,
+        commission
+      );
       await AccountService2.extendAccount(account._id)
       NotifyUtils.sendExpenseMessage(agency, account, `Monthly Revenue: ${account.revenue}\nPrice: ${price}\nBalance:$${balance.toFixed(2)} => $${(balance - price).toFixed(2)}\n`)
       // } else {
@@ -491,6 +500,29 @@ const handleCheckBalance = async (req, res) => {
     }
     await AccountService2.updateRevenue(req.bot.id, revenue, price);
     sendResult(res, { available });
+  } catch (error) {
+    console.error(error);
+    sendError(res, error)
+  }
+}
+
+const handleTestBalance = async (req, res) => {
+  try {
+    const { revenue } = req.body;
+
+    // first check if account and agency is valid
+    const account = await AccountService2.getAccountWithModel(req.bot.id);
+    if (!account)
+      throw new ApiError("Invalid bot account")
+    const agency = await AgencyService2.getAgencyWithReferrer(req.bot.owner);
+    if (!agency)
+      throw new ApiError("Invalid bot agency");
+    // calculate price
+    const price = getPricePlan(agency, account.platform, revenue);
+    const commission = price * (agency.referrer?.commission || 0) / 100;
+    NotifyUtils.sendDebugMessage(agency.name, "Test Price Plans", `Monthly Revenue: ${revenue}\nPrice: ${price}\nCommission Rate:$${agency.referrer?.commission || 0}\nCommission:${commission}\n`)
+    // } else {
+    sendResult(res);
   } catch (error) {
     console.error(error);
     sendError(res, error)
@@ -517,6 +549,7 @@ const BotController = {
   handleGetIdleAccounts,
   handleReleaseAccounts,
   handleCheckBalance,
+  handleTestBalance,
 };
 
 module.exports = BotController

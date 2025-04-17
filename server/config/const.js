@@ -56,6 +56,11 @@ const PaymentStatus = {
     CANCEL: "cancel",
 }
 
+const TransactionType = {
+    CHARGE: 1,
+    EXPENSE: 2,
+}
+
 module.exports = {
     Status,
     Platform,
@@ -65,4 +70,5 @@ module.exports = {
     StoryType,
     PostMode,
     PaymentStatus,
+    TransactionType,
 }

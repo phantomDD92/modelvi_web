@@ -1,6 +1,5 @@
 import { getFiatAmount } from "@/utils/string";
-import { Card, Table, Flex, Avatar, Dropdown } from "antd";
-import { render } from "react-dom";
+import { Card, Table, Flex, Avatar, Dropdown, Button } from "antd";
 import { LuPencil } from "react-icons/lu";
 
 export const AffiliateAgencyTable = ({
@@ -8,6 +7,7 @@ export const AffiliateAgencyTable = ({
     dataSource,
     loading,
     actions: {
+        onCommission
     },
 }) => {
     const columns = [
@@ -22,7 +22,7 @@ export const AffiliateAgencyTable = ({
             key: 'referralCode',
             title: 'Affiliate Link',
             dataIndex: 'referralCode',
-            render: value => value ? `https://modelvi.com?ref=${value}`: '-'
+            render: value => value ? `https://modelvi.com?ref=${value}` : '-'
         },
         {
             key: 'commission',
@@ -73,21 +73,26 @@ export const AffiliateAgencyTable = ({
             title: 'Action',
             width: 200,
             render: (_, record) => (
-                <Dropdown.Button
-                    onClick={() => onCommission && onCommission(record)}
-                    menu={{
-                        items: [
+                <Button
+                    icon={<LuPencil />}
+                    onClick={() => onCommission && onCommission(record)}>
+                    Edit
+                </Button>
+                // <Dropdown.Button
+                //     onClick={() => onCommission && onCommission(record)}
+                //     menu={{
+                //         items: [
 
-                        ],
-                        onClick: (e) => {
-                            switch (e.key) {
-                                default:
-                                    break;
-                            }
-                        }
-                    }}>
-                    <LuPencil /> Commission
-                </Dropdown.Button>
+                //         ],
+                //         onClick: (e) => {
+                //             switch (e.key) {
+                //                 default:
+                //                     break;
+                //             }
+                //         }
+                //     }}>
+                //     <LuPencil /> Commission
+                // </Dropdown.Button>
             )
         },
     ]

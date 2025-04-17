@@ -9,6 +9,8 @@ const TransactionSchema = new Schema({
   amount: { type: Number },
   from: { type: Number },
   to: { type: Number },
+  type: { type: Number },
+  commission: { type: Number, default: 0, },
   description: { type: String },
   createdAt: { type: Date, default: Date.now },
 });

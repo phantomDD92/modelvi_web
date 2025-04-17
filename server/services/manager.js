@@ -31,6 +31,7 @@ const findAgencyById = (id) => {
     return ManagerModel.findById(id, "name email role status balance vip createdAt");
 }
 
+
 const changeAgencyPassword = (id, password) => {
     return ManagerModel.findByIdAndUpdate(id, { $set: { password: bcrypt.hashSync(password, 12) } })
 }

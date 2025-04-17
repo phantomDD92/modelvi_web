@@ -1,11 +1,13 @@
+const AccountService2 = require("../../services/v2/account");
 const AgencyService2 = require("../../services/v2/agency");
+const ModelService2 = require("../../services/v2/model");
 const TransactionService2 = require("../../services/v2/transaction");
 const NotifyUtils = require("../../utils/notifiy");
 const { sendError, sendResult, ApiError } = require("../../utils/resp");
 
 const handleUpdateAgencyForAdmin = async (req, res) => {
   try {
-    const { id: agencyId } = req.params;
+    const { agencyId } = req.params;
     const { action, ...params } = req.body;
     switch (action) {
       case 'balance':
@@ -13,10 +15,26 @@ const handleUpdateAgencyForAdmin = async (req, res) => {
         const agency = await AgencyService2.updateBalance(agencyId, balance);
         const from = agency.balance || 0;
         const to = from + balance;
-        await TransactionService2.createTransaction(agencyId, balance, from, to, "Modelvi payment");
+        await TransactionService2.createChargeTransaction(agencyId, balance, from, to, "Modelvi payment");
         NotifyUtils.sendPaymentMessage(agency, "Payment By Manager",
           `Manager:${req.manager?.name}\nCharge: $${balance}\nBalance:$${from} => $${to}`
         )
+        break;
+      case "status":
+        const { status } = params;
+        await AgencyService2.changeStatus(agencyId, status);
+        break;
+      case "plan":
+        const { pricePlans } = params;
+        await AgencyService2.changePricePlans(agencyId, pricePlans);
+        break;
+      case "referrer":
+        const { referrer } = params;
+        await AgencyService2.changeReferrer(agencyId, referrer);
+        break;
+      case "commission":
+        const { commission } = params;
+        await AgencyService2.changeCommission(agencyId, commission);
         break;
       case 'vip':
         const { vip } = params;
@@ -35,15 +53,74 @@ const handleUpdateAgencyForAdmin = async (req, res) => {
 const handleLoadAgenciesForAdmin = async (req, res) => {
   try {
     const agencies = await AgencyService2.loadAgencies();
-    sendResult(res, { agencies })
+    const modelStats = await ModelService2.getCountStatsByAgency();
+    const accountStats = await AccountService2.getCountStatsByAgencyPlatform();
+    const feeStats = await AccountService2.getFeeStatsByAgency();
+    const agencyInfos = agencies.map(agency => {
+      const modelStat = modelStats.find(stat => stat._id.toString() == agency._id.toString());
+      const accountStat = accountStats.filter(stat => stat._id?.creator?.toString() == agency._id.toString());
+      const feeStat = feeStats.find(stat => stat._id.toString() == agency._id.toString());
+      return ({
+        ...agency.toJSON(),
+        modelCount: modelStat?.count || 0,
+        monthlyFee: feeStat?.monthlyFee || 0,
+        accountCount: accountStat.map(item => `${item.platform} ${item.count}`).join(', ')
+      })
+    });
+
+    sendResult(res, { agencies: agencyInfos })
   } catch (error) {
     sendError(res, error)
+  }
+}
+
+const handleDeleteAgencyForAdmin = async (req, res) => {
+  try {
+    const { agencyId } = req.params;
+    const agency = await AgencyService2.findAgencyById(agencyId);
+    if (!agency)
+      throw new ApiError("Agency does not exist");
+    await AgencyService2.deleteAgency(agencyId);
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
+const handleDeleteAgenciesForAdmin = async (req, res) => {
+  try {
+    const { agencyIds } = req.body;
+    await AgencyService2.deleteAgencies(agencyIds);
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
+const handleUpdateAgenciesForAdmin = async (req, res) => {
+  try {
+    const { action, agencyIds, ...params } = req.body;
+    switch (action) {
+      case 'status':
+        const { status } = params;
+        await AgencyService2.changeStatuses(agencyIds, status);
+        break;
+      default:
+        throw new ApiError("Invalid agency admin operation");
+    }
+    sendResult(res);
+  } catch (error) {
+    console.error(error)
+    sendError(res, error);
   }
 }
 
 const AgencyCtrl2 = {
   handleUpdateAgencyForAdmin,
   handleLoadAgenciesForAdmin,
+  handleDeleteAgencyForAdmin,
+  handleDeleteAgenciesForAdmin,
+  handleUpdateAgenciesForAdmin,
 }
 
 module.exports = AgencyCtrl2;

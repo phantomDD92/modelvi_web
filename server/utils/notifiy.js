@@ -79,7 +79,7 @@ const sendPaymentMessage = (agency, subject, message) => {
 const sendExpenseMessage = (agency, account, message) => {
   if (process.env.DISCORD_WEBHOOK_PAYMENT) {
     axios.post(process.env.DISCORD_WEBHOOK_PAYMENT, {
-      username: `${agency?.name}${agency.vip ? '(VIP)' : ''}`,
+      username: `${agency?.name}`,
       content: `[ ${moment().format("YYYY-MM-DD HH:mm:ss")} ]\n**Expense for ${account.platform} - ${account.alias}**\n${message}`
     })
       .then(() => { })

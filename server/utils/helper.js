@@ -1,18 +1,18 @@
 const moment = require("moment");
 const crypto = require("crypto");
-const { VIP_PRICE_PLANS, NORMAL_PRICE_PLANS } = require("./const");
+const { DEFAULT_PRICE_PLANS, REVENUE_THRESHOLDS } = require("./const");
 const dotenv = require("dotenv");
 dotenv.config();
 
 const ModelVI_DOMAIN = process.env.ModelVI_DOMAIN ?? 'https://modelvi.com/'
 
-function getPricePlan(agency, revenue) {
-  const pricePlans = agency.vip ? VIP_PRICE_PLANS : NORMAL_PRICE_PLANS;
+function getPricePlan(agency, platform, revenue) {
+  const pricePlans = (agency?.pricePlans && agency.pricePlans[platform]) ? agency.pricePlans[platform] || DEFAULT_PRICE_PLANS : DEFAULT_PRICE_PLANS;
   for (var i = 0; i < pricePlans.length; i++) {
-    if (revenue < pricePlans[i].revenue)
-      return pricePlans[i].price;
+    if (revenue < REVENUE_THRESHOLDS[i])
+      return pricePlans[i];
   }
-  return pricePlans[pricePlans.length - 1].price;
+  return pricePlans[pricePlans.length - 1];
 }
 
 function getDateDelta(date) {
@@ -93,7 +93,7 @@ function getVerifyEmailTemplate(verifyLink) {
           <p>Thank you,<br>The ModelVI Team</p>
       </div>
   </body>
-  </html>`  
+  </html>`
 }
 
 module.exports = {

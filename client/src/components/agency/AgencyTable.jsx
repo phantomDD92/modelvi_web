@@ -1,27 +1,21 @@
 import { AdminRole } from '@/utils/const'
 import { Card, Table, Button, Flex, Switch, Avatar, Dropdown, Space, Typography } from "antd";
 import { DeleteOutlined, UserAddOutlined, EditOutlined, KeyOutlined, DatabaseOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-import { LuGlobe, LuWallet } from 'react-icons/lu';
+import { LuGlobe, LuTrash, LuUser, LuWallet } from 'react-icons/lu';
 
 export const AgencyTable = ({
     pagination,
     rowSelection,
     dataSource,
-    modelStats,
-    feeStats,
-    accountStats,
     loading,
     actions: {
         onBulkStatus,
         onBulkDelete,
         onDelete,
-        onCreate,
-        onEdit,
-        onStatusChange,
-        onPasswordReset,
+        onStatus,
         onBalance,
-        onVIP,
-        onUpdateDB,
+        onPricePlans,
+        onReferrer,
     },
 }) => {
     const columns = [
@@ -31,13 +25,6 @@ export const AgencyTable = ({
             dataIndex: 'name',
             width: 150,
             render: value => <Flex gap="middle" align='center'><Avatar src="/img/agency.png" /><span>{value}</span></Flex>
-        },
-        {
-            key: 'role',
-            title: 'Role',
-            dataIndex: 'role',
-            width: 120,
-            render: (value, record) => value == AdminRole.MANAGER ? "Manager" : record.vip ? "VIP Agency" : "Agency"
         },
         {
             key: 'email',
@@ -52,35 +39,35 @@ export const AgencyTable = ({
             dataIndex: 'telegram',
         },
         {
+            key: 'referrer',
+            title: 'Referrer',
+            width: 120,
+            dataIndex: 'referrer',
+            render: value => value?.name || "-"
+        },
+        {
             key: 'balance',
             title: 'Balance',
             dataIndex: 'balance',
             render: value => value || 0
         },
         {
-            key: 'feeStats',
+            key: 'monthlyFee',
             title: 'Monthly Fee',
-            render: (value, record) => {
-                const feeInfo = feeStats.find(item => item._id == record._id);
-                if (feeInfo) {
-                    return `${feeInfo.monthlyFee}`
-                } else {
-                    return ``;
-                }
-            }
+            dataIndex: 'monthlyFee',
+            render: value => value || 0,
         },
         {
-            key: 'accountStats',
+            key: 'modelCount',
+            title: 'Models',
+            dataIndex: 'modelCount',
+            render: value => value || 0
+        },
+        {
+            key: 'accountCount',
             title: 'Accounts',
-            render: (value, record) => {
-                const accountInfos = accountStats.filter(item => item.creator == record._id);
-                if (accountInfos.length > 0) {
-                    const str = accountInfos.map(item => `${item.platform} ${item.count}`).join(', ')
-                    return `${str}`
-                } else {
-                    return ``;
-                }
-            }
+            dataIndex: 'accountCount',
+            render: value => value || "-"
         },
         {
             key: 'status',
@@ -92,7 +79,7 @@ export const AgencyTable = ({
                     checked={value}
                     checkedChildren="Enabled"
                     unCheckedChildren="Disabled"
-                    onChange={(status) => onStatusChange(record, status)}
+                    onChange={(status) => onStatus && onStatus(record, status)}
                 />
             )
         },
@@ -111,32 +98,32 @@ export const AgencyTable = ({
                                 icon: <LuWallet />,
                             },
                             {
-                                label: record.vip ? 'Disable VIP' : 'Enable VIP',
-                                key: 'vip',
+                                label: 'Change Price Plans',
+                                key: 'plan',
                                 icon: <LuGlobe />,
                             },
                             {
-                                label: 'Reset Password',
-                                key: 'password',
-                                icon: <KeyOutlined />,
+                                label: 'Change Referrer',
+                                key: 'referrer',
+                                icon: <LuUser />,
                             },
                             {
                                 label: 'Delete Agency',
                                 key: 'delete',
-                                icon: <DeleteOutlined />,
+                                icon: <LuTrash />,
                                 danger: true,
                             },
                         ],
                         onClick: (e) => {
                             switch (e.key) {
-                                case "password":
-                                    onPasswordReset && onPasswordReset(record)
-                                    break;
                                 case "balance":
                                     onBalance && onBalance(record)
                                     break;
-                                case "vip":
-                                    onVIP && onVIP(record, record.vip != true)
+                                case "plan":
+                                    onPricePlans && onPricePlans(record)
+                                    break;
+                                case "referrer":
+                                    onReferrer && onReferrer(record)
                                     break;
                                 case "delete":
                                     onDelete && onDelete(record)
@@ -155,10 +142,10 @@ export const AgencyTable = ({
     return (
         <Card
             title="Agency List"
-            extra={[
-                <Button key="create" icon={<UserAddOutlined />} onClick={() => onCreate && onCreate()}>Create</Button>,
-                // <Button key="db" icon={<DatabaseOutlined />} onClick={() => onUpdateDB && onUpdateDB()}>UpdateDB</Button>
-            ]}
+            // extra={[
+            //     <Button key="create" icon={<UserAddOutlined />} onClick={() => onCreate && onCreate()}>Create</Button>,
+            //     // <Button key="db" icon={<DatabaseOutlined />} onClick={() => onUpdateDB && onUpdateDB()}>UpdateDB</Button>
+            // ]}
         >
             <Space align='center' size="middle">
                 {rowSelection.selectedRowKeys && rowSelection.selectedRowKeys.length > 0 &&

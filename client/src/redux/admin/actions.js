@@ -96,7 +96,6 @@ export const deleteBulkProxiesForAdmin = (agencyId, proxyIds, callback) => async
   })
 };
 
-
 export const loadAgenciesForAdmin = (callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/v2/admin/agency`,
@@ -104,3 +103,76 @@ export const loadAgenciesForAdmin = (callback) => async (dispatch) => {
     callback,
   })
 };
+
+export const deleteAgenciesForAdmin = (agencyIds, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/admin/agency`,
+    data: { agencyIds },
+    inform: `${agencyIds.length} agencies are successfully deleted.`,
+    callback
+  })
+};
+
+export const changeAgenciesStatusForAdmin = (agencyIds, status, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/agency`,
+    data: { action: 'status', agencyIds, status },
+    inform: `${agencyIds.length} agencies are successfully ${status ? 'enabled' : 'disabled'}.`,
+    callback
+  })
+};
+
+export const deleteAgencyForAdmin = (agency, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/admin/agency/${agency._id}`,
+    inform: `Agency(${agency.name}) is successfully deleted.`,
+    callback
+  })
+};
+
+export const changeAgencyStatusForAdmin = (agency, status, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/agency/${agency._id}`,
+    data: { status, action: 'status' },
+    inform: `Agency(${agency.name}) is ${status ? 'enabled' : 'disabled'}`,
+    callback
+  })
+};
+
+export const changeAgencyPricePlansForAdmin = (agency, pricePlans, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/agency/${agency._id}`,
+    data: { pricePlans, action: 'plan' },
+    inform: `Agency(${agency.name})'s price plans is successfully updated`,
+    callback
+  })
+};
+
+export const changeAgencyReferrerForAdmin = (agency, referrer, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/agency/${agency._id}`,
+    data: { referrer, action: 'referrer' },
+    inform: `Agency(${agency.name})'s referrer is successfully changed`,
+    callback
+  })
+};
+
+export const changeAgencyCommissionForAdmin = (agency, commission, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/agency/${agency._id}`,
+    data: { commission, action: 'commission' },
+    inform: `Agency(${agency.name})'s commission rate is successfully changed`,
+    callback
+  })
+};
+
+export const appendAgencyBalanceForAdmin = (agency, balance, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/agency/${agency._id}`,
+    data: { action: 'balance', balance },
+    inform: `Agency(${agency.name}) balance is successfully updated.`,
+    callback
+  })
+}
+
+

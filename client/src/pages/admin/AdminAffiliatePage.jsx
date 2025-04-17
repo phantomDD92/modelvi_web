@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
 import qs from 'query-string';
@@ -7,14 +7,17 @@ import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from
 import { StatisticCard } from "@/components/comment";
 import { PageMetaData } from "@/components/common";
 import { AffiliateAdminTable } from "@/components/affiliate";
-import { loadAffiliatesForAdmin } from "@/redux/admin/actions";
+import { changeAgencyCommissionForAdmin, loadAffiliatesForAdmin } from "@/redux/admin/actions";
 import AffiliateClickChart from "@/components/affiliate/AffiliateClickChart";
 import AffiliateCommissionChart from "@/components/affiliate/AffiliateComissionChart";
+import { AgencyCommissionDialog } from "@/components/agency";
 
 const AdminAffiliatePage = () => {
 
   const [loading, setLoading] = useState(false);
   const [time, setTime] = useState("day");
+  const [commissionOpen, setCommissionOpen] = useState(false);
+  const [agency, setAgency] = useState();
 
   const dispatch = useDispatch()
   const location = useLocation();
@@ -29,10 +32,14 @@ const AdminAffiliatePage = () => {
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
 
-  useEffect(() => {
+  const loadAffiliateCallback = useCallback((time) => {
     setLoading(true);
     dispatch(loadAffiliatesForAdmin(time, () => setLoading(false)));
-  }, [time]);
+  }, [dispatch]);
+
+  useEffect(() => {
+    loadAffiliateCallback(time);
+  }, []);
 
   const handleChangePagination = (pageValue, pageSizeValue) => {
     navigate({
@@ -48,6 +55,12 @@ const AdminAffiliatePage = () => {
       const referees = agencies.filter(element => element.referrer?._id == agency._id);
       return ({ ...agency, clicks: affStat?.totalClicks || 0, attempts: affStat?.totalAttempts || 0, completions: affStat?.totalCompletions || 0, referees: referees.length, earnings: tranStat?.totalCommission || 0 })
     })
+  }
+
+  const handleChangeCommission = (commission) => {
+    console.log(commission)
+    if (agency)
+      dispatch(changeAgencyCommissionForAdmin(agency, commission, () => { setCommissionOpen(false); loadAffiliateCallback(time) }))
   }
 
   return (
@@ -111,11 +124,17 @@ const AdminAffiliatePage = () => {
               onChange: handleChangePagination
             }}
             actions={{
-
+              onCommission: agency => { setAgency(agency); setCommissionOpen(true) }
             }}
           />
         </Col>
       </Row>
+      <AgencyCommissionDialog
+        agency={agency}
+        open={commissionOpen}
+        onUpdate={handleChangeCommission}
+        onCancel={() => setCommissionOpen(false)}
+      />
     </>
   )
 }
