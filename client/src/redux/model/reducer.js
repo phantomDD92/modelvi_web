@@ -8,8 +8,6 @@ const initialState = {
   contents: [],
   contentsUpdated: false,
   contentModel: undefined,
-  // For Chat Team Page
-  teams: [],
   // For Account List Page
   accounts: [],
   accountsCount: 0,
@@ -20,7 +18,6 @@ const initialState = {
   // For Schedule List Page
   schedules: [],
   schedulesCount: 0,
-
   chatTeams: [],
 }
 
@@ -35,16 +32,6 @@ const modelReducer = (state = initialState, action) => {
       return {
         ...state,
         allModels: action.payload.actors,
-      };
-    case ACTIONS.LOAD_CHAT_TEAMS:
-      return {
-        ...state,
-        teams: action.payload.teams,
-      };
-    case ACTIONS.LOAD_ALL_CHAT_TEAMS:
-      return {
-        ...state,
-        chatTeams: action.payload.teams,
       };
     case ACTIONS.LOAD_ACCOUNTS:
       return {

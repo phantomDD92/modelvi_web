@@ -2,7 +2,7 @@ import React from "react"
 import {
   AccountListPage,
   AdminAgencyListPage,
-  AdminChatTeamListPage,
+  AdminChatTeamPage,
   AdminDashboardPage,
   CommentListPage,
   ModelContentPage,
@@ -23,7 +23,7 @@ const adminRoutes = [
   { key: "admin_comment", path: "/admin/comment", component: <CommentListPage />, },
   { key: "admin_proxy", path: "/admin/proxy", component: <AdminProxyStatPage />, },
   { key: "admin_agency_proxy", path: "/admin/proxy/:agencyId", component: <AdminProxyAgencyPage />, },
-  { key: "admin_chat", path: "/admin/chat", component: <AdminChatTeamListPage />, },
+  { key: "admin_chat", path: "/admin/chat", component: <AdminChatTeamPage />, },
   { key: "admin_finance", path: "/admin/finance", component: <div>Admin Finance Page</div>, },
   { key: "admin_affiliate", path: "/admin/affiliate", component: <AdminAffiliatePage />, },
 ]

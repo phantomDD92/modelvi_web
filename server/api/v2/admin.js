@@ -4,6 +4,7 @@ const checkManager = require("../../middleware/manager");
 const AgencyCtrl2 = require("../../controllers/v2/agency");
 const AffiliateCtrl2 = require("../../controllers/v2/affiliate");
 const ProxyCtrl2 = require("../../controllers/v2/proxy");
+const ChatTeamCtrl2 = require("../../controllers/v2/chatteam");
 
 const router = express.Router();
 
@@ -42,4 +43,19 @@ router.route("/proxy/:agencyId/:proxyId")
   .put(ProxyCtrl2.handleUpdateProxyForAdmin)
   .delete(ProxyCtrl2.handleDeleteProxyForAdmin)
 
+router.route("/chat")
+  .all(authenticate, checkManager)
+  .get(ChatTeamCtrl2.handleLoadChatTeamsForAdmin)
+  .post(ChatTeamCtrl2.handleCreateChatTeamForAdmin)
+  .delete(ChatTeamCtrl2.handleDeleteChatTeamsForAdmin)
+
+router.route("/chat/:id")
+  .all(authenticate, checkManager)
+  .put(ChatTeamCtrl2.handleUpdateChatTeamForAdmin)
+  .delete(ChatTeamCtrl2.handleDeleteChatTeamForAdmin)
+
+router.route("/account")
+  .all(authenticate, checkManager)
+  .get()
+  .delete(ProxyCtrl2.handleClearProxiesForAdmin)
 module.exports = router;
