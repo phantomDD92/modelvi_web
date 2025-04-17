@@ -80,55 +80,6 @@ export const changeModelOwner = (actor, agency, callback) => async (dispatch) =>
   })
 };
 
-export const loadAllChatTeams = () => async (dispatch) => {
-  await ApiRequest.getAction(dispatch, {
-    path: `/chat_all`,
-    action: ACTIONS.LOAD_ALL_CHAT_TEAMS,
-  });
-};
-
-export const loadChatTeams = (callback) => async (dispatch) => {
-  await ApiRequest.getAction(dispatch, {
-    path: `/chat`,
-    action: ACTIONS.LOAD_CHAT_TEAMS,
-    callback
-  });
-};
-
-export const createChatTeam = (params, callback) => async (dispatch) => {
-  await ApiRequest.postAction(dispatch, {
-    path: `/chat`,
-    data: params,
-    inform: `Chat team (${params.name}) is successfully created`,
-    callback
-  })
-};
-
-export const changeChatTeam = (team, params, callback) => async (dispatch) => {
-  await ApiRequest.putAction(dispatch, {
-    path: `/chat/${team._id}`,
-    data: { ...params, action: "change" },
-    inform: `Chat team (${team.name}) is successfully changed`,
-    callback
-  })
-};
-
-export const deleteChatTeam = (team, callback) => async (dispatch) => {
-  await ApiRequest.deleteAction(dispatch, {
-    path: `/chat/${team._id}`,
-    inform: `Chat team (${team.name}) is successfully deleted`,
-    callback
-  })
-};
-
-export const deleteBulkChatTeams = (teamIds, callback) => async (dispatch) => {
-  await ApiRequest.deleteAction(dispatch, {
-    path: `/chat`,
-    data: { teamIds },
-    inform: `${teamIds.length} chat teams are successfully deleted`,
-    callback
-  })
-};
 
 const waitForTimeout = (secs) => new Promise(resolve => setTimeout(() => resolve(), secs * 1000));
 

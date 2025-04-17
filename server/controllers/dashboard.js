@@ -1,13 +1,13 @@
 const AccountService = require("../services/account");
 const ActorService = require("../services/actor");
-const ChatTeamService = require("../services/chatteam");
 const ProxyService = require("../services/proxy");
+const ChatTeamService2 = require("../services/v2/chatteam");
 const { sendError, sendResult } = require("../utils/resp")
 
 const handleGetStats = async (req, res) => {
     try {
         const [actorCount, actorUpdatedCount] = await ActorService.getCount(req.manager);
-        const teamCount = await ChatTeamService.getCount();
+        const teamCount = await ChatTeamService2.getCount();
         const [proxyCount, proxyExpiredCount] = await ProxyService.getCount(req.manager);
         const [
             f2fCount,

@@ -11,7 +11,7 @@ export * from "@/pages/agency/BillingPaymentPage";
 export * from "@/pages/agency/BillingTransactionPage";
 export * from "@/pages/agency/AffiliatePage";
 
-export * from "@/pages/admin/AdminChatTeamListPage";
+export * from "@/pages/admin/AdminChatTeamPage";
 export * from "@/pages/admin/AdminAgencyListPage";
 export * from "@/pages/admin/AdminDashboardPage";
 export * from "@/pages/admin/AdminAffiliatePage";

@@ -7,7 +7,6 @@ import {
   createAccount,
   deleteAccount,
   loadAccounts,
-  loadAllChatTeams,
   loadModels,
   updateAccountStatus,
   changeAllStatus,
@@ -62,10 +61,6 @@ export const AccountListPage = () => {
     }, DEFAULT_REFRESH_TIMEOUT);
     return () => clearInterval(interval);
   });
-
-  useEffect(() => {
-    dispatch(loadAllChatTeams())
-  }, [loadAllChatTeams])
 
   const handleChangeStatus = (account, status) => {
     dispatch(updateAccountStatus(account, status, () => loadAccountsCallback()))

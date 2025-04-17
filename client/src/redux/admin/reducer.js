@@ -17,6 +17,9 @@ const initialState = {
 
   // agency related state,
   agencies: [],
+
+  // chat team related state
+  chatTeams: [],
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -46,6 +49,11 @@ const adminReducer = (state = initialState, action) => {
       return {
         ...state,
         agencies: action.payload.agencies || [],
+      };
+    case ACTIONS.LOAD_CHAT_TEAMS:
+      return {
+        ...state,
+        chatTeams: action.payload.teams,
       };
     default:
       return state;

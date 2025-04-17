@@ -17,7 +17,6 @@ const imageUpload = multer({ storage: mediaStorage })
 const authenticate = require("../middleware/auth.js");
 const ActorCtrl = require("../controllers/actor.js");
 const AccountCtrl = require("../controllers/account.js");
-const ChatTeamCtrl = require("../controllers/chatteam.js");
 const DashboardCtrl = require("../controllers/dashboard.js");
 const ManagerCtrl = require("../controllers/manager.js");
 const CommentCtrl = require("../controllers/comment.js");
@@ -29,22 +28,6 @@ const UserCtrl = require("../controllers/user.js");
 const apiRouterV2 = require("./v2");
 
 const router = express.Router();
-
-router.route("/chat_all")
-  .all(authenticate)
-  .get(ChatTeamCtrl.handleLoadAllChatTeams)
-
-// Chat team related apis
-router.route("/chat")
-  .all(authenticate, checkManager)
-  .get(ChatTeamCtrl.handleLoadChatTeams)
-  .post(ChatTeamCtrl.handleCreateChatTeam)
-  .delete(ChatTeamCtrl.handleDeleteBulkChatTeams)
-
-router.route("/chat/:id")
-  .all(authenticate, checkManager)
-  .put(ChatTeamCtrl.handleUpdateChatTeam)
-  .delete(ChatTeamCtrl.handleDeleteChatTeam)
 
 router.route("/temp")
   .all(authenticate, checkManager)

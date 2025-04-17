@@ -1,8 +1,8 @@
-const { Platform, AdminRole, PostMode } = require("../config/const");
+const { AdminRole } = require("../config/const");
 const AccountService = require("../services/account");
 const ActorService = require("../services/actor");
-const ChatTeamService = require("../services/chatteam");
 const HistoryService = require("../services/history");
+const ChatTeamService2 = require("../services/v2/chatteam");
 const NotifyUtils = require("../utils/notifiy");
 const { sendResult, sendError, ApiError } = require("../utils/resp");
 
@@ -35,7 +35,7 @@ const handleCreateAccount = async (req, res) => {
     const account = await AccountService.createAccount(platform, currActor, { ...params, chatTeam, owner: currActor.owner, creator: req.manager._id });
     await ActorService.appendAccount(actor, account._id)
     if (chatTeam)
-      await ChatTeamService.appendTeamAccount(chatTeam, account._id);
+      await ChatTeamService2.appendTeamAccount(chatTeam, account._id);
     await NotifyUtils.sendMessage(
       `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
       `${currActor.number}. ${currActor.name} - ${platform} ${alias}`,
@@ -56,7 +56,7 @@ const handleDeleteAccount = async (req, res) => {
       throw new ApiError(`Account is able to delete only by owner.`)
     await ActorService.removeAccount(account.actor?._id, account);
     if (account.chatTeam)
-      await ChatTeamService.removeTeamAccount(account.chatTeam, account._id)
+      await ChatTeamService2.removeTeamAccount(account.chatTeam, account._id)
     await AccountService.deleteAccount(id);
     await NotifyUtils.sendMessage(
       `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
@@ -85,9 +85,9 @@ const handleUpdateAccount = async (req, res) => {
           throw new ApiError("Model does not exist.");
         await AccountService.updateAccount(accountId, currActor, { chatTeam, ...others });
         if (account.chatTeam)
-          await ChatTeamService.removeTeamAccount(account.chatTeam, account._id)
+          await ChatTeamService2.removeTeamAccount(account.chatTeam, account._id)
         if (chatTeam)
-          await ChatTeamService.appendTeamAccount(chatTeam, account._id)
+          await ChatTeamService2.appendTeamAccount(chatTeam, account._id)
         break;
       case "status":
         const { status } = params;
@@ -145,7 +145,7 @@ const handleDeleteAccounts = async (req, res) => {
     for (account of accounts) {
       await ActorService.removeAccount(account.actor?._id, account);
       if (account.chatTeam)
-        await ChatTeamService.removeTeamAccount(account.chatTeam, account._id)
+        await ChatTeamService2.removeTeamAccount(account.chatTeam, account._id)
     }
     await AccountService.deleteBulkAccounts(req.manager, accountIds);
     await NotifyUtils.sendMessage(

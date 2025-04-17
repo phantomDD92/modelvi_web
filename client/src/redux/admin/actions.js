@@ -109,6 +109,39 @@ export const deleteAgenciesForAdmin = (agencyIds, callback) => async (dispatch) 
     path: `/v2/admin/agency`,
     data: { agencyIds },
     inform: `${agencyIds.length} agencies are successfully deleted.`,
+  })
+}
+
+export const loadChatTeamsForAdmin = (callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/admin/chat`,
+    action: ACTIONS.LOAD_CHAT_TEAMS,
+    callback
+  });
+};
+
+export const createChatTeamForAdmin = (params, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/v2/admin/chat`,
+    data: params,
+    inform: `Chat team (${params.name}) is successfully created`,
+    callback
+  })
+};
+
+export const changeChatTeamForAdmin = (team, params, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/chat/${team._id}`,
+    data: { ...params, action: "change" },
+    inform: `Chat team (${team.name}) is successfully changed`,
+    callback
+  })
+};
+
+export const deleteChatTeamForAdmin = (team, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/admin/chat/${team._id}`,
+    inform: `Chat team (${team.name}) is successfully deleted`,
     callback
   })
 };
@@ -126,6 +159,15 @@ export const deleteAgencyForAdmin = (agency, callback) => async (dispatch) => {
   await ApiRequest.deleteAction(dispatch, {
     path: `/v2/admin/agency/${agency._id}`,
     inform: `Agency(${agency.name}) is successfully deleted.`,
+    callback
+  })
+}
+
+export const deleteChatTeamsForAdmin = (teamIds, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/admin/chat`,
+    data: { teamIds },
+    inform: `${teamIds.length} chat teams are successfully deleted`,
     callback
   })
 };
@@ -175,4 +217,12 @@ export const appendAgencyBalanceForAdmin = (agency, balance, callback) => async 
   })
 }
 
+
+export const loadAccountStatsForAdmin = (platform, callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/admin/account/${platform}`,
+    action: ACTIONS.LOAD_ACCOUNTS,
+    callback
+  });
+};
 
