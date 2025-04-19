@@ -49,9 +49,9 @@ const services = [
     icon: LuComponent,
   },
   {
-    title: "Data-Driven Results",
+    title: "Drive Targeted Traffic",
     description:
-      "Optimize your strategy with real-time insights and analytics, ensuring your models get maximum exposure.",
+      "Fuel your growth with tools that attract the right audience to your models. Reach more fans through smart automation and platform-specific optimization.",
     icon: LuLayers,
   },
   {
