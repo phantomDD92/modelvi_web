@@ -11,6 +11,10 @@ const router = express.Router();
 router.route("/version")
   .get((req, res) => { res.json({ success: true, version: "manager api version 2.0" }) });
 
+router.route("/agency_list")
+  .all(authenticate, checkManager)
+  .get(AgencyCtrl2.handleLoadAgencyListForAdmin);
+  
 router.route("/agency")
   .all(authenticate, checkManager)
   .get(AgencyCtrl2.handleLoadAgenciesForAdmin)

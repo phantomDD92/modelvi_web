@@ -40,7 +40,6 @@ export const ModelListPage = () => {
   const location = useLocation();
 
   const modelProps = useSelector(state => state.model)
-  const homeProps = useSelector(state => state.home)
   const models = useSelector(state => state.model.models);
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
