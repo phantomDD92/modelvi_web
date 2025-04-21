@@ -1,13 +1,21 @@
 import { Select } from "antd";
 
-const AgencySelect = ({ dataSource, ...props }) => {
+const AgencySelect = ({ dataSource, all, ...props }) => {
+  const getOptions = (allValue, source) => {
+    return allValue
+      ? source.map(agency => ({
+        value: agency._id,
+        label: `${agency.name}`,
+      })).unshift({ value: '', label: "All" })
+      : source.map(agency => ({
+        value: agency._id,
+        label: `${agency.name}`,
+      }))
+  }
   return (
     <Select
       className="min-w-[200px]"
-      options={dataSource.map(agency => ({
-        value: agency._id,
-        label: `${agency.name}`,
-      }))}
+      options={getOptions(all, dataSource)}
       {...props}
     />
   )

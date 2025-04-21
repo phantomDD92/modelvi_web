@@ -226,3 +226,20 @@ export const loadAccountStatsForAdmin = (platform, callback) => async (dispatch)
   });
 };
 
+
+export const loadModelsForAdmin = (agency, search, callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/admin/model`,
+    params: { agency, search },
+    action: ACTIONS.LOAD_MODELS,
+    callback
+  });
+};
+
+export const loadAgencyListForAdmin = (callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/admin/agency_list`,
+    action: ACTIONS.LOAD_AGENCY_LIST,
+    callback
+  });
+};
