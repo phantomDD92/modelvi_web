@@ -175,3 +175,229 @@ export const verifyAgency = (params, callback) => async (dispatch) => {
     callback && callback(false);
   }
 };
+
+
+export const loadModels = (search, callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/agency/model`,
+    params: { search },
+    action: ACTIONS.LOAD_MODELS,
+    callback
+  });
+};
+
+export const createModel = (params, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: "/v2/agency/model",
+    data: { ...params },
+    inform: `Model (${params.name}) is successfully created`,
+    callback
+  })
+};
+
+export const deleteModel = (model, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/agency/model/${model._id}`,
+    inform: `Model (${model.name}) is successfully deleted`,
+    callback
+  })
+};
+
+export const deleteModels = (modelIds, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/agency/model`,
+    data: { modelIds },
+    inform: `${modelIds.length} models are successfully deleted`,
+    callback
+  })
+};
+
+export const syncModels = (modelIds, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/agency/model`,
+    data: { action: "sync", modelIds },
+    inform: `${modelIds.length} models are successfully synchronized`,
+    callback
+  })
+};
+
+export const syncModel = (model, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/agency/model/${model._id}`,
+    data: { action: "sync" },
+    inform: `Model (${model.name}) is successfully synchronized`,
+    callback
+  })
+};
+
+export const changeModel = (model, params, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/agency/model/${model._id}`,
+    data: { action: "change", ...params },
+    inform: `Model (${model.name}) is successfully changed`,
+    callback
+  })
+};
+
+export const getModelContents = (modelId, callback) => (dispatch) =>
+  ApiRequest.getAction(dispatch, {
+    path: `/v2/agency/content/${modelId}`,
+    action: ACTIONS.GET_MODEL_CONTENTS,
+    callback
+  })
+
+export const appendModelContent = (model, params, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/v2/agency/content/${model._id}`,
+    data: params,
+    action: ACTIONS.GET_MODEL_CONTENTS,
+    inform: `Model (${model.name})'s content is successfully appended`,
+    callback
+  });
+};
+
+export const clearModelContents = (model, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/agency/content/${model._id}`,
+    data: { action: "clear" },
+    action: ACTIONS.GET_MODEL_CONTENTS,
+    inform: `Model (${model.name})'s contents are successfully cleared`,
+    callback
+  })
+};
+
+export const deleteModelContents = (model, contentIds, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/agency/content/${model._id}`,
+    data: { contentIds },
+    action: ACTIONS.GET_MODEL_CONTENTS,
+    inform: `Model (${model.name})'s ${contentIds.length} contents are successfully deleted`,
+    callback
+  })
+};
+
+export const updateModelContentsPlatform = (model, contentIds, params, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/agency/content/${model._id}`,
+    data: { action: "platform", contentIds, ...params },
+    action: ACTIONS.GET_MODEL_CONTENTS,
+    inform: `Model (${model.name})'s ${contentIds.length} contents' platforms are successfully changed`,
+    callback
+  });
+};
+
+export const updateModelContent = (model, content, params, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/agency/content/${model._id}/${content._id}`,
+    data: { action: "change", ...params },
+    action: ACTIONS.GET_MODEL_CONTENTS,
+    inform: `Model (${model.name})'s content is successfully changed`,
+    callback
+  });
+};
+
+export const deleteModelContent = (model, content, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/agency/content/${model._id}/${content._id}`,
+    action: ACTIONS.GET_MODEL_CONTENTS,
+    inform: `Model (${model.name})'s content is successfully deleted`,
+    callback
+  })
+};
+
+export const loadAccounts = (platform, search, callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/agency/account/${platform}`,
+    params: { search },
+    action: ACTIONS.LOAD_ACCOUNTS,
+    callback
+  });
+};
+
+export const updateAccountsStatus = (platform, accountIds, status, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/agency/account/${platform}`,
+    data: { action: "status", accountIds, status },
+    inform: `${accountIds.length} accounts are successfully ${status ? "enabled" : "disabled"}`,
+    callback
+  });
+};
+
+export const deleteAccounts = (platform, accountIds, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/agency/account/${platform}`,
+    data: { accountIds },
+    inform: `${accountIds.length} accounts are successfully deleted`,
+    callback
+  });
+};
+
+export const updateAccountStatus = (account, status, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/agency/account/${account.platform}/${account._id}`,
+    data: { action: "status", status },
+    inform: `Account (${account.alias}) is successfully ${status ? "enabled" : "disabled"}`,
+    callback,
+  });
+};
+
+export const createAccount = (platform, params, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/v2/agency/account/${platform}`,
+    data: params,
+    inform: `Account (${params.alias}) is successfully created`,
+    callback
+  });
+};
+
+export const changeAccount = (platform, account, params, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/agency/account/${platform}/${account._id}`,
+    data: { action: "change", ...params },
+    inform: `Account (${account.alias}) is successfully changed`,
+    callback
+  });
+};
+
+export const updateAccountSettings = (platform, account, params, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/agency/account/${platform}/${account._id}`,
+    data: { action: "setting", ...params },
+    inform: `Account (${account.alias})'s setting is successfully changed`,
+    callback
+  })
+}
+
+export const deleteAccount = (platform, account, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/agency/account/${platform}/${account._id}`,
+    inform: `Account (${account.alias}) is successfully deleted`,
+    callback
+  })
+};
+
+export const loadAccountHistory = (platform, accountId, { page, pageSize }, callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/agency/history/${platform}/${accountId}`,
+    params: { page, pageSize },
+    action: ACTIONS.LOAD_ACCOUNT_HISTORY,
+    callback
+  })
+}
+
+export const clearAccountHistory = (platform, accountId, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/agency/history/${platform}/${accountId}`,
+    inform: "successfully clear history",
+    callback
+  })
+}
+
+export const clearAccountError = (platform, accountId, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/v2/agency/history/${platform}/${accountId}`,
+    inform: "successfully clear error",
+    callback
+  })
+}
+

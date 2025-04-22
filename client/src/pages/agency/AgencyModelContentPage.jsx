@@ -5,13 +5,13 @@ import qs from 'query-string';
 import {
   appendModelContent,
   clearModelContents,
-  deleteModelBulkContents,
+  deleteModelContents,
   deleteModelContent,
-  getModelContent,
+  getModelContents,
   syncModel,
-  updateModelBulkContentsPlatform,
+  updateModelContentsPlatform,
   updateModelContent
-} from "@/redux/model/actions";
+} from "@/redux/v2/actions";
 import {
   ModelContentTable,
   ModelContentDialog
@@ -20,7 +20,7 @@ import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE } from "@/utils/const";
 import { Modal } from "antd";
 import ModelPlatformDialog from "@/components/model/ModelPlatformDialog";
 
-export const ModelContentPage = () => {
+export const AgencyModelContentPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -31,15 +31,16 @@ export const ModelContentPage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const location = useLocation();
-
-  const model = useSelector(state => state.model.contentModel);
   const routeParams = useParams()
+
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
 
+  const model = useSelector(state => state.v2.contentModel);
+
   const loadModelContentCallback = useCallback(() => {
     setLoading(true);
-    dispatch(getModelContent(routeParams.modelId, () => setLoading(false)))
+    dispatch(getModelContents(routeParams.modelId, () => setLoading(false)))
   }, [dispatch]);
 
   useEffect(() => {
@@ -65,12 +66,12 @@ export const ModelContentPage = () => {
   const handleDeleteBulkContents = () => {
     Modal.confirm({
       title: `Are you sure to delete ${selectedRowKeys.length} model's contents?`,
-      onOk: () => dispatch(deleteModelBulkContents(model, selectedRowKeys, () => setSelectedRowKeys([]))),
+      onOk: () => dispatch(deleteModelContents(model, selectedRowKeys, () => setSelectedRowKeys([]))),
     });
   }
 
   const handleUpdateBulkPlatforms = (params) => {
-    dispatch(updateModelBulkContentsPlatform(model, selectedRowKeys, params, () => { setPlatformOpen(false); setSelectedRowKeys([]) }))
+    dispatch(updateModelContentsPlatform(model, selectedRowKeys, params, () => { setPlatformOpen(false); setSelectedRowKeys([]) }))
   }
 
 
@@ -132,4 +133,4 @@ export const ModelContentPage = () => {
   );
 };
 
-export default ModelContentPage;
+export default AgencyModelContentPage;

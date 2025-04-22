@@ -60,12 +60,12 @@
   padding: 1.5rem;
   height: 5rem;
 }
-
+.ant-input-search.light-theme .ant-input,
 .ant-input[type='text'].light-theme,
 .ant-input[type='password'].light-theme {
   box-sizing: border-box;
   margin: 0;
-  padding: 4px 11px;
+  padding: 4px 11px!important;
   color: rgba(0, 0, 0, 0.88);
   background-color: white;
   font-size: 14px;
@@ -80,6 +80,7 @@
   transition: all 0.2s;
 }
 
+.ant-input-search.light-theme .ant-input-outlined,
 .ant-input-outlined[type='text'].light-theme,
 .ant-input-outlined[type='password'].light-theme {
   background: #ffffff;
@@ -87,6 +88,8 @@
   border-style: solid;
   border-color: #d9d9d9;
 }
+
+.ant-input-search.focus.light-theme .ant-input-outlined,
 .ant-input-outlined[type='text']:focus.light-theme,
 .ant-input-outlined[type='password']:focus.light-theme {
   border-color: #1677ff;
@@ -95,6 +98,7 @@
   background-color: #ffffff;
 }
 
+.ant-input-search.dark-theme .ant-input,
 .ant-input[type='text'].dark-theme,
 .ant-input[type='password'].dark-theme {
     box-sizing: border-box;
@@ -113,6 +117,7 @@
     transition: all 0.2s;
 }
 
+.ant-input-search.dark-theme .ant-input-outlined,
 .ant-input-outlined[type='text'].dark-theme,
 .ant-input-outlined[type='password'].dark-theme  {
   background: #141414;
@@ -120,6 +125,8 @@
   border-style: solid;
   border-color: #424242;
 }
+
+.ant-input-search.focus.dark-theme .ant-input-outlined,
 .ant-input-outlined[type='text']:focus.dark-theme,
 .ant-input-outlined[type='password']:focus.dark-theme {
   border-color: #1677ff;
