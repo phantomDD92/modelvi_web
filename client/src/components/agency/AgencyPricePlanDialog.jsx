@@ -19,7 +19,6 @@ const DEFAULT_PRICE_PLANS = [
 const AgencyPricePlanDialog = ({
     open,
     agency,
-    pricePlans,
     onUpdate,
     onCancel,
 }) => {
@@ -27,6 +26,7 @@ const AgencyPricePlanDialog = ({
     const [dataSource, setDataSource] = useState([]);
 
     useEffect(() => {
+        const pricePlans = agency?.pricePlans;
         const newDataSource = DEFAULT_PRICE_PLANS.map((plan, index) => ({
             ...plan,
             [Platform.F2F]: pricePlans && pricePlans[Platform.F2F] ? pricePlans[Platform.F2F][index] : plan.price,
@@ -36,7 +36,7 @@ const AgencyPricePlanDialog = ({
             [Platform.MALOUM]: pricePlans && pricePlans[Platform.MALOUM] ? pricePlans[Platform.MALOUM][index] : plan.price,
         }))
         setDataSource(newDataSource);
-    }, [pricePlans]);
+    }, [agency]);
 
     const getPricePlans = (source) => {
         const plans = {

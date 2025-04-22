@@ -473,26 +473,25 @@ const handleCheckBalance = async (req, res) => {
     // get valid dates
     const dateDelta = getDateDelta(account.expiredAt);
     if (dateDelta <= 0) { // if account is expired
-      // if (hasSufficientBalance(agency, price)) {
-      // remove balance and create transaction, extend account
-      const { balance } = await AgencyService2.updateBalance(agency._id, -1 * price);
-      const commission = price * (agency.referrer?.commission || 0) / 100;
-      await TransactionService2.createExpenseTransaction(
-        agency._id,
-        account._id,
-        price,
-        balance,
-        balance - price,
-        `payout for ${account.platform} ${account.alias}`,
-        commission
-      );
-      await AccountService2.extendAccount(account._id)
-      NotifyUtils.sendExpenseMessage(agency, account, `Monthly Revenue: ${account.revenue}\nPrice: ${price}\nBalance:$${balance.toFixed(2)} => $${(balance - price).toFixed(2)}\n`)
-      // } else {
-      //   available = false;
-      //   // disable account
-      //   await AccountService2.disableAccount(account._id, "insufficient balance");
-      // }
+      if (hasSufficientBalance(agency, price)) {
+        // remove balance and create transaction, extend account
+        const { balance } = await AgencyService2.updateBalance(agency._id, -1 * price);
+        const commission = price * (agency.referrer?.commission || 0) / 100;
+        await TransactionService2.createExpenseTransaction(
+          agency._id,
+          account._id,
+          price,
+          balance,
+          balance - price,
+          `payout for ${account.platform} ${account.alias}`,
+          commission
+        );
+        await AccountService2.extendAccount(account._id)
+        NotifyUtils.sendExpenseMessage(agency, account, `Monthly Revenue: ${account.revenue}\nPrice: ${price}\nBalance:$${balance.toFixed(2)} => $${(balance - price).toFixed(2)}\n`)
+      } else {
+        available = false;
+        await AccountService2.disableAccount(account._id, "no balance");
+      }
     } else if (dateDelta == 7) {
       // send notification
     } else if (dateDelta == 1) {
