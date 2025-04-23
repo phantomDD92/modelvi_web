@@ -3,14 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { createSearchParams, useParams, useLocation, useNavigate } from "react-router-dom";
 import qs from 'query-string';
 import {
-  appendModelContentForAmin,
   clearModelContentsForAdmin,
   deleteModelContentsForAdmin,
   getModelContentsForAdmin,
   syncModelForAdmin,
   updateModelContentsPlatformForAdmin,
   deleteModelContentForAdmin,
-  updateModelContentForAdmin
+  updateModelContentForAdmin,
+  appendModelContentForAdmin
 } from "@/redux/admin/actions";
 import {
   ModelContentTable,
@@ -36,7 +36,7 @@ export const AdminModelContentPage = () => {
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
 
-  const model = useSelector(state => state.v2.contentModel);
+  const model = useSelector(state => state.admin.contentModel);
 
   const loadModelContentCallback = useCallback(() => {
     setLoading(true);
@@ -52,7 +52,7 @@ export const AdminModelContentPage = () => {
     if (content) {
       dispatch(updateModelContentForAdmin(model, content, params, () => setEditOpen(false)));
     } else {
-      dispatch(appendModelContentForAmin(model, params, () => setEditOpen(false)));
+      dispatch(appendModelContentForAdmin(model, params, () => setEditOpen(false)));
     }
   }
 

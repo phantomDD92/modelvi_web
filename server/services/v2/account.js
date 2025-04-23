@@ -132,7 +132,8 @@ const createAccount = (
 
 const findAccountById = (accountId) =>
   AccountModel.findById(accountId, "-params.contents")
-    .populate("actor", "number name");
+    .populate("actor", "number name")
+    .populate("owner", "name");
 
 const deleteAccount = (accountId) =>
   AccountModel.findByIdAndDelete(accountId);
@@ -165,6 +166,21 @@ const clearError = (accountId) =>
 const updateParams = (accountId, params) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: params });
 
+const getAccounts = (accountIds, agencyId = undefined) =>
+  agencyId
+    ? AccountModel.find({ _id: { $in: accountIds }, owner: agencyId }, "platform alias owner actor chatTeam")
+      .populate("actor", "number name")
+      .populate("owner", "name")
+    : AccountModel.find({ _id: { $in: accountIds } }, "platform alias actor chatTeam")
+      .populate("actor", "number name")
+      .populate("owner", "name")
+
+const updateAccountsStatus = (accountIds, status) =>
+  AccountModel.updateMany({ _id: { $in: accountIds } }, { $set: { status } })
+
+const deleteAccounts = (accountIds) =>
+  AccountModel.deleteMany({ _id: { $in: accountIds } });
+
 const AccountService2 = {
   getAccountWithModel,
   getAccountWithModelChat,
@@ -188,6 +204,9 @@ const AccountService2 = {
   setStatus,
   clearError,
   updateParams,
+  getAccounts,
+  updateAccountsStatus,
+  deleteAccounts,
 };
 
 module.exports = AccountService2;

@@ -3,7 +3,7 @@ import { Modal, Form, Input, Select } from "antd";
 import { useEffect } from "react";
 import StyledInput from "../common/StyledInput";
 
-const AccountDialog = ({ open, platform, models, chatTeams, account, onCancel, onCreate, onUpdate }) => {
+const AgencyAccountDialog = ({ open, platform, models, account, onCancel, onCreate, onUpdate }) => {
     const [form] = Form.useForm();
 
     const handleOkClick = async () => {
@@ -21,7 +21,7 @@ const AccountDialog = ({ open, platform, models, chatTeams, account, onCancel, o
     }
     useEffect(() => {
         if (account && open) {
-            form.setFieldsValue({ ...account, actor: account.actor._id, chatTeam: account.chatTeam?._id })
+            form.setFieldsValue({ ...account, actor: account.actor._id })
         } else {
             form.resetFields();
         }
@@ -71,15 +71,6 @@ const AccountDialog = ({ open, platform, models, chatTeams, account, onCancel, o
                     rules={platform == Platform.KNKY ? [] : [{ required: true }]}>
                     <StyledInput />
                 </Form.Item>
-                <Form.Item
-                    name="chatTeam"
-                    label="Chat Team">
-                    <Select
-                        options={chatTeams.map(team => ({
-                            label: team.name,
-                            value: team._id
-                        }))} />
-                </Form.Item>
                 {((platform == Platform.FAN) || (platform == Platform.KNKY)) &&
                     <Form.Item
                         name="device"
@@ -92,4 +83,4 @@ const AccountDialog = ({ open, platform, models, chatTeams, account, onCancel, o
     )
 }
 
-export default AccountDialog;
+export default AgencyAccountDialog;

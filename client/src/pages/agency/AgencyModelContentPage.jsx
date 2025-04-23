@@ -37,7 +37,6 @@ export const AgencyModelContentPage = () => {
   const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
 
   const model = useSelector(state => state.v2.contentModel);
-
   const loadModelContentCallback = useCallback(() => {
     setLoading(true);
     dispatch(getModelContents(routeParams.modelId, () => setLoading(false)))

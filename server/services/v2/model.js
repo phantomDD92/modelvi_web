@@ -78,6 +78,9 @@ const findModelById = (modelId) =>
 const getModel = (modelId) =>
   ActorModel.findById(modelId, "-contents");
 
+const getModelWithContents = (modelId) => 
+  ActorModel.findById(modelId).populate("owner", "name");
+
 const deleteModel = (modelId) =>
   ActorModel.findByIdAndDelete(modelId);
 
@@ -175,7 +178,7 @@ const ModelService2 = {
   syncContents,
   syncBulkContents,
   updateContentsPlatform,
-
+  getModelWithContents,
   appendAccount,
   removeAccount,
 };
