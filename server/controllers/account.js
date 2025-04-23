@@ -1,8 +1,8 @@
-const { Platform, AdminRole, PostMode } = require("../config/const");
+const { AdminRole } = require("../config/const");
 const AccountService = require("../services/account");
 const ActorService = require("../services/actor");
-const ChatTeamService = require("../services/chatteam");
 const HistoryService = require("../services/history");
+const ChatTeamService2 = require("../services/v2/chatteam");
 const NotifyUtils = require("../utils/notifiy");
 const { sendResult, sendError, ApiError } = require("../utils/resp");
 
@@ -31,12 +31,11 @@ const handleCreateAccount = async (req, res) => {
       throw new ApiError("Account with the same alias is already existed.");
     if (req.manager.role != AdminRole.MANAGER && currActor.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`Account is able to create only by owner`);
-    const count = await AccountService.getAgencyCount(req.manager._id)
     const account = await AccountService.createAccount(platform, currActor, { ...params, chatTeam, owner: currActor.owner, creator: req.manager._id });
     await ActorService.appendAccount(actor, account._id)
     if (chatTeam)
-      await ChatTeamService.appendTeamAccount(chatTeam, account._id);
-    await NotifyUtils.sendMessage(
+      await ChatTeamService2.appendTeamAccount(chatTeam, account._id);
+    NotifyUtils.sendMessage(
       `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
       `${currActor.number}. ${currActor.name} - ${platform} ${alias}`,
       `CREATE A ACCOUNT`);
@@ -56,9 +55,9 @@ const handleDeleteAccount = async (req, res) => {
       throw new ApiError(`Account is able to delete only by owner.`)
     await ActorService.removeAccount(account.actor?._id, account);
     if (account.chatTeam)
-      await ChatTeamService.removeTeamAccount(account.chatTeam, account._id)
+      await ChatTeamService2.removeTeamAccount(account.chatTeam, account._id)
     await AccountService.deleteAccount(id);
-    await NotifyUtils.sendMessage(
+    NotifyUtils.sendMessage(
       `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
       `${account.actor?.number}. ${account.actor?.name} - ${account.platform} ${account.alias}`,
       `DELETE A ACCOUNT`);
@@ -85,14 +84,14 @@ const handleUpdateAccount = async (req, res) => {
           throw new ApiError("Model does not exist.");
         await AccountService.updateAccount(accountId, currActor, { chatTeam, ...others });
         if (account.chatTeam)
-          await ChatTeamService.removeTeamAccount(account.chatTeam, account._id)
+          await ChatTeamService2.removeTeamAccount(account.chatTeam, account._id)
         if (chatTeam)
-          await ChatTeamService.appendTeamAccount(chatTeam, account._id)
+          await ChatTeamService2.appendTeamAccount(chatTeam, account._id)
         break;
       case "status":
         const { status } = params;
         await AccountService.setStatus(accountId, status);
-        await NotifyUtils.sendMessage(
+        NotifyUtils.sendMessage(
           `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
           `${account.actor?.number}. ${account.actor?.name} - ${account.platform} ${account.alias}`,
           `${status ? 'ENABLE' : 'DISABLE'} A BOT`);
@@ -117,14 +116,14 @@ const handleUpdateAccounts = async (req, res) => {
       case "status":
         const accounts = await AccountService.getBulkAccounts(req.manager, accountIds);
         await AccountService.updateBulkAccountsStatus(req.manager, accountIds, status);
-        await NotifyUtils.sendMessage(
+        NotifyUtils.sendMessage(
           `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
           `${accounts.map(account => `${account.actor?.number}. ${account.actor?.name} - ${account.platform} ${account.alias}`).join(", ")}`,
           `${status ? 'ENABLE' : 'DISABLE'} ${accounts.length} BOTS`);
         break;
       case "all":
         await AccountService.setAllStatus(req.manager, platform, status);
-        await NotifyUtils.sendMessage(
+        NotifyUtils.sendMessage(
           `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
           `ALL ACCOUNTS`,
           `${status ? 'ENABLE' : 'DISABLE'} ALL BOTS`);
@@ -145,10 +144,10 @@ const handleDeleteAccounts = async (req, res) => {
     for (account of accounts) {
       await ActorService.removeAccount(account.actor?._id, account);
       if (account.chatTeam)
-        await ChatTeamService.removeTeamAccount(account.chatTeam, account._id)
+        await ChatTeamService2.removeTeamAccount(account.chatTeam, account._id)
     }
     await AccountService.deleteBulkAccounts(req.manager, accountIds);
-    await NotifyUtils.sendMessage(
+    NotifyUtils.sendMessage(
       `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
       `${accounts.map(account => `${account.actor?.number}. ${account.actor?.name} - ${account.platform} ${account.alias}`).join(", ")}`,
       `DELETE ${accounts.length} ACCOUNTS`);

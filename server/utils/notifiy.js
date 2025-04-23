@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 const dotenv = require("dotenv");
 dotenv.config();
 
-const sendMessage = async (who, what, message) => {
+const sendMessage = (who, what, message) => {
   if (process.env.DISCORD_AGENCIES_WEBHOOK) {
     axios.post(process.env.DISCORD_AGENCIES_WEBHOOK, {
       username: `${who}`,

@@ -58,7 +58,7 @@ const AdminAffiliatePage = () => {
   }
 
   const handleChangeCommission = (commission) => {
-    console.log(commission)
+    // console.log(commission)
     if (agency)
       dispatch(changeAgencyCommissionForAdmin(agency, commission, () => { setCommissionOpen(false); loadAffiliateCallback(time) }))
   }

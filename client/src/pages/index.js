@@ -1,7 +1,7 @@
 export * from "@/pages/agency/DashboardPage";
-export * from "@/pages/agency/ModelListPage";
-export * from "@/pages/agency/ModelContentPage";
-export * from "@/pages/agency/AccountListPage";
+export * from "@/pages/agency/AgencyModelPage";
+export * from "@/pages/agency/AgencyModelContentPage";
+export * from "@/pages/agency/AgencyAccountPage";
 export * from "@/pages/agency/AccountHistoryPage";
 export * from "@/pages/agency/AgencyProxyPage";
 export * from "@/pages/agency/CommentListPage";
@@ -11,7 +11,9 @@ export * from "@/pages/agency/BillingPaymentPage";
 export * from "@/pages/agency/BillingTransactionPage";
 export * from "@/pages/agency/AffiliatePage";
 
-export * from "@/pages/admin/AdminChatTeamListPage";
+export * from "@/pages/admin/AdminChatTeamPage";
 export * from "@/pages/admin/AdminAgencyListPage";
 export * from "@/pages/admin/AdminDashboardPage";
 export * from "@/pages/admin/AdminAffiliatePage";
+export * from "@/pages/admin/AdminModelPage";
+export * from "@/pages/admin/AdminModelContentPage";

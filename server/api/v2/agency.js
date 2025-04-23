@@ -3,6 +3,9 @@ const PaymentCtrl = require("../../controllers/v2/payment");
 const authenticate = require("../../middleware/auth");
 const TransactionCtrl = require("../../controllers/v2/transaction");
 const ProxyCtrl2 = require("../../controllers/v2/proxy");
+const ModelCtrl2 = require("../../controllers/v2/model");
+const AccountCtrl2 = require("../../controllers/v2/account");
+const HistoryCtrl2 = require("../../controllers/v2/history");
 
 const router = express.Router();
 
@@ -38,5 +41,53 @@ router.route("/proxy/:proxyId")
   .all(authenticate)
   .put(ProxyCtrl2.handleUpdateProxyForAdmin)
   .delete(ProxyCtrl2.handleDeleteProxyForAgency)
+
+router.route("/model")
+  .all(authenticate)
+  .get(ModelCtrl2.handleLoadModelsForAgency)
+  .post(ModelCtrl2.handleCreateModelForAgency)
+  .put(ModelCtrl2.handleUpdateModelsForAgency)
+  .delete(ModelCtrl2.handleDeleteModelsForAgency)
+
+router
+  .route("/model/:modelId")
+  .all(authenticate)
+  .put(ModelCtrl2.handleUpdateModelForAgency)
+  .delete(ModelCtrl2.handleDeleteModelForAgency);
+
+router
+  .route("/content/:modelId")
+  .all(authenticate)
+  .get(ModelCtrl2.handleGetContentsForAgency)
+  .post(ModelCtrl2.handleAppendContentForAgency)
+  .put(ModelCtrl2.handleUpdateContentsForAgency)
+  .delete(ModelCtrl2.handleDeleteContentsForAgency);
+
+router
+  .route("/content/:modelId/:contentId")
+  .all(authenticate)
+  .put(ModelCtrl2.handleUpdateContentForAgency)
+  .delete(ModelCtrl2.handleDeleteContentForAgency);
+
+router
+  .route("/account/:platform")
+  .all(authenticate)
+  .get(AccountCtrl2.handleLoadAccountsForAgency)
+  .post(AccountCtrl2.handleCreateAccountForAgency)
+  .put(AccountCtrl2.handleUpdateAccountsForAgency)
+  .delete(AccountCtrl2.handleDeleteAccountsForAgency);
+
+router
+  .route("/account/:platform/:accountId")
+  .all(authenticate)
+  .put(AccountCtrl2.handleUpdateAccountForAgency)
+  .delete(AccountCtrl2.handleDeleteAccountForAgency);
+
+router
+  .route("/history/:platform/:accountId")
+  .all(authenticate)
+  .get(HistoryCtrl2.handleLoadHistoryForAgency)
+  .post(HistoryCtrl2.handleClearErrorForAgency)
+  .delete(HistoryCtrl2.handleClearHistoryForAgency);
   
 module.exports = router;

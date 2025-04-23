@@ -4,20 +4,17 @@ import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
 import qs from 'query-string';
 import { Modal } from "antd";
 import {
-  changeModelOwner,
   createModel,
   deleteModel,
   loadModels,
   changeModel,
-  deleteBulkModels,
-  syncBulkModels,
   syncModel,
-  // updateModelProfile 
-} from "@/redux/model/actions";
+  deleteModels,
+  syncModels,
+} from "@/redux/v2/actions";
 import {
-  ModelTable,
-  ModelEditDialog,
-  ModelOwnerDialog,
+  AgencyModelTable,
+  AgencyModelEditDialog,
 } from "@/components/model";
 import {
   DEFAULT_CURRENT_PAGE,
@@ -27,44 +24,37 @@ import {
 import toast from "react-hot-toast";
 import PageMetaData from "@/components/common/PageMetaData";
 
-export const ModelListPage = () => {
+export const AgencyModelPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [editOpen, setEditOpen] = useState(false);
-  const [agencyOpen, setAgencyOpen] = useState(false);
   const [model, setModel] = useState();
+  const [search, setSearch] = useState('');
 
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const location = useLocation();
 
-  const modelProps = useSelector(state => state.model)
-  const homeProps = useSelector(state => state.home)
-  const models = useSelector(state => state.model.models);
+  const models = useSelector(state => state.v2.models);
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
 
-  const loadModelsCallback = useCallback(() => {
+  const loadModelsCallback = useCallback((search) => {
     setLoading(true);
-    dispatch(loadModels(() => setLoading(false)));
+    dispatch(loadModels(search, () => setLoading(false)));
   }, [dispatch]);
 
   useEffect(() => {
-    loadModelsCallback();
-  }, [loadModelsCallback])
+    loadModelsCallback(search);
+  }, [loadModelsCallback, search])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      loadModelsCallback();
+      loadModelsCallback(search);
     }, DEFAULT_REFRESH_TIMEOUT);
     return () => clearInterval(interval);
   });
-
-  // const handleProfileClick = (model) => {
-  //   setModel(model)
-  //   setProfileOpen(true);
-  // }
 
   const handleDeleteModel = (model) => {
     if (model.accounts && model.accounts.length > 0) {
@@ -73,7 +63,7 @@ export const ModelListPage = () => {
     }
     Modal.confirm({
       title: `Are you sure to delete the model(${model.name})?`,
-      onOk: () => dispatch(deleteModel(model, () => loadModelsCallback())),
+      onOk: () => dispatch(deleteModel(model, () => loadModelsCallback(search))),
     });
   }
 
@@ -85,31 +75,27 @@ export const ModelListPage = () => {
     }
     Modal.confirm({
       title: `Are you sure to delete ${selectedRowKeys.length} models?`,
-      onOk: () => dispatch(deleteBulkModels(selectedRowKeys, () => loadModelsCallback())),
+      onOk: () => dispatch(deleteModels(selectedRowKeys, () => { setSelectedRowKeys([]); loadModelsCallback(search) })),
     });
   }
 
   const handleSyncBulkModels = () => {
     Modal.confirm({
       title: `Are you sure to sync ${selectedRowKeys.length} models' content?`,
-      onOk: () => dispatch(syncBulkModels(selectedRowKeys, () => loadModelsCallback())),
+      onOk: () => dispatch(syncModels(selectedRowKeys, () => { setSelectedRowKeys([]); loadModelsCallback(search) })),
     });
   }
 
   const handleSyncModel = (model) => {
-    dispatch(syncModel(model, () => { loadModelsCallback(); }))
+    dispatch(syncModel(model, () => { loadModelsCallback(search); }))
   }
 
-  const handleUpdateModel = (model, params) => {
-    dispatch(changeModel(model, params, () => { setEditOpen(false); loadModelsCallback(); }))
+  const handleUpdateModel = (params) => {
+    dispatch(changeModel(model, params, () => { setEditOpen(false); loadModelsCallback(search); }))
   }
 
   const handleCreateModel = (params) => {
-    dispatch(createModel(params, () => { setEditOpen(false); loadModelsCallback(); }));
-  }
-
-  const handleChangeAgency = (params) => {
-    dispatch(changeModelOwner(model, params, () => { setAgencyOpen(false); loadModelsCallback(); }));
+    dispatch(createModel(params, () => { setEditOpen(false); loadModelsCallback(search); }));
   }
 
   const handleChangePagination = (pageValue, pageSizeValue) => {
@@ -121,8 +107,12 @@ export const ModelListPage = () => {
   return (
     <>
       <PageMetaData title="Models" />
-      <ModelTable
-        dataSource={modelProps.models}
+      <AgencyModelTable
+        filters={{
+          search,
+          onSearchChange: value => setSearch(value)
+        }}
+        dataSource={models}
         loading={loading}
         pagination={{
           current: page,
@@ -138,34 +128,20 @@ export const ModelListPage = () => {
           onEdit: (model) => { setModel(model); setEditOpen(true); },
           onDelete: handleDeleteModel,
           onContent: (model) => navigate(`/model/${model._id}`),
-          onAgencyChange: (model) => { setModel(model); setAgencyOpen(true); },
           onBulkDelete: handleDeleteBulkModels,
           onBulkSync: handleSyncBulkModels,
           onSync: handleSyncModel,
-          // onProfile: (model) => { setModel(model); setProfileOpen(true); },
         }}
       />
-      <ModelEditDialog
+      <AgencyModelEditDialog
         open={editOpen}
         model={model}
         onCancel={() => setEditOpen(false)}
         onCreate={handleCreateModel}
         onUpdate={handleUpdateModel}
       />
-      <ModelOwnerDialog
-        open={agencyOpen}
-        model={model}
-        onCancel={() => setAgencyOpen(false)}
-        onUpdate={handleChangeAgency}
-      />
-      {/* <ProfileDialog
-        open={profileOpen}
-        model={model}
-        onCancel={() => setProfileOpen(false)}
-        onUpdate={handleProfileUpdate}
-      /> */}
     </>
   );
 };
 
-export default ModelListPage;
+export default AgencyModelPage;

@@ -7,30 +7,29 @@ import {
   createAccount,
   deleteAccount,
   loadAccounts,
-  loadAllChatTeams,
   loadModels,
   updateAccountStatus,
-  changeAllStatus,
   changeAccount,
   updateAccountSettings,
-  updateBulkAccountsStatus,
-  deleteBulkAccounts
-} from "@/redux/model/actions";
+  deleteAccounts,
+  updateAccountsStatus
+} from "@/redux/v2/actions";
 import {
-  AccountTable,
-  AccountDialog,
-  AccountParamDialog
+  AccountParamDialog,
+  AgencyAccountDialog,
+  AgencyAccountTable
 } from "@/components/account";
 import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
 import PageMetaData from "@/components/common/PageMetaData";
 
-export const AccountListPage = () => {
+export const AgencyAccountPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [account, setAccount] = useState();
   const [settingOpen, setSettingOpen] = useState(false);
+  const [search, setSearch] = useState('');
 
   const navigate = useNavigate();
   const dispatch = useDispatch()
@@ -40,74 +39,63 @@ export const AccountListPage = () => {
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
 
-  const modelProps = useSelector(state => state.model)
-  const models = useSelector(state => state.model.models);
+  const models = useSelector(state => state.v2.models);
+  const accounts = useSelector(state => state.v2.accounts);
 
-  const loadAccountsCallback = useCallback(() => {
+  const loadAccountsCallback = useCallback((platform, search) => {
     setLoading(true);
-    dispatch(loadAccounts(platform, () => setLoading(false)));
-  }, [dispatch, platform]);
+    dispatch(loadAccounts(platform, search, () => setLoading(false)));
+  }, [dispatch]);
 
   useEffect(() => {
-    dispatch(loadModels())
+    dispatch(loadModels(""))
   }, [loadModels])
 
   useEffect(() => {
-    loadAccountsCallback();
-  }, [loadAccountsCallback])
+    loadAccountsCallback(platform, search);
+  }, [loadAccountsCallback, platform, search])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      loadAccountsCallback();
+      loadAccountsCallback(platform, search);
     }, DEFAULT_REFRESH_TIMEOUT);
     return () => clearInterval(interval);
   });
 
-  useEffect(() => {
-    dispatch(loadAllChatTeams())
-  }, [loadAllChatTeams])
-
   const handleChangeStatus = (account, status) => {
-    dispatch(updateAccountStatus(account, status, () => loadAccountsCallback()))
+    dispatch(updateAccountStatus(account, status, () => loadAccountsCallback(platform, search)))
   }
 
   const handleUpdateAccount = (account, params) => {
-    dispatch(changeAccount(platform, account, params, () => { setEditOpen(false); loadAccountsCallback() }))
+    dispatch(changeAccount(platform, account, params, () => { setEditOpen(false); loadAccountsCallback(platform, search) }))
   }
 
   const handleCreateAccount = (params) => {
-    dispatch(createAccount(platform, params, () => { setEditOpen(false); loadAccountsCallback() }));
+    dispatch(createAccount(platform, params, () => { setEditOpen(false); loadAccountsCallback(platform, search) }));
   }
 
   const handleDeleteAccount = (account) => {
     Modal.confirm({
-      title: `Are you sure to delete the account(${account.alias})?`,
-      onOk: () => { dispatch(deleteAccount(platform, account, () => loadAccountsCallback())); },
+      title: `Are you sure to delete the account(${account.platform} - ${account.alias})?`,
+      onOk: () => { dispatch(deleteAccount(platform, account, () => loadAccountsCallback(platform, search))); },
     });
   }
 
   const handleUpdateSetting = (account, params) => {
-    dispatch(updateAccountSettings(platform, account, params, () => { setSettingOpen(false); loadAccountsCallback(); }));
-  }
-
-  const handleChangeAllStatus = (status) => {
-    Modal.confirm({
-      title: `Are you sure to ${status ? "enable" : "disable"} all accounts?`,
-      onOk: () => dispatch(changeAllStatus(platform, status, () => loadAccountsCallback())),
-    });
+    dispatch(updateAccountSettings(platform, account, params, () => { setSettingOpen(false); loadAccountsCallback(platform, search); }));
   }
 
   const handleChangeBulkAccountsStatus = (status) => {
     Modal.confirm({
       title: `Are you sure to ${status ? "enable" : "disable"} ${selectedRowKeys.length} accounts?`,
-      onOk: () => dispatch(updateBulkAccountsStatus(platform, selectedRowKeys, status, () => { setSelectedRowKeys([]); loadAccountsCallback() })),
+      onOk: () => dispatch(updateAccountsStatus(platform, selectedRowKeys, status, () => { setSelectedRowKeys([]); loadAccountsCallback(platform, search) })),
     });
   }
 
   const handleDeleteBulkAccounts = () => {
     Modal.confirm({
       title: `Are you sure to delete ${selectedRowKeys.length} accounts?`,
-      onOk: () => dispatch(deleteBulkAccounts(platform, selectedRowKeys, () => { setSelectedRowKeys([]); loadAccountsCallback() })),
+      onOk: () => dispatch(deleteAccounts(platform, selectedRowKeys, () => { setSelectedRowKeys([]); loadAccountsCallback(platform, search) })),
     });
   }
 
@@ -127,9 +115,9 @@ export const AccountListPage = () => {
   return (
     <>
       <PageMetaData title="Accounts" />
-      <AccountTable
+      <AgencyAccountTable
         platform={platform}
-        dataSource={modelProps.accounts}
+        dataSource={accounts}
         loading={loading}
         pagination={{
           current: page,
@@ -140,25 +128,27 @@ export const AccountListPage = () => {
           selectedRowKeys: selectedRowKeys,
           onChange: (newSelectedRowKeys) => setSelectedRowKeys(newSelectedRowKeys),
         }}
+        filters={{
+          search,
+          onSearchChange: value => setSearch(value)
+        }}
         actions={{
           onPlatform: handleChangePlatform,
           onCreate: () => { setAccount(); setEditOpen(true) },
           onEdit: (account) => { setAccount(account); setEditOpen(true) },
           onDelete: handleDeleteAccount,
-          onHistory: (account) => navigate(`/account/${platform}/${account._id}`),
+          onHistory: (account) => navigate(`/history/${platform}/${account._id}`),
           onSetting: (account) => { setAccount(account); setSettingOpen(true) },
-          onAllStatus: handleChangeAllStatus,
           onStatus: handleChangeStatus,
           onBulkDelete: handleDeleteBulkAccounts,
           onBulkStatus: handleChangeBulkAccountsStatus,
         }}
       />
-      <AccountDialog
+      <AgencyAccountDialog
         open={editOpen}
         platform={platform}
         account={account}
         models={models}
-        chatTeams={modelProps.chatTeams}
         onCancel={() => setEditOpen(false)}
         onCreate={handleCreateAccount}
         onUpdate={handleUpdateAccount}
@@ -173,4 +163,4 @@ export const AccountListPage = () => {
   );
 };
 
-export default AccountListPage;
+export default AgencyAccountPage;

@@ -50,6 +50,137 @@ const getFeeStatsByAgency = () =>
     },
   ]);
 
+const changeModelNumber = (modelId, number) =>
+  AccountModel.updateMany({ actor: modelId }, { $set: { number } });
+
+const syncContents = (modelId) =>
+  AccountModel.updateMany({ actor: modelId }, { $set: { "params.uploaded": false, "params.recent": false } })
+
+const syncBulkContents = (modelIds) =>
+  AccountModel.updateMany({ actor: { $in: modelIds } }, { $set: { "params.uploaded": false, "params.recent": false } })
+
+const changeOwner = (modelId, agencyId) =>
+  AccountModel.updateMany({ actor: modelId }, { $set: { owner: agencyId } });
+
+const loadAccounts = (platform, { agency, search }) => {
+  const agencyQuery = agency ? { owner: agency, platform } : { platform };
+  const searchQuery = search
+    ? isNaN(Number(search))
+      ? { alias: { $regex: search, $options: "i" } }
+      : {
+        $or: [
+          { alias: { $regex: search, $options: "i" } },
+          { number: Number(search) },
+        ]
+      }
+    : {}
+  const query = {
+    ...agencyQuery,
+    ...searchQuery,
+  }
+  return AccountModel.find(query, "-params.contents")
+    .sort({ owner: 1, number: 1 })
+    .populate("owner", "name")
+    .populate("actor", "name")
+    .populate("chatTeam", "name")
+}
+
+const loadAgencyAccounts = (platform, agencyId, search) => {
+  const agencyQuery = { owner: agencyId, platform };
+  const searchQuery = search
+    ? isNaN(Number(search))
+      ? { alias: { $regex: search, $options: "i" } }
+      : {
+        $or: [
+          { alias: { $regex: search, $options: "i" } },
+          { number: Number(search) },
+        ]
+      }
+    : {}
+  const query = {
+    ...agencyQuery,
+    ...searchQuery,
+  }
+  return AccountModel.find(query, "-params.contents")
+    .sort({ owner: 1, number: 1 })
+    .populate("owner", "name")
+    .populate("actor", "name")
+    .populate("chatTeam", "name")
+}
+
+const findAccountByAlias = (platform, alias) =>
+  AccountModel.findOne({ platform, alias });
+
+const createAccount = (
+  platform,
+  model,
+  { alias, email, password, chatTeam, description, creator, device }
+) =>
+  AccountModel.create({
+    platform,
+    actor: model._id,
+    number: model.number,
+    owner: model.owner,
+    alias,
+    email: email || "-",
+    password: password || "-",
+    chatTeam,
+    description,
+    device,
+    creator,
+  });
+
+const findAccountById = (accountId) =>
+  AccountModel.findById(accountId, "-params.contents")
+    .populate("actor", "number name")
+    .populate("owner", "name");
+
+const deleteAccount = (accountId) =>
+  AccountModel.findByIdAndDelete(accountId);
+
+const updateAccount = (
+  accountId,
+  model,
+  { alias, email, password, chatTeam, description, device }
+) =>
+  AccountModel.findByIdAndUpdate(accountId, {
+    $set: {
+      actor: model._id,
+      number: model.number,
+      owner: model.owner,
+      alias,
+      email: email || "-",
+      device,
+      password: password || "-",
+      chatTeam,
+      description,
+    },
+  });
+
+const setStatus = (accountId, status) =>
+  AccountModel.findByIdAndUpdate(accountId, { $set: { status, "params.balanceNextTime": new Date() } });
+
+const clearError = (accountId) =>
+  AccountModel.findByIdAndUpdate(accountId, { $set: { lastError: "" } })
+
+const updateParams = (accountId, params) =>
+  AccountModel.findByIdAndUpdate(accountId, { $set: params });
+
+const getAccounts = (accountIds, agencyId = undefined) =>
+  agencyId
+    ? AccountModel.find({ _id: { $in: accountIds }, owner: agencyId }, "platform alias owner actor chatTeam")
+      .populate("actor", "number name")
+      .populate("owner", "name")
+    : AccountModel.find({ _id: { $in: accountIds } }, "platform alias actor chatTeam")
+      .populate("actor", "number name")
+      .populate("owner", "name")
+
+const updateAccountsStatus = (accountIds, status) =>
+  AccountModel.updateMany({ _id: { $in: accountIds } }, { $set: { status } })
+
+const deleteAccounts = (accountIds) =>
+  AccountModel.deleteMany({ _id: { $in: accountIds } });
+
 const AccountService2 = {
   getAccountWithModel,
   getAccountWithModelChat,
@@ -59,6 +190,23 @@ const AccountService2 = {
   findAgencyAccounts,
   getCountStatsByAgencyPlatform,
   getFeeStatsByAgency,
+  changeModelNumber,
+  syncContents,
+  syncBulkContents,
+  changeOwner,
+  loadAccounts,
+  loadAgencyAccounts,
+  findAccountByAlias,
+  findAccountById,
+  createAccount,
+  deleteAccount,
+  updateAccount,
+  setStatus,
+  clearError,
+  updateParams,
+  getAccounts,
+  updateAccountsStatus,
+  deleteAccounts,
 };
 
 module.exports = AccountService2;
