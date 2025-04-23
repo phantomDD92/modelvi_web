@@ -120,6 +120,7 @@ const AdminModelPage = () => {
           onEdit: (model) => { setModel(model); setEditOpen(true); },
           onSync: handleSyncModel,
           onBulkSync: handleSyncBulkModels,
+          onContent: (model) => navigate(`/admin/model/${model._id}`),
         }}
       />
       <AdminModelEditDialog

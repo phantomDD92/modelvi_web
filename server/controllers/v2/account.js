@@ -5,14 +5,6 @@ const { isModelOwner } = require("../../utils/helper");
 const NotifyUtils = require("../../utils/notifiy");
 const { sendResult, sendError } = require("../../utils/resp");
 
-const loadAccountStatsForAdmin = async (req, res) => {
-  try {
-    sendResult(res);
-  } catch (error) {
-    sendError(res, error);
-  }
-}
-
 const handleLoadAccountsForAgency = async (req, res) => {
   try {
     const { platform } = req.params;
@@ -85,7 +77,7 @@ const handleCreateAccountForAdmin = async (req, res) => {
       await ChatTeamService2.appendTeamAccount(chatTeam, account._id);
     NotifyUtils.sendMessage(
       `${req.manager.name} (Admin)`,
-      `${model.number}. ${model.name} - ${platform} ${alias}`,
+      `${model.number}. ${model.name} - [${platform}] ${alias}`,
       `CREATE A ACCOUNT`);
     sendResult(res);
   } catch (error) {
@@ -102,13 +94,13 @@ const handleDeleteAccountForAgency = async (req, res) => {
       throw new ApiError("Account does not exist.");
     if (!isModelOwner(account, req.manager))
       throw new ApiError(`Account can be accessible by owner.`)
-    await AccountService2.removeAccount(account.actor?._id, accountId);
+    await ModelService2.removeAccount(account.actor?._id, accountId);
     if (account.chatTeam)
       await ChatTeamService2.removeTeamAccount(account.chatTeam, accountId)
     await AccountService2.deleteAccount(accountId);
     NotifyUtils.sendMessage(
       `${req.manager.name}`,
-      `${account.actor?.number}. ${account.actor?.name} - ${account.platform} ${account.alias}`,
+      `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`,
       `DELETE A ACCOUNT`);
     sendResult(res);
   } catch (error) {
@@ -122,13 +114,13 @@ const handleDeleteAccountForAdmin = async (req, res) => {
     const account = await AccountService2.findAccountById(accountId);
     if (!account)
       throw new ApiError("Account does not exist.");
-    await AccountService2.removeAccount(account.actor?._id, accountId);
+    await ModelService2.removeAccount(account.actor?._id, accountId);
     if (account.chatTeam)
       await ChatTeamService2.removeTeamAccount(account.chatTeam, accountId)
     await AccountService2.deleteAccount(accountId);
     NotifyUtils.sendMessage(
       `${req.manager.name} (Admin)`,
-      `${account.actor?.number}. ${account.actor?.name} - ${account.platform} ${account.alias}`,
+      `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`,
       `DELETE A ACCOUNT`);
     sendResult(res);
   } catch (error) {
@@ -147,22 +139,18 @@ const handleUpdateAccountForAgency = async (req, res) => {
       throw new ApiError(`Account can be accessible by owner.`)
     switch (action) {
       case "change":
-        const { actor, chatTeam, ...others } = params;
+        const { actor, ...others } = params;
         const model = await ModelService2.getModel(actor);
         if (!model)
           throw new ApiError("Model does not exist.");
-        await AccountService2.updateAccount(accountId, model, { chatTeam, ...others });
-        if (account.chatTeam)
-          await ChatTeamService2.removeTeamAccount(account.chatTeam, accountId)
-        if (chatTeam)
-          await ChatTeamService2.appendTeamAccount(chatTeam, accountId)
+        await AccountService2.updateAccount(accountId, model, { ...others });
         break;
       case "status":
         const { status } = params;
         await AccountService2.setStatus(accountId, status);
         NotifyUtils.sendMessage(
           `${req.manager.name}`,
-          `${account.actor?.number}. ${account.actor?.name} - ${account.platform} ${account.alias}`,
+          `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`,
           `${status ? 'ENABLE' : 'DISABLE'} A BOT`);
         break;
       case "setting":
@@ -200,8 +188,8 @@ const handleUpdateAccountForAdmin = async (req, res) => {
         const { status } = params;
         await AccountService2.setStatus(accountId, status);
         NotifyUtils.sendMessage(
-          `${req.manager.name}`,
-          `${account.actor?.number}. ${account.actor?.name} - ${account.platform} ${account.alias}`,
+          `${req.manager.name} (Admin)`,
+          `${account.owner?.name} ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`,
           `${status ? 'ENABLE' : 'DISABLE'} A BOT`);
         break;
       case "setting":
@@ -216,25 +204,19 @@ const handleUpdateAccountForAdmin = async (req, res) => {
   }
 };
 
-const handleUpdateAccounts = async (req, res) => {
+const handleUpdateAccountsForAgency = async (req, res) => {
   try {
     const { platform } = req.params;
-    const { action, accountIds, status, ...params } = req.body;
+    const { action, accountIds, status } = req.body;
     switch (action) {
       case "status":
-        const accounts = await AccountService.getBulkAccounts(req.manager, accountIds);
-        await AccountService.updateBulkAccountsStatus(req.manager, accountIds, status);
+        const accounts = await AccountService2.getAccounts(accountIds, req.manager._id);
+        const agencyAccountIds = accounts.map(account => account._id);
+        await AccountService2.updateAccountsStatus(agencyAccountIds, status);
         NotifyUtils.sendMessage(
-          `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
-          `${accounts.map(account => `${account.actor?.number}. ${account.actor?.name} - ${account.platform} ${account.alias}`).join(", ")}`,
+          `${req.manager.name}`,
+          `${accounts.map(account => `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`).join("\n")}`,
           `${status ? 'ENABLE' : 'DISABLE'} ${accounts.length} BOTS`);
-        break;
-      case "all":
-        await AccountService.setAllStatus(req.manager, platform, status);
-        NotifyUtils.sendMessage(
-          `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
-          `ALL ACCOUNTS`,
-          `${status ? 'ENABLE' : 'DISABLE'} ALL BOTS`);
         break;
       default:
         throw new ApiError("Invalid account operation");
@@ -245,19 +227,42 @@ const handleUpdateAccounts = async (req, res) => {
   }
 };
 
-const handleDeleteAccounts = async (req, res) => {
+const handleUpdateAccountsForAdmin = async (req, res) => {
+  try {
+    const { platform } = req.params;
+    const { action, accountIds, status } = req.body;
+    switch (action) {
+      case "status":
+        const accounts = await AccountService2.getAccounts(accountIds);
+        await AccountService2.updateAccountsStatus(accountIds, status);
+        NotifyUtils.sendMessage(
+          `${req.manager.name} (Admin)`,
+          `${accounts.map(account => `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`).join("\n")}`,
+          `${status ? 'ENABLE' : 'DISABLE'} ${accounts.length} BOTS`);
+        break;
+      default:
+        throw new ApiError("Invalid account admin operation");
+    }
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error);
+  }
+};
+
+const handleDeleteAccountsForAgency = async (req, res) => {
   try {
     const { accountIds } = req.body;
-    const accounts = await AccountService.getBulkAccounts(req.manager, accountIds);
-    for (account of accounts) {
-      await ActorService.removeAccount(account.actor?._id, account);
+    const accounts = await AccountService2.getAccounts(accountIds, req.manager._id);
+    const agencyAccountIds = accounts.map(account => account._id);
+    for (var account of accounts) {
+      await ModelService2.removeAccount(account.actor?._id, account._id);
       if (account.chatTeam)
         await ChatTeamService2.removeTeamAccount(account.chatTeam, account._id)
     }
-    await AccountService.deleteBulkAccounts(req.manager, accountIds);
+    await AccountService2.deleteAccounts(agencyAccountIds);
     NotifyUtils.sendMessage(
       `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
-      `${accounts.map(account => `${account.actor?.number}. ${account.actor?.name} - ${account.platform} ${account.alias}`).join(", ")}`,
+      `${accounts.map(account => `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`).join("\n")}`,
       `DELETE ${accounts.length} ACCOUNTS`);
     sendResult(res);
   } catch (error) {
@@ -265,42 +270,20 @@ const handleDeleteAccounts = async (req, res) => {
   }
 };
 
-const handleLoadHistory = async (req, res) => {
+const handleDeleteAccountsForAdmin = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { page, pageSize } = req.query;
-    const account = await AccountService.findById(id);
-    const [history, historyCount] = await HistoryService.loadHistories(id, { page, pageSize: pageSize || "10" })
-    sendResult(res, { history, historyCount, account });
-  } catch (error) {
-    sendError(res, error);
-  }
-};
-
-const handleClearHistory = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const account = await AccountService.findById(id);
-    if (!account)
-      throw new ApiError("The account does not exist.");
-    if (req.manager.role != AdminRole.MANAGER && account.owner.toString() !== req.manager._id.toString())
-      throw new ApiError(`The model is able to update only by owner.`)
-    await HistoryService.clearHistory(id)
-    sendResult(res);
-  } catch (error) {
-    sendError(res, error);
-  }
-};
-
-const handleClearError = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const account = await AccountService.findById(id);
-    if (!account)
-      throw new ApiError("The account does not exist.");
-    if (req.manager.role != AdminRole.MANAGER && account.owner.toString() !== req.manager._id.toString())
-      throw new ApiError(`The model is able to update only by owner.`)
-    await AccountService.clearError(id)
+    const { accountIds } = req.body;
+    const accounts = await AccountService2.getAccounts(accountIds);
+    for (var account of accounts) {
+      await ModelService2.removeAccount(account.actor?._id, account._id);
+      if (account.chatTeam)
+        await ChatTeamService2.removeTeamAccount(account.chatTeam, account._id)
+    }
+    await AccountService2.deleteAccounts(accountIds);
+    NotifyUtils.sendMessage(
+      `${req.manager.name} (Admin)`,
+      `${accounts.map(account => `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`).join("\n")}`,
+      `DELETE ${accounts.length} ACCOUNTS`);
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -308,7 +291,19 @@ const handleClearError = async (req, res) => {
 };
 
 const AccountCtrl2 = {
-  loadAccountStatsForAdmin,
+  handleLoadAccountsForAdmin,
+  handleCreateAccountForAdmin,
+  handleUpdateAccountsForAdmin,
+  handleDeleteAccountsForAdmin,
+  handleUpdateAccountForAdmin,
+  handleDeleteAccountForAdmin,
+
+  handleLoadAccountsForAgency,
+  handleCreateAccountForAgency,
+  handleUpdateAccountsForAgency,
+  handleDeleteAccountsForAgency,
+  handleUpdateAccountForAgency,
+  handleDeleteAccountForAgency,
 }
 
 module.exports = AccountCtrl2;

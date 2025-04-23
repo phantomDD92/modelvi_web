@@ -6,6 +6,8 @@ const AffiliateCtrl2 = require("../../controllers/v2/affiliate");
 const ProxyCtrl2 = require("../../controllers/v2/proxy");
 const ChatTeamCtrl2 = require("../../controllers/v2/chatteam");
 const ModelCtrl2 = require("../../controllers/v2/model");
+const AccountCtrl2 = require("../../controllers/v2/account");
+const HistoryCtrl2 = require("../../controllers/v2/history");
 
 const router = express.Router();
 
@@ -68,13 +70,13 @@ router.route("/model")
 
 router
   .route("/model/:modelId")
-  .all(authenticate)
+  .all(authenticate, checkManager)
   .put(ModelCtrl2.handleUpdateModelForAdmin)
   .delete(ModelCtrl2.handleDeleteModelForAdmin);
 
 router
   .route("/content/:modelId")
-  .all(authenticate)
+  .all(authenticate, checkManager)
   .get(ModelCtrl2.handleGetContentsForAdmin)
   .post(ModelCtrl2.handleAppendContentForAdmin)
   .put(ModelCtrl2.handleUpdateContentsForAdmin)
@@ -82,8 +84,29 @@ router
 
 router
   .route("/content/:modelId/:contentId")
-  .all(authenticate)
+  .all(authenticate, checkManager)
   .put(ModelCtrl2.handleUpdateContentForAdmin)
   .delete(ModelCtrl2.handleDeleteContentForAdmin);
+
+router
+  .route("/account/:platform")
+  .all(authenticate, checkManager)
+  .get(AccountCtrl2.handleLoadAccountsForAdmin)
+  .post(AccountCtrl2.handleCreateAccountForAdmin)
+  .put(AccountCtrl2.handleUpdateAccountsForAdmin)
+  .delete(AccountCtrl2.handleDeleteAccountsForAdmin);
+
+router
+  .route("/account/:platform/:accountId")
+  .all(authenticate, checkManager)
+  .put(AccountCtrl2.handleUpdateAccountForAdmin)
+  .delete(AccountCtrl2.handleDeleteAccountForAdmin);
+
+router
+  .route("/history/:platform/:accountId")
+  .all(authenticate, checkManager)
+  .get(HistoryCtrl2.handleLoadHistoryForAdmin)
+  .post(HistoryCtrl2.handleClearErrorForAdmin)
+  .delete(HistoryCtrl2.handleClearHistoryForAdmin);
 
 module.exports = router;

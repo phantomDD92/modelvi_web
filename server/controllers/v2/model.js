@@ -281,7 +281,7 @@ const handleUpdateModelsForAgency = async (req, res) => {
 const handleGetContentsForAdmin = async (req, res) => {
   try {
     const { modelId } = req.params;
-    const model = await ModelService2.findModelById(modelId);
+    const model = await ModelService2.getModelWithContents(modelId);
     if (!model)
       throw new ApiError(`Model does not exist.`);
     sendResult(res, { model });
@@ -293,7 +293,7 @@ const handleGetContentsForAdmin = async (req, res) => {
 const handleGetContentsForAgency = async (req, res) => {
   try {
     const { modelId } = req.params;
-    const model = await ModelService2.getModel(modelId);
+    const model = await ModelService2.getModelWithContents(modelId);
     if (!model)
       throw new ApiError(`Model does not exist.`);
     if (!isModelOwner(model, req.manager))
@@ -312,7 +312,7 @@ const handleAppendContentForAdmin = async (req, res) => {
     if (!model)
       throw new ApiError(`The model does not exist.`);
     await ModelService2.appendContent(modelId, params);
-    model = await ModelService2.getModel(modelId);
+    model = await ModelService2.getModelWithContents(modelId);
     sendResult(res, { model });
   } catch (error) {
     sendError(res, error);
@@ -329,7 +329,7 @@ const handleAppendContentForAgency = async (req, res) => {
     if (!isModelOwner(model, req.manager))
       throw new ApiError(`Model contents can be accessible by owner`);
     await ModelService2.appendContent(modelId, params);
-    model = await ModelService2.getModel(modelId);
+    model = await ModelService2.getModelWithContents(modelId);
     sendResult(res, { model });
   } catch (error) {
     sendError(res, error);
@@ -352,7 +352,7 @@ const handleUpdateContentForAgency = async (req, res) => {
       default:
         throw new ApiError("Invalid content operations")
     }
-    model = await ModelService2.getModel(modelId);
+    model = await ModelService2.getModelWithContents(modelId);
     sendResult(res, { model });
   } catch (error) {
     sendError(res, error);
@@ -373,7 +373,7 @@ const handleUpdateContentForAdmin = async (req, res) => {
       default:
         throw new ApiError("Invalid content operations")
     }
-    model = await ModelService2.getModel(modelId);
+    model = await ModelService2.getModelWithContents(modelId);
     sendResult(res, { model });
   } catch (error) {
     sendError(res, error);
@@ -389,7 +389,7 @@ const handleDeleteContentForAgency = async (req, res) => {
     if (!isModelOwner(model, req.manager))
       throw new ApiError(`Model contents can be accessible by owner`);
     await ModelService2.deleteContent(modelId, contentId);
-    model = await ModelService2.getModel(modelId);
+    model = await ModelService2.getModelWithContents(modelId);
     sendResult(res, { model });
   } catch (error) {
     sendError(res, error);
@@ -403,7 +403,7 @@ const handleDeleteContentForAdmin = async (req, res) => {
     if (!model)
       throw new ApiError(`Model does not exist.`);
     await ModelService2.deleteContent(modelId, contentId);
-    model = await ModelService2.getModel(modelId);
+    model = await ModelService2.getModelWithContents(modelId);
     sendResult(res, { model });
   } catch (error) {
     sendError(res, error);
@@ -420,7 +420,7 @@ const handleDeleteContentsForAgency = async (req, res) => {
       throw new ApiError(`Model contents can be accessible by owner`);
     const { contentIds } = req.body;
     await ModelService2.deleteContents(modelId, contentIds);
-    model = await ModelService2.getModel(modelId);
+    model = await ModelService2.getModelWithContents(modelId);
     sendResult(res, { model });
   } catch (error) {
     sendError(res, error);
@@ -435,7 +435,7 @@ const handleDeleteContentsForAdmin = async (req, res) => {
       throw new ApiError(`Model does not exist.`);
     const { contentIds } = req.body;
     await ModelService2.deleteContents(modelId, contentIds);
-    model = await ModelService2.getModel(modelId);
+    model = await ModelService2.getModelWithContents(modelId);
     sendResult(res, { model });
   } catch (error) {
     sendError(res, error);
@@ -461,7 +461,7 @@ const handleUpdateContentsForAgency = async (req, res) => {
       default:
         throw new ApiError("Invalid content operation");
     }
-    model = await ModelService2.getModel(modelId);
+    model = await ModelService2.getModelWithContents(modelId);
     sendResult(res, { model });
   } catch (error) {
     sendError(res, error);
@@ -485,7 +485,7 @@ const handleUpdateContentsForAdmin = async (req, res) => {
       default:
         throw new ApiError("Invalid content operation");
     }
-    model = await ModelService2.getModel(modelId);
+    model = await ModelService2.getModelWithContents(modelId);
     sendResult(res, { model });
   } catch (error) {
     sendError(res, error);

@@ -2,6 +2,7 @@ import { AdminRole } from '@/utils/const'
 import { Card, Table, Button, Flex, Switch, Avatar, Dropdown, Space, Typography } from "antd";
 import { DeleteOutlined, UserAddOutlined, EditOutlined, KeyOutlined, DatabaseOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import { LuGlobe, LuTrash, LuUser, LuWallet } from 'react-icons/lu';
+import { getFiatAmount } from '@/utils/string';
 
 export const AgencyTable = ({
     pagination,
@@ -49,7 +50,7 @@ export const AgencyTable = ({
             key: 'balance',
             title: 'Balance',
             dataIndex: 'balance',
-            render: value => value || 0
+            render: value => getFiatAmount(value)
         },
         {
             key: 'monthlyFee',

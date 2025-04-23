@@ -127,7 +127,7 @@ export const AgencyModelPage = () => {
           onCreate: () => { setModel(); setEditOpen(true); },
           onEdit: (model) => { setModel(model); setEditOpen(true); },
           onDelete: handleDeleteModel,
-          onContent: (model) => navigate(`/admin/model/${model._id}`),
+          onContent: (model) => navigate(`/model/${model._id}`),
           onBulkDelete: handleDeleteBulkModels,
           onBulkSync: handleSyncBulkModels,
           onSync: handleSyncModel,

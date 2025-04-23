@@ -4,6 +4,8 @@ const authenticate = require("../../middleware/auth");
 const TransactionCtrl = require("../../controllers/v2/transaction");
 const ProxyCtrl2 = require("../../controllers/v2/proxy");
 const ModelCtrl2 = require("../../controllers/v2/model");
+const AccountCtrl2 = require("../../controllers/v2/account");
+const HistoryCtrl2 = require("../../controllers/v2/history");
 
 const router = express.Router();
 
@@ -67,4 +69,25 @@ router
   .put(ModelCtrl2.handleUpdateContentForAgency)
   .delete(ModelCtrl2.handleDeleteContentForAgency);
 
+router
+  .route("/account/:platform")
+  .all(authenticate)
+  .get(AccountCtrl2.handleLoadAccountsForAgency)
+  .post(AccountCtrl2.handleCreateAccountForAgency)
+  .put(AccountCtrl2.handleUpdateAccountsForAgency)
+  .delete(AccountCtrl2.handleDeleteAccountsForAgency);
+
+router
+  .route("/account/:platform/:accountId")
+  .all(authenticate)
+  .put(AccountCtrl2.handleUpdateAccountForAgency)
+  .delete(AccountCtrl2.handleDeleteAccountForAgency);
+
+router
+  .route("/history/:platform/:accountId")
+  .all(authenticate)
+  .get(HistoryCtrl2.handleLoadHistoryForAgency)
+  .post(HistoryCtrl2.handleClearErrorForAgency)
+  .delete(HistoryCtrl2.handleClearHistoryForAgency);
+  
 module.exports = router;
