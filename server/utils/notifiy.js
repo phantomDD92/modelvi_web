@@ -2,6 +2,7 @@ const axios = require('axios');
 const moment = require('moment');
 const nodemailer = require('nodemailer');
 const dotenv = require("dotenv");
+const { getAccountName } = require('./helper');
 dotenv.config();
 
 const sendMessage = (who, what, message) => {
@@ -80,7 +81,7 @@ const sendExpenseMessage = (agency, account, message) => {
   if (process.env.DISCORD_WEBHOOK_PAYMENT) {
     axios.post(process.env.DISCORD_WEBHOOK_PAYMENT, {
       username: `${agency?.name}`,
-      content: `[ ${moment().format("YYYY-MM-DD HH:mm:ss")} ]\n**Expense for ${account.platform} - ${account.alias}**\n${message}`
+      content: `[ ${moment().format("YYYY-MM-DD HH:mm:ss")} ]\n**Expense for ${getAccountName(account, agency)}**\n${message}`
     })
       .then(() => { })
       .catch(() => { })

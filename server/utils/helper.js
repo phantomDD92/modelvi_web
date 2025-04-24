@@ -52,9 +52,10 @@ function getAccountName(account, agency) {
   let name = ""
   if (agency?.name)
     name += `${agency.name} - `;
-  if (account?.actor?.number && account?.actor?.name)
+  if (account.actor?.number && account.actor?.name)
     name += `[${account.actor.number}] ${account.actor.name} - `
   name += `[${account.platform}] ${account.alias}`;
+  return name;
 }
 
 function getVerifyEmailTemplate(verifyLink) {
