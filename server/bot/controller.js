@@ -492,7 +492,7 @@ const handleCheckBalance = async (req, res) => {
       } else {
         available = false;
         await AccountService2.disableAccount(account._id, "no balance");
-        NotifyUtils.sendDebugMessage(getAccountName(account, agency), "Bot Closed With No Balance", `Monthly Revenue: ${account.revenue}\nPrice: ${price}\nBalance:$${balance.toFixed(2)}\n`)
+        NotifyUtils.sendDebugMessage(getAccountName(account, agency), "Bot Closed With No Balance", `Monthly Revenue: ${account.revenue}\nPrice: ${price}\nBalance:$${account.balance?.toFixed(2)}\n`)
       }
     } else if (dateDelta == 7) {
       // send notification
