@@ -4,7 +4,6 @@ import {
     Card,
     Dropdown,
     Flex,
-    Input,
     Space,
     Table,
     Tag,
@@ -13,20 +12,16 @@ import {
     DeleteOutlined,
     EditOutlined,
     ReadOutlined,
-    UserOutlined,
     UserAddOutlined,
     UploadOutlined,
 } from "@ant-design/icons";
 import { getPlatformName } from "@/utils/string";
-import { AgencySelect } from "../agency";
 import { StyledSearch } from "../common";
 
-export const AdminModelTable = ({
+export const AgencyModelTable = ({
     filters: {
+        search,
         onSearchChange,
-        agency,
-        agencyList,
-        onAgencyChange,
     },
     pagination,
     rowSelection,
@@ -40,9 +35,9 @@ export const AdminModelTable = ({
         onBulkSync,
         onContent,
         onSync,
-        onOwner,
     }
 }) => {
+
     const getPlatformTag = (platform) =>
         <Tag key={platform} color="processing">{getPlatformName(platform)}</Tag>;
 
@@ -61,18 +56,12 @@ export const AdminModelTable = ({
             render: value => <Flex gap="middle" align='center'><Avatar src="/img/actor.png" /><span>{value}</span></Flex>
         },
         {
-            key: 'owner',
-            title: 'Agency',
-            width: 150,
-            dataIndex: 'owner',
-            render: value => value && value.name ? value.name : "-"
-        },
-        {
             key: 'accounts',
             title: 'Accounts',
             dataIndex: 'accounts',
             render: value => value.length == 0 ? '-' : <Flex gap="small">{value.map(el => getPlatformTag(el.platform))}</Flex>
-        }, {
+        },
+        {
             key: 'contents',
             title: 'Contents',
             dataIndex: 'contentsLength',
@@ -90,7 +79,7 @@ export const AdminModelTable = ({
             key: 'action',
             title: 'Action',
             width: 150,
-            render: (_, record) =>
+            render: (_, record) => (
                 <Dropdown.Button
                     onClick={() => onEdit(record)}
                     menu={{
@@ -116,13 +105,13 @@ export const AdminModelTable = ({
                         onClick: (e) => {
                             switch (e.key) {
                                 case "content":
-                                    onContent && onContent(record)
+                                    onContent(record)
                                     break;
                                 case "sync":
-                                    onSync && onSync(record)
+                                    onSync(record)
                                     break;
                                 case "delete":
-                                    onDelete && onDelete(record)
+                                    onDelete(record)
                                     break;
                                 default:
                                     break;
@@ -131,7 +120,7 @@ export const AdminModelTable = ({
                     }}>
                     <EditOutlined /> Edit
                 </Dropdown.Button>
-
+            )
         },
     ];
 
@@ -140,15 +129,7 @@ export const AdminModelTable = ({
             title={"Model List"}
             extra={
                 <Flex gap={16}>
-                    <StyledSearch
-                        onSearch={value => onSearchChange && onSearchChange(value)}
-                    />
-                    <AgencySelect
-                        all
-                        value={agency}
-                        dataSource={agencyList}
-                        onChange={value => onAgencyChange && onAgencyChange(value)}
-                    />
+                    <StyledSearch onSearch={value => onSearchChange && onSearchChange(value)} />
                     <Button
                         icon={<UserAddOutlined />}
                         onClick={onCreate}>
@@ -193,4 +174,4 @@ export const AdminModelTable = ({
     )
 };
 
-export default AdminModelTable;
+export default AgencyModelTable;

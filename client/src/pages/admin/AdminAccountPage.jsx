@@ -1,46 +1,110 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
+import { createSearchParams, useLocation, useNavigate, useParams } from "react-router-dom";
 import qs from 'query-string';
 import { Modal } from "antd";
-import { AdminProxyAppendDialog, AdminProxyTable } from "@/components/proxy";
+import {
+  createAccount,
+  deleteAccount,
+  loadAccounts,
+  loadModels,
+  updateAccountStatus,
+  changeAllStatus,
+  changeAccount,
+  updateAccountSettings,
+  updateBulkAccountsStatus,
+  deleteBulkAccounts
+} from "@/redux/model/actions";
+import {
+  AccountTable,
+  AccountDialog,
+  AccountParamDialog
+} from "@/components/account";
 import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
 import PageMetaData from "@/components/common/PageMetaData";
-import { appendAgencyProxiesForAdmin, clearAgencyProxiesForAdmin, clearAllProxiesForAdmin, loadAgenciesForAdmin, loadProxiesForAdmin } from "@/redux/admin/actions";
 
-export const AdminAccountStatPage = () => {
+export const AccountListPage = () => {
+
   const [loading, setLoading] = useState(false);
-  const [createShow, setCreateShow] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [account, setAccount] = useState();
+  const [settingOpen, setSettingOpen] = useState(false);
 
-  const dispatch = useDispatch()
   const navigate = useNavigate();
+  const dispatch = useDispatch()
   const location = useLocation();
-
-  const proxyStats = useSelector(state => state.admin.proxyStats)
-  const agencies = useSelector(state => state.admin.agencies);
+  const { platform } = useParams()
 
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
 
-  const loadAccountStatsCallback = useCallback(() => {
+  const modelProps = useSelector(state => state.model)
+  const models = useSelector(state => state.model.models);
+
+  const loadAccountsCallback = useCallback(() => {
     setLoading(true);
-    dispatch(loadProxiesForAdmin(() => setLoading(false)));
-  }, [dispatch]);
+    dispatch(loadAccounts(platform, () => setLoading(false)));
+  }, [dispatch, platform]);
 
   useEffect(() => {
-    loadAccountStatsCallback();
-  }, [loadAccountStatsCallback])
+    dispatch(loadModels())
+  }, [loadModels])
 
   useEffect(() => {
-    dispatch(loadAgenciesForAdmin());
-  }, [loadAgenciesForAdmin]);
+    loadAccountsCallback();
+  }, [loadAccountsCallback])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      loadAccountStatsCallback(agency);
+      loadAccountsCallback();
     }, DEFAULT_REFRESH_TIMEOUT);
     return () => clearInterval(interval);
   });
+
+  const handleChangeStatus = (account, status) => {
+    dispatch(updateAccountStatus(account, status, () => loadAccountsCallback()))
+  }
+
+  const handleUpdateAccount = (account, params) => {
+    dispatch(changeAccount(platform, account, params, () => { setEditOpen(false); loadAccountsCallback() }))
+  }
+
+  const handleCreateAccount = (params) => {
+    dispatch(createAccount(platform, params, () => { setEditOpen(false); loadAccountsCallback() }));
+  }
+
+  const handleDeleteAccount = (account) => {
+    Modal.confirm({
+      title: `Are you sure to delete the account(${account.alias})?`,
+      onOk: () => { dispatch(deleteAccount(platform, account, () => loadAccountsCallback())); },
+    });
+  }
+
+  const handleUpdateSetting = (account, params) => {
+    dispatch(updateAccountSettings(platform, account, params, () => { setSettingOpen(false); loadAccountsCallback(); }));
+  }
+
+  const handleChangeAllStatus = (status) => {
+    Modal.confirm({
+      title: `Are you sure to ${status ? "enable" : "disable"} all accounts?`,
+      onOk: () => dispatch(changeAllStatus(platform, status, () => loadAccountsCallback())),
+    });
+  }
+
+  const handleChangeBulkAccountsStatus = (status) => {
+    Modal.confirm({
+      title: `Are you sure to ${status ? "enable" : "disable"} ${selectedRowKeys.length} accounts?`,
+      onOk: () => dispatch(updateBulkAccountsStatus(platform, selectedRowKeys, status, () => { setSelectedRowKeys([]); loadAccountsCallback() })),
+    });
+  }
+
+  const handleDeleteBulkAccounts = () => {
+    Modal.confirm({
+      title: `Are you sure to delete ${selectedRowKeys.length} accounts?`,
+      onOk: () => dispatch(deleteBulkAccounts(platform, selectedRowKeys, () => { setSelectedRowKeys([]); loadAccountsCallback() })),
+    });
+  }
 
   const handleChangePagination = (pageValue, pageSizeValue) => {
     navigate({
@@ -49,54 +113,59 @@ export const AdminAccountStatPage = () => {
     }, { replace: true });
   }
 
-  const handleViewAgencyProxy = (agency) => {
-    navigate(`/admin/proxy/${agency._id}`);
-  }
-
-  const handleDeleteAgencyProxies = (agency) => {
-    Modal.confirm({
-      title: `Are you sure to delete ${agency?.agencyName || "unknown agency"}'s proxies?`,
-      onOk: () => dispatch(clearAgencyProxiesForAdmin(agency._id, () => loadAccountStatsCallback())),
-    });
-  }
-
-  const handleAppendProxies = (agencyId, proxies, deadline) => {
-    dispatch(appendAgencyProxiesForAdmin(agencyId, proxies, deadline, () => { setCreateShow(false); loadAccountStatsCallback(); }))
-  }
-
-  const handleClearProxies = () => {
-    Modal.confirm({
-      title: `Are you sure to delete all proxies?`,
-      onOk: () => dispatch(clearAllProxiesForAdmin(() => loadAccountStatsCallback())),
-    });
+  const handleChangePlatform = (plat) => {
+    navigate({
+      pathname: `/account/${plat}`
+    }, { replace: true });
   }
 
   return (
     <>
-      <PageMetaData title="Proxies" admin />
-      <AdminProxyTable
-        dataSource={proxyStats}
+      <PageMetaData title="Accounts" />
+      <AccountTable
+        platform={platform}
+        dataSource={modelProps.accounts}
         loading={loading}
         pagination={{
           current: page,
           pageSize: pageSize,
           onChange: handleChangePagination
         }}
+        rowSelection={{
+          selectedRowKeys: selectedRowKeys,
+          onChange: (newSelectedRowKeys) => setSelectedRowKeys(newSelectedRowKeys),
+        }}
         actions={{
-          onView: handleViewAgencyProxy,
-          onClear: handleClearProxies,
-          onAppend: () => setCreateShow(true),
-          onDelete: handleDeleteAgencyProxies,
+          onPlatform: handleChangePlatform,
+          onCreate: () => { setAccount(); setEditOpen(true) },
+          onEdit: (account) => { setAccount(account); setEditOpen(true) },
+          onDelete: handleDeleteAccount,
+          onHistory: (account) => navigate(`/account/${platform}/${account._id}`),
+          onSetting: (account) => { setAccount(account); setSettingOpen(true) },
+          onAllStatus: handleChangeAllStatus,
+          onStatus: handleChangeStatus,
+          onBulkDelete: handleDeleteBulkAccounts,
+          onBulkStatus: handleChangeBulkAccountsStatus,
         }}
       />
-      <AdminProxyAppendDialog
-        open={createShow}
-        agencies={agencies}
-        onAppend={handleAppendProxies}
-        onCancel={() => setCreateShow(false)}
+      <AccountDialog
+        open={editOpen}
+        platform={platform}
+        account={account}
+        models={models}
+        chatTeams={modelProps.chatTeams}
+        onCancel={() => setEditOpen(false)}
+        onCreate={handleCreateAccount}
+        onUpdate={handleUpdateAccount}
+      />
+      <AccountParamDialog
+        open={settingOpen}
+        account={account}
+        onCancel={() => setSettingOpen(false)}
+        onUpdate={handleUpdateSetting}
       />
     </>
   );
 };
 
-export default AdminAccountStatPage;
+export default AccountListPage;

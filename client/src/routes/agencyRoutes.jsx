@@ -1,8 +1,8 @@
 import React from "react"
 import {
     DashboardPage,
-    ModelListPage,
-    ModelContentPage,
+    AgencyModelPage,
+    AgencyModelContentPage,
     AccountListPage,
     AccountHistoryPage,
     AgencyProxyPage,
@@ -13,8 +13,8 @@ import AffiliatePage from "@/pages/agency/AffiliatePage";
 
 const routes = [
     { key: "dashboard", path: "/", component: <DashboardPage />, },
-    { key: "model", path: "/model", component: <ModelListPage />, },
-    { key: "content", path: "/model/:modelId", component: <ModelContentPage />, },
+    { key: "model", path: "/model", component: <AgencyModelPage />, },
+    { key: "content", path: "/model/:modelId", component: <AgencyModelContentPage />, },
     { key: "account", path: "/account/:platform", component: <AccountListPage />, },
     { key: "history", path: "/account/:platform/:accountId", component: <AccountHistoryPage /> },
     { key: "comment", path: "/comment", component: <CommentListPage />, },

@@ -10,6 +10,17 @@ const initialState = {
   referralCode: undefined,
 
   proxies: [],
+
+  models: [],
+
+  contentModel: undefined,
+
+  accounts: [],
+  accountsCount: 0,
+
+  history: [],
+  historyCount: 0,
+  historyAccount: undefined,
 }
 
 const v2Reducer = (state = initialState, action) => {
@@ -46,11 +57,32 @@ const v2Reducer = (state = initialState, action) => {
         },
 
       };
-
     case ACTIONS.LOAD_PROXIES:
       return {
         ...state,
         proxies: action.payload.proxies,
+      };
+    case ACTIONS.LOAD_MODELS:
+      return {
+        ...state,
+        models: action.payload.models,
+      };
+    case ACTIONS.GET_MODEL_CONTENTS:
+      return {
+        ...state,
+        contentModel: action.payload.model
+      };
+    case ACTIONS.LOAD_ACCOUNTS:
+      return {
+        ...state,
+        accounts: action.payload.accounts,
+      };
+    case ACTIONS.LOAD_ACCOUNT_HISTORY:
+      return {
+        ...state,
+        history: action.payload.history,
+        historyCount: action.payload.historyCount,
+        historyAccount: action.payload.account
       };
     default:
       return state;

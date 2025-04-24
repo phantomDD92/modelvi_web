@@ -5,6 +5,7 @@ const AgencyCtrl2 = require("../../controllers/v2/agency");
 const AffiliateCtrl2 = require("../../controllers/v2/affiliate");
 const ProxyCtrl2 = require("../../controllers/v2/proxy");
 const ChatTeamCtrl2 = require("../../controllers/v2/chatteam");
+const ModelCtrl2 = require("../../controllers/v2/model");
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ router.route("/version")
 router.route("/agency_list")
   .all(authenticate, checkManager)
   .get(AgencyCtrl2.handleLoadAgencyListForAdmin);
-  
+
 router.route("/agency")
   .all(authenticate, checkManager)
   .get(AgencyCtrl2.handleLoadAgenciesForAdmin)
@@ -58,8 +59,31 @@ router.route("/chat/:id")
   .put(ChatTeamCtrl2.handleUpdateChatTeamForAdmin)
   .delete(ChatTeamCtrl2.handleDeleteChatTeamForAdmin)
 
-router.route("/account")
+router.route("/model")
   .all(authenticate, checkManager)
-  .get()
-  .delete(ProxyCtrl2.handleClearProxiesForAdmin)
+  .get(ModelCtrl2.handleLoadModelsForAdmin)
+  .post(ModelCtrl2.handleCreateModelForAdmin)
+  .put(ModelCtrl2.handleUpdateModelsForAdmin)
+  .delete(ModelCtrl2.handleDeleteModelsForAdmin)
+
+router
+  .route("/model/:modelId")
+  .all(authenticate)
+  .put(ModelCtrl2.handleUpdateModelForAdmin)
+  .delete(ModelCtrl2.handleDeleteModelForAdmin);
+
+router
+  .route("/content/:modelId")
+  .all(authenticate)
+  .get(ModelCtrl2.handleGetContentsForAdmin)
+  .post(ModelCtrl2.handleAppendContentForAdmin)
+  .put(ModelCtrl2.handleUpdateContentsForAdmin)
+  .delete(ModelCtrl2.handleDeleteContentsForAdmin);
+
+router
+  .route("/content/:modelId/:contentId")
+  .all(authenticate)
+  .put(ModelCtrl2.handleUpdateContentForAdmin)
+  .delete(ModelCtrl2.handleDeleteContentForAdmin);
+
 module.exports = router;

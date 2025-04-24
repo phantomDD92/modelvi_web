@@ -6,8 +6,6 @@ const initialState = {
   models: [],
   // For Model Content Page
   contents: [],
-  contentsUpdated: false,
-  contentModel: undefined,
   // For Account List Page
   accounts: [],
   accountsCount: 0,
@@ -33,17 +31,16 @@ const modelReducer = (state = initialState, action) => {
         ...state,
         allModels: action.payload.actors,
       };
+
+    case ACTIONS.GET_MODEL_CONTENT:
+      return {
+        ...state,
+        contentModel: action.payload.actor
+      };
     case ACTIONS.LOAD_ACCOUNTS:
       return {
         ...state,
         accounts: action.payload.accounts,
-      };
-    case ACTIONS.GET_MODEL_CONTENT:
-      return {
-        ...state,
-        contents: action.payload.actor.contents,
-        contentsUpdated: action.payload.actor.updated,
-        contentModel: action.payload.actor
       };
     case ACTIONS.LOAD_ACCOUNT_HISTORY:
       return {

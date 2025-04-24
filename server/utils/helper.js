@@ -105,6 +105,11 @@ function getVerifyEmailTemplate(verifyLink) {
   </html>`
 }
 
+function isModelOwner(model, agency) {
+  const ownerId = model.owner?._id || model.owner;
+  return ownerId?.toString() == agency._id?.toString()
+}
+
 module.exports = {
   getPricePlan,
   getDateDelta,
@@ -112,5 +117,6 @@ module.exports = {
   generateReferralCode,
   getClientIp,
   getVerifyEmailTemplate,
-  getAccountName
+  getAccountName,
+  isModelOwner,
 }

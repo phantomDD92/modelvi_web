@@ -67,6 +67,9 @@ const getAgencyWithReferrer = (agencyId) =>
   ManagerModel.findById(agencyId, "name email role status balance referrer pricePlans createdAt")
     .populate("referrer", "commission")
 
+const getAgencyList = () =>
+  ManagerModel.find({}, "name");
+
 const AgencyService2 = {
   createAgency,
   findReferees,
@@ -85,7 +88,8 @@ const AgencyService2 = {
   changeStatuses,
   changePricePlans,
   changeReferrer,
-  changeCommission
+  changeCommission,
+  getAgencyList
 }
 
 module.exports = AgencyService2

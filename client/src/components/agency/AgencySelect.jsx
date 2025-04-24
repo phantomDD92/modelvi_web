@@ -3,10 +3,10 @@ import { Select } from "antd";
 const AgencySelect = ({ dataSource, all, ...props }) => {
   const getOptions = (allValue, source) => {
     return allValue
-      ? source.map(agency => ({
+      ? [{ value: '', label: "All" }].concat(source.map(agency => ({
         value: agency._id,
         label: `${agency.name}`,
-      })).unshift({ value: '', label: "All" })
+      })))
       : source.map(agency => ({
         value: agency._id,
         label: `${agency.name}`,

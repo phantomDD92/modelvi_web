@@ -67,22 +67,22 @@ const handleProcessPayment = async (req, res) => {
   try {
     const data = req.body;
     const sig = req.header("x-nowpayments-sig");
-    await NotifyUtils.sendMessage("NOWPayment", "payment callback", JSON.stringify(sortObject(data)));
+    NotifyUtils.sendMessage("NOWPayment", "payment callback", JSON.stringify(sortObject(data)));
     const hmac = crypto.createHmac('sha512', process.env.NOWPAYMENT_IPN_KEY);
     hmac.update(JSON.stringify(sortObject(data)));
     const signature = hmac.digest('hex');
     if (sig != signature) {
-      await NotifyUtils.sendMessage("NOWPayment", "payment callback", "Signature checking failed");
+      NotifyUtils.sendMessage("NOWPayment", "payment callback", "Signature checking failed");
       throw new BotError("Signature checking failed");
     }
     const payment = await PaymentService.getPayment(data["payment_id"]);
     if (!payment) {
-      await NotifyUtils.sendMessage("NOWPayment", "payment callback", "Invalid payment id");
+      NotifyUtils.sendMessage("NOWPayment", "payment callback", "Invalid payment id");
       throw new BotError("Invalid payment id");
     }
     await PaymentService.updatePayment(payment._id, data);
     if (data["payment_status"] == PaymentStatus.FINISHED) {
-      await NotifyUtils.sendMessage("NOWPayment", "payment callback", "Finish payment");
+      NotifyUtils.sendMessage("NOWPayment", "payment callback", "Finish payment");
       const agency = await AgencyService2.updateBalance(payment.agency, data["outcome_amount"]);
       const from = agency.balance || 0;
       const to = from + data["outcome_amount"];
@@ -93,7 +93,7 @@ const handleProcessPayment = async (req, res) => {
     }
     sendResult(res);
   } catch (error) {
-    await NotifyUtils.sendMessage("NOWPayment", "payment callback error", error.message);
+    NotifyUtils.sendMessage("NOWPayment", "payment callback error", error.message);
     sendError(res, error);
   }
 }
