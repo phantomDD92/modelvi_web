@@ -18,7 +18,7 @@ export const DEFAULT_STORY_REPLACE = 1;
 
 export const Platform = {
     ALL: "ALL",
-    F2F: "F2F", 
+    F2F: "F2F",
     FNC: "FNC",
     FAN: "FAN",
     FANVUE: "FANVUE",
@@ -64,4 +64,12 @@ export const PostMode = {
     INTERVAL: "interval",
     LIMITED: "limited",
     OFFSET: "offset",
+}
+
+export const F2FPostType = {
+    PUBLIC: 0,
+    EXCLUSIVE_FOR_FANS: 1,
+    ONLY_NON_FANS_MUST_PAY: 2,
+    PAID_FOR_EVERYONE: 3,
+    VIP_POST: 4,
 }

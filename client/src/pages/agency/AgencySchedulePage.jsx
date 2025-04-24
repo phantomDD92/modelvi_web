@@ -1,8 +1,12 @@
-import { PageMetaData } from "@/components/common"
+import { useState } from "react";
 import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
-import { AgencyScheduleTable } from "@/components/schedule";
+import { PageMetaData } from "@/components/common"
+import { AgencyScheduleDialog, AgencyScheduleTable } from "@/components/schedule";
 
 const AgencySchedulePage = () => {
+  const [editOpen, setEditOpen] = useState(false);
+  const [content, setContent] = useState();
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -36,14 +40,22 @@ const AgencySchedulePage = () => {
         dataSource={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(value => ({ _id: `${value}`, title: `title - ${value}` }))}
         filters={{
           platform,
-          onPlatformChange:handlePlatformChange,
+          onPlatformChange: handlePlatformChange,
         }}
         pagination={{
           current: page,
           total: 14,
           onChange: handlePageChange,
         }}
-        actions={{}}
+        actions={{
+          onCreate: () => setEditOpen(true),
+        }}
+      />
+      <AgencyScheduleDialog
+        open={editOpen}
+        content={content}
+        onCancel={() => setEditOpen(false)}
+        onUpdate={() => { }}
       />
     </>
   )
