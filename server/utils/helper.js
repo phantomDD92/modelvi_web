@@ -48,6 +48,15 @@ function getClientIp(req) {
     req.connection?.socket?.remoteAddress;
 }
 
+function getAccountName(account, agency) {
+  let name = ""
+  if (agency?.name)
+    name += `${agency.name} - `;
+  if (account?.actor?.number && account?.actor?.name)
+    name += `[${account.actor.number}] ${account.actor.name} - `
+  name += `[${account.platform}] ${account.alias}`;
+}
+
 function getVerifyEmailTemplate(verifyLink) {
   return `<!DOCTYPE html>
   <html lang="en">
@@ -102,5 +111,6 @@ module.exports = {
   hasSufficientBalance,
   generateReferralCode,
   getClientIp,
-  getVerifyEmailTemplate
+  getVerifyEmailTemplate,
+  getAccountName
 }
