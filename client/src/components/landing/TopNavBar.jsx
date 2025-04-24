@@ -107,6 +107,21 @@ const TopNavBar = ({ menuItems, position, referralCode }) => {
                     </li>
                   );
                 })}
+                <li
+                  key={10}
+                  className={cn(
+                    "menu-item mx-2 text-default-800 transition-all duration-300 hover:text-primary [&.active]:text-primary",
+                    activation === "telegram" && "active"
+                  )}
+                >
+                  <a
+                    className="inline-flex items-center rounded-full px-2 py-0.5 text-sm font-medium capitalize lg:text-base"
+                    href={"https://t.me/ModelVI_automation"}
+                    target="_blank"
+                  >
+                    Telegram
+                  </a>
+                </li>
               </ul>
               <div className="ms-auto shrink gap-2 lg:inline-flex">
                 <Link
