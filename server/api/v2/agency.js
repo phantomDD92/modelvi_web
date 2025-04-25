@@ -70,6 +70,11 @@ router
   .delete(ModelCtrl2.handleDeleteContentForAgency);
 
 router
+  .route("/account_list")
+  .all(authenticate)
+  .get(AccountCtrl2.handleLoadAccountList);
+
+router
   .route("/account/:platform")
   .all(authenticate)
   .get(AccountCtrl2.handleLoadAccountsForAgency)
@@ -89,5 +94,5 @@ router
   .get(HistoryCtrl2.handleLoadHistoryForAgency)
   .post(HistoryCtrl2.handleClearErrorForAgency)
   .delete(HistoryCtrl2.handleClearHistoryForAgency);
-  
+
 module.exports = router;

@@ -17,10 +17,12 @@ const initialState = {
 
   accounts: [],
   accountsCount: 0,
+  accountList: [],
 
   history: [],
   historyCount: 0,
   historyAccount: undefined,
+
 }
 
 const v2Reducer = (state = initialState, action) => {
@@ -76,6 +78,11 @@ const v2Reducer = (state = initialState, action) => {
       return {
         ...state,
         accounts: action.payload.accounts,
+      };
+    case ACTIONS.LOAD_ACCOUNT_LIST:
+      return {
+        ...state,
+        accountList: action.payload.accounts,
       };
     case ACTIONS.LOAD_ACCOUNT_HISTORY:
       return {

@@ -181,7 +181,13 @@ const updateAccountsStatus = (accountIds, status) =>
 const deleteAccounts = (accountIds) =>
   AccountModel.deleteMany({ _id: { $in: accountIds } });
 
+const getAgencyAccounts = (agencyId) =>
+  AccountModel.find({ owner: agencyId }, "platform number actor alias")
+    .populate("actor", "number name")
+    .sort({ platform: 1, number: 1 });
+
 const AccountService2 = {
+  getAgencyAccounts,
   getAccountWithModel,
   getAccountWithModelChat,
   updateRevenue,

@@ -11,12 +11,11 @@ import {
     Upload,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { F2FPostType, KnkyStoryType, Platform, SERVER_PATH, StoryType } from "@/utils/const";
+import { F2FPostType, Platform, SERVER_PATH } from "@/utils/const";
 import Media from "../common/Media";
 import StyledInput from "../common/StyledInput";
-import { Input } from "postcss";
 
-const AgencyScheduleDialog = ({ open, content, onCancel, onUpdate }) => {
+const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
     const [mediaName, setMediaName] = useState();
     const [mediaType, setMediaType] = useState();
@@ -158,6 +157,18 @@ const AgencyScheduleDialog = ({ open, content, onCancel, onUpdate }) => {
                         <Radio.Button value={Platform.KNKY} disabled>Knky</Radio.Button>
                         <Radio.Button value={Platform.MALOUM} disabled>Maloum</Radio.Button>
                     </Radio.Group>
+                </Form.Item>
+                <Form.Item
+                    label="Account"
+                    name="account"
+                    rules={[{ required: true }]}
+                >
+                    <Select
+                        options={accountList
+                            .filter(account => account.platform == platform)
+                            .map(account => ({ value: account._id, label: `[${account.platform}] ${account.actor?.number}. ${account.actor?.name} - ${account.alias}` }))
+                        }
+                    />
                 </Form.Item>
                 <Form.Item
                     label="Date/Time"

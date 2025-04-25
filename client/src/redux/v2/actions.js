@@ -305,6 +305,15 @@ export const deleteModelContent = (model, content, callback) => async (dispatch)
   })
 };
 
+export const loadAccountList = (callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/agency/account_list`,
+    action: ACTIONS.LOAD_ACCOUNT_LIST,
+    callback
+  });
+};
+
+
 export const loadAccounts = (platform, search, callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/v2/agency/account/${platform}`,

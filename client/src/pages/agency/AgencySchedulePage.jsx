@@ -1,17 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
 import { PageMetaData } from "@/components/common"
 import { AgencyScheduleDialog, AgencyScheduleTable } from "@/components/schedule";
+import { useDispatch, useSelector } from "react-redux";
+import { loadAccountList, loadAccounts } from "@/redux/v2/actions";
 
 const AgencySchedulePage = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [content, setContent] = useState();
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
 
   const platform = searchParams.get('platform') || "";
   const page = parseInt(searchParams.get('page') || "1")
+  const accountList = useSelector(state => state.v2.accountList);
+
+  useEffect(() => {
+    dispatch(loadAccountList())
+  }, [loadAccountList]);
 
   const handlePageChange = (pageValue) => {
     navigate({
@@ -54,6 +62,7 @@ const AgencySchedulePage = () => {
       <AgencyScheduleDialog
         open={editOpen}
         content={content}
+        accountList={accountList}
         onCancel={() => setEditOpen(false)}
         onUpdate={() => { }}
       />
