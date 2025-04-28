@@ -151,8 +151,8 @@ const handleUpdateContents = async (req, res) => {
     if (!actor)
       throw new ApiError("unknown model");
     const actorJson = actor.toJSON();
-    await NotifyUtils.sendDebugMessage(`${account.platform} - ${account.alias}`, "Update contents")
     const contents = actorJson.contents.filter(content => content.platforms.includes(account.platform));
+    await NotifyUtils.sendDebugMessage(`${account.platform} - ${account.alias}`, "Update contents", `update ${contents.length} contents from ${actorJson.contents?.length} contents`)
     await AccountService.clearContents(req.bot.id);
     await AccountService.setContents(req.bot.id, contents);
     sendResult(res, { count: contents.length });
