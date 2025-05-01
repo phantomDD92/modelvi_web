@@ -6,6 +6,7 @@ const ProxyCtrl2 = require("../../controllers/v2/proxy");
 const ModelCtrl2 = require("../../controllers/v2/model");
 const AccountCtrl2 = require("../../controllers/v2/account");
 const HistoryCtrl2 = require("../../controllers/v2/history");
+const ScheduleCtrl2 = require("../../controllers/v2/schedule");
 
 const router = express.Router();
 
@@ -94,5 +95,19 @@ router
   .get(HistoryCtrl2.handleLoadHistoryForAgency)
   .post(HistoryCtrl2.handleClearErrorForAgency)
   .delete(HistoryCtrl2.handleClearHistoryForAgency);
+
+  router
+  .route("/schedule")
+  .all(authenticate)
+  .get(ScheduleCtrl2.handleLoadSchedulesForAgency)
+  .post(ScheduleCtrl2.handleCreateScheduleForAgency)
+  // .put(ModelCtrl2.handleUpdateContentsForAgency)
+  // .delete(ModelCtrl2.handleDeleteContentsForAgency);
+
+router
+  .route("/schedule/:scheduleId")
+  .all(authenticate)
+  // .put(ModelCtrl2.handleUpdateContentForAgency)
+  // .delete(ModelCtrl2.handleDeleteContentForAgency);
 
 module.exports = router;

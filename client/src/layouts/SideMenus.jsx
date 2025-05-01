@@ -10,7 +10,7 @@ export const agencyMenus = [
   { key: "comment", icon: <LuMessageSquare />, label: "Comment", path: "/comment" },
   { key: "billing", icon: <LuWallet />, label: "Billing", path: "/billing/payments" },
   { key: "affiliate", icon: <LuTrophy />, label: "Affiliate", path: "/affiliate" },
-  { key: "to_admin", icon: <LuArrowRightFromLine />, label: "To Admin", path: "/admin", visible: role => role == AdminRole.MANAGER },
+  { key: "to_admin", icon: <LuArrowRightFromLine />, label: "To Admin", path: "/admin/dashboard", visible: role => role == AdminRole.MANAGER },
 ]
 
 export const adminMenus = [
@@ -23,5 +23,5 @@ export const adminMenus = [
   { key: "admin_comment", icon: <LuMessageCircle />, label: "Comment", path: "/admin/comment" },
   { key: "admin_finance", icon: <LuWallet />, label: "Finance", path: "/admin/finance" },
   { key: "admin_affiliate", icon: <LuTrophy />, label: "Affiliate", path: "/admin/affiliate" },
-  { key: "to_agency", icon: <LuArrowLeftToLine />, label: "To Agency", path: "/" },
+  { key: "to_agency", icon: <LuArrowLeftToLine />, label: "To Agency", path: "/dashboard" },
 ]

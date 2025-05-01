@@ -35,7 +35,12 @@ const Router = () => {
               path={route.path}
             />
           ))}
-        {!isAuthenticated && <Route key="landing" element={<HomePage />} exact path="/" />}
+        {!isAuthenticated
+          ? <Route key="landing" element={<HomePage />} exact path="/" />
+          : session?.role == AdminRole.MANAGER
+            ? <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
+            : <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        }
         <Route key="sign-in" element={<SignIn />} path="/sign-in" />
         <Route key="sign-up" element={<SignUp />} path="/sign-up" />
         <Route key="forgot-pass" element={<ForgotPassword />} path="/forgot-pass" />

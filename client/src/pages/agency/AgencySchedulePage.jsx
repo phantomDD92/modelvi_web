@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
 import { PageMetaData } from "@/components/common"
 import { AgencyScheduleDialog, AgencyScheduleTable } from "@/components/schedule";
 import { useDispatch, useSelector } from "react-redux";
-import { loadAccountList, loadAccounts } from "@/redux/v2/actions";
+import { appendSchedulePost, getSchedulePosts, loadAccountList } from "@/redux/v2/actions";
 
 const AgencySchedulePage = () => {
   const [editOpen, setEditOpen] = useState(false);
-  const [content, setContent] = useState();
+  const [post, setPost] = useState();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -20,6 +20,11 @@ const AgencySchedulePage = () => {
   useEffect(() => {
     dispatch(loadAccountList())
   }, [loadAccountList]);
+
+  const loadSchedulePostsCallback = useCallback(({ platform, page }) => {
+    setLoading(true);
+    dispatch(getSchedulePosts({ platform, page }, () => setLoading(false)))
+  }, [dispatch]);
 
   const handlePageChange = (pageValue) => {
     navigate({
@@ -39,6 +44,12 @@ const AgencySchedulePage = () => {
         page
       }).toString()
     }, { replace: true });
+  }
+
+  const handleUpdateSchedule = (params) => {
+    if (post) {
+      dispatch(appendSchedulePost(params, () => { setEditOpen(false); loadSchedulePostsCallback({ platform, page }) }))
+    }
   }
 
   return (
@@ -61,10 +72,10 @@ const AgencySchedulePage = () => {
       />
       <AgencyScheduleDialog
         open={editOpen}
-        content={content}
+        content={post}
         accountList={accountList}
         onCancel={() => setEditOpen(false)}
-        onUpdate={() => { }}
+        onUpdate={handleUpdateSchedule}
       />
     </>
   )

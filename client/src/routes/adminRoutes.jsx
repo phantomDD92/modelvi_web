@@ -16,7 +16,7 @@ import AdminAccountHistoryPage from "@/pages/admin/AdminAccountHistoryPage"
 import AdminAccountPage from "@/pages/admin/AdminAccountPage"
 
 const adminRoutes = [
-  { key: "admin_dashboard", path: "/admin", component: <AdminDashboardPage />, },
+  { key: "admin_dashboard", path: "/admin/dashboard", component: <AdminDashboardPage />, },
   { key: "admin_agency", path: "/admin/agency", component: <AdminAgencyListPage />, },
   { key: "admin_model", path: "/admin/model", component: <AdminModelPage />, },
   { key: "admin_content", path: "/admin/model/:modelId", component: <AdminModelContentPage />, },

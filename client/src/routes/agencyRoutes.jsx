@@ -13,7 +13,7 @@ import AffiliatePage from "@/pages/agency/AffiliatePage";
 import AgencySchedulePage from "@/pages/agency/AgencySchedulePage";
 
 const routes = [
-    { key: "dashboard", path: "/", component: <DashboardPage />, },
+    { key: "dashboard", path: "/dashboard", component: <DashboardPage />, },
     { key: "model", path: "/model", component: <AgencyModelPage />, },
     { key: "content", path: "/model/:modelId", component: <AgencyModelContentPage />, },
     { key: "account", path: "/account/:platform", component: <AgencyAccountPage />, },

@@ -49,7 +49,7 @@ const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }
     const handleOkClick = async () => {
         try {
             await form.validateFields();
-            const { medias, previews, tags, platforms, ...params } = form.getFieldsValue();
+            const { medias, previews, tags, scheduledAt, ...params } = form.getFieldsValue();
             let postTags = [];
             const tagsStr = tags.replaceAll("#", " ").trim()
             if (tagsStr != "") {
@@ -60,7 +60,7 @@ const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }
             if (previews && previews.length > 0) {
                 preview = { name: previewName, mode: previewType }
             }
-            onUpdate({ media, preview, postTags, platforms, ...params });
+            onUpdate({ media, preview, postTags, platform, postType, scheduledAt: scheduledAt.toDate(), ...params });
         } catch (e) {
             console.error(e);
         }
@@ -68,7 +68,7 @@ const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }
 
     useEffect(() => {
         if (open && content) {
-            const { image, platform, media, preview, postTags, ...params } = content;
+            const { image, platform, media, preview, postType, postTags, scheduledAt, ...params } = content;
             let medias = [];
             let previews = [];
             if (media && media.length > 0) {
@@ -88,11 +88,15 @@ const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }
                 setPreviewName(preview.name);
                 previews = [preview.name];
             }
+            if (postType)
+                setPostType(postType)
+            if (platform)
+                setPlatform(platform)
             form.setFieldsValue({
                 medias,
                 previews,
-                platform,
                 tags: (postTags || []).map(tag => `#${tag}`).join(" "),
+                scheduledAt: moment(scheduledAt),
                 ...params
             })
         } else {
@@ -101,6 +105,8 @@ const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }
             setMediaType();
             setPreviewName();
             setPreviewType();
+            setPostType(F2FPostType.PUBLIC)
+            setPlatform(Platform.F2F)
         }
     }, [content, open]);
 
@@ -175,7 +181,7 @@ const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }
                     name="scheduledAt"
                     rules={[{ required: true }]}
                 >
-                    <DatePicker showMinute />
+                    <DatePicker showTime />
                 </Form.Item>
                 <Form.Item
                     label="Media"
@@ -240,7 +246,6 @@ const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }
                 </Form.Item>
                 {platform == Platform.F2F &&
                     <Form.Item
-                        name="postType"
                         label="Post Type"
                         rules={[{ required: true }]}
                     >
@@ -252,6 +257,7 @@ const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }
                                 { value: F2FPostType.PAID_FOR_EVERYONE, label: "Paid for everyone" },
                                 { value: F2FPostType.VIP_POST, label: "VIP post" },
                             ]}
+                            value={postType}
                             onChange={value => setPostType(value)}
                         />
                     </Form.Item>
@@ -262,7 +268,7 @@ const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }
                         label="Followers Price"
                         rules={[{ required: true }]}
                     >
-                        <InputNumber />
+                        <InputNumber min={5} suffix="€" />
                     </Form.Item>
                 }
                 {hasFanPrice(platform, postType) &&
@@ -271,7 +277,7 @@ const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }
                         label="Fans Price"
                         rules={[{ required: true }]}
                     >
-                        <InputNumber />
+                        <InputNumber min={5} suffix="€" />
                     </Form.Item>
                 }
             </Form>
