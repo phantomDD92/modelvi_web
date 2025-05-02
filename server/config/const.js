@@ -61,6 +61,13 @@ const TransactionType = {
     EXPENSE: 2,
 }
 
+const ScheduleStatus = {
+    WAITING: 1,
+    SCHEDULED: 2,
+    FINISHED: 3,
+    FAILED: 4,
+}
+
 module.exports = {
     Status,
     Platform,
@@ -71,4 +78,5 @@ module.exports = {
     PostMode,
     PaymentStatus,
     TransactionType,
+    ScheduleStatus,
 }

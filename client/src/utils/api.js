@@ -21,6 +21,7 @@ const postAction = async (dispatch, { action, path, data, params, inform, callba
             return undefined
         }
     } catch (error) {
+        console.error("###\n", error)
         if (error.response?.status === 401) {
             dispatch(logoutManager());
         } else {

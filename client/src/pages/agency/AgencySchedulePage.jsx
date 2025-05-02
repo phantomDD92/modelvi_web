@@ -3,28 +3,37 @@ import { createSearchParams, useNavigate, useSearchParams } from "react-router-d
 import { PageMetaData } from "@/components/common"
 import { AgencyScheduleDialog, AgencyScheduleTable } from "@/components/schedule";
 import { useDispatch, useSelector } from "react-redux";
-import { appendSchedulePost, getSchedulePosts, loadAccountList } from "@/redux/v2/actions";
+import { appendSchedulePost, deleteSchedulePost, getSchedulePosts, loadAccountList, updateSchedulePost } from "@/redux/v2/actions";
+import { Modal } from "antd";
 
 const AgencySchedulePage = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [post, setPost] = useState();
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
 
   const platform = searchParams.get('platform') || "";
+  const status = searchParams.get('status') || "";
   const page = parseInt(searchParams.get('page') || "1")
   const accountList = useSelector(state => state.v2.accountList);
+  const schedules = useSelector(state => state.v2.schedules);
+  const schedulesCount = useSelector(state => state.v2.schedulesCount);
+
+  const loadSchedulePostsCallback = useCallback(({ platform, page, status }) => {
+    setLoading(true);
+    dispatch(getSchedulePosts({ platform, status, page }, () => setLoading(false)))
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(loadAccountList())
   }, [loadAccountList]);
 
-  const loadSchedulePostsCallback = useCallback(({ platform, page }) => {
-    setLoading(true);
-    dispatch(getSchedulePosts({ platform, page }, () => setLoading(false)))
-  }, [dispatch]);
+  useEffect(() => {
+    loadSchedulePostsCallback({ platform, status, page })
+  }, [loadSchedulePostsCallback, platform, status, page]);
 
   const handlePageChange = (pageValue) => {
     navigate({
@@ -41,6 +50,18 @@ const AgencySchedulePage = () => {
       pathname: location.pathname,
       search: createSearchParams({
         platform: value,
+        status,
+        page
+      }).toString()
+    }, { replace: true });
+  }
+
+  const handleStatusChange = (value) => {
+    navigate({
+      pathname: location.pathname,
+      search: createSearchParams({
+        platform,
+        status: value,
         page
       }).toString()
     }, { replace: true });
@@ -48,31 +69,45 @@ const AgencySchedulePage = () => {
 
   const handleUpdateSchedule = (params) => {
     if (post) {
-      dispatch(appendSchedulePost(params, () => { setEditOpen(false); loadSchedulePostsCallback({ platform, page }) }))
+      dispatch(updateSchedulePost(post, params, () => { setEditOpen(false); loadSchedulePostsCallback({ platform, status, page }) }))
+    } else {
+      dispatch(appendSchedulePost(params, () => { setEditOpen(false); loadSchedulePostsCallback({ platform, status, page }) }))
     }
+  }
+
+  const handleDeleteSchedule = (post) => {
+    Modal.confirm({
+      title: `Are you sure to delete the scheduled post?`,
+      onOk: () => dispatch(deleteSchedulePost(post, () => loadSchedulePostsCallback({ platform, status, page }))),
+    });
   }
 
   return (
     <>
       <PageMetaData title="Scheduled Post" />
       <AgencyScheduleTable
-        dataSource={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(value => ({ _id: `${value}`, title: `title - ${value}` }))}
+        loading={loading}
+        dataSource={schedules}
         filters={{
           platform,
+          status,
           onPlatformChange: handlePlatformChange,
+          onStatusChange: handleStatusChange,
         }}
         pagination={{
           current: page,
-          total: 14,
+          total: schedulesCount,
           onChange: handlePageChange,
         }}
         actions={{
           onCreate: () => setEditOpen(true),
+          onDelete: handleDeleteSchedule,
+          onEdit: (post) => { setPost(post); setEditOpen(true) },
         }}
       />
       <AgencyScheduleDialog
         open={editOpen}
-        content={post}
+        data={post}
         accountList={accountList}
         onCancel={() => setEditOpen(false)}
         onUpdate={handleUpdateSchedule}

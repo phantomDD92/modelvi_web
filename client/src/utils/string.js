@@ -1,5 +1,5 @@
 import moment from "moment";
-import { Platform } from "./const";
+import { Platform, ScheduleStatus } from "./const";
 import { cryptoCurrencies } from "@/data/crypto";
 
 export const getPlatformName = (platform) => {
@@ -44,3 +44,4 @@ export const getCryptoAmount = (amount, ticker, defValue = "-") =>
       ? `${(amount || 0).toFixed(2)} ${ticker}`
       : `${(amount || 0).toFixed(5)} ${ticker}`
     : defValue;
+

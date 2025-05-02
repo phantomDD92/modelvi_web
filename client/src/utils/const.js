@@ -1,7 +1,7 @@
-export const API_PATH = "http://localhost:5000/api";
-export const SERVER_PATH = "http://localhost:5000";
-// export const API_PATH = `${window.location.protocol}//${window.location.host}/api`;
-// export const SERVER_PATH = `${window.location.protocol}//${window.location.host}`;
+// export const API_PATH = "http://localhost:5000/api";
+// export const SERVER_PATH = "http://localhost:5000";
+export const API_PATH = `${window.location.protocol}//${window.location.host}/api`;
+export const SERVER_PATH = `${window.location.protocol}//${window.location.host}`;
 
 export const DEFAULT_REFRESH_TIMEOUT = 180000;
 export const DEFAULT_PAGE_SIZE = 10;
@@ -72,4 +72,11 @@ export const F2FPostType = {
     ONLY_NON_FANS_MUST_PAY: 2,
     PAID_FOR_EVERYONE: 3,
     VIP_POST: 4,
+}
+
+export const ScheduleStatus = {
+    WAITING: 1,
+    SCHEDULED: 2,
+    FINISHED: 3,
+    FAILED: 4,
 }

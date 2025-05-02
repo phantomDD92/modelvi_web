@@ -107,7 +107,7 @@ router
 router
   .route("/schedule/:scheduleId")
   .all(authenticate)
-  // .put(ModelCtrl2.handleUpdateContentForAgency)
-  // .delete(ModelCtrl2.handleDeleteContentForAgency);
+  .put(ScheduleCtrl2.handleUpdateScheduleForAgency)
+  .delete(ScheduleCtrl2.handleDeleteScheduleForAgency);
 
 module.exports = router;

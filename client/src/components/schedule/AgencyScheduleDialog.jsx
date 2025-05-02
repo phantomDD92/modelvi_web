@@ -11,11 +11,12 @@ import {
     Upload,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import moment from "moment";
 import { F2FPostType, Platform, SERVER_PATH } from "@/utils/const";
 import Media from "../common/Media";
 import StyledInput from "../common/StyledInput";
 
-const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }) => {
+const AgencyScheduleDialog = ({ open, data, accountList, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
     const [mediaName, setMediaName] = useState();
     const [mediaType, setMediaType] = useState();
@@ -55,30 +56,26 @@ const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }
             if (tagsStr != "") {
                 postTags = tagsStr.split(/\s+/);
             }
-            let media = [{ name: mediaName, mode: mediaType }];
+            let media = { name: mediaName, mode: mediaType };
             let preview;
             if (previews && previews.length > 0) {
                 preview = { name: previewName, mode: previewType }
             }
-            onUpdate({ media, preview, postTags, platform, postType, scheduledAt: scheduledAt.toDate(), ...params });
+            onUpdate({ media, preview, tags: postTags, platform, type: postType, scheduledAt: scheduledAt.toDate(), ...params });
         } catch (e) {
             console.error(e);
         }
     }
 
     useEffect(() => {
-        if (open && content) {
-            const { image, platform, media, preview, postType, postTags, scheduledAt, ...params } = content;
+        if (open && data) {
+            const { platform, media, preview, account, type: postType, tags: postTags, scheduledAt, ...params } = data;
             let medias = [];
             let previews = [];
-            if (media && media.length > 0) {
-                setMediaType(media[0].mode);
-                setMediaName(media[0].name);
-                medias = [media[0].name]
-            } else if (image) {
-                setMediaName(image);
-                setMediaType("image/jpg");
-                medias = [image]
+            if (media) {
+                setMediaType(media.mode);
+                setMediaName(media.name);
+                medias = [media.name]
             } else {
                 setMediaName();
                 setMediaType();
@@ -95,6 +92,7 @@ const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }
             form.setFieldsValue({
                 medias,
                 previews,
+                account: account?._id,
                 tags: (postTags || []).map(tag => `#${tag}`).join(" "),
                 scheduledAt: moment(scheduledAt),
                 ...params
@@ -108,7 +106,7 @@ const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }
             setPostType(F2FPostType.PUBLIC)
             setPlatform(Platform.F2F)
         }
-    }, [content, open]);
+    }, [data, open]);
 
 
     const normFile = (e) => {
@@ -140,7 +138,7 @@ const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }
 
     return (
         <Modal
-            title={content ? "Edit Scheduled Post" : "Add Scheduled Post"}
+            title={data ? "Edit Scheduled Post" : "Add Scheduled Post"}
             width={700}
             open={open}
             onOk={handleOkClick}
@@ -156,7 +154,11 @@ const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }
                 <Form.Item
                     label="Platform"
                     rules={[{ required: true }]}>
-                    <Radio.Group value={platform} onChange={(e) => setPlatform(e.target.value)}>
+                    <Radio.Group
+                        value={platform}
+                        onChange={(e) => setPlatform(e.target.value)}
+                        disabled={data != undefined}
+                    >
                         <Radio.Button value={Platform.F2F}>F2F</Radio.Button>
                         <Radio.Button value={Platform.FNC} disabled>Fancentro</Radio.Button>
                         <Radio.Button value={Platform.FAN} disabled>Fansly</Radio.Button>
@@ -170,6 +172,7 @@ const AgencyScheduleDialog = ({ open, content, accountList, onCancel, onUpdate }
                     rules={[{ required: true }]}
                 >
                     <Select
+                        disabled={data != undefined}
                         options={accountList
                             .filter(account => account.platform == platform)
                             .map(account => ({ value: account._id, label: `[${account.platform}] ${account.actor?.number}. ${account.actor?.name} - ${account.alias}` }))
