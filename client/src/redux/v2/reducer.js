@@ -17,10 +17,14 @@ const initialState = {
 
   accounts: [],
   accountsCount: 0,
+  accountList: [],
 
   history: [],
   historyCount: 0,
   historyAccount: undefined,
+
+  schedules: [],
+  schedulesCount: 0,
 }
 
 const v2Reducer = (state = initialState, action) => {
@@ -77,12 +81,23 @@ const v2Reducer = (state = initialState, action) => {
         ...state,
         accounts: action.payload.accounts,
       };
+    case ACTIONS.LOAD_ACCOUNT_LIST:
+      return {
+        ...state,
+        accountList: action.payload.accounts,
+      };
     case ACTIONS.LOAD_ACCOUNT_HISTORY:
       return {
         ...state,
         history: action.payload.history,
         historyCount: action.payload.historyCount,
         historyAccount: action.payload.account
+      };
+    case ACTIONS.LOAD_SCHEDULE_CONTENTS:
+      return {
+        ...state,
+        schedules: action.payload.schedules,
+        schedulesCount: action.payload.schedulesCount,
       };
     default:
       return state;

@@ -290,6 +290,14 @@ const handleDeleteAccountsForAdmin = async (req, res) => {
   }
 };
 
+const handleLoadAccountList = async (req, res) => {
+  try {
+    const accounts = await AccountService2.getAgencyAccounts(req.manager._id);
+    sendResult(res, { accounts });
+  } catch (error) {
+    sendError(res, error)
+  }
+}
 const AccountCtrl2 = {
   handleLoadAccountsForAdmin,
   handleCreateAccountForAdmin,
@@ -304,6 +312,8 @@ const AccountCtrl2 = {
   handleDeleteAccountsForAgency,
   handleUpdateAccountForAgency,
   handleDeleteAccountForAgency,
+
+  handleLoadAccountList
 }
 
 module.exports = AccountCtrl2;

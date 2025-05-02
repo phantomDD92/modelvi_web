@@ -305,6 +305,15 @@ export const deleteModelContent = (model, content, callback) => async (dispatch)
   })
 };
 
+export const loadAccountList = (callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/agency/account_list`,
+    action: ACTIONS.LOAD_ACCOUNT_LIST,
+    callback
+  });
+};
+
+
 export const loadAccounts = (platform, search, callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/v2/agency/account/${platform}`,
@@ -401,3 +410,55 @@ export const clearAccountError = (platform, accountId, callback) => async (dispa
   })
 }
 
+
+export const getSchedulePosts = ({ platform, page, status }, callback) => (dispatch) =>
+  ApiRequest.getAction(dispatch, {
+    path: `/v2/agency/schedule`,
+    params: { page, platform, status },
+    action: ACTIONS.LOAD_SCHEDULE_CONTENTS,
+    callback
+  })
+
+export const appendSchedulePost = (params, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/v2/agency/schedule`,
+    data: params,
+    inform: `Scheduled post is successfully appended`,
+    callback
+  });
+};
+
+export const clearSchedulePosts = (callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/agency/schedule`,
+    data: { action: "clear" },
+    inform: `Scheduled posts are successfully cleared`,
+    callback
+  })
+};
+
+export const deleteSchedulePosts = (model, postIds, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/agency/schedule`,
+    data: { postIds },
+    inform: `${postIds.length} scheduled posts are successfully deleted`,
+    callback
+  })
+};
+
+export const updateSchedulePost = (post, params, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/agency/schedule/${post._id}`,
+    data: { action: "change", ...params },
+    inform: `Scheduled post is successfully changed`,
+    callback
+  });
+};
+
+export const deleteSchedulePost = (post, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/agency/schedule/${post._id}`,
+    inform: `Scheduled post is successfully deleted`,
+    callback
+  })
+};

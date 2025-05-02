@@ -108,6 +108,7 @@ function getVerifyEmailTemplate(verifyLink) {
 
 function isModelOwner(model, agency) {
   const ownerId = model.owner?._id || model.owner;
+  console.log(ownerId, agency._id)
   return ownerId?.toString() == agency._id?.toString()
 }
 
