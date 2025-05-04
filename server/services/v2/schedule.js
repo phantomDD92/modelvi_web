@@ -73,8 +73,11 @@ const updateScheduleResults = (results) => {
       update: { $set: { status, post, reason } }
     }
   }));
-  return Schedule.bulkWrite(updates);
+  return ScheduleModel.bulkWrite(updates);
 }
+
+const loadLivingSchedules = (accountId) =>
+  ScheduleModel.find({ account: accountId, status: { $lte: ScheduleStatus.SCHEDULED } });
 
 const ScheduleService2 = {
   getSchedule,
@@ -83,6 +86,7 @@ const ScheduleService2 = {
   changeSchedule,
   updateScheduleResults,
   loadSchedulesWithPage,
+  loadLivingSchedules,
 }
 
 module.exports = ScheduleService2

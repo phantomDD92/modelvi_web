@@ -197,7 +197,8 @@ const handleUpdateScheduleSetting = async (req, res) => {
       throw new ApiError("Invalid account");
     const scheduleNextTime = moment().add(10, "minute").toDate();
     await AccountService.updateParams(account, { "params.scheduleNextTime": scheduleNextTime });
-    sendResult(res);
+    const schedules = await ScheduleService2.loadLivingSchedules(req.bot.id)
+    sendResult(res, { schedules });
   } catch (error) {
     sendError(res, error);
   }
