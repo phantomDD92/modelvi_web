@@ -33,7 +33,7 @@ export const AdminDashboardPage = () => {
   }
 
   const handleHistoryButtonClick = (account) => {
-    navigate(`/account/${account.platform}/${account._id}`);
+    navigate(`/admin/history/${account.platform}/${account._id}`);
   }
 
   const handleSetStatus = (account, status) => {

@@ -94,6 +94,7 @@ export const AccountHistoryPage = () => {
             position: ["topRight", "bottomRight"],
             showTotal: total => `Total ${total} histories`,
             current: page,
+            pageSize: 20,
             total: modelProps.historyCount,
             onChange: handlePageChange
           }}

@@ -99,6 +99,7 @@ export const AdminAccountHistoryPage = () => {
             position: ["topRight", "bottomRight"],
             showTotal: total => `Total ${total} histories`,
             current: page,
+            pageSize: 20,
             total: historyCount,
             onChange: handlePageChange
           }}
