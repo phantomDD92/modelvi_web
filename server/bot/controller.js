@@ -19,6 +19,7 @@ const AccountService2 = require('../services/v2/account');
 const AgencyService2 = require('../services/v2/agency');
 const TransactionService2 = require('../services/v2/transaction');
 const NotifyUtils = require('../utils/notifiy');
+const ScheduleService2 = require('../services/v2/schedule');
 
 
 const handleLoginAccount = async (req, res) => {
@@ -189,6 +190,34 @@ const handleUpdateChatSetting = async (req, res) => {
   }
 }
 
+const handleUpdateScheduleSetting = async (req, res) => {
+  try {
+    const account = await AccountService.findById(req.bot.id);
+    if (!account)
+      throw new ApiError("Invalid account");
+    const scheduleNextTime = moment().add(10, "minute").toDate();
+    await AccountService.updateParams(account, { "params.scheduleNextTime": scheduleNextTime });
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
+const handleUpdateScheduleResults = async (req, res) => {
+  try {
+    const { results } = req.body;
+    const account = await AccountService.findById(req.bot.id);
+    if (!account)
+      throw new ApiError("Invalid account");
+    NotifyUtils.sendDebugMessage(getAccountName(account), "Update Schedule Results", JSON.stringify(results))
+    await ScheduleService2.updateScheduleResults(results);
+    sendResult(res);
+  } catch (error) {
+    console.error(error)
+    sendError(res, error);
+  }
+}
+
 const handleUpdateStorySetting = async (req, res) => {
   try {
     const { index } = req.body;
@@ -331,6 +360,12 @@ const handleUpdateAccount = async (req, res) => {
       case "content_media":
       case "content_preview":
         handleUpdateMedia(req, res);
+        break;
+      case "schedule_setting":
+        handleUpdateScheduleSetting(req, res);
+        break;
+      case "schedule_results":
+        handleUpdateScheduleResults(req, res);
         break;
       case "post_setting":
         handleUpdatePostSetting(req, res);

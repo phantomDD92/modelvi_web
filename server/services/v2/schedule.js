@@ -66,11 +66,22 @@ const changeSchedule = (scheduleId, { media, preview, title, folder, tags, type,
   }
   )
 
+const updateScheduleResults = (results) => {
+  const updates = results.map(({ id, status, post, reason }) => ({
+    updateOne: {
+      filter: { _id: id },
+      update: { $set: { status, post, reason } }
+    }
+  }));
+  return Schedule.bulkWrite(updates);
+}
+
 const ScheduleService2 = {
   getSchedule,
   deleteSchedule,
   createSchedule,
   changeSchedule,
+  updateScheduleResults,
   loadSchedulesWithPage,
 }
 
