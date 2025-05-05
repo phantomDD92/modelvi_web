@@ -1,6 +1,7 @@
 import {
     Card,
     Table,
+    Tag,
 } from "antd";
 import { getCurrencyAmount, getCurrencyName, getDateTime, getFiatAmount } from "@/utils/string";
 import { render } from "react-dom";
@@ -10,6 +11,21 @@ const PaymentTable = ({
     loading,
     dataSource,
 }) => {
+      const getStatusTag = (status) => {
+        switch (status) {
+          case "finished":
+            return <Tag color="success">finished</Tag>
+          case "failed":
+            return <Tag color="error">failed</Tag>
+          case "waiting":
+            return <Tag color="processing">waiting</Tag>
+          case "expired":
+            return <Tag color="warning">expired</Tag>
+          default:
+            break;
+        }
+        return <Tag color="default">{status}</Tag>
+      }
     const columns = [
         {
             key: 'createdAt',
@@ -19,30 +35,30 @@ const PaymentTable = ({
             render: value => getDateTime(value)
         },
         {
-            key: 'payCurrency',
-            title: 'Currency',
-            width: 250,
-            dataIndex: 'payCurrency',
-            render: value => getCurrencyName(value)
-        },
-        {
             key: 'payAddress',
             title: 'Address',
-            width: 500,
             dataIndex: 'payAddress',
-        },
+            render: (value, record) => <div><h4>{getCurrencyName(record.payCurrency)}</h4><p>{value}</p></div>
+          },
         {
             key: 'paidAmount',
-            title: 'Amount',
+            title: 'Paid Amount',
             width: 150,
             dataIndex: 'paidAmount',
             render: (value, record) => record.status == "cancel" || record.status == "waiting" ? "-" : getCurrencyAmount(value, record.payCurrency, record.status)
         },
         {
             key: 'outcomeAmount',
-            title: 'Balance Charge',
+            title: 'Received Amount',
             width: 150,
             dataIndex: 'outcomeAmount',
+            render: (value, record) => record.status == "cancel" || record.status == "waiting" ? "-" : getCurrencyAmount(value, record.outcomeCurrency, record.status)
+        },
+        {
+            key: 'chargeAmount',
+            title: 'Charged Balance',
+            width: 150,
+            dataIndex: 'chargeAmount',
             render: (value, record) => record.status == "finished" ? getFiatAmount(value) : "-"
         },
         {
@@ -50,9 +66,8 @@ const PaymentTable = ({
             title: 'Status',
             width: 200,
             dataIndex: 'status',
-
+            render: value => getStatusTag(value)
         },
-
     ]
 
     return (

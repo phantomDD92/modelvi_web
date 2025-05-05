@@ -1,8 +1,8 @@
 const crypto = require('crypto');
-const { PaymentStatus } = require("../../config/const");
+const { PaymentStatus, TransactionType } = require("../../config/const");
 const AgencyService2 = require("../../services/v2/agency");
 const CounterService = require("../../services/v2/counter");
-const PaymentService = require("../../services/v2/payment");
+const PaymentService2 = require("../../services/v2/payment");
 const TransactionService2 = require("../../services/v2/transaction");
 const NotifyUtils = require("../../utils/notifiy");
 const PaymentUtils = require("../../utils/payment");
@@ -15,7 +15,7 @@ const handleCreatePayment = async (req, res) => {
     const id = await CounterService.getNextSequence("payment");
     const { min_amount: minAmount, fiat_equivalent: minFiat } = await PaymentUtils.getMinimumPaymentAmount(currency);
     const data = await PaymentUtils.createPayment(req.manager, id, currency, minAmount, minFiat);
-    const payment = await PaymentService.createPayment(id, req.manager, data);
+    const payment = await PaymentService2.createPayment(id, req.manager, data);
     sendResult(res, { payment });
   } catch (error) {
     console.error(error);
@@ -25,7 +25,7 @@ const handleCreatePayment = async (req, res) => {
 
 const handleLoadPayments = async (req, res) => {
   try {
-    const payments = await PaymentService.loadPayments(req.manager);
+    const payments = await PaymentService2.loadPayments(req.manager);
     sendResult(res, { payments });
   } catch (error) {
     sendError(res, error);
@@ -35,7 +35,7 @@ const handleLoadPayments = async (req, res) => {
 const handleCancelPayment = async (req, res) => {
   try {
     const { id: paymentId } = req.params;
-    await PaymentService.cancelPayment(paymentId);
+    await PaymentService2.cancelPayment(paymentId);
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -45,7 +45,7 @@ const handleCancelPayment = async (req, res) => {
 const handleGetPayment = async (req, res) => {
   try {
     const { id: paymentId } = req.params;
-    const payment = await PaymentService.getPaymentById(paymentId);
+    const payment = await PaymentService2.getPaymentById(paymentId);
     sendResult(res, { payment });
   } catch (error) {
     sendError(res, error);
@@ -75,25 +75,37 @@ const handleProcessPayment = async (req, res) => {
       NotifyUtils.sendMessage("NOWPayment", "payment callback", "Signature checking failed");
       throw new BotError("Signature checking failed");
     }
-    const payment = await PaymentService.getPayment(data["payment_id"]);
+    const payment = await PaymentService2.getPayment(data["payment_id"]);
     if (!payment) {
       NotifyUtils.sendMessage("NOWPayment", "payment callback", "Invalid payment id");
       throw new BotError("Invalid payment id");
     }
-    await PaymentService.updatePayment(payment._id, data);
+    await PaymentService2.updatePayment(payment._id, data);
     if (data["payment_status"] == PaymentStatus.FINISHED) {
       NotifyUtils.sendMessage("NOWPayment", "payment callback", "Finish payment");
-      const agency = await AgencyService2.updateBalance(payment.agency, data["outcome_amount"]);
+      const amount = await PaymentUtils.getEstimatedPrice(data["outcome_amount"], data["outcome_amount"])
+      await PaymentService2.setChargeAmount(payment._id, amount);
+      const agency = await AgencyService2.updateBalance(payment.agency, amount);
       const from = agency.balance || 0;
       const to = from + data["outcome_amount"];
-      await TransactionService2.createChargeTransaction(payment.agency, data["outcome_amount"], from, to, payment.description);
+      await TransactionService2.createChargeTransaction(payment.agency, TransactionType.CHARGE_NOWPAYMENT, amount, from, to, payment.description);
       NotifyUtils.sendPaymentMessage(agency, "Payment By NOWPayment",
-        `Currency: ${data["pay_currency"]}\nAmount: ${data["actually_paid"]}\nCharge: $${data["outcome_amount"]}\nBalance:$${from} => $${to}`
+        `Currency: ${data["pay_currency"]}\nAmount: ${data["actually_paid"]}\nCharge: $${amount}\nBalance:$${from} => $${to}`
       )
     }
     sendResult(res);
   } catch (error) {
     NotifyUtils.sendMessage("NOWPayment", "payment callback error", error.message);
+    sendError(res, error);
+  }
+}
+
+const handleLoadPaymentsForAdmin = async (req, res) => {
+  try {
+    const { page, agency, status } = req.query;
+    const [payments, paymentsCount] = await PaymentService2.loadPaymentsWithPage({ agency, status }, page);
+    sendResult(res, { payments, paymentsCount });
+  } catch (error) {
     sendError(res, error);
   }
 }
@@ -107,13 +119,13 @@ const handleProcess = async (req, res) => {
 }
 
 
-
-const PaymentCtrl = {
+const PaymentCtrl2 = {
   handleCreatePayment,
   handleGetPayment,
   handleLoadPayments,
   handleCancelPayment,
-  handleProcessPayment
+  handleProcessPayment,
+  handleLoadPaymentsForAdmin,
 };
 
-module.exports = PaymentCtrl
+module.exports = PaymentCtrl2

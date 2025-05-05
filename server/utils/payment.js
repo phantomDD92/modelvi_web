@@ -13,10 +13,28 @@ const getApiStatus = async () => {
 
 const getAvailableCurrencies = async () => {
   try {
-    const resp = await axios.get("https://api-sandbox.nowpayments.io/v1/currencies", { headers: { 'x-api-key': process.env.NOWPAYMENT_API_KEY } });
+    const resp = await axios.get("https://api.nowpayments.io/v1/currencies", { headers: { 'x-api-key': process.env.NOWPAYMENT_API_KEY } });
     return resp.data?.currencies;
   } catch (error) {
     throw new ApiError("NowPayment service not available");
+  }
+}
+
+const getEstimatedPrice = async (amount, currencyFrom) => {
+  try {
+    const resp = await axios.get("https://api.nowpayments.io/v1/estimate",
+      {
+        headers: { 'x-api-key': process.env.NOWPAYMENT_API_KEY },
+        params: {
+          "amount": amount,
+          "currency_from": currencyFrom,
+          "currency_to": "usd",
+        }
+      }
+    );
+    return resp.data?.estimated_amount;
+  } catch (error) {
+    throw new ApiError("NowPayment service failed");
   }
 }
 
@@ -67,6 +85,7 @@ const PaymentUtils = {
   getAvailableCurrencies,
   getMinimumPaymentAmount,
   createPayment,
+  getEstimatedPrice,
 };
 
 module.exports = PaymentUtils;

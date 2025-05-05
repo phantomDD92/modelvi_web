@@ -4,7 +4,16 @@ const TransactionModel = require("../../models/transaction");
 const { TransactionType } = require("../../config/const");
 
 const loadTransactions = (agency) =>
-  TransactionModel.find({ agency: agency._id }).sort("-createdAt");
+  TransactionModel.find({ agency: agency._id })
+    .sort("-createdAt")
+    .populate({
+      path: "account",
+      select: "actor platform alias",
+      populate: {
+        path: "actor",
+        select: "number name"
+      }
+    });
 
 const createTransaction = (agencyId, type, amount, from, to, desc, accountId = undefined) =>
   TransactionModel.create({
@@ -17,10 +26,10 @@ const createTransaction = (agencyId, type, amount, from, to, desc, accountId = u
     description: desc
   })
 
-const createChargeTransaction = (agencyId, amount, from, to, desc) =>
+const createChargeTransaction = (agencyId, type, amount, from, to, desc) =>
   TransactionModel.create({
     agency: agencyId,
-    type: TransactionType.CHARGE,
+    type,
     amount,
     from,
     to,
@@ -242,6 +251,31 @@ const getTotalStatsByTime = async (timePeriod = 'day') => {
   ]);
 };
 
+const loadTransactionsWithPage = ({ agency, type }, page) => {
+  const agencyQuery = agency && agency != "" ? { agency } : {};
+  const typeQuery = type && type != "" ? { type: parseInt(type) } : {};
+  const query = {
+    ...agencyQuery,
+    ...typeQuery
+  }
+  return Promise.all([
+    TransactionModel.find(query)
+      .sort("-createdAt")
+      .skip((parseInt(page) - 1) * 20)
+      .limit(20)
+      .populate("agency", "name")
+      .populate({
+        path: "account",
+        select: "actor platform alias",
+        populate: {
+          path: "actor",
+          select: "number name"
+        }
+      }),
+    TransactionModel.countDocuments(query),
+  ])
+}
+
 const TransactionService2 = {
   loadTransactions,
   createTransaction,
@@ -251,6 +285,7 @@ const TransactionService2 = {
   getMonthlyEarningsByReferees,
   getTotalStatsByAgency,
   getTotalStatsByTime,
+  loadTransactionsWithPage
 }
 
 module.exports = TransactionService2;

@@ -57,8 +57,9 @@ const PaymentStatus = {
 }
 
 const TransactionType = {
-    CHARGE: 1,
+    CHARGE_NOWPAYMENT: 1,
     EXPENSE: 2,
+    CHARGE_INVOICE: 3,
 }
 
 const ScheduleStatus = {

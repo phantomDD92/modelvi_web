@@ -48,6 +48,14 @@ export const cryptoCurrencies = [
     "ticker": "BTC"
   },
   {
+    "id": 2,
+    "code": "ltc",
+    "name": "Litecoin",
+    "logo_url": "/images/coins/ltc.svg",
+    "network": "ltc",
+    "ticker": "LTC"
+  },
+  {
     "id": 6,
     "code": "trx",
     "name": "Tron",
@@ -149,6 +157,14 @@ export const cryptoCurrencies = [
     "name": "USD Coin (Binance Smart Chain)",
     "logo_url": "/images/coins/usdcbsc.svg",
     "network": "bsc",
+    "ticker": "USDC"
+  },
+  {
+    "id": 289,
+    "code": "usdcsol",
+    "name": "USD Coin (Solana)",
+    "logo_url": "/images/coins/usdcsol.svg",
+    "network": "sol",
     "ticker": "USDC"
   },
   {

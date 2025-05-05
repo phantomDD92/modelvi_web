@@ -1,12 +1,10 @@
 import React from "react"
 import {
-  AgencyAccountPage,
   AdminAgencyListPage,
   AdminChatTeamPage,
   AdminDashboardPage,
   CommentListPage,
 } from "@/pages"
-import AccountHistoryPage from "@/pages/agency/AccountHistoryPage"
 import AdminAffiliatePage from "@/pages/admin/AdminAffiliatePage"
 import AdminProxyStatPage from "@/pages/admin/AdminProxyStatPage"
 import AdminProxyAgencyPage from "@/pages/admin/AdminProxyAgencyPage"
@@ -14,6 +12,7 @@ import AdminModelPage from "@/pages/admin/AdminModelPage"
 import AdminModelContentPage from "@/pages/admin/AdminModelContentPage"
 import AdminAccountHistoryPage from "@/pages/admin/AdminAccountHistoryPage"
 import AdminAccountPage from "@/pages/admin/AdminAccountPage"
+import AdminFinancePage from "@/pages/admin/AdminFinancePage"
 
 const adminRoutes = [
   { key: "admin_dashboard", path: "/admin/dashboard", component: <AdminDashboardPage />, },
@@ -26,7 +25,7 @@ const adminRoutes = [
   { key: "admin_proxy", path: "/admin/proxy", component: <AdminProxyStatPage />, },
   { key: "admin_agency_proxy", path: "/admin/proxy/:agencyId", component: <AdminProxyAgencyPage />, },
   { key: "admin_chat", path: "/admin/chat", component: <AdminChatTeamPage />, },
-  { key: "admin_finance", path: "/admin/finance", component: <div>Admin Finance Page</div>, },
+  { key: "admin_finance", path: "/admin/finance/:key", component: <AdminFinancePage />, },
   { key: "admin_affiliate", path: "/admin/affiliate", component: <AdminAffiliatePage />, },
 ]
 

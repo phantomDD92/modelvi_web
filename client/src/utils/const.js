@@ -80,3 +80,9 @@ export const ScheduleStatus = {
     FINISHED: 3,
     FAILED: 4,
 }
+
+export const TransactionType = {
+    CHARGE_NOWPAYMENT: 1,
+    EXPENSE: 2,
+    CHARGE_INVOICE: 3,
+}

@@ -23,7 +23,10 @@ const getPaymentById = (id, fields) =>
 const cancelPayment = (paymentId) =>
   PaymentModel.findByIdAndUpdate(paymentId, { $set: { status: PaymentStatus.CANCEL } });
 
-const updatePayment = (id, data) =>
+const setChargeAmount = (paymentId, chargeAmount) =>
+  PaymentModel.findByIdAndUpdate(paymentId, { $set: { chargeAmount } });
+
+const updatePayment = (id, data, amount) =>
   PaymentModel.findByIdAndUpdate(id, {
     status: data["payment_status"],
     payAddress: data["pay_address"],
@@ -33,6 +36,9 @@ const updatePayment = (id, data) =>
     priceCurrency: data["price_currency"],
     paidAmount: data["actually_paid"],
     outcomeAmount: data["outcome_amount"],
+    outcomeCurrency: data["outcome_currency"],
+    chargeAmount: amount,
+    fee: data["fee"],
   })
 
 const loadPayments = (agency) =>
@@ -42,13 +48,32 @@ const loadPayments = (agency) =>
 const getPayment = (paymentId) =>
   PaymentModel.findOne({ paymentId });
 
-const PaymentService = {
+const loadPaymentsWithPage = ({ status, agency }, page) => {
+  const agencyQuery = agency && agency != "" ? { agency } : {};
+  const statusQuery = status && status != "" ? { status } : {};
+  const query = {
+    ...agencyQuery,
+    ...statusQuery,
+  }
+  return Promise.all([
+    PaymentModel.find(query)
+      .sort("-createdAt")
+      .skip((parseInt(page) - 1) * 20)
+      .limit(20)
+      .populate("agency", "name"),
+    PaymentModel.countDocuments(query),
+  ])
+}
+
+const PaymentService2 = {
   createPayment,
   getPaymentById,
   updatePayment,
   cancelPayment,
   loadPayments,
   getPayment,
+  setChargeAmount,
+  loadPaymentsWithPage,
 };
 
-module.exports = PaymentService;
+module.exports = PaymentService2;

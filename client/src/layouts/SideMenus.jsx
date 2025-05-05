@@ -21,7 +21,7 @@ export const adminMenus = [
   { key: "admin_proxy", icon: <LuNetwork />, label: "Proxy", path: "/admin/proxy" },
   { key: "admin_chat", icon: <LuMessagesSquare />, label: "Chat Team", path: "/admin/chat" },
   { key: "admin_comment", icon: <LuMessageCircle />, label: "Comment", path: "/admin/comment" },
-  { key: "admin_finance", icon: <LuWallet />, label: "Finance", path: "/admin/finance" },
+  { key: "admin_finance", icon: <LuWallet />, label: "Finance", path: "/admin/finance/payments" },
   { key: "admin_affiliate", icon: <LuTrophy />, label: "Affiliate", path: "/admin/affiliate" },
   { key: "to_agency", icon: <LuArrowLeftToLine />, label: "To Agency", path: "/dashboard" },
 ]

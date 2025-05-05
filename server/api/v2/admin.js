@@ -8,6 +8,8 @@ const ChatTeamCtrl2 = require("../../controllers/v2/chatteam");
 const ModelCtrl2 = require("../../controllers/v2/model");
 const AccountCtrl2 = require("../../controllers/v2/account");
 const HistoryCtrl2 = require("../../controllers/v2/history");
+const PaymentCtrl2 = require("../../controllers/v2/payment");
+const TransactionCtrl = require("../../controllers/v2/transaction");
 
 const router = express.Router();
 
@@ -108,5 +110,15 @@ router
   .get(HistoryCtrl2.handleLoadHistoryForAdmin)
   .post(HistoryCtrl2.handleClearErrorForAdmin)
   .delete(HistoryCtrl2.handleClearHistoryForAdmin);
+
+router
+  .route("/payment")
+  .all(authenticate, checkManager)
+  .get(PaymentCtrl2.handleLoadPaymentsForAdmin)
+
+router
+  .route("/transaction")
+  .all(authenticate, checkManager)
+  .get(TransactionCtrl.handleLoadTransactionForAdmin)
 
 module.exports = router;

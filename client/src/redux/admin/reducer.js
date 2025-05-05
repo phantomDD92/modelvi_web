@@ -32,6 +32,12 @@ const initialState = {
   history: [],
   historyCount: 0,
   historyAccount: undefined,
+
+  payments: [],
+  paymentsCount: 0,
+
+  transactions: [],
+  transactionsCount: 0,
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -93,6 +99,18 @@ const adminReducer = (state = initialState, action) => {
         history: action.payload.history,
         historyCount: action.payload.historyCount,
         historyAccount: action.payload.account
+      };
+    case ACTIONS.LOAD_PAYMENTS:
+      return {
+        ...state,
+        payments: action.payload.payments,
+        paymentsCount: action.payload.paymentsCount,
+      };
+    case ACTIONS.LOAD_TRANSACTIONS:
+      return {
+        ...state,
+        transactions: action.payload.transactions,
+        transactionsCount: action.payload.transactionsCount,
       };
     default:
       return state;

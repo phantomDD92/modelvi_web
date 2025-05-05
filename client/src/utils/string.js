@@ -38,6 +38,8 @@ export const getCurrencyAmount = (value, code, status) => {
 
 export const getFiatAmount = (amount, defValue = "-") => amount >= 0 ? `$${(amount || 0).toFixed(2)}` : defValue;
 
+export const getFullFiatAmount = (amount) => amount >= 0 ? `$${(amount || 0).toFixed(2)}` : `- $${(amount * -1).toFixed(2)}`;
+
 export const getCryptoAmount = (amount, ticker, defValue = "-") =>
   amount > 0
     ? (ticker == "USDT" || ticker == "USDC")
@@ -45,3 +47,12 @@ export const getCryptoAmount = (amount, ticker, defValue = "-") =>
       : `${(amount || 0).toFixed(5)} ${ticker}`
     : defValue;
 
+export function getAccountName(account, agency) {
+  let name = ""
+  if (agency?.name)
+    name += `${agency.name} - `;
+  if (account.actor?.number && account.actor?.name)
+    name += `[${account.actor.number}] ${account.actor.name} - `
+  name += `[${account.platform}] ${account.alias}`;
+  return name;
+}

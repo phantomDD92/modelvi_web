@@ -457,3 +457,21 @@ export const clearAccountErrorForAdmin = (platform, accountId, callback) => asyn
     callback
   })
 }
+
+export const loadPaymentsForAdmin = ({ page, status, agency }, callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/admin/payment`,
+    params: { page, status, agency },
+    action: ACTIONS.LOAD_PAYMENTS,
+    callback
+  })
+}
+
+export const loadTransactionsForAdmin = ({ page, type, agency }, callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/admin/transaction`,
+    params: { page, type, agency },
+    action: ACTIONS.LOAD_TRANSACTIONS,
+    callback
+  })
+}

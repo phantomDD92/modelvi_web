@@ -2,14 +2,26 @@ import {
     Card,
     Table,
 } from "antd";
-import { getDateTime, getFiatAmount } from "@/utils/string";
-import { render } from "react-dom";
+import { getAccountName, getDateTime, getFullFiatAmount } from "@/utils/string";
+import { TransactionType } from "@/utils/const";
 
 const TransactionTable = ({
     pagination,
     loading,
     dataSource,
 }) => {
+    const getTransactionDescription = (record) => {
+        switch (record.type) {
+            case TransactionType.CHARGE_INVOICE:
+                return "Payment by invoice"
+            case TransactionType.CHARGE_NOWPAYMENT:
+                return "Payment by NOWPayment"
+            case TransactionType.EXPENSE:
+                return `Expense for ${getAccountName(record.account)}`
+            default:
+                return record.description
+        }
+    }
     const columns = [
         {
             key: 'createdAt',
@@ -23,20 +35,21 @@ const TransactionTable = ({
             title: 'Description',
             width: 200,
             dataIndex: 'description',
+            render: (value, record) => getTransactionDescription(record),
         },
         {
             key: 'amount',
             title: 'Amount',
-            width: 100,
+            width: 150,
             dataIndex: 'amount',
-            render: value => getFiatAmount(value),
+            render: value => getFullFiatAmount(value),
         },
         {
             key: 'to',
             title: 'Balance',
-            width: 100,
+            width: 200,
             dataIndex: 'to',
-            render: value => getFiatAmount(value)
+            render: (value, record) => `${getFullFiatAmount(record.from)} => ${getFullFiatAmount(value)}`
         },
     ]
 
