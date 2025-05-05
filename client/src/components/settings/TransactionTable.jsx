@@ -17,7 +17,7 @@ const TransactionTable = ({
             case TransactionType.CHARGE_NOWPAYMENT:
                 return "Payment by NOWPayment"
             case TransactionType.EXPENSE:
-                return `Expense for ${getAccountName(record.account)}`
+                return record.account ? `Expense for ${getAccountName(record.account)}` : record.description
             default:
                 return record.description
         }
