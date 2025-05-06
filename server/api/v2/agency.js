@@ -50,6 +50,10 @@ router.route("/model")
   .put(ModelCtrl2.handleUpdateModelsForAgency)
   .delete(ModelCtrl2.handleDeleteModelsForAgency)
 
+router.route("/model_list")
+  .all(authenticate)
+  .get(ModelCtrl2.handleLoadModelListForAgency)
+
 router
   .route("/model/:modelId")
   .all(authenticate)
@@ -96,13 +100,11 @@ router
   .post(HistoryCtrl2.handleClearErrorForAgency)
   .delete(HistoryCtrl2.handleClearHistoryForAgency);
 
-  router
+router
   .route("/schedule")
   .all(authenticate)
   .get(ScheduleCtrl2.handleLoadSchedulesForAgency)
   .post(ScheduleCtrl2.handleCreateScheduleForAgency)
-  // .put(ModelCtrl2.handleUpdateContentsForAgency)
-  // .delete(ModelCtrl2.handleDeleteContentsForAgency);
 
 router
   .route("/schedule/:scheduleId")

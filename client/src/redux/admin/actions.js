@@ -234,6 +234,14 @@ export const loadAgencyListForAdmin = (callback) => async (dispatch) => {
   });
 };
 
+export const loadModelListForAdmin = (callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/admin/model_list`,
+    action: ACTIONS.LOAD_MODEL_LIST,
+    callback
+  });
+};
+
 export const loadModelsForAdmin = (agency, search, callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/v2/admin/model`,
@@ -475,3 +483,37 @@ export const loadTransactionsForAdmin = ({ page, type, agency }, callback) => as
     callback
   })
 }
+
+export const getSchedulePostsForAdmin = ({ agency, model, page }, callback) => (dispatch) =>
+  ApiRequest.getAction(dispatch, {
+    path: `/v2/admin/schedule`,
+    params: { agency, model, page },
+    action: ACTIONS.LOAD_SCHEDULE_CONTENTS,
+    callback
+  })
+
+export const appendSchedulePostForAdmin = (params, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/v2/admin/schedule`,
+    data: params,
+    inform: `Scheduled post is successfully appended`,
+    callback
+  });
+};
+
+export const updateSchedulePostForAdmin = (post, params, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/schedule/${post._id}`,
+    data: { action: "change", ...params },
+    inform: `Scheduled post is successfully changed`,
+    callback
+  });
+};
+
+export const deleteSchedulePostForAdmin = (post, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/admin/schedule/${post._id}`,
+    inform: `Scheduled post is successfully deleted`,
+    callback
+  })
+};

@@ -28,7 +28,7 @@ const AdminTransactionsTable = ({
       case TransactionType.CHARGE_NOWPAYMENT:
         return "Payment by NOWPayment"
       case TransactionType.EXPENSE:
-        return record.account ? `Expense for ${getAccountName(record.account)}` : record.description
+        return record.account ? `Payout for ${getAccountName(record.account)}` : record.description
       default:
         return record.description
     }
@@ -83,7 +83,7 @@ const AdminTransactionsTable = ({
           <Radio.Button value="">All</Radio.Button>
           <Radio.Button value={`${TransactionType.CHARGE_NOWPAYMENT}`}>NOWPayment</Radio.Button>
           <Radio.Button value={`${TransactionType.CHARGE_INVOICE}`}>Invoice</Radio.Button>
-          <Radio.Button value={`${TransactionType.EXPENSE}`}>Expense</Radio.Button>
+          <Radio.Button value={`${TransactionType.EXPENSE}`}>Payout</Radio.Button>
         </Radio.Group>
         <AgencySelect
           all

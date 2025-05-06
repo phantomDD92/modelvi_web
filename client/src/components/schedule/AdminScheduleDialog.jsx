@@ -12,17 +12,18 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
-import {  PostType, SERVER_PATH } from "@/utils/const";
+import { PostType, SERVER_PATH } from "@/utils/const";
 import Media from "../common/Media";
 import StyledInput from "../common/StyledInput";
 
-const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => {
+const AdminScheduleDialog = ({ open, data, agencyList, modelList, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
     const [mediaName, setMediaName] = useState();
     const [mediaType, setMediaType] = useState();
     const [previewName, setPreviewName] = useState();
     const [previewType, setPreviewType] = useState();
     const [postType, setPostType] = useState(PostType.FREE);
+    const [agency, setAgency] = useState();
 
     const handleMediaChange = ({ file }) => {
         if (file.status == 'done') {
@@ -128,6 +129,18 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
                     folder: 'AAA',
                 }}>
                 <Form.Item
+                    label="Agency"
+                >
+                    <Select
+                        disabled={data != undefined}
+                        options={agencyList
+                            .map(agency => ({ value: agency._id, label: `${agency.name}` }))
+                        }
+                        value={agency}
+                        onChange={value => setAgency(value)}
+                    />
+                </Form.Item>
+                <Form.Item
                     label="Model"
                     name="model"
                     rules={[{ required: true }]}
@@ -135,6 +148,7 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
                     <Select
                         disabled={data != undefined}
                         options={modelList
+                            .filter(model => model.owner == agency)
                             .map(model => ({ value: model._id, label: `[${model.number}] ${model.name}` }))
                         }
                     />
@@ -231,4 +245,4 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
     )
 }
 
-export default AgencyScheduleDialog;
+export default AdminScheduleDialog;

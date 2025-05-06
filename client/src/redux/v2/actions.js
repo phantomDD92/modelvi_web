@@ -176,6 +176,13 @@ export const verifyAgency = (params, callback) => async (dispatch) => {
   }
 };
 
+export const loadModelList = (callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/agency/model_list`,
+    action: ACTIONS.LOAD_MODEL_LIST,
+    callback
+  });
+};
 
 export const loadModels = (search, callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
@@ -411,10 +418,10 @@ export const clearAccountError = (platform, accountId, callback) => async (dispa
 }
 
 
-export const getSchedulePosts = ({ platform, page, status }, callback) => (dispatch) =>
+export const getSchedulePosts = ({ model, page }, callback) => (dispatch) =>
   ApiRequest.getAction(dispatch, {
     path: `/v2/agency/schedule`,
-    params: { page, platform, status },
+    params: { model, page },
     action: ACTIONS.LOAD_SCHEDULE_CONTENTS,
     callback
   })
@@ -462,3 +469,4 @@ export const deleteSchedulePost = (post, callback) => async (dispatch) => {
     callback
   })
 };
+

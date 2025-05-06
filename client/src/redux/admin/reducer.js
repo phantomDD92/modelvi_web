@@ -23,6 +23,7 @@ const initialState = {
 
   // model related state
   models: [],
+  modelList: [],
 
   contentModel: undefined,
 
@@ -38,6 +39,9 @@ const initialState = {
 
   transactions: [],
   transactionsCount: 0,
+
+  schedules: [],
+  schedulesCount: 0,
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -83,6 +87,11 @@ const adminReducer = (state = initialState, action) => {
         ...state,
         models: action.payload.models,
       };
+    case ACTIONS.LOAD_MODEL_LIST:
+      return {
+        ...state,
+        modelList: action.payload.models,
+      };
     case ACTIONS.GET_MODEL_CONTENTS:
       return {
         ...state,
@@ -111,6 +120,12 @@ const adminReducer = (state = initialState, action) => {
         ...state,
         transactions: action.payload.transactions,
         transactionsCount: action.payload.transactionsCount,
+      };
+    case ACTIONS.LOAD_SCHEDULE_CONTENTS:
+      return {
+        ...state,
+        schedules: action.payload.schedules,
+        schedulesCount: action.payload.schedulesCount,
       };
     default:
       return state;

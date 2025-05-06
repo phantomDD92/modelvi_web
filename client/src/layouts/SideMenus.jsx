@@ -19,6 +19,7 @@ export const adminMenus = [
   { key: "admin_model", icon: <LuUser />, label: "Model", path: "/admin/model" },
   { key: "admin_account", icon: <LuUserSquare />, label: "Account", path: "/admin/account/F2F" },
   { key: "admin_proxy", icon: <LuNetwork />, label: "Proxy", path: "/admin/proxy" },
+  { key: "admin_schedule", icon: <LuSatellite />, label: "Schedule", path: "/admin/schedule" },
   { key: "admin_chat", icon: <LuMessagesSquare />, label: "Chat Team", path: "/admin/chat" },
   { key: "admin_comment", icon: <LuMessageCircle />, label: "Comment", path: "/admin/comment" },
   { key: "admin_finance", icon: <LuWallet />, label: "Finance", path: "/admin/finance/payments" },

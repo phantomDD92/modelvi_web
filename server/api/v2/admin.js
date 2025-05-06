@@ -10,6 +10,7 @@ const AccountCtrl2 = require("../../controllers/v2/account");
 const HistoryCtrl2 = require("../../controllers/v2/history");
 const PaymentCtrl2 = require("../../controllers/v2/payment");
 const TransactionCtrl = require("../../controllers/v2/transaction");
+const ScheduleCtrl2 = require("../../controllers/v2/schedule");
 
 const router = express.Router();
 
@@ -62,6 +63,10 @@ router.route("/chat/:id")
   .all(authenticate, checkManager)
   .put(ChatTeamCtrl2.handleUpdateChatTeamForAdmin)
   .delete(ChatTeamCtrl2.handleDeleteChatTeamForAdmin)
+
+router.route("/model_list")
+  .all(authenticate, checkManager)
+  .get(ModelCtrl2.handleLoadModelListForAdmin)
 
 router.route("/model")
   .all(authenticate, checkManager)
@@ -120,5 +125,17 @@ router
   .route("/transaction")
   .all(authenticate, checkManager)
   .get(TransactionCtrl.handleLoadTransactionForAdmin)
+
+router
+  .route("/schedule")
+  .all(authenticate, checkManager)
+  .get(ScheduleCtrl2.handleLoadSchedulesForAdmin)
+  .post(ScheduleCtrl2.handleCreateScheduleForAdmin)
+
+router
+  .route("/schedule/:scheduleId")
+  .all(authenticate, checkManager)
+  .put(ScheduleCtrl2.handleUpdateScheduleForAdmin)
+  .delete(ScheduleCtrl2.handleDeleteScheduleForAdmin);
 
 module.exports = router;

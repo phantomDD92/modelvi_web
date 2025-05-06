@@ -492,6 +492,24 @@ const handleUpdateContentsForAdmin = async (req, res) => {
   }
 }
 
+const handleLoadModelListForAgency = async (req, res) => {
+  try {
+    const models = await ModelService2.loadAgencyModelList(req.manager._id);
+    sendResult(res, { models });
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
+const handleLoadModelListForAdmin = async (req, res) => {
+  try {
+    const models = await ModelService2.loadModelList();
+    sendResult(res, { models });
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
 const ModelCtrl2 = {
   handleLoadModelsForAdmin,
   handleCreateModelForAdmin,
@@ -505,7 +523,7 @@ const ModelCtrl2 = {
   handleDeleteContentsForAdmin,
   handleUpdateContentForAdmin,
   handleUpdateContentsForAdmin,
-
+  handleLoadModelListForAdmin,
 
   handleLoadModelsForAgency,
   handleCreateModelForAgency,
@@ -519,7 +537,7 @@ const ModelCtrl2 = {
   handleDeleteContentsForAgency,
   handleUpdateContentForAgency,
   handleUpdateContentsForAgency,
-
+  handleLoadModelListForAgency,
 };
 
 module.exports = ModelCtrl2;

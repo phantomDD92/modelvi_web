@@ -4,7 +4,7 @@ import { Button, Card, Flex, Select, Table, Tooltip } from "antd";
 import { LuPencil, LuPlus, LuTrash } from "react-icons/lu";
 import Media from "../common/Media";
 
-const AgencyScheduleTable = ({
+const AdminScheduleTable = ({
   loading,
   dataSource,
   pagination: {
@@ -15,7 +15,10 @@ const AgencyScheduleTable = ({
   filters: {
     model,
     modelList,
+    agency,
+    agencyList,
     onModelChange,
+    onAgencyChange,
   },
   actions: {
     onCreate,
@@ -63,9 +66,16 @@ const AgencyScheduleTable = ({
       render: value => getDateTime(value)
     },
     {
+      key: 'owner',
+      title: 'Agency',
+      width: 120,
+      dataIndex: 'owner',
+      render: (value) => value ? `${value.name}` : "-"
+    },
+    {
       key: 'actor',
       title: 'Model',
-      width: 200,
+      width: 150,
       dataIndex: 'actor',
       render: (value, record) => value ? `[${value.number}] ${value.name}` : "-"
     },
@@ -112,7 +122,7 @@ const AgencyScheduleTable = ({
     {
       key: 'results',
       title: 'Status',
-      width: 300,
+      width: 200,
       dataIndex: 'results',
       render: value => value.map(result => `${result.account.platform} : ${getScheduleStatusName(result.status)}`).join(", ")
     },
@@ -140,10 +150,19 @@ const AgencyScheduleTable = ({
             Scheduled Posts
           </span>
           <Select
-          className="min-w-[250px]"
+            className="min-w-[250px]"
+            value={agency}
+            onChange={value => onAgencyChange && onAgencyChange(value)}
+            options={[{ value: "", label: "All Agencies" }].concat(agencyList
+              .map(agency => ({ value: agency._id, label: `${agency.name}` })))
+            }
+          />
+          <Select
+            className="min-w-[250px]"
             value={model}
             onChange={value => onModelChange && onModelChange(value)}
             options={[{ value: "", label: "All Models" }].concat(modelList
+              .filter(model => agency == "" || model.owner == agency)
               .map(model => ({ value: model._id, label: `[${model.number}] ${model.name}` })))
             }
           />
@@ -175,4 +194,4 @@ const AgencyScheduleTable = ({
   )
 }
 
-export default AgencyScheduleTable;
+export default AdminScheduleTable;

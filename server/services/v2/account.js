@@ -186,6 +186,9 @@ const getAgencyAccounts = (agencyId) =>
     .populate("actor", "number name")
     .sort({ platform: 1, number: 1 });
 
+const getModelAccounts = (modelId) =>
+  AccountModel.find({ actor: modelId }, "platform number alias");
+
 const AccountService2 = {
   getAgencyAccounts,
   getAccountWithModel,
@@ -213,6 +216,7 @@ const AccountService2 = {
   getAccounts,
   updateAccountsStatus,
   deleteAccounts,
+  getModelAccounts,
 };
 
 module.exports = AccountService2;

@@ -12,6 +12,7 @@ const initialState = {
   proxies: [],
 
   models: [],
+  modelList: [],
 
   contentModel: undefined,
 
@@ -65,6 +66,11 @@ const v2Reducer = (state = initialState, action) => {
       return {
         ...state,
         proxies: action.payload.proxies,
+      };
+    case ACTIONS.LOAD_MODEL_LIST:
+      return {
+        ...state,
+        modelList: action.payload.models,
       };
     case ACTIONS.LOAD_MODELS:
       return {

@@ -59,6 +59,8 @@ const handleLoginAgency = async (req, res) => {
     const agency = await ManagerModel.findOne({ email }, "password status role name verified");
     if (!agency)
       throw new ApiError(`Agency(${email}) is not registerd`);
+    if (!agency.status)
+      throw new ApiError(`Agency(${email}) is disabled`);
     if (!agency.verified) {
       const verifyToken = jwt.sign({ id: agency._id }, process.env.SECRET_KEY || "SECRET_KEY_MODELVI", { expiresIn: "600s" });
       const emailContent = getVerifyEmailTemplate(`/verify?token=${verifyToken}`)

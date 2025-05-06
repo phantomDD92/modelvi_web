@@ -1,84 +1,48 @@
 import { useCallback, useEffect, useState } from "react";
-import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
 import { PageMetaData } from "@/components/common"
 import { AgencyScheduleDialog, AgencyScheduleTable } from "@/components/schedule";
 import { useDispatch, useSelector } from "react-redux";
-import { appendSchedulePost, deleteSchedulePost, getSchedulePosts, loadAccountList, updateSchedulePost } from "@/redux/v2/actions";
+import { appendSchedulePost, deleteSchedulePost, getSchedulePosts, loadAccountList, loadModelList, updateSchedulePost } from "@/redux/v2/actions";
 import { Modal } from "antd";
 
 const AgencySchedulePage = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [post, setPost] = useState();
+  const [model, setModel] = useState('');
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [searchParams] = useSearchParams();
 
-  const platform = searchParams.get('platform') || "";
-  const status = searchParams.get('status') || "";
-  const page = parseInt(searchParams.get('page') || "1")
-  const accountList = useSelector(state => state.v2.accountList);
+  const modelList = useSelector(state => state.v2.modelList);
   const schedules = useSelector(state => state.v2.schedules);
   const schedulesCount = useSelector(state => state.v2.schedulesCount);
 
-  const loadSchedulePostsCallback = useCallback(({ platform, page, status }) => {
+  const loadSchedulePostsCallback = useCallback(({ model, page }) => {
     setLoading(true);
-    dispatch(getSchedulePosts({ platform, status, page }, () => setLoading(false)))
+    dispatch(getSchedulePosts({ model, page }, () => setLoading(false)))
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(loadAccountList())
-  }, [loadAccountList]);
+    dispatch(loadModelList())
+  }, [loadModelList]);
 
   useEffect(() => {
-    loadSchedulePostsCallback({ platform, status, page })
-  }, [loadSchedulePostsCallback, platform, status, page]);
-
-  const handlePageChange = (pageValue) => {
-    navigate({
-      pathname: location.pathname,
-      search: createSearchParams({
-        platform,
-        page: pageValue
-      }).toString()
-    }, { replace: true });
-  }
-
-  const handlePlatformChange = (value) => {
-    navigate({
-      pathname: location.pathname,
-      search: createSearchParams({
-        platform: value,
-        status,
-        page
-      }).toString()
-    }, { replace: true });
-  }
-
-  const handleStatusChange = (value) => {
-    navigate({
-      pathname: location.pathname,
-      search: createSearchParams({
-        platform,
-        status: value,
-        page
-      }).toString()
-    }, { replace: true });
-  }
+    loadSchedulePostsCallback({ model, page })
+  }, [loadSchedulePostsCallback, model, page]);
 
   const handleUpdateSchedule = (params) => {
     if (post) {
-      dispatch(updateSchedulePost(post, params, () => { setEditOpen(false); loadSchedulePostsCallback({ platform, status, page }) }))
+      dispatch(updateSchedulePost(post, params, () => { setEditOpen(false); loadSchedulePostsCallback({ model, page }) }))
     } else {
-      dispatch(appendSchedulePost(params, () => { setEditOpen(false); loadSchedulePostsCallback({ platform, status, page }) }))
+      dispatch(appendSchedulePost(params, () => { setEditOpen(false); loadSchedulePostsCallback({ model, page }) }))
     }
   }
 
   const handleDeleteSchedule = (post) => {
     Modal.confirm({
       title: `Are you sure to delete the scheduled post?`,
-      onOk: () => dispatch(deleteSchedulePost(post, () => loadSchedulePostsCallback({ platform, status, page }))),
+      onOk: () => dispatch(deleteSchedulePost(post, () => loadSchedulePostsCallback({ model, page }))),
     });
   }
 
@@ -89,15 +53,14 @@ const AgencySchedulePage = () => {
         loading={loading}
         dataSource={schedules}
         filters={{
-          platform,
-          status,
-          onPlatformChange: handlePlatformChange,
-          onStatusChange: handleStatusChange,
+          model,
+          modelList,
+          onModelChange: value => setModel(value),
         }}
         pagination={{
           current: page,
           total: schedulesCount,
-          onChange: handlePageChange,
+          onChange: value => setPage(value),
         }}
         actions={{
           onCreate: () => setEditOpen(true),
@@ -108,7 +71,7 @@ const AgencySchedulePage = () => {
       <AgencyScheduleDialog
         open={editOpen}
         data={post}
-        accountList={accountList}
+        modelList={modelList}
         onCancel={() => setEditOpen(false)}
         onUpdate={handleUpdateSchedule}
       />

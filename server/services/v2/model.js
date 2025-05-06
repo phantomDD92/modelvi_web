@@ -78,7 +78,7 @@ const findModelById = (modelId) =>
 const getModel = (modelId) =>
   ActorModel.findById(modelId, "-contents");
 
-const getModelWithContents = (modelId) => 
+const getModelWithContents = (modelId) =>
   ActorModel.findById(modelId).populate("owner", "name");
 
 const deleteModel = (modelId) =>
@@ -151,6 +151,12 @@ const appendAccount = (modelId, accountId) =>
 const removeAccount = (modelId, accountId) =>
   ActorModel.findByIdAndUpdate(modelId, { $pull: { accounts: accountId } });
 
+const loadAgencyModelList = (agencyId) =>
+  ActorModel.find({ owner: agencyId }, "number name").sort({ number: 1 });
+
+const loadModelList = () =>
+  ActorModel.find({}, "owner number name").sort({ owner: 1, number: 1 });
+
 const ModelService2 = {
   findAgencyModels,
   loadAgencyModels,
@@ -181,6 +187,9 @@ const ModelService2 = {
   getModelWithContents,
   appendAccount,
   removeAccount,
+
+  loadAgencyModelList,
+  loadModelList
 };
 
 module.exports = ModelService2;

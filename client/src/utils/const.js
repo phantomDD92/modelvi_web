@@ -35,7 +35,6 @@ export const AgencyRole = {
 export const PostType = {
     FREE: 1,
     FAN: 2,
-    SUBSCRIBER: 3,
     PAID: 4,
 }
 

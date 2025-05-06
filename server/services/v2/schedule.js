@@ -1,11 +1,11 @@
 const { ScheduleStatus } = require("../../config/const");
-const ScheduleModel = require("../../models/schedule")
+const ScheduleModel = require("../../models/schedule");
+const ScheduleResultModel = require("../../models/scheduleResult");
 
-const createSchedule = (agencyId, { platform, account, media, preview, title, folder, tags, type, price, fanPrice, scheduledAt }) =>
+const createSchedule = (agencyId, modelId, { media, preview, title, folder, tags, type, price, scheduledAt }) =>
   ScheduleModel.create({
     owner: agencyId,
-    platform,
-    account,
+    actor: modelId,
     media,
     preview,
     title,
@@ -13,16 +13,15 @@ const createSchedule = (agencyId, { platform, account, media, preview, title, fo
     tags,
     type,
     price,
-    fanPrice,
     scheduledAt,
   })
 
-const loadSchedulesWithPage = ({ platform, status, page }) => {
-  const platformQuery = platform && platform != "" ? { platform } : {};
-  const statusQuery = status && status != "" ? { status: parseInt(status) } : {};
+const loadSchedulesWithPage = ({ agency, model }, page) => {
+  const agencyQuery = agency && agency != "" ? { owner: agency } : {};
+  const modelQuery = model && model != "" ? { actor: model } : {};
   const query = {
-    ...platformQuery,
-    ...statusQuery,
+    ...agencyQuery,
+    ...modelQuery,
   }
   return Promise.all([
     ScheduleModel
@@ -31,12 +30,40 @@ const loadSchedulesWithPage = ({ platform, status, page }) => {
       .skip((parseInt(page) - 1) * 10)
       .limit(10)
       .populate("owner", "name")
+      .populate("actor", "number name")
       .populate({
-        path: "account",
-        select: "actor number alias",
+        path: "results",
+        select: "account status",
         populate: {
-          path: "actor",
-          select: "number name"
+          path: "account",
+          select: "platform number name"
+        }
+      }),
+    ScheduleModel.countDocuments()
+  ]);
+}
+
+const loadAgencySchedulesWithPage = (agencyId, { model }, page) => {
+  const agencyQuery = { owner: agencyId }
+  const modelQuery = model && model != "" ? { actor: model } : {};
+  const query = {
+    ...agencyQuery,
+    ...modelQuery,
+  }
+  return Promise.all([
+    ScheduleModel
+      .find(query)
+      .sort("scheduledAt")
+      .skip((parseInt(page) - 1) * 10)
+      .limit(10)
+      .populate("owner", "name")
+      .populate("actor", "number name")
+      .populate({
+        path: "results",
+        select: "account status",
+        populate: {
+          path: "account",
+          select: "platform number name"
         }
       }),
     ScheduleModel.countDocuments()
@@ -79,6 +106,22 @@ const updateScheduleResults = (results) => {
 const loadLivingSchedules = (accountId) =>
   ScheduleModel.find({ account: accountId, status: { $lte: ScheduleStatus.SCHEDULED } });
 
+const createScheduleResults = (scheduleId, accountIds) =>
+  ScheduleResultModel.bulkWrite(accountIds.map(accountId => ({
+    insertOne: {
+      document: {
+        schedule: scheduleId,
+        account: accountId,
+      }
+    }
+  })));
+
+const setScheduleResults = (scheduleId, results) =>
+  ScheduleModel.findByIdAndUpdate(scheduleId, { $set: { results } });
+
+const deleteScheduleResults = (scheduleId) =>
+  ScheduleResultModel.deleteMany({ schedule: scheduleId });
+
 const ScheduleService2 = {
   getSchedule,
   deleteSchedule,
@@ -86,7 +129,11 @@ const ScheduleService2 = {
   changeSchedule,
   updateScheduleResults,
   loadSchedulesWithPage,
+  loadAgencySchedulesWithPage,
   loadLivingSchedules,
+  createScheduleResults,
+  setScheduleResults,
+  deleteScheduleResults,
 }
 
 module.exports = ScheduleService2
