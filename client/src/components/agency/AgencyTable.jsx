@@ -13,7 +13,7 @@ export const AgencyTable = ({
         onBulkStatus,
         onBulkDelete,
         onDelete,
-        onStatus,
+        onStatusChange,
         onBalance,
         onPricePlans,
         onReferrer,
@@ -80,7 +80,7 @@ export const AgencyTable = ({
                     checked={value}
                     checkedChildren="Enabled"
                     unCheckedChildren="Disabled"
-                    onChange={(status) => onStatus && onStatus(record, status)}
+                    onChange={(status) => onStatusChange && onStatusChange(record, status)}
                 />
             )
         },
