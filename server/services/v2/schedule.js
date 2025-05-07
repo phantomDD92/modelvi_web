@@ -104,7 +104,8 @@ const updateScheduleResults = (results) => {
 }
 
 const loadLivingSchedules = (accountId) =>
-  ScheduleModel.find({ account: accountId, status: { $lte: ScheduleStatus.SCHEDULED } });
+  ScheduleResultModel.find({ account: accountId, status: { $lte: ScheduleStatus.SCHEDULED } })
+    .populate("schedule", "media preview folder title tags type price scheduledAt");
 
 const createScheduleResults = (scheduleId, accountIds) =>
   ScheduleResultModel.bulkWrite(accountIds.map(accountId => ({
