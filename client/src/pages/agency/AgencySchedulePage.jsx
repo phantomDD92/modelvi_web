@@ -63,7 +63,7 @@ const AgencySchedulePage = () => {
           onChange: value => setPage(value),
         }}
         actions={{
-          onCreate: () => setEditOpen(true),
+          onCreate: () => { setPost(); setEditOpen(true) },
           onDelete: handleDeleteSchedule,
           onEdit: (post) => { setPost(post); setEditOpen(true) },
         }}

@@ -152,10 +152,14 @@ const removeAccount = (modelId, accountId) =>
   ActorModel.findByIdAndUpdate(modelId, { $pull: { accounts: accountId } });
 
 const loadAgencyModelList = (agencyId) =>
-  ActorModel.find({ owner: agencyId }, "number name").sort({ number: 1 });
+  ActorModel.find({ owner: agencyId }, "number name")
+    .sort({ number: 1 })
+    .populate("accounts", "platform alias");
 
 const loadModelList = () =>
-  ActorModel.find({}, "owner number name").sort({ owner: 1, number: 1 });
+  ActorModel.find({}, "owner number name")
+    .sort({ owner: 1, number: 1 })
+    .populate("accounts", "platform alias");
 
 const ModelService2 = {
   findAgencyModels,

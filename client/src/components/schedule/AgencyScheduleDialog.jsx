@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
     Button,
+    Checkbox,
     DatePicker,
     Flex,
     Form,
@@ -12,9 +13,10 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
-import {  PostType, SERVER_PATH } from "@/utils/const";
+import { Platform, PostType, SERVER_PATH } from "@/utils/const";
 import Media from "../common/Media";
 import StyledInput from "../common/StyledInput";
+import { getPlatformName } from "@/utils/string";
 
 const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
@@ -23,6 +25,7 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
     const [previewName, setPreviewName] = useState();
     const [previewType, setPreviewType] = useState();
     const [postType, setPostType] = useState(PostType.FREE);
+    const [model, setModel] = useState();
 
     const handleMediaChange = ({ file }) => {
         if (file.status == 'done') {
@@ -60,7 +63,7 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
             if (previews && previews.length > 0) {
                 preview = { name: previewName, mode: previewType }
             }
-            onUpdate({ media, preview, tags: postTags, type: postType, scheduledAt: scheduledAt.toDate(), ...params });
+            onUpdate({ media, preview, tags: postTags, type: postType, model, scheduledAt: scheduledAt.toDate(), ...params });
         } catch (e) {
             console.error(e);
         }
@@ -68,7 +71,7 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
 
     useEffect(() => {
         if (open && data) {
-            const { media, preview, actor, type: postType, tags: postTags, scheduledAt, ...params } = data;
+            const { media, preview, actor, type: postType, tags: postTags, scheduledAt, results, ...params } = data;
             let medias = [];
             let previews = [];
             if (media) {
@@ -86,10 +89,11 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
             }
             if (postType)
                 setPostType(postType)
+            setModel(actor._id)
             form.setFieldsValue({
                 medias,
                 previews,
-                model: actor?._id,
+                platforms: (results || []).map(result => result.account?.platform),
                 tags: (postTags || []).map(tag => `#${tag}`).join(" "),
                 scheduledAt: moment(scheduledAt),
                 ...params
@@ -100,6 +104,7 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
             setMediaType();
             setPreviewName();
             setPreviewType();
+            setModel();
             setPostType(PostType.FREE)
         }
     }, [data, open]);
@@ -112,6 +117,12 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
         return e?.fileList;
     };
 
+    const getPlatformOptions = (modelList, model) => {
+        const target = modelList.find(element => element._id == model);
+        if (!target)
+            return []
+        return target.accounts.map(account => ({ value: account.platform, label: getPlatformName(account.platform) }))
+    }
     return (
         <Modal
             title={data ? "Edit Scheduled Post" : "Add Scheduled Post"}
@@ -129,7 +140,6 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
                 }}>
                 <Form.Item
                     label="Model"
-                    name="model"
                     rules={[{ required: true }]}
                 >
                     <Select
@@ -137,7 +147,12 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
                         options={modelList
                             .map(model => ({ value: model._id, label: `[${model.number}] ${model.name}` }))
                         }
+                        value={model}
+                        onChange={value => setModel(value)}
                     />
+                </Form.Item>
+                <Form.Item name="platforms" label="Platforms" rules={[{ required: true }]}>
+                    <Checkbox.Group options={getPlatformOptions(modelList, model)} />
                 </Form.Item>
                 <Form.Item
                     label="Date/Time"

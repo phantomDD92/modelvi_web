@@ -16,18 +16,17 @@ const handleLoadSchedulesForAgency = async (req, res) => {
 
 const handleCreateScheduleForAgency = async (req, res) => {
   try {
-    const { model: modelId, ...params } = req.body;
+    const { model: modelId, platforms, ...params } = req.body;
     const model = await ModelService2.getModel(modelId);
     if (!model)
       throw new ApiError("Model does not exist");
     if (!isModelOwner(model, req.manager))
       throw new ApiError("Schedule post can be accessed by model owner");
-    const accounts = await AccountService2.getModelAccounts(modelId);
+    const accounts = await AccountService2.getModelAccounts(modelId, platforms);
     if (accounts.length == 0)
       throw new ApiError("Model has no accounts");
     const schedule = await ScheduleService2.createSchedule(req.manager._id, modelId, params);
     const result = await ScheduleService2.createScheduleResults(schedule._id, accounts.map(account => account._id));
-    console.log(result);
     await ScheduleService2.setScheduleResults(schedule._id, Object.values(result.insertedIds));
     sendResult(res)
   } catch (error) {
@@ -38,13 +37,17 @@ const handleCreateScheduleForAgency = async (req, res) => {
 const handleUpdateScheduleForAgency = async (req, res) => {
   try {
     const { scheduleId } = req.params;
-    const { action, ...params } = req.body;
+    const { action, model: modelId, platforms, ...params } = req.body;
     const schedule = await ScheduleService2.getSchedule(scheduleId);
     if (!schedule)
       throw new ApiError("Scheduled post does not exist");
     switch (action) {
       case "change":
+        await ScheduleService2.deleteScheduleResults();
         await ScheduleService2.changeSchedule(scheduleId, params);
+        const accounts = await AccountService2.getModelAccounts(modelId, platforms);
+        const result = await ScheduleService2.createScheduleResults(schedule._id, accounts.map(account => account._id));
+        await ScheduleService2.setScheduleResults(schedule._id, Object.values(result.insertedIds));
         break
       default:
         throw new ApiError("Invalid schedule operation")
@@ -83,11 +86,11 @@ const handleLoadSchedulesForAdmin = async (req, res) => {
 
 const handleCreateScheduleForAdmin = async (req, res) => {
   try {
-    const { model: modelId, ...params } = req.body;
+    const { model: modelId, platforms, ...params } = req.body;
     const model = await ModelService2.getModel(modelId);
     if (!model)
       throw new ApiError("Model does not exist");
-    const accounts = await AccountService2.getModelAccounts(modelId);
+    const accounts = await AccountService2.getModelAccounts(modelId, platforms);
     if (accounts.length == 0)
       throw new ApiError("Model has no accounts");
     const schedule = await ScheduleService2.createSchedule(model.owner, modelId, params);
@@ -103,13 +106,17 @@ const handleCreateScheduleForAdmin = async (req, res) => {
 const handleUpdateScheduleForAdmin = async (req, res) => {
   try {
     const { scheduleId } = req.params;
-    const { action, ...params } = req.body;
+    const { action, model: modelId, platforms, ...params } = req.body;
     const schedule = await ScheduleService2.getSchedule(scheduleId);
     if (!schedule)
       throw new ApiError("Scheduled post does not exist");
     switch (action) {
       case "change":
+        await ScheduleService2.deleteScheduleResults();
         await ScheduleService2.changeSchedule(scheduleId, params);
+        const accounts = await AccountService2.getModelAccounts(modelId, platforms);
+        const result = await ScheduleService2.createScheduleResults(schedule._id, accounts.map(account => account._id));
+        await ScheduleService2.setScheduleResults(schedule._id, Object.values(result.insertedIds));
         break
       default:
         throw new ApiError("Invalid schedule operation")

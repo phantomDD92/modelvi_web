@@ -186,8 +186,8 @@ const getAgencyAccounts = (agencyId) =>
     .populate("actor", "number name")
     .sort({ platform: 1, number: 1 });
 
-const getModelAccounts = (modelId) =>
-  AccountModel.find({ actor: modelId }, "platform number alias");
+const getModelAccounts = (modelId, platforms) =>
+  AccountModel.find({ actor: modelId, platform: { $in: platforms } }, "platform number alias");
 
 const AccountService2 = {
   getAgencyAccounts,

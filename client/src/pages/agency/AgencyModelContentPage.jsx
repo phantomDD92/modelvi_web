@@ -48,11 +48,12 @@ export const AgencyModelContentPage = () => {
 
 
   const handleUpdateContent = (params) => {
-    if (content) {
-      dispatch(updateModelContent(model, content, params, () => setEditOpen(false)));
-    } else {
-      dispatch(appendModelContent(model, params, () => setEditOpen(false)));
-    }
+    console.log(params)
+    // if (content) {
+    //   dispatch(updateModelContent(model, content, params, () => setEditOpen(false)));
+    // } else {
+    //   dispatch(appendModelContent(model, params, () => setEditOpen(false)));
+    // }
   }
 
   const handleDeleteContent = (content) => {
