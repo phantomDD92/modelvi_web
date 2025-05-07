@@ -100,7 +100,7 @@ const updateScheduleResults = (results) => {
       update: { $set: { status, post, reason } }
     }
   }));
-  return ScheduleModel.bulkWrite(updates);
+  return ScheduleResultModel.bulkWrite(updates);
 }
 
 const loadLivingSchedules = (accountId) =>
