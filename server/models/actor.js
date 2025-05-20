@@ -22,6 +22,7 @@ const ActorSchema = new Schema({
     postTags: [String],  // tags array
     knkyStoryType: Number,
     knkyStoryPrice: Number,
+    f2fStoryType: Number,
   }],
   updated: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },

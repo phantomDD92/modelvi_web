@@ -161,6 +161,7 @@ const loadModelList = () =>
     .sort({ owner: 1, number: 1 })
     .populate("accounts", "platform alias");
 
+
 const ModelService2 = {
   findAgencyModels,
   loadAgencyModels,
@@ -193,7 +194,7 @@ const ModelService2 = {
   removeAccount,
 
   loadAgencyModelList,
-  loadModelList
+  loadModelList,
 };
 
 module.exports = ModelService2;

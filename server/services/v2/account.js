@@ -189,6 +189,7 @@ const getAgencyAccounts = (agencyId) =>
 const getModelAccounts = (modelId, platforms) =>
   AccountModel.find({ actor: modelId, platform: { $in: platforms } }, "platform number alias");
 
+
 const AccountService2 = {
   getAgencyAccounts,
   getAccountWithModel,

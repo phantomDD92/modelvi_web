@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const { SchemaTypes } = mongoose;
 const { AdminRole } = require("../config/const");
-const { DEFAULT_PRICE_PLANS } = require("../utils/const");
 
 const ManagerSchema = new mongoose.Schema({
   // profile-related field
