@@ -120,11 +120,11 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
 
     const hasCommentSupport = (platform) => (platform == Platform.F2F || platform == Platform.FNC || platform == Platform.FAN || platform == Platform.MALOUM);
 
-    const hasStorySupport = (platform) => (platform == Platform.FNC || platform == Platform.KNKY);
+    const hasStorySupport = (platform) => (platform == Platform.FNC || platform == Platform.KNKY || platform == Platform.F2F);
 
     const hasOffsetsPostingSupport = (platform) => (platform == Platform.F2F || platform == Platform.FNC || platform == Platform.FAN);
 
-    const hasLimitedPostingSupport = (plaform) => plaform == Platform.F2F;
+    const hasLimitedPostingSupport = (platform) => platform == Platform.F2F;
 
     return (
         <Modal

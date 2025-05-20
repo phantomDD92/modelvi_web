@@ -16,6 +16,7 @@ import {
     UploadOutlined,
 } from "@ant-design/icons";
 import {
+    F2FStoryType,
     KnkyStoryType,
     Platform,
     SERVER_PATH,
@@ -43,11 +44,7 @@ export const ModelContentTable = ({
 }) => {
 
     const isFancentroStory = (record) => {
-        return record.platforms && record.platforms.includes(Platform.FNC) && record.story != StoryType.NONE
-    }
-
-    const isKnkyStory = (record) => {
-        return record.platforms && record.platforms.includes(Platform.KNKY) && record.knkyStoryType != KnkyStoryType.NONE
+        return record.platforms && record.platforms.includes(Platform.FNC) && (record.story && record.story != StoryType.NONE)
     }
 
     const getFancentroStoryTag = (record) => {
@@ -64,6 +61,10 @@ export const ModelContentTable = ({
         return ""
     }
 
+    const isKnkyStory = (record) => {
+        return record.platforms && record.platforms.includes(Platform.KNKY) && (record.knkyStoryType && record.knkyStoryType != KnkyStoryType.NONE)
+    }
+
     const getKnkyStoryTag = (record) => {
         switch (record.knkyStoryType) {
             case KnkyStoryType.PUBLIC:
@@ -78,6 +79,24 @@ export const ModelContentTable = ({
         return ""
     }
 
+    const isF2FStory = (record) => {
+        return record.platforms && record.platforms.includes(Platform.F2F) && (record.f2fStoryType && record.f2fStoryType != F2FStoryType.NONE)
+    }
+
+    const getF2FStoryTag = (record) => {
+        switch (record.f2fStoryType) {
+            case F2FStoryType.PUBLIC:
+                return <Tag color="error">F2F Story - Public</Tag>
+            case F2FStoryType.FOLLOWERS:
+                return <Tag color="error">F2F Story - Followers</Tag>
+            case F2FStoryType.FANS:
+                return <Tag color="error">F2F Story - Fans</Tag>
+            default:
+                break;
+        }
+        return ""
+    }
+
     const getPlatformTag = (platform) => <Tag key={platform} color="processing">{getPlatformName(platform)}</Tag>;
 
     const columns = [
@@ -86,11 +105,17 @@ export const ModelContentTable = ({
             title: 'Platforms',
             dataIndex: 'platforms',
             render: (value, record) =>
-                <Flex gap="4px 0" wrap>
-                    {value.filter(tag => tag != Platform.FNS).map(tag => getPlatformTag(tag))}
-                    {isFancentroStory(record) && getFancentroStoryTag(record)}
-                    {isKnkyStory(record) && getKnkyStoryTag(record)}
-                </Flex>
+                <Space direction="vertical" >
+                    <Flex gap="4px 0" wrap>
+                        {value.filter(tag => tag != Platform.FNS).map(tag => getPlatformTag(tag))}
+                    </Flex>
+                    <Flex gap="4px 0" wrap>
+                        {isF2FStory(record) && getF2FStoryTag(record)}
+                        {isFancentroStory(record) && getFancentroStoryTag(record)}
+                        {isKnkyStory(record) && getKnkyStoryTag(record)}
+                    </Flex>
+                </Space>
+
         },
         {
             key: 'media',

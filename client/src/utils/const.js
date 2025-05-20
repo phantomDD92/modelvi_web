@@ -54,6 +54,13 @@ export const KnkyStoryType = {
     PAYTOVIEW: 4,
 };
 
+export const F2FStoryType = {
+    NONE: 0,
+    PUBLIC: 1,
+    FOLLOWERS: 2,
+    FANS: 4,
+};
+
 export const AdminRole = {
     MANAGER: 1,
     AGENCY: 2,

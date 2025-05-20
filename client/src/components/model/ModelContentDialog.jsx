@@ -11,7 +11,7 @@ import {
     Upload,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { KnkyStoryType, Platform, SERVER_PATH, StoryType } from "@/utils/const";
+import { F2FStoryType, KnkyStoryType, Platform, SERVER_PATH, StoryType } from "@/utils/const";
 import Media from "../common/Media";
 import StyledInput from "../common/StyledInput";
 
@@ -68,7 +68,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
 
     useEffect(() => {
         if (open && content) {
-            const { image, platforms, media, preview, postTags, knkyStoryType, ...params } = content;
+            const { image, platforms, media, preview, postTags, knkyStoryType, f2fStoryType, ...params } = content;
             setPlatforms(platforms);
             let medias = [];
             let previews = [];
@@ -95,6 +95,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                 previews,
                 platforms,
                 knkyStoryType: knkyStoryType || KnkyStoryType.NONE,
+                f2fStoryType: f2fStoryType || F2FStoryType.NONE,
                 tags: (postTags || []).map(tag => `#${tag}`).join(" "),
                 ...params
             })
@@ -124,6 +125,10 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
     const isFancentro = () => {
         return platforms.includes(Platform.FNC);
     }
+
+    const isF2F = () => {
+        return platforms.includes(Platform.F2F);
+    }
     const isKnky = () => {
         return platforms.includes(Platform.KNKY);
     }
@@ -147,6 +152,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                     tags: "",
                     folder: 'AAA',
                     story: StoryType.NONE,
+                    f2fStoryType: F2FStoryType.NONE,
                     knkyStoryType: KnkyStoryType.NONE,
                     knkyStoryPrice: 5,
                 }}>
@@ -160,6 +166,19 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                         { label: 'Maloum', value: Platform.MALOUM },
                     ]} onChange={handlePlatformsChange} />
                 </Form.Item>
+                {isF2F() &&
+                    <Form.Item name="f2fStoryType" label="F2F Story">
+                        <Radio.Group
+                            buttonStyle="solid"
+                            optionType="button"
+                            options={[
+                                { label: 'None', value: F2FStoryType.NONE },
+                                { label: 'Public', value: F2FStoryType.PUBLIC },
+                                { label: 'Followers', value: F2FStoryType.FOLLOWERS },
+                                { label: 'Fans', value: F2FStoryType.FANS },
+                            ]} />
+                    </Form.Item>
+                }
                 {isFancentro() &&
                     <Form.Item name="story" label="Fancentro Story">
                         <Radio.Group
@@ -173,6 +192,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                             ]} />
                     </Form.Item>
                 }
+
                 {isKnky() &&
                     <Form.Item name="knkyStoryType" label="Knky Story">
                         <Radio.Group
