@@ -21,10 +21,18 @@ export const Platform = {
     F2F: "F2F",
     FNC: "FNC",
     FAN: "FAN",
-    FANVUE: "FANVUE",
-    FNS: "FNS", // for fancentro story
     KNKY: "KNKY",
     MALOUM: "MALOUM",
+    ONLYFANS: "ONLYFANS",
+    LOYALFANS: "LOYALFANS",
+    MYMFANS: "MYMFANS",
+    FETLIFE: "FETLIFE",
+    FOURBASED: "FOURBASED",
+    DFANXYZ: "DFANXYZ",
+    UNFILTRD: "UNFILTRD",
+    MYCLUB: "MYCLUB",
+    MANYVIDS: "MANYVIDS",
+    FANVUE: "FANVUE",
 }
 
 export const AgencyRole = {
@@ -70,14 +78,6 @@ export const PostMode = {
     INTERVAL: "interval",
     LIMITED: "limited",
     OFFSET: "offset",
-}
-
-export const F2FPostType = {
-    PUBLIC: 0,
-    EXCLUSIVE_FOR_FANS: 1,
-    ONLY_NON_FANS_MUST_PAY: 2,
-    PAID_FOR_EVERYONE: 3,
-    VIP_POST: 4,
 }
 
 export const ScheduleStatus = {

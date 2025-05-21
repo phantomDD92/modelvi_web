@@ -6,7 +6,7 @@ import {
     Modal,
     Radio,
 } from "antd";
-import { KnkyStoryType, Platform, StoryType } from "@/utils/const";
+import { F2FStoryType, KnkyStoryType, Platform, StoryType } from "@/utils/const";
 
 const ModelPlatformDialog = ({ open, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
@@ -25,7 +25,9 @@ const ModelPlatformDialog = ({ open, onCancel, onUpdate }) => {
             })
             .catch((e) => { console.error(e) });
     }
-
+    const isF2F = () => {
+        return platforms.includes(Platform.F2F);
+    }
     const isFancentro = () => {
         return platforms.includes(Platform.FNC);
     }
@@ -65,6 +67,19 @@ const ModelPlatformDialog = ({ open, onCancel, onUpdate }) => {
                         { label: 'Maloum', value: Platform.MALOUM },
                     ]} onChange={handlePlatformsChange} />
                 </Form.Item>
+                {isF2F() &&
+                    <Form.Item name="f2fStoryType" label="F2F Story">
+                        <Radio.Group
+                            buttonStyle="solid"
+                            optionType="button"
+                            options={[
+                                { label: 'None', value: F2FStoryType.NONE },
+                                { label: 'Public', value: F2FStoryType.PUBLIC },
+                                { label: 'Followers', value: F2FStoryType.FOLLOWERS },
+                                { label: 'Fans', value: F2FStoryType.FANS },
+                            ]} />
+                    </Form.Item>
+                }
                 {isFancentro() &&
                     <Form.Item name="story" label="Fancentro Story">
                         <Radio.Group

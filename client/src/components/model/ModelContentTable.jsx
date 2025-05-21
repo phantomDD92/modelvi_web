@@ -107,7 +107,7 @@ export const ModelContentTable = ({
             render: (value, record) =>
                 <Space direction="vertical" >
                     <Flex gap="4px 0" wrap>
-                        {value.filter(tag => tag != Platform.FNS).map(tag => getPlatformTag(tag))}
+                        {value.map(tag => getPlatformTag(tag))}
                     </Flex>
                     <Flex gap="4px 0" wrap>
                         {isF2FStory(record) && getF2FStoryTag(record)}

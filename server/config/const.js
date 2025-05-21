@@ -7,13 +7,21 @@ const Status = {
 
 const Platform = {
     ALL: "ALL",
-    FNC: "FNC", // fancentro posting
-    F2F: "F2F", // f2f posting
-    FAN: "FAN", // fansly posting
-    FNS: "FNS", // fancentro storying
+    F2F: "F2F",
+    FNC: "FNC",
+    FAN: "FAN",
     KNKY: "KNKY",
-    FANVUE: "FANVUE",
     MALOUM: "MALOUM",
+    ONLYFANS: "ONLYFANS",
+    LOYALFANS: "LOYALFANS",
+    MYMFANS: "MYMFANS",
+    FETLIFE: "FETLIFE",
+    FOURBASED: "FOURBASED",
+    DFANXYZ: "DFANXYZ",
+    UNFILTRD: "UNFILTRD",
+    MYCLUB: "MYCLUB",
+    MANYVIDS: "MANYVIDS",
+    FANVUE: "FANVUE",
 }
 
 const PostType = {

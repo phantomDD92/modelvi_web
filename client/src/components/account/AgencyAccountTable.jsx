@@ -196,9 +196,9 @@ const AgencyAccountTable = ({
                         <Radio.Button value={Platform.F2F}>F2F</Radio.Button>
                         <Radio.Button value={Platform.FNC}>Fancentro</Radio.Button>
                         <Radio.Button value={Platform.FAN}>Fansly</Radio.Button>
-                        <Radio.Button value={Platform.FANVUE}>Fanvue</Radio.Button>
                         <Radio.Button value={Platform.KNKY}>Knky</Radio.Button>
                         <Radio.Button value={Platform.MALOUM}>Maloum</Radio.Button>
+                        {/* <Radio.Button value={Platform.FANVUE}>Fanvue</Radio.Button> */}
                     </Radio.Group>
                 </Flex>
             }

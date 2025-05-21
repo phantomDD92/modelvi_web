@@ -3,6 +3,7 @@ import { Modal, Form, Input, Select } from "antd";
 import { useEffect, useState } from "react";
 import StyledInput from "../common/StyledInput";
 import { AgencySelect } from "../agency";
+import { getPlatformName } from "@/utils/string";
 
 const AdminAccountDialog = ({ open, platform, agencies, models, chatTeams, account, onCancel, onCreate, onUpdate }) => {
     const [form] = Form.useForm();
@@ -34,7 +35,7 @@ const AdminAccountDialog = ({ open, platform, agencies, models, chatTeams, accou
     };
     return (
         <Modal
-            title={account ? `Update ${platform} - ${account.alias} account` : `Create ${platform} account`}
+            title={account ? `Update ${getPlatformName(platform)} - ${account.alias} account` : `Create ${getPlatformName(platform)} account`}
             open={open}
             onOk={handleOkClick}
             onCancel={onCancel}>
