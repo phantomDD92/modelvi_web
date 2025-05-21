@@ -20,6 +20,10 @@ app.use(cors());
 
 app.use("/api", apiRouter)
 app.use("/bot", botRouter)
+app.get('/capitalist_9585c66ba8.txt', (req, res) => {
+  res.sendFile(path.join(buildPath, 'capitalist_9585c66ba8.txt'))
+})
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(buildPath, 'index.html'))
 })
