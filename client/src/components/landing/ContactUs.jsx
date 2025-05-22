@@ -38,7 +38,7 @@ const ContactUs = () => {
             Contact Sales
           </span>
           <h2 className="mt-4 text-4xl/tight font-medium text-default-950">
-            Let's Begin a Dialogue
+            Contact
           </h2>
           <p className="mt-5 text-lg">
             Modelvi takes the hassle out of content posting so you can focus on growing your agency. Ready to scale smarter? Get started today! 🚀

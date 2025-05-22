@@ -39,7 +39,6 @@ const HomePage = () => {
           "home",
           "services",
           "features",
-          "faq",
           "pricing",
           "contact",
         ]}
@@ -49,7 +48,7 @@ const HomePage = () => {
       <Services />
       <Features />
       <Pricing referralCode={refCode} />
-      <FAQs />
+      {/* <FAQs /> */}
       <ContactUs />
       <Footer />
     </>
