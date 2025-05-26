@@ -234,6 +234,7 @@ export const ModelContentTable = ({
             <Table
                 pagination={{
                     ...pagination,
+                    pageSizeOptions: [100, 200, 500, 1000],
                     position: ["topRight", "bottomRight"],
                     showTotal: total => `Total ${total} contents`,
                 }}
