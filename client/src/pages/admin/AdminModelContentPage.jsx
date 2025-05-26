@@ -34,7 +34,7 @@ export const AdminModelContentPage = () => {
   const routeParams = useParams()
 
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
-  const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
+  const pageSize = parseInt(qs.parse(location.search).size) || 100;
 
   const model = useSelector(state => state.admin.contentModel);
 

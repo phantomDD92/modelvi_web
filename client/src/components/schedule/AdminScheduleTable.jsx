@@ -124,7 +124,7 @@ const AdminScheduleTable = ({
       title: 'Status',
       width: 200,
       dataIndex: 'results',
-      render: value => value.map(result => `${result.account.platform} : ${getScheduleStatusName(result.status)}`).join(", ")
+      render: value => value.map(result => result.account?.platform ? `${result.account?.platform} : ${getScheduleStatusName(result.status)}`: '').join(" ")
     },
     {
       key: 'action',

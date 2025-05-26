@@ -34,7 +34,7 @@ export const AgencyModelContentPage = () => {
   const routeParams = useParams()
 
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
-  const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
+  const pageSize = parseInt(qs.parse(location.search).size) || 100;
 
   const model = useSelector(state => state.v2.contentModel);
   const loadModelContentCallback = useCallback(() => {
@@ -48,12 +48,11 @@ export const AgencyModelContentPage = () => {
 
 
   const handleUpdateContent = (params) => {
-    console.log(params)
-    // if (content) {
-    //   dispatch(updateModelContent(model, content, params, () => setEditOpen(false)));
-    // } else {
-    //   dispatch(appendModelContent(model, params, () => setEditOpen(false)));
-    // }
+    if (content) {
+      dispatch(updateModelContent(model, content, params, () => setEditOpen(false)));
+    } else {
+      dispatch(appendModelContent(model, params, () => setEditOpen(false)));
+    }
   }
 
   const handleDeleteContent = (content) => {
