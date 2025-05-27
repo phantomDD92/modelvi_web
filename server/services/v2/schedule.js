@@ -93,6 +93,29 @@ const changeSchedule = (scheduleId, { media, preview, title, folder, tags, type,
   }
   )
 
+const loadScheduleResultsWithPage = ({ agency, model, status, platform }, page, pageSize) => {
+  const agencyQuery = agency && agency != "" ? { owner: agency } : {};
+  const modelQuery = model && model != "" ? { actor: model } : {};
+  const statusQuery = status && status != "" ? { status } : {};
+  const platformQuery = platform && platform != "" ? { platform } : {};
+  const query = {
+    ...agencyQuery,
+    ...modelQuery,
+    ...statusQuery,
+    ...platformQuery,
+  }
+  return Promise.all([
+    ScheduleResultModel
+      .find(query)
+      .sort("scheduledAt")
+      .skip((parseInt(page) - 1) * 10)
+      .limit(parseInt(pageSize))
+      .populate("owner", "name")
+      .populate("actor", "number name"),
+    ScheduleModel.countDocuments()
+  ]);
+}
+
 const updateScheduleResults = (results) => {
   const updates = results.map(({ id, status, post, reason }) => ({
     updateOne: {
@@ -107,12 +130,16 @@ const loadLivingSchedules = (accountId) =>
   ScheduleResultModel.find({ account: accountId, status: { $lte: ScheduleStatus.SCHEDULED } })
     .populate("schedule", "media preview folder title tags type price scheduledAt");
 
-const createScheduleResults = (scheduleId, accountIds) =>
-  ScheduleResultModel.bulkWrite(accountIds.map(accountId => ({
+const createScheduleResults = (scheduleId, accounts, { agencyId, modelId, scheduledAt }) =>
+  ScheduleResultModel.bulkWrite(accounts.map(account => ({
     insertOne: {
       document: {
+        owner: agencyId,
+        actor: modelId,
+        scheduledAt,
         schedule: scheduleId,
-        account: accountId,
+        account: account._id,
+        platform: account.platform,
       }
     }
   })));
@@ -123,6 +150,15 @@ const setScheduleResults = (scheduleId, results) =>
 const deleteScheduleResults = (scheduleId) =>
   ScheduleResultModel.deleteMany({ schedule: scheduleId });
 
+const deleteScheduleResult = (resultId) =>
+  ScheduleResultModel.findByIdAndDelete(resultId);
+
+const getScheduleResult = (resultId) =>
+  ScheduleResultModel.findById(resultId);
+
+const resetScheduleResult = (resultId) =>
+  ScheduleResultModel.findByIdAndUpdate(resultId, { $set: { status: ScheduleStatus.WAITING } });
+
 const ScheduleService2 = {
   getSchedule,
   deleteSchedule,
@@ -132,9 +168,13 @@ const ScheduleService2 = {
   loadSchedulesWithPage,
   loadAgencySchedulesWithPage,
   loadLivingSchedules,
+  loadScheduleResultsWithPage,
   createScheduleResults,
+  getScheduleResult,
   setScheduleResults,
+  deleteScheduleResult,
   deleteScheduleResults,
+  resetScheduleResult,
 }
 
 module.exports = ScheduleService2

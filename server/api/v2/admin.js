@@ -138,4 +138,15 @@ router
   .put(ScheduleCtrl2.handleUpdateScheduleForAdmin)
   .delete(ScheduleCtrl2.handleDeleteScheduleForAdmin);
 
+router
+  .route("/schedule_result")
+  .all(authenticate, checkManager)
+  .get(ScheduleCtrl2.handleLoadScheduleResultsForAdmin)
+
+router
+  .route("/schedule_result/:resultId")
+  .all(authenticate, checkManager)
+  .put(ScheduleCtrl2.handleUpdateScheduleResultForAdmin)
+  .delete(ScheduleCtrl2.handleDeleteScheduleResultForAdmin);
+  
 module.exports = router;

@@ -517,3 +517,11 @@ export const deleteSchedulePostForAdmin = (post, callback) => async (dispatch) =
     callback
   })
 };
+
+export const getScheduleResultsForAdmin = ({ agency, model, status, platform, page, pageSize }, callback) => (dispatch) =>
+  ApiRequest.getAction(dispatch, {
+    path: `/v2/admin/schedule_result`,
+    params: { agency, model, status, platform, page, pageSize },
+    action: ACTIONS.LOAD_SCHEDULE_CONTENTS,
+    callback
+  })

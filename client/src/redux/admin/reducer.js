@@ -42,6 +42,9 @@ const initialState = {
 
   schedules: [],
   schedulesCount: 0,
+
+  scheduleResults: [],
+  scheduleResultsCount: 0,
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -126,6 +129,12 @@ const adminReducer = (state = initialState, action) => {
         ...state,
         schedules: action.payload.schedules,
         schedulesCount: action.payload.schedulesCount,
+      };
+    case ACTIONS.LOAD_SCHEDULE_RESULTS:
+      return {
+        ...state,
+        schedules: action.payload.scheduleResults,
+        schedulesCount: action.payload.scheduleResultsCount,
       };
     default:
       return state;
