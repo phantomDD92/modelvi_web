@@ -131,7 +131,7 @@ const syncContents = (modelId) =>
 const syncBulkContents = (modelIds) =>
   ActorModel.updateMany({ _id: { $in: modelIds } }, { $set: { updated: false } })
 
-const updateContentsPlatform = (modelId, contentIds, { platforms, story, knkyStoryType, knkyStoryPrice }) =>
+const updateContentsPlatform = (modelId, contentIds, { platforms, story, knkyStoryType, knkyStoryPrice, f2fStoryType }) =>
   ActorModel.updateOne(
     { _id: modelId },
     {
@@ -139,7 +139,8 @@ const updateContentsPlatform = (modelId, contentIds, { platforms, story, knkySto
         'contents.$[elem].platforms': platforms,
         'contents.$[elem].story': story,
         'contents.$[elem].knkyStoryType': knkyStoryType,
-        'contents.$[elem].knkyStoryPrice': knkyStoryPrice
+        'contents.$[elem].knkyStoryPrice': knkyStoryPrice,
+        'contents.$[elem].f2fStoryType': f2fStoryType
       }
     },
     { arrayFilters: [{ 'elem._id': { $in: contentIds } }] }
