@@ -522,6 +522,28 @@ export const getScheduleResultsForAdmin = ({ agency, model, status, platform, pa
   ApiRequest.getAction(dispatch, {
     path: `/v2/admin/schedule_result`,
     params: { agency, model, status, platform, page, pageSize },
-    action: ACTIONS.LOAD_SCHEDULE_CONTENTS,
+    action: ACTIONS.LOAD_SCHEDULE_RESULTS,
+    callback
+  })
+
+export const fixScheduleResults = (callback) => (dispatch) =>
+  ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/schedule_result`,
+    inform: `Scheduled posts are successfully fixed`,
+    callback
+  })
+
+export const resetScheduleResultForAdmin = (result, callback) => (dispatch) =>
+  ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/schedule_result/${result._id}`,
+    data: { action: "reset" },
+    inform: `Scheduled post is successfully reset`,
+    callback
+  })
+
+export const deleteScheduleResultForAdmin = (result, callback) => (dispatch) =>
+  ApiRequest.deleteAction(dispatch, {
+    path: `/v2/admin/schedule_result/${result._id}`,
+    inform: `Scheduled post is successfully deleted`,
     callback
   })

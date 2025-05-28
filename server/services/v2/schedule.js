@@ -111,8 +111,10 @@ const loadScheduleResultsWithPage = ({ agency, model, status, platform }, page, 
       .skip((parseInt(page) - 1) * 10)
       .limit(parseInt(pageSize))
       .populate("owner", "name")
-      .populate("actor", "number name"),
-    ScheduleModel.countDocuments()
+      .populate("actor", "number name")
+      .populate("account", "platform alias")
+      .populate("schedule"),
+    ScheduleResultModel.countDocuments(query)
   ]);
 }
 
@@ -159,6 +161,32 @@ const getScheduleResult = (resultId) =>
 const resetScheduleResult = (resultId) =>
   ScheduleResultModel.findByIdAndUpdate(resultId, { $set: { status: ScheduleStatus.WAITING } });
 
+
+const getAllScheduleResults = () =>
+  ScheduleResultModel.find()
+    .populate({
+      path: "schedule",
+      select: "owner actor scheduledAt",
+      populate: {
+        path: "actor",
+        select: "number name"
+      }
+    })
+    .populate("account", "platform");
+
+const fixScheduleResult = (resultId, schedule, account) =>
+  ScheduleResultModel.findByIdAndUpdate(resultId, {
+    $set: {
+      owner: schedule.owner,
+      actor: schedule.actor,
+      scheduledAt: schedule.scheduledAt,
+      platform: account.platform
+    }
+  })
+
+const removeScheduleResult = (scheduleId, resultId) =>
+  ScheduleModel.findByIdAndUpdate(scheduleId, { $pull: { results: resultId } })
+
 const ScheduleService2 = {
   getSchedule,
   deleteSchedule,
@@ -175,6 +203,10 @@ const ScheduleService2 = {
   deleteScheduleResult,
   deleteScheduleResults,
   resetScheduleResult,
+  removeScheduleResult,
+
+  getAllScheduleResults,
+  fixScheduleResult,
 }
 
 module.exports = ScheduleService2

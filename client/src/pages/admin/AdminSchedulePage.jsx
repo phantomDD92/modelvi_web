@@ -1,7 +1,7 @@
 import { PageMetaData } from "@/components/common";
 import AdminScheduleDialog from "@/components/schedule/AdminScheduleDialog";
-import AdminScheduleTable from "@/components/schedule/AdminScheduleTable";
-import { appendSchedulePostForAdmin, deleteSchedulePostForAdmin, getSchedulePostsForAdmin, loadAgencyListForAdmin, loadModelListForAdmin, updateSchedulePostForAdmin } from "@/redux/admin/actions";
+import AdminScheduleResultTable from "@/components/schedule/AdminScheduleResultTable";
+import { appendSchedulePostForAdmin, deleteSchedulePostForAdmin, deleteScheduleResultForAdmin, fixScheduleResults, getSchedulePostsForAdmin, getScheduleResultsForAdmin, loadAgencyListForAdmin, loadModelListForAdmin, resetScheduleResultForAdmin, updateSchedulePostForAdmin } from "@/redux/admin/actions";
 import { Modal } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +11,9 @@ const AdminSchedulePage = () => {
   const [post, setPost] = useState();
   const [agency, setAgency] = useState('');
   const [model, setModel] = useState('');
+  const [status, setStatus] = useState('');
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(100);
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
@@ -19,6 +21,8 @@ const AdminSchedulePage = () => {
   const modelList = useSelector(state => state.admin.modelList);
   const schedules = useSelector(state => state.admin.schedules);
   const schedulesCount = useSelector(state => state.admin.schedulesCount);
+  const scheduleResults = useSelector(state => state.admin.scheduleResults);
+  const scheduleResultsCount = useSelector(state => state.admin.scheduleResultsCount);
 
   useEffect(() => {
     dispatch(loadAgencyListForAdmin())
@@ -33,28 +37,42 @@ const AdminSchedulePage = () => {
     dispatch(getSchedulePostsForAdmin({ agency, model, page }, () => setLoading(false)))
   }, [dispatch]);
 
+  const loadScheduleResultsCallback = useCallback(({ agency, model, status, page, pageSize }) => {
+    setLoading(true);
+    dispatch(getScheduleResultsForAdmin({ agency, model, status, page, pageSize }, () => setLoading(false)))
+  }, [dispatch]);
+
   useEffect(() => {
-    loadSchedulePostsCallback({ agency, model, page })
-  }, [loadSchedulePostsCallback, agency, model, page]);
+    loadScheduleResultsCallback({ agency, model, status, page, pageSize })
+  }, [loadScheduleResultsCallback, agency, model, status, page, pageSize]);
 
   const handleUpdateSchedule = (params) => {
     if (post) {
-      dispatch(updateSchedulePostForAdmin(post, params, () => { setEditOpen(false); loadSchedulePostsCallback({ agency, model, page }) }))
+      dispatch(updateSchedulePostForAdmin(post, params, () => { setEditOpen(false); loadScheduleResultsCallback({ agency, model, status, page, pageSize }) }))
     } else {
-      dispatch(appendSchedulePostForAdmin(params, () => { setEditOpen(false); loadSchedulePostsCallback({ agency, model, page }) }))
+      dispatch(appendSchedulePostForAdmin(params, () => { setEditOpen(false); loadScheduleResultsCallback({ agency, model, status, page, pageSize }) }))
     }
   }
 
-  const handleDeleteSchedule = (post) => {
+  const handleFixScheduleData = () => {
+    dispatch(fixScheduleResults(() => { loadScheduleResultsCallback({ agency, model, status, page, pageSize }) }))
+  }
+
+  const handleRetrySchedule = (result) => {
+    dispatch(resetScheduleResultForAdmin(result, () => { loadScheduleResultsCallback({ agency, model, status, page, pageSize }) }))
+  }
+
+  const handleDeleteSchedule = (result) => {
     Modal.confirm({
       title: `Are you sure to delete the scheduled post?`,
-      onOk: () => dispatch(deleteSchedulePostForAdmin(post, () => loadSchedulePostsCallback({ agency, model, page }))),
+      onOk: () => dispatch(deleteScheduleResultForAdmin(result, () => loadScheduleResultsCallback({ agency, model, status, page, pageSize }))),
     });
   }
+
   return (
     <>
       <PageMetaData title="Scheduled Posts" admin />
-      <AdminScheduleTable
+      {/* <AdminScheduleTable
         loading={loading}
         dataSource={schedules}
         filters={{
@@ -74,6 +92,32 @@ const AdminSchedulePage = () => {
           onCreate: () => { setPost(); setEditOpen(true) },
           onDelete: handleDeleteSchedule,
           onEdit: (post) => { setPost(post); setEditOpen(true) },
+        }}
+      /> */}
+      <AdminScheduleResultTable
+        loading={loading}
+        dataSource={scheduleResults}
+        filters={{
+          model,
+          modelList,
+          onModelChange: value => setModel(value),
+          agency,
+          agencyList,
+          onAgencyChange: value => { setAgency(value); setModel(''); },
+          status,
+          onStatusChange: value => setStatus(value)
+        }}
+        pagination={{
+          current: page,
+          pageSize: pageSize,
+          total: scheduleResultsCount,
+          onChange: (pageValue, pageSizeValue) => { setPage(pageValue); setPageSize(pageSizeValue) }
+        }}
+        actions={{
+          onCreate: () => { setPost(); setEditOpen(true) },
+          onDelete: handleDeleteSchedule,
+          onFix: handleFixScheduleData,
+          onRetry: handleRetrySchedule,
         }}
       />
       <AdminScheduleDialog

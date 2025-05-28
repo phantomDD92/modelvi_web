@@ -1,7 +1,7 @@
 import { PostType, ScheduleStatus } from "@/utils/const";
-import { getDateTime } from "@/utils/string";
-import { Button, Card, Flex, Select, Table, Tooltip } from "antd";
-import { LuPencil, LuPlus, LuTrash } from "react-icons/lu";
+import { getDateTime, getPlatformName } from "@/utils/string";
+import { Button, Card, Flex, Select, Space, Table, Tooltip, Tag } from "antd";
+import { LuDatabase, LuPencil, LuPlus, LuRefreshCcw, LuSend, LuTrash } from "react-icons/lu";
 import Media from "../common/Media";
 
 const AdminScheduleResultTable = ({
@@ -9,6 +9,7 @@ const AdminScheduleResultTable = ({
   dataSource,
   pagination: {
     current,
+    pageSize,
     total,
     onChange,
   },
@@ -19,24 +20,27 @@ const AdminScheduleResultTable = ({
     agencyList,
     onModelChange,
     onAgencyChange,
+    status,
+    onStatusChange,
   },
   actions: {
     onCreate,
-    onEdit,
+    onFix,
+    onRetry,
     onDelete
   }
 }) => {
 
-  const getScheduleStatusName = (value) => {
+  const getScheduleStatusTag = (value) => {
     switch (value) {
       case ScheduleStatus.WAITING:
-        return "waiting"
+        return <Tag>waiting</Tag>
       case ScheduleStatus.SCHEDULED:
-        return "scheduled"
+        return <Tag color="processing">scheduled</Tag>
       case ScheduleStatus.FINISHED:
-        return "success"
+        return <Tag color="success">success</Tag>
       case ScheduleStatus.FAILED:
-        return "failed"
+        return <Tag color="error">failed</Tag>
       default:
         break
     }
@@ -66,11 +70,14 @@ const AdminScheduleResultTable = ({
       render: value => getDateTime(value.scheduledAt)
     },
     {
-      key: 'owner',
-      title: 'Agency',
-      width: 120,
-      dataIndex: 'schedule',
-      render: (value) => value.owner?.name || "-"
+      key: 'account',
+      title: 'Model/Account',
+      width: 200,
+      dataIndex: 'account',
+      render: (value, record) => <Space direction="vertical">
+        <h5>{`[${record.owner?.name}] ${record.actor?.number}. ${record.actor?.name}`}</h5>
+        <p>{`[${getPlatformName(value?.platform)}] ${value?.alias}`}</p>
+      </Space>
     },
     {
       key: 'media',
@@ -113,21 +120,31 @@ const AdminScheduleResultTable = ({
       render: value => value.folder || "-"
     },
     {
+      key: 'status',
+      title: 'Status',
+      dataIndex: 'status',
+      width: 80,
+      render: value => getScheduleStatusTag(value)
+    },
+    {
       key: 'action',
       title: 'Action',
       width: 150,
       render: (_, record) => (
         <Flex gap="small">
-          <Tooltip title="Edit content">
-            <Button icon={<LuPencil />} onClick={() => onEdit && onEdit(record)} />
-          </Tooltip>
           <Tooltip title="Delete content">
             <Button icon={<LuTrash />} danger onClick={() => onDelete && onDelete(record)} />
           </Tooltip>
+          {record.status == ScheduleStatus.FAILED &&
+            <Tooltip title="Retry posting">
+              <Button icon={<LuRefreshCcw />} onClick={() => onRetry && onRetry(record)} />
+            </Tooltip>
+          }
         </Flex>
       )
     },
   ];
+
   return (
     <Card
       title={
@@ -136,7 +153,7 @@ const AdminScheduleResultTable = ({
             Scheduled Posts
           </span>
           <Select
-            className="min-w-[250px]"
+            className="min-w-[200px]"
             value={agency}
             onChange={value => onAgencyChange && onAgencyChange(value)}
             options={[{ value: "", label: "All Agencies" }].concat(agencyList
@@ -152,9 +169,26 @@ const AdminScheduleResultTable = ({
               .map(model => ({ value: model._id, label: `[${model.number}] ${model.name}` })))
             }
           />
+          <Select
+            className="min-w-[150px]"
+            value={status}
+            onChange={value => onStatusChange && onStatusChange(value)}
+            options={[
+              { value: "", label: "All Status" },
+              { value: `${ScheduleStatus.WAITING}`, label: "Waiting" },
+              { value: `${ScheduleStatus.SCHEDULED}`, label: "Scheduled" },
+              { value: `${ScheduleStatus.FINISHED}`, label: "Success" },
+              { value: `${ScheduleStatus.FAILED}`, label: "Failed" },
+            ]}
+          />
         </Flex>}
       extra={
         <Flex gap="small">
+          <Button
+            icon={<LuDatabase />}
+            onClick={() => onFix && onFix()}>
+            Fix Data
+          </Button>
           <Button
             icon={<LuPlus />}
             onClick={() => onCreate && onCreate()}>
@@ -166,8 +200,10 @@ const AdminScheduleResultTable = ({
       <Table
         pagination={{
           current,
+          pageSize,
           total,
           onChange,
+          pageSizeOptions: [50, 100, 200, 500],
           position: ["topRight", "bottomRight"],
           showTotal: total => `Total ${total} posts`,
         }}

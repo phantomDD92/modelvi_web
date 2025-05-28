@@ -142,6 +142,7 @@ router
   .route("/schedule_result")
   .all(authenticate, checkManager)
   .get(ScheduleCtrl2.handleLoadScheduleResultsForAdmin)
+  .put(ScheduleCtrl2.handleFixScheduleResultsForAdmin)
 
 router
   .route("/schedule_result/:resultId")

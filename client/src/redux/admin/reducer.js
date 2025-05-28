@@ -133,9 +133,9 @@ const adminReducer = (state = initialState, action) => {
     case ACTIONS.LOAD_SCHEDULE_RESULTS:
       return {
         ...state,
-        schedules: action.payload.scheduleResults,
-        schedulesCount: action.payload.scheduleResultsCount,
-      };
+        scheduleResults: action.payload.results,
+        scheduleResultsCount: action.payload.resultsCount,
+      }
     default:
       return state;
   }

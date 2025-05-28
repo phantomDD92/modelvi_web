@@ -96,7 +96,6 @@ const handleCreateScheduleForAdmin = async (req, res) => {
       throw new ApiError("Model has no accounts");
     const schedule = await ScheduleService2.createSchedule(model.owner, modelId, params);
     const result = await ScheduleService2.createScheduleResults(schedule._id, accounts.map(account => account._id), { agencyId: model.owner, modelId, scheduledAt: params.scheduledAt });
-    console.log(result);
     await ScheduleService2.setScheduleResults(schedule._id, Object.values(result.insertedIds));
     sendResult(res)
   } catch (error) {
@@ -146,11 +145,11 @@ const handleDeleteScheduleForAdmin = async (req, res) => {
 const handleDeleteScheduleResultForAdmin = async (req, res) => {
   try {
     const { resultId } = req.params;
-    const scheduleResult = await ScheduleResultModel.getScheduleResult(resultId);
+    const scheduleResult = await ScheduleService2.getScheduleResult(resultId);
     if (!scheduleResult)
       throw new ApiError("Scheduled post does not exist");
     await ScheduleService2.deleteScheduleResult(resultId);
-    // await ScheduleService2.removeScheduleResult(scheduleResult.schedule, resultId);
+    await ScheduleService2.removeScheduleResult(scheduleResult.schedule, resultId);
     sendResult(res)
   } catch (error) {
     sendError(res, error)
@@ -170,7 +169,8 @@ const handleLoadScheduleResultsForAdmin = async (req, res) => {
 const handleUpdateScheduleResultForAdmin = async (req, res) => {
   try {
     const { resultId } = req.params;
-    const scheduleResult = await ScheduleResultModel.getScheduleResult(resultId);
+    const { action, ...params } = req.body;
+    const scheduleResult = await ScheduleService2.getScheduleResult(resultId);
     if (!scheduleResult)
       throw new ApiError("Scheduled post does not exist");
     switch (action) {
@@ -183,6 +183,28 @@ const handleUpdateScheduleResultForAdmin = async (req, res) => {
     sendResult(res)
   } catch (error) {
     sendError(res, error)
+  }
+}
+
+const handleFixScheduleResultsForAdmin = async (req, res) => {
+  try {
+    const scheduleResults = await ScheduleService2.getAllScheduleResults();
+    for (var result of scheduleResults) {
+      if (result.schedule?.actor) {
+        if (result.account) {
+          await ScheduleService2.fixScheduleResult(result._id, result.schedule, result.account);
+        } else {
+          await ScheduleService2.deleteScheduleResult(result._id);
+          await ScheduleService2.removeScheduleResult(result.schedule._id, result._id);
+        }
+      } else {
+        await ScheduleService2.deleteScheduleResults(result.schedule._id);
+        await ScheduleService2.deleteSchedule(result.schedule._id);
+      }
+    }
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error);
   }
 }
 
@@ -199,7 +221,8 @@ const ScheduleCtrl2 = {
 
   handleLoadScheduleResultsForAdmin,
   handleUpdateScheduleResultForAdmin,
-  handleDeleteScheduleResultForAdmin
+  handleDeleteScheduleResultForAdmin,
+  handleFixScheduleResultsForAdmin
 };
 
 module.exports = ScheduleCtrl2;

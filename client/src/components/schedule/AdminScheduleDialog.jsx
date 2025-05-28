@@ -72,7 +72,6 @@ const AdminScheduleDialog = ({ open, data, agencyList, modelList, onCancel, onUp
 
     useEffect(() => {
         if (open && data) {
-            console.log(data)
             const { media, preview, actor, type: postType, tags: postTags, scheduledAt, owner, results, ...params } = data;
             let medias = [];
             let previews = [];
