@@ -27,7 +27,7 @@ const handleCreateScheduleForAgency = async (req, res) => {
     if (accounts.length == 0)
       throw new ApiError("Model has no accounts");
     const schedule = await ScheduleService2.createSchedule(req.manager._id, modelId, params);
-    const result = await ScheduleService2.createScheduleResults(schedule._id, accounts.map(account => account._id));
+    const result = await ScheduleService2.createScheduleResults(schedule._id, accounts, { agencyId: req.manager._id, modelId: model._id, scheduledAt: params.scheduledAt });
     await ScheduleService2.setScheduleResults(schedule._id, Object.values(result.insertedIds));
     sendResult(res)
   } catch (error) {
@@ -66,7 +66,7 @@ const handleDeleteScheduleForAgency = async (req, res) => {
     if (!schedule)
       throw new ApiError("Scheduled post does not exist");
     if (!isModelOwner(schedule, req.manager))
-      throw new ApiError("Scheduled post can be accessed by creator");
+      throw new ApiError("Schedule post can be accessed by model owner");
     await ScheduleService2.deleteSchedule(scheduleId);
     await ScheduleService2.deleteScheduleResults(scheduleId);
     sendResult(res)
@@ -186,6 +186,54 @@ const handleUpdateScheduleResultForAdmin = async (req, res) => {
   }
 }
 
+const handleDeleteScheduleResultForAgency = async (req, res) => {
+  try {
+    const { resultId } = req.params;
+    const scheduleResult = await ScheduleService2.getScheduleResult(resultId);
+    if (!scheduleResult)
+      throw new ApiError("Scheduled post does not exist");
+    if (!isModelOwner(scheduleResult, req.manager))
+      throw new ApiError("Schedule post can be accessed by model owner");
+    await ScheduleService2.deleteScheduleResult(resultId);
+    await ScheduleService2.removeScheduleResult(scheduleResult.schedule, resultId);
+    sendResult(res)
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
+const handleLoadScheduleResultsForAgency = async (req, res) => {
+  try {
+    const { model, status, platform, page, pageSize } = req.query;
+    const [results, resultsCount] = await ScheduleService2.loadAgencyScheduleResultsWithPage(req.manager._id, { model, status, platform }, page || "1", pageSize || "50");
+    sendResult(res, { results, resultsCount })
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
+const handleUpdateScheduleResultForAgency = async (req, res) => {
+  try {
+    const { resultId } = req.params;
+    const { action, ...params } = req.body;
+    const scheduleResult = await ScheduleService2.getScheduleResult(resultId);
+    if (!scheduleResult)
+      throw new ApiError("Scheduled post does not exist");
+    if (!isModelOwner(scheduleResult, req.manager))
+      throw new ApiError("Schedule post can be accessed by model owner");
+    switch (action) {
+      case "reset":
+        await ScheduleService2.resetScheduleResult(resultId);
+        break
+      default:
+        throw new ApiError("Invalid schedule operation")
+    }
+    sendResult(res)
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
 const handleFixScheduleResultsForAdmin = async (req, res) => {
   try {
     const scheduleResults = await ScheduleService2.getAllScheduleResults();
@@ -213,6 +261,10 @@ const ScheduleCtrl2 = {
   handleCreateScheduleForAgency,
   handleUpdateScheduleForAgency,
   handleDeleteScheduleForAgency,
+
+  handleLoadScheduleResultsForAgency,
+  handleUpdateScheduleResultForAgency,
+  handleDeleteScheduleResultForAgency,
 
   handleLoadSchedulesForAdmin,
   handleCreateScheduleForAdmin,

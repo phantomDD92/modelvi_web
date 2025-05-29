@@ -470,3 +470,25 @@ export const deleteSchedulePost = (post, callback) => async (dispatch) => {
   })
 };
 
+export const getScheduleResults = ({ model, status, platform, page, pageSize }, callback) => (dispatch) =>
+  ApiRequest.getAction(dispatch, {
+    path: `/v2/agency/schedule_result`,
+    params: { model, status, platform, page, pageSize },
+    action: ACTIONS.LOAD_SCHEDULE_RESULTS,
+    callback
+  })
+
+export const resetScheduleResult = (result, callback) => (dispatch) =>
+  ApiRequest.putAction(dispatch, {
+    path: `/v2/agency/schedule_result/${result._id}`,
+    data: { action: "reset" },
+    inform: `Scheduled post is successfully reset`,
+    callback
+  })
+
+export const deleteScheduleResult = (result, callback) => (dispatch) =>
+  ApiRequest.deleteAction(dispatch, {
+    path: `/v2/agency/schedule_result/${result._id}`,
+    inform: `Scheduled post is successfully deleted`,
+    callback
+  })

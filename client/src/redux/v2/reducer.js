@@ -26,6 +26,9 @@ const initialState = {
 
   schedules: [],
   schedulesCount: 0,
+
+  scheduleResults: [],
+  scheduleResultsCount: 0,
 }
 
 const v2Reducer = (state = initialState, action) => {
@@ -105,6 +108,12 @@ const v2Reducer = (state = initialState, action) => {
         schedules: action.payload.schedules,
         schedulesCount: action.payload.schedulesCount,
       };
+    case ACTIONS.LOAD_SCHEDULE_RESULTS:
+      return {
+        ...state,
+        scheduleResults: action.payload.results,
+        scheduleResultsCount: action.payload.resultsCount,
+      }
     default:
       return state;
   }

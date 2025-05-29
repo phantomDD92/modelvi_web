@@ -112,4 +112,14 @@ router
   .put(ScheduleCtrl2.handleUpdateScheduleForAgency)
   .delete(ScheduleCtrl2.handleDeleteScheduleForAgency);
 
+router
+  .route("/schedule_result")
+  .all(authenticate)
+  .get(ScheduleCtrl2.handleLoadScheduleResultsForAgency)
+
+router
+  .route("/schedule_result/:resultId")
+  .all(authenticate)
+  .put(ScheduleCtrl2.handleUpdateScheduleResultForAgency)
+  .delete(ScheduleCtrl2.handleDeleteScheduleResultForAgency);
 module.exports = router;

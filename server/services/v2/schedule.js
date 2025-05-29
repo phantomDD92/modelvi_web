@@ -118,6 +118,29 @@ const loadScheduleResultsWithPage = ({ agency, model, status, platform }, page, 
   ]);
 }
 
+const loadAgencyScheduleResultsWithPage = (agencyId, { model, status, platform }, page, pageSize) => {
+  const modelQuery = model && model != "" ? { actor: model } : {};
+  const statusQuery = status && status != "" ? { status } : {};
+  const platformQuery = platform && platform != "" ? { platform } : {};
+  const query = {
+    owner: agencyId,
+    ...modelQuery,
+    ...statusQuery,
+    ...platformQuery,
+  }
+  return Promise.all([
+    ScheduleResultModel
+      .find(query)
+      .sort("scheduledAt")
+      .skip((parseInt(page) - 1) * 10)
+      .limit(parseInt(pageSize))
+      .populate("actor", "number name")
+      .populate("account", "platform alias")
+      .populate("schedule"),
+    ScheduleResultModel.countDocuments(query)
+  ]);
+}
+
 const updateScheduleResults = (results) => {
   const updates = results.map(({ id, status, post, reason }) => ({
     updateOne: {
@@ -197,6 +220,7 @@ const ScheduleService2 = {
   loadAgencySchedulesWithPage,
   loadLivingSchedules,
   loadScheduleResultsWithPage,
+  loadAgencyScheduleResultsWithPage,
   createScheduleResults,
   getScheduleResult,
   setScheduleResults,
