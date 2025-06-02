@@ -55,9 +55,6 @@ const handleDeleteChatTeamForAdmin = async (req, res) => {
     const team = await ChatTeamService2.findTeamById(teamId);
     if (!team)
       throw new ApiError("Chat team does not exist.");
-    const accounts = team.get("accounts");
-    if (accounts.length > 0)
-      throw new ApiError("Chat team is using by some accounts.");
     await AccountService2.removeChatTeam(teamId);
     await ChatTeamService2.deleteTeam(teamId);
     sendResult(res);
