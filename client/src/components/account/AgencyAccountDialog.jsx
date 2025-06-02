@@ -1,9 +1,9 @@
 import { Platform } from "@/utils/const";
-import { Modal, Form, Input, Select } from "antd";
+import { Modal, Form, Select } from "antd";
 import { useEffect } from "react";
 import StyledInput from "../common/StyledInput";
 
-const AgencyAccountDialog = ({ open, platform, models, account, onCancel, onCreate, onUpdate }) => {
+const AgencyAccountDialog = ({ open, platform, models, chatTeams, account, onCancel, onCreate, onUpdate }) => {
     const [form] = Form.useForm();
 
     const handleOkClick = async () => {
@@ -21,7 +21,7 @@ const AgencyAccountDialog = ({ open, platform, models, account, onCancel, onCrea
     }
     useEffect(() => {
         if (account && open) {
-            form.setFieldsValue({ ...account, actor: account.actor._id })
+            form.setFieldsValue({ ...account, actor: account.actor._id, chatTeam: account.chatTeam?._id })
         } else {
             form.resetFields();
         }
@@ -70,6 +70,16 @@ const AgencyAccountDialog = ({ open, platform, models, account, onCancel, onCrea
                     label="Password"
                     rules={platform == Platform.KNKY ? [] : [{ required: true }]}>
                     <StyledInput />
+                </Form.Item>
+                <Form.Item
+                    name="chatTeam"
+                    label="Chat Team">
+                    <Select
+                        allowClear
+                        options={chatTeams.map(team => ({
+                            label: team.name,
+                            value: team._id
+                        }))} />
                 </Form.Item>
                 {((platform == Platform.FAN) || (platform == Platform.KNKY)) &&
                     <Form.Item

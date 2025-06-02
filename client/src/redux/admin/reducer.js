@@ -20,6 +20,11 @@ const initialState = {
   agencyList: [],
   // chat team related state
   chatTeams: [],
+  chatTeamStats: [],
+
+  chatTeam: undefined,
+  chatTeamAccounts: [],
+  chatTeamModels: [],
 
   // model related state
   models: [],
@@ -84,6 +89,14 @@ const adminReducer = (state = initialState, action) => {
       return {
         ...state,
         chatTeams: action.payload.teams,
+        chatTeamStats: action.payload.teamsStat,
+      };
+    case ACTIONS.GET_CHAT_TEAM:
+      return {
+        ...state,
+        chatTeam: action.payload.team,
+        chatTeamAccounts: action.payload.teamAccounts,
+        chatTeamActors: action.payload.teamActors,
       };
     case ACTIONS.LOAD_MODELS:
       return {

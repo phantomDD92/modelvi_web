@@ -24,14 +24,15 @@ export const AgencyTable = ({
             key: 'name',
             title: 'Name',
             dataIndex: 'name',
-            width: 150,
-            render: value => <Flex gap="middle" align='center'><Avatar src="/img/agency.png" /><span>{value}</span></Flex>
-        },
-        {
-            key: 'email',
-            title: 'Email',
-            width: 150,
-            dataIndex: 'email',
+            width: 250,
+            render: (value, record) =>
+                <Flex gap="middle" align='center'>
+                    <Avatar src="/img/agency.png" />
+                    <Space direction="vertical" size={1}>
+                        <span>{value}</span>
+                        <span>{record.email || "-"}</span>
+                    </Space>
+                </Flex>
         },
         {
             key: 'telegram',
@@ -143,10 +144,10 @@ export const AgencyTable = ({
     return (
         <Card
             title="Agency List"
-            // extra={[
-            //     <Button key="create" icon={<UserAddOutlined />} onClick={() => onCreate && onCreate()}>Create</Button>,
-            //     // <Button key="db" icon={<DatabaseOutlined />} onClick={() => onUpdateDB && onUpdateDB()}>UpdateDB</Button>
-            // ]}
+        // extra={[
+        //     <Button key="create" icon={<UserAddOutlined />} onClick={() => onCreate && onCreate()}>Create</Button>,
+        //     // <Button key="db" icon={<DatabaseOutlined />} onClick={() => onUpdateDB && onUpdateDB()}>UpdateDB</Button>
+        // ]}
         >
             <Space align='center' size="middle">
                 {rowSelection.selectedRowKeys && rowSelection.selectedRowKeys.length > 0 &&

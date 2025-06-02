@@ -153,20 +153,20 @@ const handleUpdateAgency = async (req, res) => {
   }
 };
 
-/** Update Database */
-const handleUpdateDB = async (req, res) => {
-  try {
-    // update actors content
-    const actors = await ActorService.loadAll();
-    for (let actor of actors) {
-      const contents = actor.contents || [];
-      await ActorModel.findByIdAndUpdate(actor._id, { $set: { contentsLength: contents.length } })
-    }
-    sendResult(res);
-  } catch (error) {
-    sendError(res, error);
-  }
-};
+// /** Update Database */
+// const handleUpdateDB = async (req, res) => {
+//   try {
+//     // update actors content
+//     const actors = await ActorService.loadAll();
+//     for (let actor of actors) {
+//       const contents = actor.contents || [];
+//       await ActorModel.findByIdAndUpdate(actor._id, { $set: { contentsLength: contents.length } })
+//     }
+//     sendResult(res);
+//   } catch (error) {
+//     sendError(res, error);
+//   }
+// };
 
 const handleSendContact = async (req, res) => {
   try {
@@ -191,7 +191,7 @@ const ManagerCtrl = {
   handleReloadManager,
   handleUpdateAgency,
   handleUpdateBulkAgencies,
-  handleUpdateDB,
+  // handleUpdateDB,
   handleSendContact,
   // Auth related routes
   handleLoginManager,

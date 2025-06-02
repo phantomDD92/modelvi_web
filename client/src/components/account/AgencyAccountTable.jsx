@@ -47,7 +47,6 @@ const AgencyAccountTable = ({
         onHistory,
         onBulkStatus,
         onBulkDelete,
-
     }
 }) => {
 

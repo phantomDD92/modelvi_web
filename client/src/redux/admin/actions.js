@@ -120,6 +120,14 @@ export const loadChatTeamsForAdmin = (callback) => async (dispatch) => {
   });
 };
 
+export const getChatTeamForAdmin = (team, callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/admin/chat/${team._id}`,
+    action: ACTIONS.GET_CHAT_TEAM,
+    callback
+  });
+};
+
 export const createChatTeamForAdmin = (params, callback) => async (dispatch) => {
   await ApiRequest.postAction(dispatch, {
     path: `/v2/admin/chat`,

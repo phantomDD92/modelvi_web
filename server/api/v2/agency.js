@@ -7,6 +7,7 @@ const ModelCtrl2 = require("../../controllers/v2/model");
 const AccountCtrl2 = require("../../controllers/v2/account");
 const HistoryCtrl2 = require("../../controllers/v2/history");
 const ScheduleCtrl2 = require("../../controllers/v2/schedule");
+const ChatTeamCtrl2 = require("../../controllers/v2/chatteam");
 
 const router = express.Router();
 
@@ -42,6 +43,17 @@ router.route("/proxy/:proxyId")
   .all(authenticate)
   .put(ProxyCtrl2.handleUpdateProxyForAdmin)
   .delete(ProxyCtrl2.handleDeleteProxyForAgency)
+
+router.route("/chat")
+  .all(authenticate)
+  .get(ChatTeamCtrl2.handleLoadChatTeamsForAgency)
+  .post(ChatTeamCtrl2.handleCreateChatTeamForAgency)
+  .delete(ChatTeamCtrl2.handleDeleteChatTeamsForAgency)
+
+router.route("/chat/:id")
+  .all(authenticate)
+  .put(ChatTeamCtrl2.handleUpdateChatTeamForAgency)
+  .delete(ChatTeamCtrl2.handleDeleteChatTeamForAgency)
 
 router.route("/model")
   .all(authenticate)
@@ -122,4 +134,5 @@ router
   .all(authenticate)
   .put(ScheduleCtrl2.handleUpdateScheduleResultForAgency)
   .delete(ScheduleCtrl2.handleDeleteScheduleResultForAgency);
+
 module.exports = router;

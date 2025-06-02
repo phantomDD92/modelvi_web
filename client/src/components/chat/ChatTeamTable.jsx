@@ -16,14 +16,25 @@ export const ChatTeamTable = ({
     pagination,
     rowSelection,
     loading,
-    dataSource,
+    dataSource: {
+        chatTeams,
+        chatTeamStats,
+    },
     actions: {
         onDelete,
         onCreate,
         onEdit,
         onBulkDelete,
+        onDetail,
     }
 }) => {
+    const getUsage = (teamId) => {
+        const team = chatTeamStats.find(team => team._id == teamId);
+        if (team)
+            return <Space direction="vertical" size={1}><span>{team.actorCount || 0} models</span><span>{team.accountCount || 0} accounts</span></Space>;
+        else
+            return '-';
+    }
 
     const columns = [
         {
@@ -31,7 +42,21 @@ export const ChatTeamTable = ({
             title: 'Name',
             width: 150,
             dataIndex: 'name',
-            render: (value) => value
+            render: (value, record) => <Button type="link" onClick={() => onDetail && onDetail(record)}>{value}</Button>
+        },
+        {
+            key: 'owner',
+            title: 'Agency',
+            width: 200,
+            dataIndex: 'owner',
+            render: (value) => value?.name || "Admin",
+        },
+        {
+            key: 'usage',
+            title: 'Usage',
+            width: 120,
+            dataIndex: '_id',
+            render: (value) => getUsage(value)
         },
         {
             key: 'discord',
@@ -39,18 +64,11 @@ export const ChatTeamTable = ({
             dataIndex: 'discord'
         },
         {
-            key: 'accounts',
-            title: 'Accounts',
-            width: 200,
-            dataIndex: 'accounts',
-            render: (value) => value.length == 0 ? '-' : `${value.length} accounts`
-        },
-        {
             key: 'operation',
             title: 'Operation',
-            width: 200,
+            width: 120,
             render: (_, record) => (
-                <Flex gap="large">
+                <Flex gap="small">
                     <Tooltip title="Edit">
                         <Button
                             icon={<EditOutlined />}
@@ -103,7 +121,7 @@ export const ChatTeamTable = ({
                 rowSelection={rowSelection}
                 rowKey={row => row._id}
                 columns={columns}
-                dataSource={dataSource}
+                dataSource={chatTeams}
             />
         </Card>
     )

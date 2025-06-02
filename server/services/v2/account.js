@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const AccountModel = require("../../models/account");
 
 const updateRevenue = (accountId, revenue, fee) =>
@@ -152,7 +153,7 @@ const updateAccount = (
       email: email || "-",
       device,
       password: password || "-",
-      chatTeam,
+      chatTeam: chatTeam || null,
       description,
     },
   });
@@ -189,6 +190,54 @@ const getAgencyAccounts = (agencyId) =>
 const getModelAccounts = (modelId, platforms) =>
   AccountModel.find({ actor: modelId, platform: { $in: platforms } }, "platform number alias");
 
+const removeChatTeam = (teamId) =>
+  AccountModel.updateMany({ chatTeam: teamId }, { $set: { chatTeam: undefined } });
+
+const removeChatTeams = (teamIds) =>
+  AccountModel.updateMany({ chatTeam: { $in: teamIds } }, { $set: { chatTeam: undefined } });
+
+const getStatsByChatTeam = () =>
+  AccountModel.aggregate([
+    {
+      $match: {
+        chatTeam: { $exists: true, $ne: null }
+      }
+    },
+    {
+      $group: {
+        _id: "$chatTeam",
+        actorCount: { $addToSet: "$actor" },
+        accountCount: { $sum: 1 }
+      }
+    },
+    {
+      $project: {
+        chatTeam: "$_id",
+        actorCount: { $size: "$actorCount" },
+        accountCount: 1
+      }
+    }
+  ]);
+
+const getStatsForChatTeam = (teamId) =>
+  AccountModel.aggregate([
+    {
+      $match: { chatTeam: new mongoose.Types.ObjectId(teamId) }
+    },
+    {
+      $group: {
+        _id: "$chatTeam",
+        actors: { $addToSet: "$actor" },
+        accounts: { $addToSet: "$_id" }
+      }
+    },
+    {
+      $project: {
+        actors: 1,
+        accounts: 1
+      }
+    }
+  ]);
 
 const AccountService2 = {
   getAgencyAccounts,
@@ -218,6 +267,9 @@ const AccountService2 = {
   updateAccountsStatus,
   deleteAccounts,
   getModelAccounts,
+  removeChatTeam,
+  removeChatTeams,
+  getStatsByChatTeam,
 };
 
 module.exports = AccountService2;

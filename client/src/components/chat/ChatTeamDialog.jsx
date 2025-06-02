@@ -5,13 +5,13 @@ import {
   Modal,
 } from "antd";
 import StyledInput from "../common/StyledInput";
+import toast from "react-hot-toast";
 
 const ChatTeamDialog = ({
   open,
   team,
   onCreate,
   onCancel,
-  onDelete,
   onUpdate,
 }) => {
   const [form] = Form.useForm();
@@ -24,10 +24,19 @@ const ChatTeamDialog = ({
     }
   }, [open, team]);
 
+  const validateDiscordUrl = (url) => {
+    const pattern = /^https:\/\/(canary\.)?discord(app)?\.com\/api\/webhooks\/\d+\/[A-Za-z0-9_-]+$/;
+    return pattern.test(url);
+  };
+
   const handleOkClick = () => {
     form.validateFields()
       .then(() => {
-        const { name, discord } = form.getFieldsValue()
+        const { name, discord } = form.getFieldsValue();
+        if (!validateDiscordUrl(discord)) {
+          toast.error("Invalid Discord webhook url");
+          return;
+        }
         if (team) {
           onUpdate && onUpdate(team, { name: name.trim(), discord: discord.trim() })
         } else {

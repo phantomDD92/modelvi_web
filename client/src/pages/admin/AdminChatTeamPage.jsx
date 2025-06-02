@@ -27,10 +27,12 @@ import {
   deleteChatTeamsForAdmin,
   loadChatTeamsForAdmin
 } from "@/redux/admin/actions";
+import ChatTeamDetailDialog from "@/components/chat/ChatTeamDetailDialog";
 
 export const AdminChatTeamPage = () => {
 
   const [editOpen, setEditOpen] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [team, setTeam] = useState();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -38,8 +40,8 @@ export const AdminChatTeamPage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const location = useLocation();
-  const modelProps = useSelector(state => state.model);
   const chatTeams = useSelector(state => state.admin.chatTeams);
+  const chatTeamStats = useSelector(state => state.admin.chatTeamStats);
 
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
@@ -104,12 +106,13 @@ export const AdminChatTeamPage = () => {
       <PageMetaData title="Chat teams" />
       <ChatTeamTable
         loading={loading}
-        dataSource={chatTeams}
+        dataSource={{ chatTeams, chatTeamStats }}
         actions={{
           onCreate: () => { setTeam(); setEditOpen(true); },
           onEdit: (team) => { setTeam(team); setEditOpen(true) },
           onDelete: handleDeleteTeam,
           onBulkDelete: handleBulkDeleteTeams,
+          // onDetail: (team) => { setTeam(team); setDetailOpen(true) },
         }}
         pagination={{
           current: page,
@@ -129,6 +132,11 @@ export const AdminChatTeamPage = () => {
         onCancel={() => setEditOpen(false)}
         onCreate={handleCreateTeam}
         onUpdate={handleUpdateTeam}
+      />
+      <ChatTeamDetailDialog
+        open={detailOpen}
+        team={team}
+        onCancel={() => setDetailOpen(false)}
       />
     </>
   );

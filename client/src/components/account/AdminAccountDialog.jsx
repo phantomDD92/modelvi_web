@@ -86,8 +86,9 @@ const AdminAccountDialog = ({ open, platform, agencies, models, chatTeams, accou
                     name="chatTeam"
                     label="Chat Team">
                     <Select
+                        allowClear
                         options={chatTeams.map(team => ({
-                            label: team.name,
+                            label: `[${team.owner?.name || "Admin"}] ${team.name}`,
                             value: team._id
                         }))} />
                 </Form.Item>

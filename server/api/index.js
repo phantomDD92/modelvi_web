@@ -29,9 +29,9 @@ const apiRouterV2 = require("./v2");
 
 const router = express.Router();
 
-router.route("/temp")
-  .all(authenticate, checkManager)
-  .post(ManagerCtrl.handleUpdateDB);
+// router.route("/temp")
+//   .all(authenticate, checkManager)
+//   .post(ManagerCtrl.handleUpdateDB);
 
 router.route("/manager")
   .all(authenticate, checkManager)

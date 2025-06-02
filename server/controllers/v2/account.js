@@ -46,8 +46,6 @@ const handleCreateAccountForAgency = async (req, res) => {
       throw new ApiError(`Account alias(${alias}) already exists.`);
     const account = await AccountService2.createAccount(platform, model, { ...params, chatTeam, creator: req.manager._id });
     await ModelService2.appendAccount(modelId, account._id)
-    if (chatTeam)
-      await ChatTeamService2.appendTeamAccount(chatTeam, account._id);
     NotifyUtils.sendMessage(
       `${req.manager.name}`,
       `${model.number}. ${model.name} - ${platform} ${alias}`,
@@ -73,8 +71,6 @@ const handleCreateAccountForAdmin = async (req, res) => {
       throw new ApiError(`Account alias(${alias}) already exists.`);
     const account = await AccountService2.createAccount(platform, model, { ...params, chatTeam, creator: req.manager._id });
     await ModelService2.appendAccount(modelId, account._id)
-    if (chatTeam)
-      await ChatTeamService2.appendTeamAccount(chatTeam, account._id);
     NotifyUtils.sendMessage(
       `${req.manager.name} (Admin)`,
       `${model.number}. ${model.name} - [${platform}] ${alias}`,
@@ -95,8 +91,6 @@ const handleDeleteAccountForAgency = async (req, res) => {
     if (!isModelOwner(account, req.manager))
       throw new ApiError(`Account can be accessible by owner.`)
     await ModelService2.removeAccount(account.actor?._id, accountId);
-    if (account.chatTeam)
-      await ChatTeamService2.removeTeamAccount(account.chatTeam, accountId)
     await AccountService2.deleteAccount(accountId);
     NotifyUtils.sendMessage(
       `${req.manager.name}`,
@@ -115,8 +109,6 @@ const handleDeleteAccountForAdmin = async (req, res) => {
     if (!account)
       throw new ApiError("Account does not exist.");
     await ModelService2.removeAccount(account.actor?._id, accountId);
-    if (account.chatTeam)
-      await ChatTeamService2.removeTeamAccount(account.chatTeam, accountId)
     await AccountService2.deleteAccount(accountId);
     NotifyUtils.sendMessage(
       `${req.manager.name} (Admin)`,
@@ -179,10 +171,6 @@ const handleUpdateAccountForAdmin = async (req, res) => {
         if (!model)
           throw new ApiError("Model does not exist.");
         await AccountService2.updateAccount(accountId, model, { chatTeam, ...others });
-        if (account.chatTeam)
-          await ChatTeamService2.removeTeamAccount(account.chatTeam, accountId)
-        if (chatTeam)
-          await ChatTeamService2.appendTeamAccount(chatTeam, accountId)
         break;
       case "status":
         const { status } = params;
@@ -256,8 +244,6 @@ const handleDeleteAccountsForAgency = async (req, res) => {
     const agencyAccountIds = accounts.map(account => account._id);
     for (var account of accounts) {
       await ModelService2.removeAccount(account.actor?._id, account._id);
-      if (account.chatTeam)
-        await ChatTeamService2.removeTeamAccount(account.chatTeam, account._id)
     }
     await AccountService2.deleteAccounts(agencyAccountIds);
     NotifyUtils.sendMessage(
@@ -276,8 +262,6 @@ const handleDeleteAccountsForAdmin = async (req, res) => {
     const accounts = await AccountService2.getAccounts(accountIds);
     for (var account of accounts) {
       await ModelService2.removeAccount(account.actor?._id, account._id);
-      if (account.chatTeam)
-        await ChatTeamService2.removeTeamAccount(account.chatTeam, account._id)
     }
     await AccountService2.deleteAccounts(accountIds);
     NotifyUtils.sendMessage(

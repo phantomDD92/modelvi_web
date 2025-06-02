@@ -1,11 +1,12 @@
 const ChatTeamModel = require("../../models/chatteam");
 
-
 const loadTeams = () =>
   ChatTeamModel.find()
+    .sort("owner")
+    .populate("owner", "name");
 
-const createTeam = ({ name, discord }) =>
-  ChatTeamModel.create({ name, discord });
+const createTeam = ({ name, discord }, agencyId = undefined) =>
+  ChatTeamModel.create({ name, discord, owner: agencyId });
 
 const changeTeam = (teamId, { name, discord }) =>
   ChatTeamModel.findByIdAndUpdate(teamId, { $set: { name, discord } });
@@ -19,14 +20,8 @@ const deleteTeams = (teamIds) =>
 const findTeamByDiscord = (discord) =>
   ChatTeamModel.findOne({ discord });
 
-const appendTeamAccount = (teamId, accountId) => {
-  return ChatTeamModel.findByIdAndUpdate(teamId, {
-    $push: { accounts: accountId },
-  });
-};
-
-const removeTeamAccount = (teamId, accountId) =>
-  ChatTeamModel.findByIdAndUpdate(teamId, { $pull: { accounts: accountId } });
+const findTeamByAgencyDiscord = (agencyId, discord) =>
+  ChatTeamModel.findOne({ owner: agencyId, discord });
 
 const findTeamById = (teamId) =>
   ChatTeamModel.findById(teamId)
@@ -34,17 +29,32 @@ const findTeamById = (teamId) =>
 const getCount = () =>
   ChatTeamModel.countDocuments({});
 
+const loadAgencyTeams = (agencyId) =>
+  ChatTeamModel.find({ owner: agencyId }).populate("owner", "name");
+
+const createAgencyTeam = (agencyId, { name, discord }) =>
+  ChatTeamModel.create({ name, discord, owner: agencyId });
+
+const deleteAgencyTeams = (agencyId, teamIds) =>
+  ChatTeamModel.deleteMany({ _id: { $in: teamIds }, owner: agencyId });
+
+const getTeam = (teamId) =>
+  ChatTeamModel.findById(teamId).populate("owner", "name");
+
 const ChatTeamService2 = {
   findTeamByDiscord,
+  findTeamByAgencyDiscord,
   findTeamById,
   loadTeams,
   createTeam,
   deleteTeam,
   deleteTeams,
   changeTeam,
-  appendTeamAccount,
-  removeTeamAccount,
   getCount,
+  loadAgencyTeams,
+  createAgencyTeam,
+  deleteAgencyTeams,
+  getTeam,
 };
 
 module.exports = ChatTeamService2;

@@ -492,3 +492,46 @@ export const deleteScheduleResult = (result, callback) => (dispatch) =>
     inform: `Scheduled post is successfully deleted`,
     callback
   })
+
+export const loadChatTeams = (callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/agency/chat`,
+    action: ACTIONS.LOAD_CHAT_TEAMS,
+    callback
+  });
+};
+
+export const createChatTeam = (params, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/v2/agency/chat`,
+    data: params,
+    inform: `Chat team (${params.name}) is successfully created`,
+    callback
+  })
+};
+
+export const changeChatTeam = (team, params, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/agency/chat/${team._id}`,
+    data: { ...params, action: "change" },
+    inform: `Chat team (${team.name}) is successfully changed`,
+    callback
+  })
+};
+
+export const deleteChatTeam = (team, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/agency/chat/${team._id}`,
+    inform: `Chat team (${team.name}) is successfully deleted`,
+    callback
+  })
+};
+
+export const deleteChatTeams = (teamIds, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/agency/chat`,
+    data: { teamIds },
+    inform: `${teamIds.length} chat teams are successfully deleted`,
+    callback
+  })
+};

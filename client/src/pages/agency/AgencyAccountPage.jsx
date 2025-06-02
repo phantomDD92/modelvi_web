@@ -12,7 +12,8 @@ import {
   changeAccount,
   updateAccountSettings,
   deleteAccounts,
-  updateAccountsStatus
+  updateAccountsStatus,
+  loadChatTeams
 } from "@/redux/v2/actions";
 import {
   AccountParamDialog,
@@ -41,7 +42,7 @@ export const AgencyAccountPage = () => {
 
   const models = useSelector(state => state.v2.models);
   const accounts = useSelector(state => state.v2.accounts);
-
+  const teams = useSelector(state => state.v2.chatTeams)
   const loadAccountsCallback = useCallback((platform, search) => {
     setLoading(true);
     dispatch(loadAccounts(platform, search, () => setLoading(false)));
@@ -62,6 +63,10 @@ export const AgencyAccountPage = () => {
     return () => clearInterval(interval);
   });
 
+  useEffect(() => {
+    dispatch(loadChatTeams());
+  }, [loadChatTeams]);
+  
   const handleChangeStatus = (account, status) => {
     dispatch(updateAccountStatus(account, status, () => loadAccountsCallback(platform, search)))
   }
@@ -149,6 +154,7 @@ export const AgencyAccountPage = () => {
         platform={platform}
         account={account}
         models={models}
+        chatTeams={teams}
         onCancel={() => setEditOpen(false)}
         onCreate={handleCreateAccount}
         onUpdate={handleUpdateAccount}

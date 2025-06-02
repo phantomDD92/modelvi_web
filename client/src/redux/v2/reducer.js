@@ -29,6 +29,9 @@ const initialState = {
 
   scheduleResults: [],
   scheduleResultsCount: 0,
+
+  chatTeams: [],
+  chatTeamStats: [],
 }
 
 const v2Reducer = (state = initialState, action) => {
@@ -114,6 +117,12 @@ const v2Reducer = (state = initialState, action) => {
         scheduleResults: action.payload.results,
         scheduleResultsCount: action.payload.resultsCount,
       }
+    case ACTIONS.LOAD_CHAT_TEAMS:
+      return {
+        ...state,
+        chatTeams: action.payload.teams,
+        chatTeamStats: action.payload.teamsStat,
+      };
     default:
       return state;
   }
