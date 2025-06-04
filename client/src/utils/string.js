@@ -18,6 +18,20 @@ export const getPlatformName = (platform) => {
       return "Maloum";
     case Platform.ONLYFANS:
       return "OnlyFans";
+    case Platform.MYMFANS:
+      return "MymFans";
+    case Platform.FOURBASED:
+      return "4Based";
+    case Platform.DFANXYZ:
+      return "DFanXyz";
+    case Platform.FETLIFE:
+      return "FetLife";
+    case Platform.LOYALFANS:
+      return "LoyalFans";
+    case Platform.MYCLUB:
+      return "MyClub";
+    case Platform.MANYVIDS:
+      return "ManyVids";
     default:
       break;
   }

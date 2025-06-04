@@ -161,9 +161,12 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                         { label: 'F2F', value: Platform.F2F },
                         { label: 'Fancentro', value: Platform.FNC },
                         { label: 'Fansly', value: Platform.FAN },
-                        { label: 'Fanvue', value: Platform.FANVUE },
                         { label: 'Knky', value: Platform.KNKY },
                         { label: 'Maloum', value: Platform.MALOUM },
+                        { label: 'OnlyFans', value: Platform.ONLYFANS },
+                        { label: 'Fanvue', value: Platform.FANVUE },
+                        { label: 'MymFans', value: Platform.MYMFANS },
+                        { label: '4Based', value: Platform.FOURBASED },
                     ]} onChange={handlePlatformsChange} />
                 </Form.Item>
                 {isF2F() &&
