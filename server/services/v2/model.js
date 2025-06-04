@@ -140,7 +140,8 @@ const updateContentsPlatform = (modelId, contentIds, { platforms, story, knkySto
         'contents.$[elem].story': story,
         'contents.$[elem].knkyStoryType': knkyStoryType,
         'contents.$[elem].knkyStoryPrice': knkyStoryPrice,
-        'contents.$[elem].f2fStoryType': f2fStoryType
+        'contents.$[elem].f2fStoryType': f2fStoryType,
+        updated: true,
       }
     },
     { arrayFilters: [{ 'elem._id': { $in: contentIds } }] }
