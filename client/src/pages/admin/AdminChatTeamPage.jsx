@@ -91,10 +91,6 @@ export const AdminChatTeamPage = () => {
   }
 
   const handleDeleteTeam = (team) => {
-    if (team.accounts && team.accounts.length > 0) {
-      toast.error(`Chat team(${team.name}) is associated with some accounts.`);
-      return;
-    }
     Modal.confirm({
       title: `Are you sure to delete the chat team (${team.name})?`,
       onOk: () => dispatch(deleteChatTeamForAdmin(team, () => { loadChatTeamsCallback() })),
