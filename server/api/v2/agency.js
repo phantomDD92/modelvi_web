@@ -8,6 +8,7 @@ const AccountCtrl2 = require("../../controllers/v2/account");
 const HistoryCtrl2 = require("../../controllers/v2/history");
 const ScheduleCtrl2 = require("../../controllers/v2/schedule");
 const ChatTeamCtrl2 = require("../../controllers/v2/chatteam");
+const DashboardCtrl2 = require("../../controllers/v2/dashboard");
 
 const router = express.Router();
 
@@ -134,5 +135,9 @@ router
   .all(authenticate)
   .put(ScheduleCtrl2.handleUpdateScheduleResultForAgency)
   .delete(ScheduleCtrl2.handleDeleteScheduleResultForAgency);
+
+router.route("/stats")
+  .all(authenticate)
+  .get(DashboardCtrl2.handleGetStatsForAgency)
 
 module.exports = router;

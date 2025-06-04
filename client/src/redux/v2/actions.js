@@ -535,3 +535,12 @@ export const deleteChatTeams = (teamIds, callback) => async (dispatch) => {
     callback
   })
 };
+
+
+export const getStatistics = (callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: "/v2/agency/stats",
+    action: ACTIONS.GET_STATISTICS,
+    callback
+  })
+};

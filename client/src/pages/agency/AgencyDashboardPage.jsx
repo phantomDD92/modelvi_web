@@ -1,25 +1,26 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { LuMessagesSquare, LuUser, LuUser2, LuUserCog } from "react-icons/lu";
 import { Card, Row, Col } from "antd";
+import { useDispatch, useSelector } from "react-redux";
 import DisabledAccountTable from "@/components/dashboard/DisabledAccountTable";
+import { useNavigate } from "react-router-dom";
 import PageMetaData from "@/components/common/PageMetaData";
+import { getStatistics, updateAccountStatus } from "@/redux/v2/actions";
 import { StatsBox } from "@/components/dashboard";
-import { getStatisticsForAdmin, updateAccountsStatusForAdmin } from "@/redux/admin/actions";
+import { LuMessagesSquare, LuUser, LuUser2, LuUserCog } from "react-icons/lu";
 import { getPlatformName } from "@/utils/string";
 
-export const AdminDashboardPage = () => {
+export const AgencyDashboardPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const stats = useSelector(state => state.admin.stats);
-  const disabledAccounts = useSelector(state => state.admin.disabledAccounts);
+
+  const stats = useSelector(state => state.v2.stats);
+  const disabledAccounts = useSelector(state => state.v2.disabledAccounts);
 
   const [loading, setLoading] = useState(false);
 
   const getStatsCallback = useCallback(() => {
     setLoading(true);
-    dispatch(getStatisticsForAdmin(() => setLoading(false)));
+    dispatch(getStatistics(() => setLoading(false)));
   }, [dispatch]);
 
   useEffect(() => {
@@ -34,16 +35,16 @@ export const AdminDashboardPage = () => {
   });
 
   const handleHistoryButtonClick = (account) => {
-    navigate(`/admin/history/${account.platform}/${account._id}`);
+    navigate(`/account/${account.platform}/${account._id}`);
   }
 
   const handleSetStatus = (account, status) => {
-    dispatch(updateAccountsStatusForAdmin(account, status, () => getStatsCallback()))
+    dispatch(updateAccountStatus(account, status, () => getStatsCallback()))
   }
 
   return (
     <>
-      <PageMetaData title="Dashboard" admin />
+      <PageMetaData title="Dashboard" />
       <Card title="Dashboard">
         <Row gutter={[16, 16]}>
           <Col md={8} sm={12} >
@@ -100,4 +101,4 @@ export const AdminDashboardPage = () => {
   );
 };
 
-export default AdminDashboardPage;
+export default AgencyDashboardPage;

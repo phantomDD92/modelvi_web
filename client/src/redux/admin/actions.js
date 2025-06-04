@@ -555,3 +555,11 @@ export const deleteScheduleResultForAdmin = (result, callback) => (dispatch) =>
     inform: `Scheduled post is successfully deleted`,
     callback
   })
+
+export const getStatisticsForAdmin = (callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: "/v2/admin/stats",
+    action: ACTIONS.GET_STATISTICS,
+    callback
+  })
+};

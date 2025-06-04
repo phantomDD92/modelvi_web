@@ -1,24 +1,16 @@
-import { Card, Row, Col } from 'antd';
+import { Card, Row, Col , Statistic} from 'antd';
 
-const StatsBox = ({ title, count }) => {
-  const span = items.length > 0 ? 24 / items.length : 24;
+const StatsBox = ({ loading, items = [] }) => {
   return (
-    <div>
-      <div>{title}</div>
-      <Row>
+    <Card>
+      <Row gutter={16}>
         {items.map(item =>
-          <Col key={`col_${item.heading}`} span={span}>
-            <div className="flex items-center gap-3">
-              {item.icon}
-              <div>
-                <div>{item.heading}</div>
-                <div>{item.count}</div>
-              </div>
-            </div>
+          <Col span={8}>
+            <Statistic title={item.label} loading={loading} value={item.value} prefix={item.icon} />
           </Col>
         )}
       </Row>
-      </div>
+    </Card>
   )
 };
 

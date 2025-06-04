@@ -73,14 +73,6 @@ export const AdminAgencyListPage = () => {
     dispatch(changeAgencyStatusForAdmin(agency, status, () => { loadAgenciesCallback() }));
   }
 
-  // const handleChangeVIP = (agency, vip) => {
-  //   dispatch(changeAgencyVIP(agency, vip, () => { loadAgenciesCallback() }));
-  // }
-
-  // const handleResetPassword = (agency, password) => {
-  //   dispatch(resetAgencyPassword(agency, password, () => setPasswordOpen(false)));
-  // }
-
   const handleStatusBulkAgencies = (status) => {
     Modal.confirm({
       title: `Are you sure to ${status ? "enable" : "disable"} ${selectedRowKeys.length} agencies?`,

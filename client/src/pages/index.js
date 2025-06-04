@@ -1,4 +1,4 @@
-export * from "@/pages/agency/DashboardPage";
+export * from "@/pages/agency/AgencyDashboardPage";
 export * from "@/pages/agency/AgencyModelPage";
 export * from "@/pages/agency/AgencyModelContentPage";
 export * from "@/pages/agency/AgencyAccountPage";

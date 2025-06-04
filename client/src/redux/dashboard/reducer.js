@@ -49,12 +49,6 @@ const initialState = {
 
 const dashboardReducer = (state = initialState, action) => {
   switch (action.type) {
-    case ACTIONS.LOAD_STATS:
-      return {
-        ...state,
-        stats: action.payload.stats,
-        disabledAccounts: action.payload.disabledAccounts || []
-      };
     case ACTIONS.LOAD_SETTING:
     case ACTIONS.UPDATE_SETTING:
       return {

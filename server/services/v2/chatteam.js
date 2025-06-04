@@ -26,8 +26,8 @@ const findTeamByAgencyDiscord = (agencyId, discord) =>
 const findTeamById = (teamId) =>
   ChatTeamModel.findById(teamId)
 
-const getCount = () =>
-  ChatTeamModel.countDocuments({});
+const getCount = (agencyId) =>
+  ChatTeamModel.countDocuments(agencyId ? {owner: agencyId} : {});
 
 const loadAgencyTeams = (agencyId) =>
   ChatTeamModel.find({ owner: agencyId }).populate("owner", "name");
@@ -40,6 +40,9 @@ const deleteAgencyTeams = (agencyId, teamIds) =>
 
 const getTeam = (teamId) =>
   ChatTeamModel.findById(teamId).populate("owner", "name");
+
+const getAgencyTeamCount = (agencyId) =>
+  ChatTeamModel.countDocuments({ owner: agencyId });
 
 const ChatTeamService2 = {
   findTeamByDiscord,

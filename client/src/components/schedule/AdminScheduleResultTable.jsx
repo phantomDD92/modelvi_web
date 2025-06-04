@@ -184,11 +184,11 @@ const AdminScheduleResultTable = ({
         </Flex>}
       extra={
         <Flex gap="small">
-          <Button
+          {/* <Button
             icon={<LuDatabase />}
             onClick={() => onFix && onFix()}>
             Fix Data
-          </Button>
+          </Button> */}
           <Button
             icon={<LuPlus />}
             onClick={() => onCreate && onCreate()}>

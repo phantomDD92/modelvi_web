@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import DashboardPage from "./pages/agency/DashboardPage";
+import AgencyDashboardPage from "./pages/agency/AgencyDashboardPage";
 import Layouts from "./layouts/Layout";
 import HomePage from "./pages/HomePage";
 import SignIn from "./pages/auth/SignIn";
@@ -22,7 +22,7 @@ const Router = () => {
             <Route
               key={route.key}
               exact
-              element={route.component ? <Layouts>{route.component}</Layouts> : <DashboardPage />}
+              element={route.component ? <Layouts>{route.component}</Layouts> : <AgencyDashboardPage />}
               path={route.path}
             />
           ))}
@@ -31,7 +31,7 @@ const Router = () => {
             <Route
               key={route.key}
               exact
-              element={route.component ? <Layouts>{route.component}</Layouts> : <DashboardPage />}
+              element={route.component ? <Layouts>{route.component}</Layouts> : <AgencyDashboardPage />}
               path={route.path}
             />
           ))}

@@ -163,6 +163,23 @@ const loadModelList = () =>
     .sort({ owner: 1, number: 1 })
     .populate("accounts", "platform alias");
 
+const getCountStats = async (agencyId) => {
+  const result = await ActorModel.aggregate([
+    {
+      $match: agencyId ? { owner: agencyId } : {}
+    },
+    {
+      $facet: {
+        totalCount: [{ $count: "count" }],
+        updatedCount: [{ $match: { updated: true } }, { $count: "count" }]
+      }
+    }
+  ]);
+  return {
+    totalModels: result[0].totalCount[0]?.count || 0,
+    updatedModels: result[0].updatedCount[0]?.count || 0,
+  }
+}
 
 const ModelService2 = {
   findAgencyModels,
@@ -197,6 +214,8 @@ const ModelService2 = {
 
   loadAgencyModelList,
   loadModelList,
+
+  getCountStats,
 };
 
 module.exports = ModelService2;

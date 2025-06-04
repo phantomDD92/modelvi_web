@@ -17,7 +17,6 @@ const imageUpload = multer({ storage: mediaStorage })
 const authenticate = require("../middleware/auth.js");
 const ActorCtrl = require("../controllers/actor.js");
 const AccountCtrl = require("../controllers/account.js");
-const DashboardCtrl = require("../controllers/dashboard.js");
 const ManagerCtrl = require("../controllers/manager.js");
 const CommentCtrl = require("../controllers/comment.js");
 const HistoryCtrl = require("../controllers/history.js");
@@ -51,10 +50,6 @@ router.route("/auth")
   .put(ManagerCtrl.handleChangePassword)
   // .patch(ManagerCtrl.handleUpdateManager)
   .get(authenticate, ManagerCtrl.handleReloadManager)
-
-router.route("/stats")
-  .all(authenticate)
-  .get(DashboardCtrl.handleGetStats)
 
 router
   .route("/actor")

@@ -15,18 +15,6 @@ const loadAccounts = (agency, platform) =>
       .populate("actor", "name")
       .populate("chatTeam", "name")
 
-
-const loadDisabledAccounts = (agency) =>
-  agency.role == AdminRole.MANAGER ?
-    AccountModel.find({ status: false }, "-params")
-      .sort("-updatedAt")
-      .populate("owner", "name")
-      .populate("actor", "name")
-    : AccountModel.find({ owner: agency._id, status: false }, "-params")
-      .sort("-updatedAt")
-      .populate("owner", "name")
-      .populate("actor", "name");;
-
 const createAccount = (
   platform,
   actor,
@@ -262,7 +250,6 @@ const AccountService = {
   changeAgency,
   releaseAccounts,
   allocateAccounts,
-  loadDisabledAccounts,
 
   getStats,
   getFeeStats,

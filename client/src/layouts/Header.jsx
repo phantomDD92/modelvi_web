@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Layout, Avatar, Popover, Menu, Modal, Form, Input, Typography, Flex, theme, Alert } from "antd";
-import { LogoutOutlined, KeyOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { changePassword, logoutManager, reloadManager } from "@/redux/dashboard/actions";
 import { useNavigate } from "react-router-dom";

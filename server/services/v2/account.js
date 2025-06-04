@@ -1,5 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const AccountModel = require("../../models/account");
+const AgencyService2 = require("./agency");
 
 const updateRevenue = (accountId, revenue, fee) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { revenue, fee, "params.balanceNextTime": new Date(Date.now() + (3600 * 1000 * 24)) } })
@@ -239,6 +240,52 @@ const getStatsForChatTeam = (teamId) =>
     }
   ]);
 
+const getCountStats = (agencyId) =>
+  AccountModel.aggregate([
+    {
+      $match: agencyId ? { owner: agencyId } : {}
+    },
+    {
+      $group: {
+        _id: "$platform",
+        totalAccounts: { $sum: 1 },
+        disabledAccounts: {
+          $sum: { $cond: [{ $eq: ["$status", false] }, 1, 0] }
+        },
+        runningAccounts: {
+          $sum: {
+            $cond: [
+              {
+                $and: [
+                  { $eq: ["$status", true] },
+                  { $gte: ["$updatedAt", new Date(Date.now() - 10 * 60 * 1000)] }
+                ]
+              },
+              1,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        platform: "$_id",
+        totalAccounts: 1,
+        disabledAccounts: 1,
+        runningAccounts: 1,
+        _id: 0
+      }
+    },
+    { $sort: { platform: 1 } }
+  ]);
+
+const getDisabledAccounts = (agencyId) =>
+  AccountModel.find(agencyId ? { owner: agencyId, status: false } : { status: false }, "-params")
+    .sort("-updatedAt")
+    .populate("owner", "name")
+    .populate("actor", "number name");
+
 const AccountService2 = {
   getAgencyAccounts,
   getAccountWithModel,
@@ -270,6 +317,9 @@ const AccountService2 = {
   removeChatTeam,
   removeChatTeams,
   getStatsByChatTeam,
+
+  getCountStats,
+  getDisabledAccounts,
 };
 
 module.exports = AccountService2;

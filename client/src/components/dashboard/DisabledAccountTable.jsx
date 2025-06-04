@@ -1,40 +1,34 @@
-import { Card, Table, Button, Flex, Switch, Tag, Avatar } from "antd";
+import { Card, Table, Button, Flex, Switch, Tag, Avatar, Space } from "antd";
 import { ReadOutlined } from "@ant-design/icons";
 import moment from "moment";
+import { getPlatformName } from "@/utils/string";
 
 const DisabledAccountTable = ({ accounts, loading, onHistory, onStatusChange }) => {
     const columns = [
         {
-            key: 'number',
-            title: 'No.',
-            dataIndex: 'number',
-            width: 50,
-        },
-        {
             key: 'name',
-            title: 'Name',
-            width: 150,
+            title: 'Model',
+            width: 300,
             dataIndex: 'actor',
-            render: value => <Flex gap="middle" align='center'><Avatar src="/img/actor.png" /><span>{value.name}</span></Flex>
-        },
-        {
-            key: 'owner',
-            title: 'Agency',
-            width: 120,
-            dataIndex: 'owner',
-            render: value => value && value.name ? value.name : "-"
-        },
-        {
-            key: 'platform',
-            title: 'Platform',
-            width: 120,
-            dataIndex: 'platform',
+            render: (value, record) =>
+                <Flex gap="middle" align='center'>
+                    <Avatar src="/img/actor.png" />
+                    <Space direction="vertical" size={1}>
+                        <h5>{`[${record.owner?.name || "-"}]`}</h5>
+                        <span>{`${value.number}. ${value.name}`}</span>
+                    </Space>
+                </Flex>
         },
         {
             key: 'alias',
-            title: 'Alias',
+            title: 'Account',
             width: 150,
             dataIndex: 'alias',
+            render: (value, record) => 
+            <Space direction="vertical" size={1}>
+                <h5>{`[${getPlatformName(record.platform)}]`}</h5>
+                <span>{`${value}`}</span>
+            </Space>
         },
         {
             key: 'email',

@@ -24,6 +24,7 @@ export const AgencyChatTeamPage = () => {
   const dispatch = useDispatch()
   const chatTeams = useSelector(state => state.v2.chatTeams);
   const chatTeamStats = useSelector(state => state.v2.chatTeamStats);
+  
   const loadChatTeamsCallback = useCallback(() => {
     setLoading(true);
     dispatch(loadChatTeams(() => setLoading(false)));

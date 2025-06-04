@@ -1,6 +1,9 @@
 import ACTIONS from "./types";
 
 const initialState = {
+  stats: {},
+  disabledAccounts: [],
+
   // affiliate state
   affiliateAgencies: [],
   affiliateStatsByAgency: [],
@@ -54,6 +57,12 @@ const initialState = {
 
 const adminReducer = (state = initialState, action) => {
   switch (action.type) {
+    case ACTIONS.GET_STATISTICS:
+      return {
+        ...state,
+        stats: action.payload.stats,
+        disabledAccounts: action.payload.disabledAccounts || []
+      };
     case ACTIONS.LOAD_AFFILIATES:
       return {
         ...state,

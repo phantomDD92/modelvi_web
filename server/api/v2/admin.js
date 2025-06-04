@@ -11,6 +11,7 @@ const HistoryCtrl2 = require("../../controllers/v2/history");
 const PaymentCtrl2 = require("../../controllers/v2/payment");
 const TransactionCtrl = require("../../controllers/v2/transaction");
 const ScheduleCtrl2 = require("../../controllers/v2/schedule");
+const DashboardCtrl2 = require("../../controllers/v2/dashboard");
 
 const router = express.Router();
 
@@ -149,5 +150,9 @@ router
   .all(authenticate, checkManager)
   .put(ScheduleCtrl2.handleUpdateScheduleResultForAdmin)
   .delete(ScheduleCtrl2.handleDeleteScheduleResultForAdmin);
-  
+
+router.route("/stats")
+  .all(authenticate, checkManager)
+  .get(DashboardCtrl2.handleGetStatsForAdmin)
+
 module.exports = router;

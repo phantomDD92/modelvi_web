@@ -1,6 +1,8 @@
 import ACTIONS from "./types";
 
 const initialState = {
+  stats: {},
+  disabledAccounts: [],
   profile: {},
 
   payments: [],
@@ -36,6 +38,12 @@ const initialState = {
 
 const v2Reducer = (state = initialState, action) => {
   switch (action.type) {
+    case ACTIONS.GET_STATISTICS:
+      return {
+        ...state,
+        stats: action.payload.stats,
+        disabledAccounts: action.payload.disabledAccounts || []
+      };
     case ACTIONS.LOAD_PROFILE:
       return {
         ...state,
