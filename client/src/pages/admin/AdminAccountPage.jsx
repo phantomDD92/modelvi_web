@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createSearchParams, useLocation, useNavigate, useParams } from "react-router-dom";
 import qs from 'query-string';
 import { Modal } from "antd";
+
 import {
   loadAccountsForAdmin,
   loadModelsForAdmin,
@@ -16,13 +17,13 @@ import {
   loadChatTeamsForAdmin,
   loadAgencyListForAdmin
 } from "@/redux/admin/actions";
+import { PageMetaData } from "@/components/common";
 import {
   AccountParamDialog,
-  AdminAccountTable
+  AdminAccountTable,
+  AdminAccountDialog
 } from "@/components/account";
 import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
-import PageMetaData from "@/components/common/PageMetaData";
-import AdminAccountDialog from "@/components/account/AdminAccountDialog";
 
 export const AdminAccountPage = () => {
 
@@ -31,16 +32,16 @@ export const AdminAccountPage = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [account, setAccount] = useState();
   const [settingOpen, setSettingOpen] = useState(false);
-  const [agency, setAgency] = useState('');
-  const [search, setSearch] = useState('');
 
   const navigate = useNavigate();
   const dispatch = useDispatch()
   const location = useLocation();
   const { platform } = useParams()
 
-  const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
-  const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
+  const page = parseInt(qs.parse(location.search)?.page) || DEFAULT_CURRENT_PAGE;
+  const pageSize = parseInt(qs.parse(location.search)?.size) || DEFAULT_PAGE_SIZE;
+  const search = qs.parse(location.search)?.search || '';
+  const agency = qs.parse(location.search)?.agency || '';
 
   const models = useSelector(state => state.admin.models);
   const accounts = useSelector(state => state.admin.accounts);
@@ -145,8 +146,18 @@ export const AdminAccountPage = () => {
           search,
           agency,
           agencyList,
-          onSearchChange: value => setSearch(value),
-          onAgencyChange: agency => setAgency(agency),
+          onSearchChange: value => {
+            navigate({
+              pathname: location.pathname,
+              search: createSearchParams({ search: value, agency, page: 1, size: pageSize }).toString()
+            }, { replace: true });
+          },
+          onAgencyChange: value => {
+            navigate({
+              pathname: location.pathname,
+              search: createSearchParams({ search, agency: value, page: 1, size: pageSize }).toString()
+            }, { replace: true });
+          },
         }}
         actions={{
           onPlatform: handleChangePlatform,

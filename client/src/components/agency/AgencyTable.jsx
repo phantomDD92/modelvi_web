@@ -29,7 +29,7 @@ export const AgencyTable = ({
                 <Flex gap="middle" align='center'>
                     <Avatar src="/img/agency.png" />
                     <Space direction="vertical" size={1}>
-                        <span>{value}</span>
+                        <h4>{value}</h4>
                         <span>{record.email || "-"}</span>
                     </Space>
                 </Flex>
@@ -57,7 +57,7 @@ export const AgencyTable = ({
             key: 'monthlyFee',
             title: 'Monthly Fee',
             dataIndex: 'monthlyFee',
-            render: value => value || 0,
+            render: value => getFiatAmount(value)
         },
         {
             key: 'modelCount',

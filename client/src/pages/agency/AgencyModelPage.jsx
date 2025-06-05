@@ -1,8 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import qs from 'query-string';
 import { Modal } from "antd";
+
+import { PageMetaData } from "@/components/common";
 import {
   createModel,
   deleteModel,
@@ -21,8 +24,6 @@ import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_REFRESH_TIMEOUT
 } from "@/utils/const";
-import toast from "react-hot-toast";
-import PageMetaData from "@/components/common/PageMetaData";
 
 export const AgencyModelPage = () => {
 
@@ -30,7 +31,7 @@ export const AgencyModelPage = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [editOpen, setEditOpen] = useState(false);
   const [model, setModel] = useState();
-  const [search, setSearch] = useState('');
+  // const [search, setSearch] = useState('');
 
   const dispatch = useDispatch()
   const navigate = useNavigate();
@@ -39,6 +40,7 @@ export const AgencyModelPage = () => {
   const models = useSelector(state => state.v2.models);
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
+  const search = qs.parse(location.search)?.search || '';
 
   const loadModelsCallback = useCallback((search) => {
     setLoading(true);
@@ -101,7 +103,7 @@ export const AgencyModelPage = () => {
   const handleChangePagination = (pageValue, pageSizeValue) => {
     navigate({
       pathname: location.pathname,
-      search: createSearchParams({ page: pageValue, size: pageSizeValue }).toString()
+      search: createSearchParams({ search, page: pageValue, size: pageSizeValue }).toString()
     }, { replace: true });
   }
   return (
@@ -110,7 +112,12 @@ export const AgencyModelPage = () => {
       <AgencyModelTable
         filters={{
           search,
-          onSearchChange: value => setSearch(value)
+          onSearchChange: value => {
+            navigate({
+              pathname: location.pathname,
+              search: createSearchParams({ search: value, page:1, size:pageSize }).toString()
+            }, { replace: true });
+          }
         }}
         dataSource={models}
         loading={loading}

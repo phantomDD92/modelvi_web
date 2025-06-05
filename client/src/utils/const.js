@@ -4,7 +4,7 @@ export const API_PATH = `${window.location.protocol}//${window.location.host}/ap
 export const SERVER_PATH = `${window.location.protocol}//${window.location.host}`;
 
 export const DEFAULT_REFRESH_TIMEOUT = 180000;
-export const DEFAULT_PAGE_SIZE = 10;
+export const DEFAULT_PAGE_SIZE = 20;
 export const DEFAULT_CURRENT_PAGE = 1;
 
 export const DEFAULT_POST_INTERVAL = 60;

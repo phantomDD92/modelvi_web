@@ -13,7 +13,6 @@ import {
     DeleteOutlined,
     EditOutlined,
     ReadOutlined,
-    UserOutlined,
     UserAddOutlined,
     UploadOutlined,
 } from "@ant-design/icons";
@@ -23,6 +22,7 @@ import { StyledSearch } from "../common";
 
 export const AdminModelTable = ({
     filters: {
+        search,
         onSearchChange,
         agency,
         agencyList,
@@ -40,7 +40,6 @@ export const AdminModelTable = ({
         onBulkSync,
         onContent,
         onSync,
-        onOwner,
     }
 }) => {
     const getPlatformTag = (platform) =>
@@ -48,17 +47,17 @@ export const AdminModelTable = ({
 
     const columns = [
         {
-            key: 'number',
-            title: 'No',
-            dataIndex: 'number',
-            width: 100,
-        },
-        {
             key: 'name',
             title: 'Name',
-            width: 250,
+            width: 350,
             dataIndex: 'name',
-            render: value => <Flex gap="middle" align='center'><Avatar src="/img/actor.png" /><span>{value}</span></Flex>
+            render: (value, record) => <Flex gap="middle" align='center'>
+                <Avatar src="/img/actor.png" />
+                <Space direction="vertical" size={1}>
+                    <h5>{`[${record.owner?.name || "-"}]`}</h5>
+                    <span>{`${record.number}. ${value}`}</span>
+                </Space>
+            </Flex>
         },
         {
             key: 'owner',
@@ -141,6 +140,7 @@ export const AdminModelTable = ({
             extra={
                 <Flex gap={16}>
                     <StyledSearch
+                        defaultValue={search}
                         onSearch={value => onSearchChange && onSearchChange(value)}
                     />
                     <AgencySelect
@@ -180,6 +180,7 @@ export const AdminModelTable = ({
             <Table
                 pagination={{
                     ...pagination,
+                    pageSizeOptions: [10, 20, 50, 100],
                     position: ["topRight", "bottomRight"],
                     showTotal: total => `Total ${total} models`,
                 }}

@@ -43,17 +43,17 @@ export const AgencyModelTable = ({
 
     const columns = [
         {
-            key: 'number',
-            title: 'No',
-            dataIndex: 'number',
-            width: 100,
-        },
-        {
             key: 'name',
-            title: 'Name',
-            width: 250,
+            title: 'Model',
+            width: 300,
             dataIndex: 'name',
-            render: value => <Flex gap="middle" align='center'><Avatar src="/img/actor.png" /><span>{value}</span></Flex>
+            render: (value, record) => <Flex gap="middle" align='center'>
+                <Avatar src="/img/actor.png" />
+                <Space direction="vertical" size={1}>
+                    <h5>{`[${record.owner?.name || "-"}]`}</h5>
+                    <span>{`${record.number}. ${value}`}</span>
+                </Space>
+            </Flex>
         },
         {
             key: 'accounts',
@@ -129,7 +129,7 @@ export const AgencyModelTable = ({
             title={"Model List"}
             extra={
                 <Flex gap={16}>
-                    <StyledSearch onSearch={value => onSearchChange && onSearchChange(value)} />
+                    <StyledSearch defaultValue={search} onSearch={value => onSearchChange && onSearchChange(value)} />
                     <Button
                         icon={<UserAddOutlined />}
                         onClick={onCreate}>
@@ -161,6 +161,7 @@ export const AgencyModelTable = ({
             <Table
                 pagination={{
                     ...pagination,
+                    pageSizeOptions: [10, 20, 50, 100],
                     position: ["topRight", "bottomRight"],
                     showTotal: total => `Total ${total} models`,
                 }}

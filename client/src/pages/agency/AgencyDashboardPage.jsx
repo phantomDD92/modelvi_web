@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Card, Row, Col } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import DisabledAccountTable from "@/components/dashboard/DisabledAccountTable";
 import { useNavigate } from "react-router-dom";
-import PageMetaData from "@/components/common/PageMetaData";
-import { getStatistics, updateAccountStatus } from "@/redux/v2/actions";
-import { StatsBox } from "@/components/dashboard";
 import { LuMessagesSquare, LuUser, LuUser2, LuUserCog } from "react-icons/lu";
+import { Card, Row, Col } from "antd";
+
+import { PageMetaData } from "@/components/common";
+import { StatsBox, DisabledAccountTable } from "@/components/dashboard";
+import { getStatistics, updateAccountStatus } from "@/redux/v2/actions";
 import { getPlatformName } from "@/utils/string";
 
 export const AgencyDashboardPage = () => {
@@ -57,14 +57,14 @@ export const AgencyDashboardPage = () => {
             />
           </Col>
           <Col md={8} sm={0} >
-              <StatsBox
-                loading={loading}
-                items={[
-                  { label: `Total Accounts`, icon: <LuUser2 />, value: (stats.accountStats || []).reduce((sum, item) => sum += (item.totalAccounts || 0), 0) },
-                  { label: `Running Accounts`, icon: <LuUser2 />, value: (stats.accountStats || []).reduce((sum, item) => sum += (item.runningAccounts || 0), 0) },
-                  { label: `Disabled Accounts`, icon: <LuUser2 />, value: (stats.accountStats || []).reduce((sum, item) => sum += (item.disabledAccounts || 0), 0) },
-                ]}
-              />
+            <StatsBox
+              loading={loading}
+              items={[
+                { label: `Total Accounts`, icon: <LuUser2 />, value: (stats.accountStats || []).reduce((sum, item) => sum += (item.totalAccounts || 0), 0) },
+                { label: `Running Accounts`, icon: <LuUser2 />, value: (stats.accountStats || []).reduce((sum, item) => sum += (item.runningAccounts || 0), 0) },
+                { label: `Disabled Accounts`, icon: <LuUser2 />, value: (stats.accountStats || []).reduce((sum, item) => sum += (item.disabledAccounts || 0), 0) },
+              ]}
+            />
           </Col>
           <Col md={8} sm={12} >
             <StatsBox
@@ -77,6 +77,7 @@ export const AgencyDashboardPage = () => {
           {(stats.accountStats || []).map(stat =>
             <Col md={8} sm={12} >
               <StatsBox
+                key={stat.platform}
                 loading={loading}
                 items={[
                   { label: `${getPlatformName(stat.platform)} Accounts`, icon: <LuUser2 />, value: stat.totalAccounts || 0 },

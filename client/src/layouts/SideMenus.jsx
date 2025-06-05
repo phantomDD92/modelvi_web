@@ -5,7 +5,6 @@ export const agencyMenus = [
   { key: "dashboard", icon: <LuHome />, label: "Dashboard", path: "/" },
   { key: "model", icon: <LuUser />, label: "Model", path: "/model" },
   { key: "account", icon: <LuUserSquare />, label: "Account", path: "/account/F2F" },
-  { key: "proxy", icon: <LuNetwork />, label: "Proxy", path: "/proxy" },
   { key: "schedule", icon: <LuSatellite />, label: "Schedule", path: "/schedule" },
   { key: "chat", icon: <LuMessagesSquare />, label: "Chat Team", path: "/chat" },
   { key: "comment", icon: <LuMessageCircle />, label: "Comment", path: "/comment" },

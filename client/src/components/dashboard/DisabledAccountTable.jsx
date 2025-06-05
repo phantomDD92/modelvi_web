@@ -24,11 +24,11 @@ const DisabledAccountTable = ({ accounts, loading, onHistory, onStatusChange }) 
             title: 'Account',
             width: 150,
             dataIndex: 'alias',
-            render: (value, record) => 
-            <Space direction="vertical" size={1}>
-                <h5>{`[${getPlatformName(record.platform)}]`}</h5>
-                <span>{`${value}`}</span>
-            </Space>
+            render: (value, record) =>
+                <Space direction="vertical" size={1}>
+                    <h5>{`[${getPlatformName(record.platform)}]`}</h5>
+                    <span>{`${value}`}</span>
+                </Space>
         },
         {
             key: 'email',

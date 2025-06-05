@@ -30,7 +30,6 @@ export const AgencyAccountPage = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [account, setAccount] = useState();
   const [settingOpen, setSettingOpen] = useState(false);
-  const [search, setSearch] = useState('');
 
   const navigate = useNavigate();
   const dispatch = useDispatch()
@@ -39,6 +38,7 @@ export const AgencyAccountPage = () => {
 
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search).size) || DEFAULT_PAGE_SIZE;
+  const search = qs.parse(location.search)?.search || "";
 
   const models = useSelector(state => state.v2.models);
   const accounts = useSelector(state => state.v2.accounts);
@@ -66,7 +66,7 @@ export const AgencyAccountPage = () => {
   useEffect(() => {
     dispatch(loadChatTeams());
   }, [loadChatTeams]);
-  
+
   const handleChangeStatus = (account, status) => {
     dispatch(updateAccountStatus(account, status, () => loadAccountsCallback(platform, search)))
   }
@@ -135,7 +135,12 @@ export const AgencyAccountPage = () => {
         }}
         filters={{
           search,
-          onSearchChange: value => setSearch(value)
+          onSearchChange: value => {
+            navigate({
+              pathname: location.pathname,
+              search: createSearchParams({ search: value, page: 1, size: pageSize }).toString()
+            }, { replace: true });
+          },
         }}
         actions={{
           onPlatform: handleChangePlatform,

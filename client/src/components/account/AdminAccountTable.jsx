@@ -21,7 +21,7 @@ import {
 } from "@ant-design/icons";
 import { Platform } from "@/utils/const"
 import moment from "moment";
-import { getDate, getFiatAmount } from "@/utils/string";
+import { getDate, getFiatAmount, getPlatformName } from "@/utils/string";
 import { StyledSearch } from "../common";
 import { AgencySelect } from "../agency";
 
@@ -32,6 +32,7 @@ const AdminAccountTable = ({
     loading,
     platform,
     filters: {
+        search,
         onSearchChange,
         agency,
         agencyList,
@@ -52,30 +53,29 @@ const AdminAccountTable = ({
     const columns =
         [
             {
-                key: 'number',
-                title: 'No.',
-                dataIndex: 'number',
-                width: 50,
-            },
-            {
                 key: 'name',
                 title: 'Name',
-                width: 200,
+                width: 300,
                 dataIndex: 'actor',
-                render: value => <Flex gap="middle" align='center'><Avatar src="/img/actor.png" /><span>{value.name}</span></Flex>
-            },
-            {
-                key: 'owner',
-                title: 'Agency',
-                width: 120,
-                dataIndex: 'owner',
-                render: value => value && value.name ? value.name : "-"
+                render: (value, record) =>
+                    <Flex gap="middle" align='center'>
+                        <Avatar src="/img/actor.png" />
+                        <Space direction="vertical" size={1}>
+                            <h5>{`[${record.owner?.name || "-"}]`}</h5>
+                            <span>{`${record.number}. ${value.name}`}</span>
+                        </Space>
+                    </Flex>
             },
             {
                 key: 'alias',
                 title: 'Alias',
-                width: 150,
+                width: 200,
                 dataIndex: 'alias',
+                render: (value, record) =>
+                    <Space direction="vertical" size={1}>
+                        <h5>{`[${getPlatformName(record.platform)}]`}</h5>
+                        <span>{`${value}`}</span>
+                    </Space>
             },
             {
                 key: 'chatTeam',
@@ -212,6 +212,7 @@ const AdminAccountTable = ({
             extra={
                 <Flex gap="small">
                     <StyledSearch
+                        defaultValue={search}
                         onSearch={value => onSearchChange && onSearchChange(value)}
                     />
                     <AgencySelect
@@ -257,6 +258,7 @@ const AdminAccountTable = ({
             <Table
                 pagination={{
                     ...pagination,
+                    pageSizeOptions: [10, 20, 50, 100],
                     position: ["topRight", "bottomRight"],
                     showTotal: total => `Total ${total} accounts`,
                 }}
