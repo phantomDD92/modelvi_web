@@ -13,7 +13,11 @@ const initialState = {
 
   // proxy related state
   proxies: [],
+  // statistics per agency
   proxyStats: [],
+  accountStats: [],
+  modelStats: [],
+
   proxyAgency: undefined,
   agencyProxies: [],
   agencyProxyStats: [],
@@ -75,7 +79,9 @@ const adminReducer = (state = initialState, action) => {
     case ACTIONS.LOAD_PROXIES:
       return {
         ...state,
-        proxyStats: action.payload.stats || [],
+        proxyStats: action.payload.proxyStats || [],
+        accountStats: action.payload.accountStats || [],
+        modelStats: action.payload.modelStats || [],
       };
     case ACTIONS.LOAD_AGENCY_PROXIES:
       return {

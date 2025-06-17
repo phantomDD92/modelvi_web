@@ -39,31 +39,31 @@ const ProxyTable = ({
             width: 200,
             dataIndex: 'url'
         },
-        {
-            key: 'agency',
-            title: 'Agency',
-            width: 120,
-            dataIndex: 'owner',
-            render: value => value && value.name ? value.name : '-'
-        },
-        {
-            key: 'expiry',
-            title: 'Expiry',
-            width: 200,
-            dataIndex: 'expiredAt',
-            render: (value) => (
-                <div className="flex">
-                    <span>{moment(value).format("YYYY-MM-DD")}&nbsp;&nbsp;</span>
-                    {
-                        moment(value).diff(moment(), 'day') > 3 ?
-                            <Tag color="success">valid</Tag>
-                            : moment(value).diff(moment(), 'day') > 0 ?
-                                <Tag color="warning">expiring</Tag>
-                                : <Tag color="error">expired</Tag>
-                    }
-                </div>
-            )
-        },
+        // {
+        //     key: 'agency',
+        //     title: 'Agency',
+        //     width: 120,
+        //     dataIndex: 'owner',
+        //     render: value => value && value.name ? value.name : '-'
+        // },
+        // {
+        //     key: 'expiry',
+        //     title: 'Expiry',
+        //     width: 200,
+        //     dataIndex: 'expiredAt',
+        //     render: (value) => (
+        //         <div className="flex">
+        //             <span>{moment(value).format("YYYY-MM-DD")}&nbsp;&nbsp;</span>
+        //             {
+        //                 moment(value).diff(moment(), 'day') > 3 ?
+        //                     <Tag color="success">valid</Tag>
+        //                     : moment(value).diff(moment(), 'day') > 0 ?
+        //                         <Tag color="warning">expiring</Tag>
+        //                         : <Tag color="error">expired</Tag>
+        //             }
+        //         </div>
+        //     )
+        // },
         {
             key: 'f2f',
             title: 'F2F',

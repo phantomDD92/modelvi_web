@@ -6,7 +6,13 @@ import { Modal } from "antd";
 import { AdminProxyAppendDialog, AdminProxyTable } from "@/components/proxy";
 import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
 import PageMetaData from "@/components/common/PageMetaData";
-import { appendAgencyProxiesForAdmin, clearAgencyProxiesForAdmin, clearAllProxiesForAdmin, loadAgenciesForAdmin, loadProxiesForAdmin } from "@/redux/admin/actions";
+import {
+  appendAgencyProxiesForAdmin,
+  clearAgencyProxiesForAdmin,
+  clearAllProxiesForAdmin,
+  loadAgenciesForAdmin,
+  loadProxiesForAdmin
+} from "@/redux/admin/actions";
 
 export const AdminProxyPage = () => {
   const [loading, setLoading] = useState(false);
@@ -17,6 +23,8 @@ export const AdminProxyPage = () => {
   const location = useLocation();
 
   const proxyStats = useSelector(state => state.admin.proxyStats)
+  const accountStats = useSelector(state => state.admin.accountStats)
+  const modelStats = useSelector(state => state.admin.modelStats)
   const agencies = useSelector(state => state.admin.agencies);
 
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
@@ -75,7 +83,12 @@ export const AdminProxyPage = () => {
     <>
       <PageMetaData title="Proxies" admin />
       <AdminProxyTable
-        dataSource={proxyStats}
+        dataSource={{
+          agencies,
+          proxyStats,
+          accountStats,
+          modelStats,
+        }}
         loading={loading}
         pagination={{
           current: page,

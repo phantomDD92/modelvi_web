@@ -25,6 +25,16 @@ const clearAgencyProxies = (agencyId) =>
 const clearProxies = () =>
   ProxyModel.deleteMany({});
 
+const getCountStatsByAgency = () =>
+  ProxyModel.aggregate([
+    {
+      $group: {
+        _id: "$owner",
+        count: { $sum: 1 }
+      }
+    }
+  ]);
+
 const getTotalStats = async () => {
   const now = new Date();
   return ProxyModel.aggregate([
@@ -139,7 +149,7 @@ const ProxyService2 = {
   appendAgencyProxies,
   getAgencyProxyCount,
   getAgencyStats,
-  
+
   findProxyById,
   changeProxyStatus,
   changeProxiesStatus,
@@ -148,7 +158,7 @@ const ProxyService2 = {
   clearProxies,
 
   resetProxyAccount,
-
+  getCountStatsByAgency,
   getTotalStats,
 }
 

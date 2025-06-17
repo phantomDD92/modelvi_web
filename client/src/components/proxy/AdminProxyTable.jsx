@@ -1,3 +1,4 @@
+import { getPlatformName } from "@/utils/string";
 import {
     Button,
     Card,
@@ -10,7 +11,12 @@ const ProxyAdminTable = ({
     pagination,
     rowSelection,
     loading,
-    dataSource,
+    dataSource: {
+        agencies,
+        modelStats,
+        proxyStats,
+        accountStats,
+    },
     actions: {
         onAppend,
         onDelete,
@@ -19,31 +25,31 @@ const ProxyAdminTable = ({
 }) => {
     const columns = [
         {
-            key: 'agency',
+            key: 'name',
             title: 'Agency',
-            width: 200,
-            dataIndex: 'agencyName',
-            render: value => value || '-'
+            width: 250,
+            dataIndex: 'name',
+            render: value => <h5>{value || '-'}</h5>
         },
         {
-            key: 'total',
-            title: 'Total Proxies',
-            dataIndex: 'totalProxies',
+            key: 'proxies',
+            title: 'Proxies',
+            width: 80,
+            dataIndex: '_id',
+            render: value => proxyStats.find(item => item._id == value)?.count || 0
         },
         {
-            key: 'valid',
-            title: 'Valid Proxies',
-            dataIndex: 'validProxies',
+            key: 'models',
+            title: 'Models',
+            width: 80,
+            dataIndex: '_id',
+            render: value => modelStats.find(item => item._id == value)?.count || 0
         },
         {
-            key: 'disabled',
-            title: 'Disabled Proxies',
-            dataIndex: 'disabledProxies',
-        },
-        {
-            key: 'expired',
-            title: 'Expired Proxies',
-            dataIndex: 'expiredProxies',
+            key: 'accounts',
+            title: 'Accounts',
+            dataIndex: '_id',
+            render: value => accountStats.filter(item => item._id?.creator == value).map(item => `[ ${getPlatformName(item._id?.platform)} ] ${item.count || 0}`).join(" , ")
         },
         {
             key: 'action',
@@ -79,7 +85,7 @@ const ProxyAdminTable = ({
 
     return (
         <Card
-            title={<div> Agency Proxies </div>}
+            title="Agency Proxies"
             extra={
                 <Button icon={<LuPlus />} onClick={() => onAppend && onAppend()}>Append</Button>
             }>
@@ -93,7 +99,7 @@ const ProxyAdminTable = ({
                 rowSelection={rowSelection}
                 rowKey={row => row._id}
                 columns={columns}
-                dataSource={dataSource}
+                dataSource={agencies}
             />
         </Card>
 

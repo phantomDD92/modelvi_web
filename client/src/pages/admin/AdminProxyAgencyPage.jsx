@@ -8,13 +8,23 @@ import {
 } from "react-router-dom";
 import qs from 'query-string';
 import { Modal } from "antd";
+
 import {
   ProxyAppendDialog,
   AgencyProxyTable
 } from "@/components/proxy";
 import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
-import PageMetaData from "@/components/common/PageMetaData";
-import { appendAgencyProxiesForAdmin, changeBulkProxiesStatusForAdmin, changeProxyStatusForAdmin, clearAgencyProxiesForAdmin, deleteBulkProxiesForAdmin, deleteProxyForAdmin, loadAgencyProxiesForAdmin, resetProxyForAdmin } from "@/redux/admin/actions";
+import { PageMetaData } from "@/components/common";
+import {
+  appendAgencyProxiesForAdmin,
+  changeBulkProxiesStatusForAdmin,
+  changeProxyStatusForAdmin,
+  clearAgencyProxiesForAdmin,
+  deleteBulkProxiesForAdmin,
+  deleteProxyForAdmin,
+  loadAgencyProxiesForAdmin,
+  resetProxyForAdmin
+} from "@/redux/admin/actions";
 
 export const AdminProxyAgencyPage = () => {
   const [loading, setLoading] = useState(false);

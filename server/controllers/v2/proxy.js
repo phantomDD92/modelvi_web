@@ -1,13 +1,15 @@
+const AccountService2 = require("../../services/v2/account");
 const AgencyService2 = require("../../services/v2/agency");
+const ModelService2 = require("../../services/v2/model");
 const ProxyService2 = require("../../services/v2/proxy");
 const { sendError, sendResult, ApiError } = require("../../utils/resp");
 
 const handleLoadProxiesForAdmin = async (req, res) => {
   try {
-    const { agency } = req.query;
-    const proxies = await ProxyService2.loadAgencyProxies(agency);
-    const stats = await ProxyService2.getTotalStats();
-    sendResult(res, { proxies, stats })
+    const proxyStats = await ProxyService2.getCountStatsByAgency();
+    const accountStats = await AccountService2.getCountStatsByAgencyPlatform();
+    const modelStats = await ModelService2.getCountStatsByAgency();
+    sendResult(res, { proxyStats, accountStats, modelStats })
   } catch (error) {
     sendError(res, error);
   }
