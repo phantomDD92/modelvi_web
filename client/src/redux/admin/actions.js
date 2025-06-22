@@ -563,3 +563,35 @@ export const getStatisticsForAdmin = (callback) => async (dispatch) => {
     callback
   })
 };
+
+export const loadLikeBots = (platform, { search }, callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/admin/like/${platform}`,
+    params: { search },
+    action: ACTIONS.LOAD_LIKE_BOTS,
+    callback
+  })
+};
+
+export const createLikeBot = (platform, { name, email, password }, callback) => (dispatch) =>
+  ApiRequest.postAction(dispatch, {
+    path: `/v2/admin/like/${platform}`,
+    data: { name, email, password },
+    inform: `Like bot is successfully created`,
+    callback
+  })
+
+export const deleteLikeBot = (bot, callback) => (dispatch) =>
+  ApiRequest.deleteAction(dispatch, {
+    path: `/v2/admin/like/${bot.platform}/${bot._id}`,
+    inform: `Like bot is successfully deleted`,
+    callback
+  })
+
+export const changeLikeBotStatus = (bot, status, callback) => (dispatch) =>
+  ApiRequest.deleteAction(dispatch, {
+    path: `/v2/admin/like/${bot.platform}/${bot._d}`,
+    data: { action: "status", status },
+    inform: `Like bot is successfully ${status ? "started" : "stopped"}`,
+    callback
+  })

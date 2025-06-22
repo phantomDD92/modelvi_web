@@ -14,6 +14,7 @@ import AdminAccountHistoryPage from "@/pages/admin/AdminAccountHistoryPage"
 import AdminAccountPage from "@/pages/admin/AdminAccountPage"
 import AdminFinancePage from "@/pages/admin/AdminFinancePage"
 import AdminSchedulePage from "@/pages/admin/AdminSchedulePage"
+import { AdminLikeBotPage } from "@/pages/admin/AdminLikeBotPage"
 
 const adminRoutes = [
   { key: "admin_dashboard", path: "/admin/dashboard", component: <AdminDashboardPage />, },
@@ -24,6 +25,7 @@ const adminRoutes = [
   { key: "admin_history", path: "/admin/history/:platform/:accountId", component: <AdminAccountHistoryPage /> },
   { key: "admin_comment", path: "/admin/comment", component: <CommentListPage />, },
   { key: "admin_schedule", path: "/admin/schedule", component: <AdminSchedulePage />, },
+  { key: "admin_like", path: "/admin/like/:platform", component: <AdminLikeBotPage />, },
   { key: "admin_proxy", path: "/admin/proxy", component: <AdminProxyStatPage />, },
   { key: "admin_agency_proxy", path: "/admin/proxy/:agencyId", component: <AdminProxyAgencyPage />, },
   { key: "admin_chat", path: "/admin/chat", component: <AdminChatTeamPage />, },

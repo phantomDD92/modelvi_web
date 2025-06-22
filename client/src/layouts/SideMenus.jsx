@@ -1,5 +1,5 @@
 import { AdminRole } from "@/utils/const";
-import { LuArrowLeftToLine, LuArrowRightFromLine, LuHome, LuMessageCircle,LuMessagesSquare, LuNetwork, LuSatellite, LuTrophy, LuUser, LuUsers, LuUserSquare, LuWallet } from "react-icons/lu";
+import { LuArrowLeftToLine, LuArrowRightFromLine, LuHome, LuMessageCircle,LuMessagesSquare, LuNetwork, LuSatellite, LuThumbsUp, LuTrophy, LuUser, LuUsers, LuUserSquare, LuWallet } from "react-icons/lu";
 
 export const agencyMenus = [
   { key: "dashboard", icon: <LuHome />, label: "Dashboard", path: "/" },
@@ -22,6 +22,7 @@ export const adminMenus = [
   { key: "admin_schedule", icon: <LuSatellite />, label: "Schedule", path: "/admin/schedule" },
   { key: "admin_chat", icon: <LuMessagesSquare />, label: "Chat Team", path: "/admin/chat" },
   { key: "admin_comment", icon: <LuMessageCircle />, label: "Comment", path: "/admin/comment" },
+  { key: "admin_like", icon: <LuThumbsUp />, label: "Like Bot", path: "/admin/like/FAN" },
   { key: "admin_finance", icon: <LuWallet />, label: "Finance", path: "/admin/finance/payments" },
   { key: "admin_affiliate", icon: <LuTrophy />, label: "Affiliate", path: "/admin/affiliate" },
   { key: "to_agency", icon: <LuArrowLeftToLine />, label: "To Agency", path: "/dashboard" },

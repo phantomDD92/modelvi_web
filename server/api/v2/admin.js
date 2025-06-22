@@ -12,6 +12,7 @@ const PaymentCtrl2 = require("../../controllers/v2/payment");
 const TransactionCtrl = require("../../controllers/v2/transaction");
 const ScheduleCtrl2 = require("../../controllers/v2/schedule");
 const DashboardCtrl2 = require("../../controllers/v2/dashboard");
+const LikeBotCtrl2 = require("../../controllers/v2/likebot");
 
 const router = express.Router();
 
@@ -154,5 +155,17 @@ router
 router.route("/stats")
   .all(authenticate, checkManager)
   .get(DashboardCtrl2.handleGetStatsForAdmin)
+
+router
+  .route("/like/:platform")
+  .all(authenticate, checkManager)
+  .get(LikeBotCtrl2.handleLoadLikeBotsForAdmin)
+  .post(LikeBotCtrl2.handleCreateLikeBotForAdmin)
+
+router
+  .route("/like/:platform/:botId")
+  .all(authenticate, checkManager)
+  .put(LikeBotCtrl2.handleChangeLikeBotForAdmin)
+  .delete(LikeBotCtrl2.handleDeleteLikeBotForAdmin)
 
 module.exports = router;

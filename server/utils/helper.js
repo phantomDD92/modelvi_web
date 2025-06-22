@@ -1,6 +1,7 @@
 const moment = require("moment");
 const crypto = require("crypto");
 const { DEFAULT_PRICE_PLANS, REVENUE_THRESHOLDS } = require("./const");
+const nodemailer = require('nodemailer');
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -111,6 +112,41 @@ function isModelOwner(model, agency) {
   return ownerId?.toString() == agency._id?.toString()
 }
 
+function generateRandomPassword(length = 12) {
+  const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+~`|}{[]:;?,./-=';
+  let password = '';
+
+  // Generate secure random bytes
+  const bytes = crypto.randomBytes(length);
+
+  for (let i = 0; i < length; i++) {
+    // Map each byte to an index in the charset
+    const index = bytes[i] % charset.length;
+    password += charset[index];
+  }
+
+  return password;
+}
+
+async function checkLikeBotEmail(email, password) {
+  const transporter = nodemailer.createTransport({
+    host: process.env.MAILER_HOST,
+    port: process.env.MAILER_PORT,
+    secure: process.env.MAILER_SECURE == "true",
+    auth: {
+      user: email,
+      pass: password,
+    },
+  });
+  try {
+    await transporter.verify();
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}
+
 module.exports = {
   getPricePlan,
   getDateDelta,
@@ -120,4 +156,6 @@ module.exports = {
   getVerifyEmailTemplate,
   getAccountName,
   isModelOwner,
+  generateRandomPassword,
+  checkLikeBotEmail
 }
