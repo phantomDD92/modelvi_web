@@ -14,17 +14,12 @@ const handleLoadLikeBotsForAdmin = async (req, res) => {
   }
 }
 
-const handleCreateLikeBotForAdmin = async (req, res) => {
+const handleAppendLikeBotsForAdmin = async (req, res) => {
   try {
     const { platform } = req.params;
-    const { name, email, password } = req.body;
-    const dupBot = await LikeBotService2.findBotByPlatformAndEmail(platform, email);
-    if (dupBot)
-      throw new ApiError(`Like bot for ${email} already exists.`);
-    const checked = await checkLikeBotEmail(email, password);
-    if (!checked)
-      throw new ApiError(`Please check email and password.`);
-    await LikeBotService2.createBot({ platform, name, email, password });
+    const { users } = req.body;
+
+    await LikeBotService2.createBots(platform, users);
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -107,7 +102,7 @@ const LikeBotCtrl2 = {
   handleLoadLikeBotsForAdmin,
   handleDeleteLikeBotForAdmin,
   handleChangeLikeBotForAdmin,
-  handleCreateLikeBotForAdmin,
+  handleAppendLikeBotsForAdmin,
 
   handleLoadBotsForBot,
   handleCheckBotForBot,

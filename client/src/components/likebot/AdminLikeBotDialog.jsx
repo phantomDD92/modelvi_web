@@ -1,77 +1,56 @@
-import { Modal, Form, Row, Col } from "antd";
-import StyledInput from "../common/StyledInput";
+import { Modal, Form, Row, Col, Input } from "antd";
 
 const AdminLikeBotDialog = ({
   open,
   onCancel,
-  onCreate,
+  onAppend,
 }) => {
 
   const [form] = Form.useForm();
 
-  // useEffect(() => {
-  //   if (agency) {
-  //     form.setFieldsValue(agency)
-  //   } else {
-  //     form.resetFields();
-  //   }
-  // }, [agency]);
-
   const handleOkClick = () => {
     form.validateFields()
       .then(() => {
-        // if (agency) {
-        //   const params = form.getFieldsValue();
-        //   onUpdate && onUpdate(agency, params);
-        // } else {
-        const params = form.getFieldsValue();
-        onCreate && onCreate(params);
-        // }
+        const { usersText } = form.getFieldsValue();
+        const userInfos = usersText.split("\n").map(userText => userText.trim().split(","));
+        const users = userInfos
+          .filter(userInfo => userInfo.length == 4)
+          .map(userInfo => ({
+            firstName: userInfo[0].trim(),
+            lastName: userInfo[1].trim(),
+            gender: userInfo[2].trim(),
+            birthday: userInfo[3].trim(),
+          }));
+        onAppend && onAppend(users);
       })
       .catch(() => { });
   }
 
-  const layout = {
-    labelCol: { span: 10 },
-    wrapperCol: { span: 14 },
-  };
-
   return (
     <Modal
-      title={"Create Like Bot"}
+      title={"Append Like Bots"}
       open={open}
       width={500}
       onOk={handleOkClick}
       onCancel={onCancel}>
       <Form
-        {...layout}
+        // {...layout}
+        layout="vertical"
         form={form}
         name="bot"
       >
         <Row>
           <Col span={24}>
             <Form.Item
-              name="name"
-              label="Name"
+              name="usersText"
+              label="Users for like bot"
               rules={[{ required: true }]}>
-              <StyledInput />
+              <Input.TextArea
+                placeholder=""
+                autoSize={{ minRows: 20, maxRows: 30 }}
+                allowClear />
             </Form.Item>
           </Col>
-          <Col span={24}>
-            <Form.Item
-              name="email"
-              label="Email" >
-              <StyledInput />
-            </Form.Item>
-          </Col>
-          <Col span={24}>
-            <Form.Item
-              name="password"
-              label="Email Password" >
-              <StyledInput />
-            </Form.Item>
-          </Col>
-
         </Row>
       </Form>
     </Modal>

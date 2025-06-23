@@ -47,14 +47,14 @@ export const AdminLikeBotPage = () => {
     dispatch(changeLikeBotStatus(bot, status, () => loadBotsCallback(platform, search)))
   }
 
-  const handleCreateBot = (params) => {
-    dispatch(createLikeBot(platform, params, () => { setEditOpen(false); loadBotsCallback(platform, search) }));
+  const handleAppendBots = (users) => {
+    dispatch(createLikeBot(platform, users, () => { setEditOpen(false); loadBotsCallback(platform, search) }));
   }
 
   const handleDeleteBot = (bot) => {
     Modal.confirm({
       title: `Are you sure to delete the bot(${bot.email})?`,
-      onOk: () => { dispatch(deleteLikeBot(platform, bot, () => loadBotsCallback(platform, search))); },
+      onOk: () => { dispatch(deleteLikeBot(bot, () => loadBotsCallback(platform, search))); },
     });
   }
 
@@ -122,7 +122,7 @@ export const AdminLikeBotPage = () => {
       <AdminLikeBotDialog
         open={editOpen}
         onCancel={() => setEditOpen(false)}
-        onCreate={handleCreateBot}
+        onAppend={handleAppendBots}
       />
 
     </>

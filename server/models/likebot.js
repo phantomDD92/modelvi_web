@@ -8,8 +8,10 @@ const LikeBotSchema = new mongoose.Schema({
   password: { type: String, required: true },
   status: { type: Boolean, default: false },
 
-  name: { type: String, required: true },
-  emailPassword: { type: String, required: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  birthday: { type: Date, },
+  gender: { type: String },
   registered: { type: Boolean, default: false },
   updatedAt: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now },

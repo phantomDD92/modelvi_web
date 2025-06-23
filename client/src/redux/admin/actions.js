@@ -573,11 +573,11 @@ export const loadLikeBots = (platform, { search }, callback) => async (dispatch)
   })
 };
 
-export const createLikeBot = (platform, { name, email, password }, callback) => (dispatch) =>
+export const createLikeBot = (platform, users, callback) => (dispatch) =>
   ApiRequest.postAction(dispatch, {
     path: `/v2/admin/like/${platform}`,
-    data: { name, email, password },
-    inform: `Like bot is successfully created`,
+    data: { users },
+    inform: `Like bots are successfully appended`,
     callback
   })
 

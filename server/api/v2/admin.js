@@ -160,7 +160,7 @@ router
   .route("/like/:platform")
   .all(authenticate, checkManager)
   .get(LikeBotCtrl2.handleLoadLikeBotsForAdmin)
-  .post(LikeBotCtrl2.handleCreateLikeBotForAdmin)
+  .post(LikeBotCtrl2.handleAppendLikeBotsForAdmin)
 
 router
   .route("/like/:platform/:botId")

@@ -1,12 +1,30 @@
-const { v4: uuidv4 } = require('uuid')
+const moment = require("moment");
 const LikeBotModel = require("../../models/likebot");
-const { generateRandomPassword } = require("../../utils/helper");
+const { generateBotAlias, generateRandomPassword } = require("../../utils/helper");
 
 const findBotByPlatformAndEmail = (platform, email) =>
   LikeBotModel.findOne({ platform, email });
 
-const createBot = ({ platform, name, email, password }) =>
-  LikeBotModel.create({ platform, alias: uuidv4(), name, email, password: generateRandomPassword(), emailPassword: password })
+const createBots = (platform, users) => {
+  let bots = users.map(({ firstName, lastName, gender, birthday }) => {
+    const alias = generateBotAlias(firstName, lastName);
+    return ({
+      insertOne: {
+        document: {
+          platform,
+          firstName,
+          lastName,
+          gender,
+          birthday: moment(birthday).toDate(),
+          alias,
+          email: `${alias}@voure.nl`,
+          password: generateRandomPassword()
+        }
+      }
+    });
+  })
+  return LikeBotModel.bulkWrite(bots);
+}
 
 const findBotById = (botId) =>
   LikeBotModel.findById(botId);
@@ -35,7 +53,7 @@ const findBotByAlias = (alias) =>
 
 const LikeBotService2 = {
   findBotByPlatformAndEmail,
-  createBot,
+  createBots,
   findBotById,
   findBotByAlias,
   deleteBot,

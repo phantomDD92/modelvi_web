@@ -8,6 +8,7 @@ import {
   Space,
   Table,
   Switch,
+  Tag,
 } from "antd";
 import {
   DeleteOutlined,
@@ -19,6 +20,7 @@ import { Platform } from "@/utils/const"
 import { getPlatformName } from "@/utils/string";
 import { StyledSearch } from "../common";
 import { LuTrash } from "react-icons/lu";
+import moment from "moment";
 
 const AdminLikeBotTable = ({
   pagination,
@@ -45,23 +47,37 @@ const AdminLikeBotTable = ({
   const columns =
     [
       {
-        key: 'platform',
-        title: 'Platform',
-        width: 200,
-        dataIndex: 'platform',
-        render: value => getPlatformName(value)
-      },
-      {
         key: 'name',
         title: 'Name',
         width: 300,
         dataIndex: 'name',
+        render: (value, record) => `${record.firstName} ${record.lastName}`
+      },
+      {
+        key: 'gender',
+        title: 'Gender',
+        width: 100,
+        dataIndex: 'gender',
+      },
+      {
+        key: 'birthday',
+        title: 'Birthday',
+        width: 100,
+        dataIndex: 'birthday',
+        render: value => moment(value).format("YYYY-MM-DD")
       },
       {
         key: 'email',
         title: 'Email',
         width: 200,
         dataIndex: 'email',
+      },
+      {
+        key: 'registered',
+        title: 'Registration',
+        width: 100,
+        dataIndex: 'registered',
+        render: value => value ? <Tag color="success">Yes</Tag> : <Tag color="error">No</Tag>
       },
       {
         key: 'status',
