@@ -529,7 +529,7 @@ const handleCheckBalance = async (req, res) => {
         available = false;
         await AccountService2.disableAccount(account._id, "no balance");
         NotifyUtils.sendDebugMessage(getAccountName(account, agency), "Bot Closed With No Balance", `Monthly Revenue: ${account.revenue}\nPrice: ${price}\nBalance:$${agency.balance?.toFixed(2)}\n`)
-        NotifyUtils.sendMail(agency.email, `🚫 Bot Paused – Insufficient Funds in Your ModelVI Account`, getNoBalanceEmailTemplate(agency, account));
+        await NotifyUtils.sendMail(agency.email, `🚫 Bot Paused – Insufficient Funds in Your ModelVI Account`, getNoBalanceEmailTemplate(agency, account));
       }
     } else if (dateDelta == 7) {
       // send notification
