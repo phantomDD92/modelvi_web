@@ -1,6 +1,6 @@
+const moment = require('moment');
 const { default: mongoose } = require("mongoose");
 const AccountModel = require("../../models/account");
-const AgencyService2 = require("./agency");
 
 const updateRevenue = (accountId, revenue, fee) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { revenue, fee, "params.balanceNextTime": new Date(Date.now() + (3600 * 1000 * 24)) } })
