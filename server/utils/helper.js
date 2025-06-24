@@ -160,7 +160,7 @@ function generateBotAlias(firstName, lastName) {
 }
 
 
-function getNoBalanceEmailTemplate(agency, account) {
+function getNoBalanceEmailTemplate(agency, accounts) {
   return `<!DOCTYPE html>
   <head>
     <meta charset="UTF-8">
@@ -178,10 +178,6 @@ function getNoBalanceEmailTemplate(agency, account) {
         .header {
             text-align: center;
             margin-bottom: 30px;
-        }
-        .logo {
-            max-width: 150px;
-            margin-bottom: 20px;
         }
         .content {
             background-color: #f9f9f9;
@@ -211,39 +207,33 @@ function getNoBalanceEmailTemplate(agency, account) {
             margin-right: 10px;
             vertical-align: middle;
         }
-        .divider {
-            border-top: 1px solid #e5e7eb;
-            margin: 25px 0;
-        }
     </style>
   </head>
   <body>
     <div class="header">
-        <!-- Replace with your actual logo -->
-        <img src="https://modelvi.com/logo.png" alt="ModelVI Logo" class="logo">
+        <h2>Bot Paused – Insufficient Funds</h2>
     </div>
     
     <div class="content">
-        <h2><span class="alert-icon">⚠️</span> Bot Paused – Insufficient Funds</h2>
         
         <p>Hi ${agency.name},</p>
         
         <p>Your ModelVI bot has been paused due to insufficient funds on your account.</p>
         
         <p><strong>Affected accounts:</strong><br>
-        [${account.platform}] ${account.alias}
+        ${accounts.map(account => `[${account.platform}] ${account.actor?.number}. ${account.actor?.name} (${account.alias}) <br>`)}
         </p>
         
         <p>To keep your automation running smoothly and avoid service interruption, please top up your balance as soon as possible.</p>
         
-        <div style="text-align: center;">
+        <div>
             <a href="https://modelvi.com/billing/payments" class="button">👉 Top Up Now</a>
         </div>
         
         <div class="divider"></div>
         
         <p>Thank you for using ModelVI,</p>
-        <p><strong>— The ModelVI Team</strong></p>
+        <p><strong>ModelVI Team</strong></p>
     </div>
     
     <div class="footer">

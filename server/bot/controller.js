@@ -527,9 +527,10 @@ const handleCheckBalance = async (req, res) => {
         NotifyUtils.sendExpenseMessage(agency, account, `Monthly Revenue: ${account.revenue}\nPrice: ${price}\nBalance:$${balance.toFixed(2)} => $${(balance - price).toFixed(2)}\n`)
       } else {
         available = false;
+        const expiringAccounts = await AccountService2.getExpiringAccounts(agency._id);
         await AccountService2.disableAccount(account._id, "no balance");
         NotifyUtils.sendDebugMessage(getAccountName(account, agency), "Bot Closed With No Balance", `Monthly Revenue: ${account.revenue}\nPrice: ${price}\nBalance:$${agency.balance?.toFixed(2)}\n`)
-        await NotifyUtils.sendMail(agency.email, `🚫 Bot Paused – Insufficient Funds in Your ModelVI Account`, getNoBalanceEmailTemplate(agency, account));
+        await NotifyUtils.sendMail(agency.email, `🚫 Bot Paused – Insufficient Funds in Your ModelVI Account`, getNoBalanceEmailTemplate(agency, expiringAccounts));
       }
     } else if (dateDelta == 7) {
       // send notification

@@ -36,7 +36,6 @@ const sendContactMail = async (from, subject, content) => {
 }
 
 const sendMail = async (to, subject, content) => {
-  console.log(to, subject);
   let transporter = nodemailer.createTransport({
     host: process.env.MAILER_HOST,
     port: process.env.MAILER_PORT,

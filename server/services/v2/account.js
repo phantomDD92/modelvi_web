@@ -286,6 +286,12 @@ const getDisabledAccounts = (agencyId) =>
     .populate("owner", "name")
     .populate("actor", "number name");
 
+const getExpiringAccounts = (agencyId) =>
+  AccountModel.find(
+    { owner: agencyId, status: true, expiredAt: { $lte: moment().endOf('day') } },
+    'platform alias actor'
+  ).populate('actor', 'number name');
+
 const AccountService2 = {
   getAgencyAccounts,
   getAccountWithModel,
@@ -320,6 +326,7 @@ const AccountService2 = {
 
   getCountStats,
   getDisabledAccounts,
+  getExpiringAccounts,
 };
 
 module.exports = AccountService2;
