@@ -159,6 +159,101 @@ function generateBotAlias(firstName, lastName) {
   return firstName.toLowerCase() + "_" + lastName.toLowerCase() + "_" + fourDigitString;
 }
 
+
+function getNoBalanceEmailTemplate(agency, account) {
+  return `<!DOCTYPE html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your ModelVI Bot Has Been Paused</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 25px;
+            border-radius: 8px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #4F46E5;
+            color: white !important;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #777777;
+            text-align: center;
+        }
+        .alert-icon {
+            color: #DC2626;
+            font-size: 24px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .divider {
+            border-top: 1px solid #e5e7eb;
+            margin: 25px 0;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+        <!-- Replace with your actual logo -->
+        <img src="https://modelvi.com/logo.png" alt="ModelVI Logo" class="logo">
+    </div>
+    
+    <div class="content">
+        <h2><span class="alert-icon">⚠️</span> Bot Paused – Insufficient Funds</h2>
+        
+        <p>Hi ${agency.name},</p>
+        
+        <p>Your ModelVI bot has been paused due to insufficient funds on your account.</p>
+        
+        <p><strong>Affected accounts:</strong><br>
+        [${account.platform}] ${account.alias}
+        </p>
+        
+        <p>To keep your automation running smoothly and avoid service interruption, please top up your balance as soon as possible.</p>
+        
+        <div style="text-align: center;">
+            <a href="https://modelvi.com/billing/payments" class="button">👉 Top Up Now</a>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <p>Thank you for using ModelVI,</p>
+        <p><strong>— The ModelVI Team</strong></p>
+    </div>
+    
+    <div class="footer">
+        <p>© 2023 ModelVI. All rights reserved.</p>
+    </div>
+  </body>
+  </html>`
+}
+
+
 module.exports = {
   getPricePlan,
   getDateDelta,
@@ -166,6 +261,7 @@ module.exports = {
   generateReferralCode,
   getClientIp,
   getVerifyEmailTemplate,
+  getNoBalanceEmailTemplate,
   getAccountName,
   isModelOwner,
   generateRandomPassword,
