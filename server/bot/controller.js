@@ -277,6 +277,19 @@ const handleUpdateCommentSetting = async (req, res) => {
   }
 }
 
+const handleUpdateAccountId = async (req, res) => {
+  try {
+    const account = await AccountService.findById(req.bot.id);
+    if (!account)
+      throw new ApiError("unknown account")
+    const { alias, identifier } = req.body;
+    await AccountService2.updateIdentifier(req.bot.id, { alias, identifier });
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
 const handleUpdatePostSetting = async (req, res) => {
   try {
     const { next, postId, deleteIds } = req.body;
@@ -357,6 +370,9 @@ const handleUpdateAccount = async (req, res) => {
         break
       case "update_contents":
         handleUpdateContents(req, res);
+        break;
+      case "update_id":
+        handleUpdateAccountId(req, res);
         break;
       case "content_media":
       case "content_preview":

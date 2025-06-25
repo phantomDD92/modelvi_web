@@ -292,6 +292,9 @@ const getExpiringAccounts = (agencyId) =>
     'platform alias actor'
   ).populate('actor', 'number name');
 
+const updateIdentifier = (accountId, { alias, identifier }) =>
+  AccountModel.findByIdAndUpdate(accountId, { $set: { alias, identifier } });
+
 const AccountService2 = {
   getAgencyAccounts,
   getAccountWithModel,
@@ -327,6 +330,7 @@ const AccountService2 = {
   getCountStats,
   getDisabledAccounts,
   getExpiringAccounts,
+  updateIdentifier,
 };
 
 module.exports = AccountService2;

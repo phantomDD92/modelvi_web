@@ -8,6 +8,7 @@ const AccountSchema = new Schema({
   number: { type: Number, required: true },
   platform: { type: String, required: true },
   alias: { type: String, required: true },
+  identifier: { type: String },
   email: { type: String, required: true },
   password: { type: String, required: true },
   device: { type: String },
