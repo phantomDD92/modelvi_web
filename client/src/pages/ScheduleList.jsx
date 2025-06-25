@@ -193,6 +193,10 @@ export const ScheduleList = () => {
                 label: `${model.number}. ${model.name}`,
                 value: model._id
               }))}
+              showSearch
+              filterOption={(input, option) =>
+                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
             />
           </Form.Item>
           <Form.Item name="platform" label="Platform" rules={[{ required: true }]}>

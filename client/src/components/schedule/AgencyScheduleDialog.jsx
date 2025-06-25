@@ -147,6 +147,10 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
                         options={modelList
                             .map(model => ({ value: model._id, label: `[${model.number}] ${model.name}` }))
                         }
+                        showSearch
+                        filterOption={(input, option) =>
+                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                        }
                         value={model}
                         onChange={value => setModel(value)}
                     />

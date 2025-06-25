@@ -159,6 +159,10 @@ const AdminScheduleResultTable = ({
             options={[{ value: "", label: "All Agencies" }].concat(agencyList
               .map(agency => ({ value: agency._id, label: `${agency.name}` })))
             }
+            showSearch
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            }
           />
           <Select
             className="min-w-[250px]"
@@ -167,6 +171,10 @@ const AdminScheduleResultTable = ({
             options={[{ value: "", label: "All Models" }].concat(modelList
               .filter(model => agency == "" || model.owner == agency)
               .map(model => ({ value: model._id, label: `[${model.number}] ${model.name}` })))
+            }
+            showSearch
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
             }
           />
           <Select

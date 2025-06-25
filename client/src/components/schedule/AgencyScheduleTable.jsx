@@ -114,7 +114,7 @@ const AgencyScheduleTable = ({
       title: 'Status',
       width: 300,
       dataIndex: 'results',
-      render: value => value.map(result => result.account?.platform ? `${result.account?.platform} : ${getScheduleStatusName(result.status)}`: '').join(" ")
+      render: value => value.map(result => result.account?.platform ? `${result.account?.platform} : ${getScheduleStatusName(result.status)}` : '').join(" ")
     },
     {
       key: 'action',
@@ -140,11 +140,15 @@ const AgencyScheduleTable = ({
             Scheduled Posts
           </span>
           <Select
-          className="min-w-[250px]"
+            className="min-w-[250px]"
             value={model}
             onChange={value => onModelChange && onModelChange(value)}
             options={[{ value: "", label: "All Models" }].concat(modelList
               .map(model => ({ value: model._id, label: `[${model.number}] ${model.name}` })))
+            }
+            showSearch
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
             }
           />
         </Flex>}

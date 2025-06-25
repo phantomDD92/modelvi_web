@@ -16,6 +16,10 @@ const AgencySelect = ({ dataSource, all, ...props }) => {
     <Select
       className="min-w-[200px]"
       options={getOptions(all, dataSource)}
+      showSearch
+      filterOption={(input, option) =>
+        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+      }
       {...props}
     />
   )

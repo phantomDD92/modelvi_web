@@ -50,6 +50,10 @@ const AgencyAccountDialog = ({ open, platform, models, chatTeams, account, onCan
                             label: `${model.number}. ${model.name}`,
                             value: model._id
                         })) : []}
+                        showSearch
+                        filterOption={(input, option) =>
+                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                        }
                         disabled={account}
                     />
                 </Form.Item>

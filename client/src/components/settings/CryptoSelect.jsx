@@ -21,6 +21,7 @@ const CryptoSelect = (params) => {
       {...params}
       className="min-h-[60px]"
       options={getOptions()}
+      
     />
   )
 }

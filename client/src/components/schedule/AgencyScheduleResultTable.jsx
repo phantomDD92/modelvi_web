@@ -155,6 +155,10 @@ const AgencyScheduleResultTable = ({
             options={[{ value: "", label: "All Models" }].concat(modelList
               .map(model => ({ value: model._id, label: `[${model.number}] ${model.name}` })))
             }
+            showSearch
+                        filterOption={(input, option) =>
+                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                        }
           />
           <Select
             className="min-w-[150px]"

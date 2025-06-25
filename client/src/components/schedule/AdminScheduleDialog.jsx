@@ -151,6 +151,10 @@ const AdminScheduleDialog = ({ open, data, agencyList, modelList, onCancel, onUp
                             .map(agency => ({ value: agency._id, label: `${agency.name}` }))
                         }
                         value={agency}
+                        showSearch
+                        filterOption={(input, option) =>
+                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                        }
                         onChange={value => setAgency(value)}
                     />
                 </Form.Item>
@@ -163,6 +167,10 @@ const AdminScheduleDialog = ({ open, data, agencyList, modelList, onCancel, onUp
                         options={modelList
                             .filter(model => model.owner == agency)
                             .map(model => ({ value: model._id, label: `[${model.number}] ${model.name}` }))
+                        }
+                        showSearch
+                        filterOption={(input, option) =>
+                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                         }
                         value={model}
                         onChange={value => setModel(value)}
