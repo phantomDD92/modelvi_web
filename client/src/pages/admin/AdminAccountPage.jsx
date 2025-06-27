@@ -116,7 +116,7 @@ export const AdminAccountPage = () => {
   const handleChangePagination = (pageValue, pageSizeValue) => {
     navigate({
       pathname: location.pathname,
-      search: createSearchParams({ page: pageValue, size: pageSizeValue }).toString()
+      search: createSearchParams({ search, agency, page: pageValue, size: pageSizeValue }).toString()
     }, { replace: true });
   }
 
