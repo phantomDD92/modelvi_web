@@ -282,6 +282,17 @@ const handleLoadAccountList = async (req, res) => {
     sendError(res, error)
   }
 }
+
+const handleLoadAccountsForBot = async (req, res) => {
+  try {
+    const { platform } = req.params;
+    const accounts = await AccountService2.getAccountsForPlatform(platform);
+    sendResult(res, { accounts })
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
 const AccountCtrl2 = {
   handleLoadAccountsForAdmin,
   handleCreateAccountForAdmin,
@@ -297,7 +308,9 @@ const AccountCtrl2 = {
   handleUpdateAccountForAgency,
   handleDeleteAccountForAgency,
 
-  handleLoadAccountList
+  handleLoadAccountList,
+
+  handleLoadAccountsForBot
 }
 
 module.exports = AccountCtrl2;

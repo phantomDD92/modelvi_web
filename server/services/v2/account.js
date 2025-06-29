@@ -295,6 +295,9 @@ const getExpiringAccounts = (agencyId) =>
 const updateIdentifier = (accountId, { alias, identifier }) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { alias, identifier } });
 
+const getAccountsForPlatform = (platform) =>
+  AccountModel.find({ platform }, "alias");
+
 const AccountService2 = {
   getAgencyAccounts,
   getAccountWithModel,
@@ -331,6 +334,7 @@ const AccountService2 = {
   getDisabledAccounts,
   getExpiringAccounts,
   updateIdentifier,
+  getAccountsForPlatform,
 };
 
 module.exports = AccountService2;
