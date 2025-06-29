@@ -296,7 +296,7 @@ const updateIdentifier = (accountId, { alias, identifier }) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { alias, identifier } });
 
 const getAccountsForPlatform = (platform) =>
-  AccountModel.find({ platform }, "alias");
+  AccountModel.find({ platform, status: true }, "alias");
 
 const AccountService2 = {
   getAgencyAccounts,
