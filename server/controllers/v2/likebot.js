@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 const LikeBotService2 = require("../../services/v2/liketbot");
 const { checkLikeBotEmail } = require("../../utils/helper");
-const { sendError, sendResult, ApiError } = require("../../utils/resp")
+const { sendError, sendResult, ApiError } = require("../../utils/resp");
+const AccountService2 = require("../../services/v2/account");
 
 const handleLoadLikeBotsForAdmin = async (req, res) => {
   try {
@@ -109,11 +110,22 @@ const handleUpdateBotForBot = async (req, res) => {
     sendError(res, error)
   }
 }
+
 const handleLoadBotsForBot = async (req, res) => {
   try {
     const { platform } = req.params;
     const accounts = await LikeBotService2.loadBots(platform);
     sendResult(res, { accounts: accounts.map(account => account.alias) })
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
+const handleLoadTeamsForBot = async (req, res) => {
+  try {
+    const { platform } = req.params;
+    const teams = await AccountService2.getIdentifiers(platform);
+    sendResult(res, { teams })
   } catch (error) {
     sendError(res, error)
   }
@@ -130,6 +142,7 @@ const LikeBotCtrl2 = {
   handleCheckBotForBot,
   handleGetBotForBot,
   handleUpdateBotForBot,
+  handleLoadTeamsForBot
 }
 
 module.exports = LikeBotCtrl2
