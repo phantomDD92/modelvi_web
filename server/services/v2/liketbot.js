@@ -51,6 +51,12 @@ const loadBots = (platform, { search }) => {
 const findBotByAlias = (alias) =>
   LikeBotModel.findOne({ alias });
 
+const setAccountRegistered = (botId) =>
+  LikeBotModel.findByIdAndUpdate(botId, { $set: { registered: true } });
+
+const setAccountVerified = (botId) =>
+  LikeBotModel.findByIdAndUpdate(botId, { $set: { verified: true } });
+
 const LikeBotService2 = {
   findBotByPlatformAndEmail,
   createBots,
@@ -58,6 +64,8 @@ const LikeBotService2 = {
   findBotByAlias,
   deleteBot,
   loadBots,
+  setAccountRegistered,
+  setAccountVerified,
 }
 
 module.exports = LikeBotService2;

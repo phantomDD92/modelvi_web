@@ -87,6 +87,28 @@ const handleGetBotForBot = async (req, res) => {
   }
 }
 
+const handleUpdateBotForBot = async (req, res) => {
+  try {
+    const { action, ...params } = req.body;
+    const bot = await LikeBotService2.findBotById(req.bot.id);
+    if (!bot)
+      throw new ApiError(`Like bot does not exist`);
+    switch (action) {
+      case "register":
+        await LikeBotService2.setAccountRegistered(req.bot.id);
+        break;
+      case "verify":
+        await LikeBotService2.setAccountVerified(req.bot.id);
+        break;
+      default:
+        throw new ApiError("Unsupported bot operation");
+    }
+    sendResult(res)
+  } catch (error) {
+    console.error(error)
+    sendError(res, error)
+  }
+}
 const handleLoadBotsForBot = async (req, res) => {
   try {
     const { platform } = req.params;
@@ -107,6 +129,7 @@ const LikeBotCtrl2 = {
   handleLoadBotsForBot,
   handleCheckBotForBot,
   handleGetBotForBot,
+  handleUpdateBotForBot,
 }
 
 module.exports = LikeBotCtrl2

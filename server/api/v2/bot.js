@@ -18,6 +18,7 @@ router.route("/like/platform/:platform")
 router.route("/like/account")
   .all(checkLikeBot)
   .get(LikeBotCtrl2.handleGetBotForBot)
+  .put(LikeBotCtrl2.handleUpdateBotForBot)
 
 
 module.exports = router;

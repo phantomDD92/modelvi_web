@@ -13,6 +13,7 @@ const LikeBotSchema = new mongoose.Schema({
   birthday: { type: Date, },
   gender: { type: String },
   registered: { type: Boolean, default: false },
+  verified: { type: Boolean, default: false },
   updatedAt: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now },
 });
