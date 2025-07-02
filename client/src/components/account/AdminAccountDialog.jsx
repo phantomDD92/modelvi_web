@@ -96,10 +96,10 @@ const AdminAccountDialog = ({ open, platform, agencies, models, chatTeams, accou
                             value: team._id
                         }))} />
                 </Form.Item>
-                {((platform == Platform.FAN) || (platform == Platform.KNKY)) &&
+                {((platform == Platform.FAN) || (platform == Platform.FNC) || (platform == Platform.KNKY)) &&
                     <Form.Item
                         name="device"
-                        label={(platform == Platform.FAN) ? "Security Key" : "Magic Link"} >
+                        label={(platform == Platform.KNKY) ? "Magic Link" : "Security Key" } >
                         <StyledInput />
                     </Form.Item>
                 }

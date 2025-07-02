@@ -147,9 +147,9 @@ const handleCreateHistoryForBot = async (req, res) => {
 
 const handleSetErrorForBot = async (req, res) => {
   try {
-    const { action } = req.body;
+    const { action, disabled } = req.body;
     await LikeBotService2.createHistory(req.bot.id, action);
-    await LikeBotService2.setLastError(req.bot.id, action);
+    await LikeBotService2.setLastError(req.bot.id, action, disabled);
     sendResult(res);
   } catch (error) {
     sendError(res, error);

@@ -299,7 +299,7 @@ const getAccountsForPlatform = (platform) =>
   AccountModel.find({ platform, status: true }, "alias");
 
 const getIdentifiers = (platform) =>
-  AccountModel.find({platform, status: true}, "alias identifier")
+  AccountModel.find({ platform, status: true }, "alias identifier")
 
 const AccountService2 = {
   getAgencyAccounts,
