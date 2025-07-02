@@ -202,10 +202,10 @@ const AdminAccountTable = ({
                         <Radio.Button value={Platform.FAN}>Fansly</Radio.Button>
                         <Radio.Button value={Platform.KNKY}>Knky</Radio.Button>
                         <Radio.Button value={Platform.MALOUM}>Maloum</Radio.Button>
-                        <Radio.Button value={Platform.ONLYFANS}>OnlyFans</Radio.Button>
                         <Radio.Button value={Platform.FANVUE}>Fanvue</Radio.Button>
                         <Radio.Button value={Platform.MYMFANS}>MymFans</Radio.Button>
                         <Radio.Button value={Platform.FOURBASED}>4Based</Radio.Button>
+                        <Radio.Button value={Platform.ONLYFANS}>OnlyFans</Radio.Button>
                     </Radio.Group>
                 </Flex>
             }
