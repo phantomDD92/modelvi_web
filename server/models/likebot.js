@@ -6,7 +6,9 @@ const LikeBotSchema = new mongoose.Schema({
   alias: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
+  device: { type: String },
   status: { type: Boolean, default: false },
+  lastError: { type: String, default: '' },
 
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },

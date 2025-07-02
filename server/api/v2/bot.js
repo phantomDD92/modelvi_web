@@ -24,5 +24,8 @@ router.route("/like/account")
   .get(LikeBotCtrl2.handleGetBotForBot)
   .put(LikeBotCtrl2.handleUpdateBotForBot)
 
+router.route("/like/history")
+  .post(LikeBotCtrl2.handleCreateHistoryForBot)
+  .put(LikeBotCtrl2.handleSetErrorForBot)
 
 module.exports = router;

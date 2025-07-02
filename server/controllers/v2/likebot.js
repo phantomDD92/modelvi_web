@@ -101,6 +101,10 @@ const handleUpdateBotForBot = async (req, res) => {
       case "verify":
         await LikeBotService2.setAccountVerified(req.bot.id);
         break;
+      case "device":
+        const { device } = params;
+        await LikeBotService2.setBotDevice(req.bot.id, device);
+        break;
       default:
         throw new ApiError("Unsupported bot operation");
     }
@@ -131,6 +135,26 @@ const handleLoadTeamsForBot = async (req, res) => {
   }
 }
 
+const handleCreateHistoryForBot = async (req, res) => {
+  try {
+    const { action } = req.body;
+    await LikeBotService2.createHistory(req.bot.id, action);
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
+const handleSetErrorForBot = async (req, res) => {
+  try {
+    const { action } = req.body;
+    await LikeBotService2.createHistory(req.bot.id, action);
+    await LikeBotService2.setLastError(req.bot.id, action);
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error);
+  }
+}
 
 const LikeBotCtrl2 = {
   handleLoadLikeBotsForAdmin,
@@ -142,7 +166,9 @@ const LikeBotCtrl2 = {
   handleCheckBotForBot,
   handleGetBotForBot,
   handleUpdateBotForBot,
-  handleLoadTeamsForBot
+  handleLoadTeamsForBot,
+  handleCreateHistoryForBot,
+  handleSetErrorForBot,
 }
 
 module.exports = LikeBotCtrl2

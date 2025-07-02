@@ -1,6 +1,7 @@
 const moment = require("moment");
 const LikeBotModel = require("../../models/likebot");
 const { generateBotAlias, generateRandomPassword } = require("../../utils/helper");
+const LikeHistoryModel = require("../../models/likehistory");
 
 const findBotByPlatformAndEmail = (platform, email) =>
   LikeBotModel.findOne({ platform, email });
@@ -57,6 +58,28 @@ const setAccountRegistered = (botId) =>
 const setAccountVerified = (botId) =>
   LikeBotModel.findByIdAndUpdate(botId, { $set: { verified: true } });
 
+const setLastError = (botId, lastError = "") =>
+  LikeBotModel.findByIdAndUpdate(botId, { $set: { lastError } });
+
+const setBotDevice = (botId, device) =>
+  LikeBotModel.findByIdAndUpdate(botId, { $set: { device } });
+
+const createHistory = (botId, action) =>
+  LikeHistoryModel.create({ bot: botId, action });
+
+const loadHistories = (botId, { page, pageSize }) =>
+  Promise.all([
+    LikeHistoryModel
+      .find({ bot: botId })
+      .sort("-createdAt")
+      .skip((parseInt(page) - 1) * parseInt(pageSize))
+      .limit(parseInt(pageSize)),
+    LikeHistoryModel.countDocuments({ bot: botId })
+  ])
+
+const clearHistory = (botId) =>
+  LikeHistoryModel.deleteMany({ bot: botId })
+
 const LikeBotService2 = {
   findBotByPlatformAndEmail,
   createBots,
@@ -66,6 +89,11 @@ const LikeBotService2 = {
   loadBots,
   setAccountRegistered,
   setAccountVerified,
+  setLastError,
+  setBotDevice,
+  loadHistories,
+  createHistory,
+  clearHistory,
 }
 
 module.exports = LikeBotService2;
