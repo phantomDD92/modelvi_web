@@ -33,6 +33,7 @@ export const Platform = {
     MYCLUB: "MYCLUB",
     MANYVIDS: "MANYVIDS",
     FANVUE: "FANVUE",
+    FANLIKE: "FANLIKE"
 }
 
 export const AgencyRole = {

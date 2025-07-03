@@ -1,5 +1,5 @@
 import moment from "moment";
-import { Platform, ScheduleStatus } from "./const";
+import { Platform } from "./const";
 import { cryptoCurrencies } from "@/data/crypto";
 
 export const getPlatformName = (platform) => {
@@ -9,6 +9,7 @@ export const getPlatformName = (platform) => {
     case Platform.FNC:
       return "Fancentro";
     case Platform.FAN:
+    case Platform.FANLIKE:
       return "Fansly";
     case Platform.FANVUE:
       return "Fanvue";

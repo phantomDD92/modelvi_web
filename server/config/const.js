@@ -22,6 +22,8 @@ const Platform = {
     MYCLUB: "MYCLUB",
     MANYVIDS: "MANYVIDS",
     FANVUE: "FANVUE",
+
+    FANLIKE: "FANLIKE",
 }
 
 const PostType = {
