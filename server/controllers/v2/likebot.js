@@ -3,6 +3,7 @@ const LikeBotService2 = require("../../services/v2/liketbot");
 const { checkLikeBotEmail } = require("../../utils/helper");
 const { sendError, sendResult, ApiError } = require("../../utils/resp");
 const AccountService2 = require("../../services/v2/account");
+const ProxyNewService2 = require("../../services/v2/proxyNew");
 
 const handleLoadLikeBotsForAdmin = async (req, res) => {
   try {
@@ -19,8 +20,8 @@ const handleAppendLikeBotsForAdmin = async (req, res) => {
   try {
     const { platform } = req.params;
     const { users } = req.body;
-
-    await LikeBotService2.createBots(platform, users);
+    const proxies = await ProxyNewService2.loadProxies();
+    await LikeBotService2.createBots(platform, users, proxies.map(proxy => proxy.url));
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -35,6 +36,10 @@ const handleChangeLikeBotForAdmin = async (req, res) => {
       throw new ApiError("Like bot does not exist.");
     const { action, ...params } = req.body;
     switch (action) {
+      case "status":
+        const { status } = params;
+        await LikeBotService2.changeStatus(botId, status);
+        break;
       default:
         throw new ApiError("Invalid like bot operation");
     }
@@ -100,6 +105,10 @@ const handleUpdateBotForBot = async (req, res) => {
         break;
       case "verify":
         await LikeBotService2.setAccountVerified(req.bot.id);
+        break;
+      case "proxy":
+        const proxy = await ProxyNewService2.pickupProxy();
+        await LikeBotService2.setBotProxy(req.bot.id, proxy);
         break;
       case "device":
         const { device } = params;

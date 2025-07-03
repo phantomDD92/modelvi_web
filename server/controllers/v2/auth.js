@@ -61,13 +61,13 @@ const handleLoginAgency = async (req, res) => {
       throw new ApiError(`Agency(${email}) is not registerd`);
     if (!agency.status)
       throw new ApiError(`Agency(${email}) is disabled`);
-    if (!agency.verified) {
-      const verifyToken = jwt.sign({ id: agency._id }, process.env.SECRET_KEY || "SECRET_KEY_MODELVI", { expiresIn: "600s" });
-      const emailContent = getVerifyEmailTemplate(`/verify?token=${verifyToken}`)
-      await sendMail(email, 'ModelVI Email Verification', emailContent);
-      sendResult(res, { needVerify: true });
-      return
-    }
+    // if (!agency.verified) {
+    //   const verifyToken = jwt.sign({ id: agency._id }, process.env.SECRET_KEY || "SECRET_KEY_MODELVI", { expiresIn: "600s" });
+    //   const emailContent = getVerifyEmailTemplate(`/verify?token=${verifyToken}`)
+    //   await sendMail(email, 'ModelVI Email Verification', emailContent);
+    //   sendResult(res, { needVerify: true });
+    //   return
+    // }
     const passwordCompare = await bcryptjs.compare(password, agency.password);
     if (!passwordCompare)
       throw new ApiError("Password is incorrect");

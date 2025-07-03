@@ -6,9 +6,11 @@ const LikeHistoryModel = require("../../models/likehistory");
 const findBotByPlatformAndEmail = (platform, email) =>
   LikeBotModel.findOne({ platform, email });
 
-const createBots = (platform, users) => {
+const createBots = (platform, users, proxies) => {
   let bots = users.map(({ firstName, lastName, gender, birthday }) => {
     const alias = generateBotAlias(firstName, lastName);
+    const proxyIndex = Math.round(Math.random() * (proxies.length - 1))
+    console.log(proxyIndex)
     return ({
       insertOne: {
         document: {
@@ -19,6 +21,7 @@ const createBots = (platform, users) => {
           birthday: moment(birthday).toDate(),
           alias,
           email: `${alias}@voure.nl`,
+          proxy: proxies[proxyIndex],
           password: generateRandomPassword()
         }
       }
@@ -26,6 +29,9 @@ const createBots = (platform, users) => {
   })
   return LikeBotModel.bulkWrite(bots);
 }
+
+const changeStatus = (botId, status) =>
+  LikeBotModel.findByIdAndUpdate(botId, { $set: { status } });
 
 const findBotById = (botId) =>
   LikeBotModel.findById(botId);
@@ -80,17 +86,22 @@ const loadHistories = (botId, { page, pageSize }) =>
 const clearHistory = (botId) =>
   LikeHistoryModel.deleteMany({ bot: botId })
 
+const setBotProxy = (botId, proxy) =>
+  LikeBotModel.findByIdAndUpdate(botId, { $set: { proxy } });
+
 const LikeBotService2 = {
   findBotByPlatformAndEmail,
   createBots,
   findBotById,
   findBotByAlias,
   deleteBot,
+  changeStatus,
   loadBots,
   setAccountRegistered,
   setAccountVerified,
   setLastError,
   setBotDevice,
+  setBotProxy,
   loadHistories,
   createHistory,
   clearHistory,

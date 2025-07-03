@@ -85,6 +85,11 @@ const adminReducer = (state = initialState, action) => {
         accountStats: action.payload.accountStats || [],
         modelStats: action.payload.modelStats || [],
       };
+    case ACTIONS.LOAD_PROXIES_NEW:
+      return {
+        ...state,
+        proxies: action.payload.proxies || [],
+      };
     case ACTIONS.LOAD_AGENCY_PROXIES:
       return {
         ...state,

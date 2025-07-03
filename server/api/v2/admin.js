@@ -13,6 +13,7 @@ const TransactionCtrl = require("../../controllers/v2/transaction");
 const ScheduleCtrl2 = require("../../controllers/v2/schedule");
 const DashboardCtrl2 = require("../../controllers/v2/dashboard");
 const LikeBotCtrl2 = require("../../controllers/v2/likebot");
+const ProxyNewCtrl2 = require("../../controllers/v2/proxyNew");
 
 const router = express.Router();
 
@@ -167,5 +168,17 @@ router
   .all(authenticate, checkManager)
   .put(LikeBotCtrl2.handleChangeLikeBotForAdmin)
   .delete(LikeBotCtrl2.handleDeleteLikeBotForAdmin)
+
+router.route("/proxy_new")
+  .all(authenticate, checkManager)
+  .get(ProxyNewCtrl2.handleLoadProxiesForAdmin)
+  .post(ProxyNewCtrl2.handleAppendProxiesForAdmin)
+  .delete(ProxyNewCtrl2.handleClearProxiesForAdmin)
+
+router.route("/proxy_new/:proxyId")
+  .all(authenticate, checkManager)
+  .put(ProxyNewCtrl2.handleUpdateProxyForAdmin)
+  .delete(ProxyNewCtrl2.handleDeleteProxyForAdmin)
+
 
 module.exports = router;

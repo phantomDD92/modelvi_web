@@ -10,6 +10,48 @@ export const loadAffiliatesForAdmin = (time = "day", callback) => async (dispatc
   })
 }
 
+export const loadProxiesNewForAdmin = (callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/admin/proxy_new`,
+    action: ACTIONS.LOAD_PROXIES_NEW,
+    callback
+  })
+};
+
+export const clearProxiesNewForAdmin = (callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/admin/proxy_new`,
+    inform: `all proxies are successfully deleted.`,
+    callback
+  })
+};
+
+export const changeProxyStatusNewForAdmin = (proxy, status, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/proxy_new/${proxy._id}`,
+    data: { action: "status", status },
+    inform: `Proxy(${proxy.url}) is successfully ${status ? "enabled" : "disabled"}`,
+    callback
+  })
+};
+
+export const appendProxiesNewForAdmin = (proxies, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/v2/admin/proxy_new`,
+    data: { proxies },
+    info: `${proxies.length} proxies are successfully appended`,
+    callback
+  })
+};
+
+export const deleteProxyNewForAdmin = (proxy, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/admin/proxy_new/${proxy._id}`,
+    info: `proxy(${proxy.url}) is successfully removed`,
+    callback
+  })
+};
+
 // proxy related actions
 export const loadProxiesForAdmin = (callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
@@ -18,6 +60,8 @@ export const loadProxiesForAdmin = (callback) => async (dispatch) => {
     callback
   })
 };
+
+
 
 export const clearAllProxiesForAdmin = (callback) => async (dispatch) => {
   await ApiRequest.deleteAction(dispatch, {
@@ -589,8 +633,8 @@ export const deleteLikeBot = (bot, callback) => (dispatch) =>
   })
 
 export const changeLikeBotStatus = (bot, status, callback) => (dispatch) =>
-  ApiRequest.deleteAction(dispatch, {
-    path: `/v2/admin/like/${bot.platform}/${bot._d}`,
+  ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/like/${bot.platform}/${bot._id}`,
     data: { action: "status", status },
     inform: `Like bot is successfully ${status ? "started" : "stopped"}`,
     callback

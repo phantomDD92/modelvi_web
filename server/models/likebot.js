@@ -7,6 +7,7 @@ const LikeBotSchema = new mongoose.Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
   device: { type: String },
+  proxy: { type: String },
   status: { type: Boolean, default: false },
   lastError: { type: String, default: '' },
 
@@ -16,8 +17,8 @@ const LikeBotSchema = new mongoose.Schema({
   gender: { type: String },
   registered: { type: Boolean, default: false },
   verified: { type: Boolean, default: false },
-  updatedAt: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 const LikeBotModel = mongoose.model("LikeBot", LikeBotSchema);

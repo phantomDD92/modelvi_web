@@ -51,7 +51,12 @@ const AdminLikeBotTable = ({
         title: 'Name',
         width: 300,
         dataIndex: 'name',
-        render: (value, record) => `${record.firstName} ${record.lastName}`
+        render: (value, record) =>
+          <Space direction="vertical" size={1}>
+            <h5>{`${record.firstName} ${record.lastName}`}</h5>
+            <span>{`${record.email}`}</span>
+          </Space>
+
       },
       {
         key: 'gender',
@@ -62,22 +67,33 @@ const AdminLikeBotTable = ({
       {
         key: 'birthday',
         title: 'Birthday',
-        width: 100,
+        width: 150,
         dataIndex: 'birthday',
         render: value => moment(value).format("YYYY-MM-DD")
       },
       {
-        key: 'email',
-        title: 'Email',
+        key: 'proxy',
+        title: 'Proxy',
         width: 200,
-        dataIndex: 'email',
+        dataIndex: 'proxy',
+        render: value => (value || "").split("@")[1] || ""
       },
       {
-        key: 'registered',
-        title: 'Registration',
-        width: 100,
-        dataIndex: 'registered',
-        render: value => value ? <Tag color="success">Yes</Tag> : <Tag color="error">No</Tag>
+        key: 'account',
+        title: 'Account',
+        dataIndex: 'updatedAt',
+        width: 200,
+        render: (value, record) =>
+          <Space direction="horizontal">
+            {record.registered ? <Tag color="success">registered</Tag> : ""}
+            {record.verified && <Tag color="success">verified</Tag>}
+          </Space>
+
+      },
+      {
+        key: 'lastError',
+        title: 'Last Error',
+        dataIndex: 'lastError',
       },
       {
         key: 'status',
