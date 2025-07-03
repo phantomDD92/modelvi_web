@@ -148,7 +148,7 @@ const AdminLikeBotTable = ({
             Like Bot List
           </span>
           <Radio.Group onChange={(e) => onPlatform && onPlatform(e.target.value)} value={platform}>
-            <Radio.Button value={Platform.FAN}>Fansly</Radio.Button>
+            {[Platform.FANLIKE].map(platform => <Radio.Button value={platform}>{getPlatformName(platform)}</Radio.Button>)}
           </Radio.Group>
         </Flex>
       }
