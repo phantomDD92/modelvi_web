@@ -138,7 +138,7 @@ const handleLoadBotsForBot = async (req, res) => {
   try {
     const { platform } = req.params;
     const accounts = await LikeBotService2.loadBots(platform);
-    sendResult(res, { accounts: accounts.map(account => account.alias) })
+    sendResult(res, { accounts: accounts.map(account => ({ _id: account._id, alias: account.alias })) })
   } catch (error) {
     sendError(res, error)
   }
