@@ -137,8 +137,8 @@ const handleUpdateBotForBot = async (req, res) => {
 const handleLoadBotsForBot = async (req, res) => {
   try {
     const { platform } = req.params;
-    const accounts = await LikeBotService2.loadBots(platform);
-    sendResult(res, { accounts: accounts.map(account => ({ _id: account._id, alias: account.alias })) })
+    const accounts = await LikeBotService2.getLivingBots(platform);
+    sendResult(res, { accounts: accounts })
   } catch (error) {
     sendError(res, error)
   }

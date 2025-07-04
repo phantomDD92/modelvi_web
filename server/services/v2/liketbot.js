@@ -92,6 +92,9 @@ const setBotProxy = (botId, proxy) =>
 const updateParams = (botId, params) =>
   LikeBotModel.findByIdAndUpdate(botId, { $set: params });
 
+const getLivingBots = (platform) =>
+  LikeBotModel.find({ platform, status: true }, "alias");
+
 const LikeBotService2 = {
   findBotByPlatformAndEmail,
   createBots,
@@ -109,6 +112,7 @@ const LikeBotService2 = {
   createHistory,
   clearHistory,
   updateParams,
+  getLivingBots,
 }
 
 module.exports = LikeBotService2;
