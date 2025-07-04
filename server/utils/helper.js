@@ -156,7 +156,8 @@ function generateFourDigitString() {
 function generateBotAlias(firstName, lastName) {
   const randomNumber = Math.floor(Math.random() * 10000); // 0 - 9999
   const fourDigitString = String(randomNumber).padStart(4, '0');
-  return firstName.toLowerCase() + "_" + lastName.toLowerCase() + "_" + fourDigitString;
+  const fullAlias = firstName.toLowerCase() + "_" + lastName.toLowerCase() + "_" + fourDigitString;
+  return fullAlias.slice(0, 20);
 }
 
 
