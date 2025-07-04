@@ -10,7 +10,8 @@ const LikeBotSchema = new mongoose.Schema({
   proxy: { type: String },
   status: { type: Boolean, default: false },
   lastError: { type: String, default: '' },
-
+  params: {},
+  
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   birthday: { type: Date, },

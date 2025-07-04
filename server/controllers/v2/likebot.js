@@ -114,6 +114,16 @@ const handleUpdateBotForBot = async (req, res) => {
         const { device } = params;
         await LikeBotService2.setBotDevice(req.bot.id, device);
         break;
+      case "like":
+        await LikeBotService2.updateParams(req.bot.id, {
+          "params.likeNextTime": moment().add(bot.params?.likeInterval || 20, "minute").toDate()
+        });
+        break;
+      case "follow":
+        await LikeBotService2.updateParams(req.bot.id, {
+          "params.followNextTime": moment().add(bot.params?.followInterval || 12, "hour").toDate()
+        });
+        break;
       default:
         throw new ApiError("Unsupported bot operation");
     }
