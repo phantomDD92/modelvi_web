@@ -90,7 +90,7 @@ const setBotProxy = (botId, proxy) =>
   LikeBotModel.findByIdAndUpdate(botId, { $set: { proxy } });
 
 const updateParams = (botId, params) =>
-  LikeBotModel.findByIdAndUpdate(accountId, { $set: params });
+  LikeBotModel.findByIdAndUpdate(botId, { $set: params });
 
 const LikeBotService2 = {
   findBotByPlatformAndEmail,
