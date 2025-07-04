@@ -25,6 +25,7 @@ router.route("/like/account")
   .put(LikeBotCtrl2.handleUpdateBotForBot)
 
 router.route("/like/history")
+  .all(checkLikeBot)
   .post(LikeBotCtrl2.handleCreateHistoryForBot)
   .put(LikeBotCtrl2.handleSetErrorForBot)
 
