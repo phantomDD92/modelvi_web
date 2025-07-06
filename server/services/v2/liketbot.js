@@ -31,7 +31,7 @@ const createBots = (platform, users, proxies) => {
 }
 
 const changeStatus = (botId, status) =>
-  LikeBotModel.findByIdAndUpdate(botId, { $set: { status } });
+  LikeBotModel.findByIdAndUpdate(botId, { $set: { status, "params.nextFollowTime": new Date() } });
 
 const findBotById = (botId) =>
   LikeBotModel.findById(botId);
@@ -95,6 +95,19 @@ const updateParams = (botId, params) =>
 const getLivingBots = (platform) =>
   LikeBotModel.find({ platform, status: true }, "alias");
 
+const updateLikeParams = (botId, likeNextTime, likeCount) =>
+  LikeBotModel.findByIdAndUpdate(botId, { $set: { "params.likeNextTime": likeNextTime }, $inc: { likes: likeCount } });
+
+const updateFollowParams = (botId, followNextTime, followCount) =>
+  LikeBotModel.findByIdAndUpdate(botId, { $set: { "params.followNextTime": followNextTime }, $inc: { followings: followCount } });
+
+const updateBotSettings = (platform, {followInterval, likeInterval, likeLimit}) => 
+  LikeBotModel.updateMany({platform}, {$set: {
+    "params.followInterval": followInterval,
+    "params.likeInterval": likeInterval,
+    "params.likeLimit": likeLimit,
+  }});
+  
 const LikeBotService2 = {
   findBotByPlatformAndEmail,
   createBots,
@@ -112,7 +125,10 @@ const LikeBotService2 = {
   createHistory,
   clearHistory,
   updateParams,
+  updateLikeParams,
+  updateFollowParams,
   getLivingBots,
+  updateBotSettings,
 }
 
 module.exports = LikeBotService2;

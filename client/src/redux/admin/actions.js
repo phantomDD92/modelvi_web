@@ -625,6 +625,14 @@ export const createLikeBot = (platform, users, callback) => (dispatch) =>
     callback
   })
 
+export const updateLikeBotSettings = (platform, params, callback) => (dispatch) =>
+  ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/like/${platform}`,
+    data: { ...params },
+    inform: `Like bot settings are successfully updated`,
+    callback
+  })
+
 export const deleteLikeBot = (bot, callback) => (dispatch) =>
   ApiRequest.deleteAction(dispatch, {
     path: `/v2/admin/like/${bot.platform}/${bot._id}`,

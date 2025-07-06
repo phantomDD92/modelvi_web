@@ -28,6 +28,17 @@ const handleAppendLikeBotsForAdmin = async (req, res) => {
   }
 }
 
+const handleUpdateLikeBotsForAdmin = async (req, res) => {
+  try {
+    const { platform } = req.params;
+    const params = req.body;
+    await LikeBotService2.updateBotSettings(platform, params);
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
 const handleChangeLikeBotForAdmin = async (req, res) => {
   try {
     const { botId } = req.params;
@@ -95,7 +106,7 @@ const handleGetBotForBot = async (req, res) => {
 
 const handleUpdateBotForBot = async (req, res) => {
   try {
-    const { action, ...params } = req.body;
+    const { action, count, ...params } = req.body;
     const bot = await LikeBotService2.findBotById(req.bot.id);
     if (!bot)
       throw new ApiError(`Like bot does not exist`);
@@ -115,14 +126,10 @@ const handleUpdateBotForBot = async (req, res) => {
         await LikeBotService2.setBotDevice(req.bot.id, device);
         break;
       case "like":
-        await LikeBotService2.updateParams(req.bot.id, {
-          "params.likeNextTime": moment().add(bot.params?.likeInterval || 20, "minute").toDate()
-        });
+        await LikeBotService2.updateLikeParams(req.bot.id, moment().add(bot.params?.likeInterval || 20, "minute").toDate(), count);
         break;
       case "follow":
-        await LikeBotService2.updateParams(req.bot.id, {
-          "params.followNextTime": moment().add(bot.params?.followInterval || 12, "hour").toDate()
-        });
+        await LikeBotService2.updateFollowParams(req.bot.id, moment().add(bot.params?.followInterval || 12, "hour").toDate(), count);
         break;
       default:
         throw new ApiError("Unsupported bot operation");
@@ -181,6 +188,7 @@ const LikeBotCtrl2 = {
   handleDeleteLikeBotForAdmin,
   handleChangeLikeBotForAdmin,
   handleAppendLikeBotsForAdmin,
+  handleUpdateLikeBotsForAdmin,
 
   handleLoadBotsForBot,
   handleCheckBotForBot,

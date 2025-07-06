@@ -19,7 +19,7 @@ import {
 import { Platform } from "@/utils/const"
 import { getPlatformName } from "@/utils/string";
 import { StyledSearch } from "../common";
-import { LuTrash } from "react-icons/lu";
+import { LuSettings, LuTrash } from "react-icons/lu";
 import moment from "moment";
 
 const AdminLikeBotTable = ({
@@ -38,7 +38,7 @@ const AdminLikeBotTable = ({
     onCreate,
     onDelete,
     // onEdit,
-    // onSetting,
+    onSettings,
     // onHistory,
     onBulkStatus,
     onBulkDelete,
@@ -60,16 +60,15 @@ const AdminLikeBotTable = ({
       },
       {
         key: 'gender',
-        title: 'Gender',
-        width: 100,
-        dataIndex: 'gender',
-      },
-      {
-        key: 'birthday',
-        title: 'Birthday',
+        title: 'Gender/Birthday',
         width: 150,
-        dataIndex: 'birthday',
-        render: value => moment(value).format("YYYY-MM-DD")
+        dataIndex: 'gender',
+        render: (value, record) =>
+          <Space direction="vertical" size={1}>
+            <h5>{value}</h5>
+            <span>{`${moment(record.birthday).format("YYYY-MM-DD")}`}</span>
+          </Space>
+
       },
       {
         key: 'proxy',
@@ -77,6 +76,17 @@ const AdminLikeBotTable = ({
         width: 200,
         dataIndex: 'proxy',
         render: value => (value || "").split("@")[1] || ""
+      },
+      {
+        key: 'following',
+        title: 'Follows/Likes',
+        dataIndex: 'followings',
+        width: 150,
+        render: (value, record) =>
+          <Space direction="vertical" size={1}>
+            <span>{`${record.followings || 0} follows`}</span>
+            <span>{`${record.likes || 0} likes`}</span>
+          </Space>
       },
       {
         key: 'account',
@@ -88,8 +98,8 @@ const AdminLikeBotTable = ({
             {record.registered ? <Tag color="success">registered</Tag> : ""}
             {record.verified && <Tag color="success">verified</Tag>}
           </Space>
-
       },
+
       {
         key: 'lastError',
         title: 'Last Error',
@@ -178,6 +188,11 @@ const AdminLikeBotTable = ({
             icon={<UserAddOutlined />}
             onClick={() => onCreate && onCreate()}>
             Create
+          </Button>
+          <Button
+            icon={<LuSettings />}
+            onClick={() => onSettings && onSettings()}>
+            Settings
           </Button>
         </Flex>
       }

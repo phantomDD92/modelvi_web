@@ -6,13 +6,14 @@ import { Modal } from "antd";
 
 import { PageMetaData } from "@/components/common"
 import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
-import { AdminLikeBotDialog, AdminLikeBotTable } from "@/components/likebot";
-import { changeLikeBotStatus, createLikeBot, deleteLikeBot, loadLikeBots } from "@/redux/admin/actions";
+import { AdminLikeBotDialog, AdminLikeBotSettingsDialog, AdminLikeBotTable } from "@/components/likebot";
+import { changeLikeBotStatus, createLikeBot, deleteLikeBot, loadLikeBots, updateLikeBotSettings } from "@/redux/admin/actions";
 
 export const AdminLikeBotPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export const AdminLikeBotPage = () => {
   const page = parseInt(qs.parse(location.search)?.page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search)?.size) || DEFAULT_PAGE_SIZE;
   const search = qs.parse(location.search)?.search || '';
-  
+
   const likeBots = useSelector(state => state.admin.likeBots);
 
   const loadBotsCallback = useCallback((platform, search) => {
@@ -85,6 +86,10 @@ export const AdminLikeBotPage = () => {
     }, { replace: true });
   }
 
+  const handleUpdateSettings = (params) => {
+    dispatch(updateLikeBotSettings(platform, params, () => { setSettingsOpen(false) }));
+  }
+
   return (
     <>
       <PageMetaData title="Like Bots" admin />
@@ -117,6 +122,7 @@ export const AdminLikeBotPage = () => {
           onStatus: handleChangeStatus,
           onBulkDelete: handleDeleteBulkBots,
           onBulkStatus: handleChangeBulkBotsStatus,
+          onSettings: () => setSettingsOpen(true),
         }}
       />
       <AdminLikeBotDialog
@@ -124,7 +130,12 @@ export const AdminLikeBotPage = () => {
         onCancel={() => setEditOpen(false)}
         onAppend={handleAppendBots}
       />
-
+      <AdminLikeBotSettingsDialog
+        open={settingsOpen}
+        settings={likeBots.length > 0 ? likeBots[0] : {}}
+        onCancel={() => setSettingsOpen(false)}
+        onUpdate={handleUpdateSettings}
+      />
     </>
   )
 }
