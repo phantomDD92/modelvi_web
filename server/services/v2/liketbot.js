@@ -31,7 +31,7 @@ const createBots = (platform, users, proxies) => {
 }
 
 const changeStatus = (botId, status) =>
-  LikeBotModel.findByIdAndUpdate(botId, { $set: { status, "params.nextFollowTime": new Date() } });
+  LikeBotModel.findByIdAndUpdate(botId, { $set: { status, "params.followNextTime": new Date() } });
 
 const findBotById = (botId) =>
   LikeBotModel.findById(botId);
@@ -107,7 +107,7 @@ const updateBotSettings = (platform, {followInterval, likeInterval, likeLimit}) 
     "params.likeInterval": likeInterval,
     "params.likeLimit": likeLimit,
   }});
-  
+
 const LikeBotService2 = {
   findBotByPlatformAndEmail,
   createBots,
