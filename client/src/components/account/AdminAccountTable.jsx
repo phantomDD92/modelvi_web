@@ -192,26 +192,33 @@ const AdminAccountTable = ({
     return (
         <Card
             title={
-                <Flex align="center">
+                <Space align="center">
                     <span className="mr-8">
                         Account List
                     </span>
                     <Radio.Group onChange={(e) => onPlatform && onPlatform(e.target.value)} value={platform}>
-                        <Radio.Button value={Platform.F2F}>F2F</Radio.Button>
-                        <Radio.Button value={Platform.FNC}>Fancentro</Radio.Button>
-                        <Radio.Button value={Platform.FAN}>Fansly</Radio.Button>
-                        <Radio.Button value={Platform.KNKY}>Knky</Radio.Button>
-                        <Radio.Button value={Platform.MALOUM}>Maloum</Radio.Button>
-                        <Radio.Button value={Platform.FANVUE}>Fanvue</Radio.Button>
-                        <Radio.Button value={Platform.MYMFANS}>MymFans</Radio.Button>
-                        <Radio.Button value={Platform.FOURBASED}>4Based</Radio.Button>
-                        <Radio.Button value={Platform.ONLYFANS}>OnlyFans</Radio.Button>
+                        {[
+                            Platform.F2F,
+                            Platform.FNC,
+                            Platform.FAN,
+                            Platform.KNKY,
+                            Platform.MALOUM,
+                            Platform.FANVUE,
+                            Platform.MYMFANS,
+                            Platform.FOURBASED,
+                            Platform.FETLIFE,
+                            Platform.LOYALFANS,
+                            Platform.ONLYFANS,
+                            // Platform.PORNHUB,
+                            // Platform.DFANXYZ,
+                        ].map(element => <Radio.Button key={element} value={element}>{getPlatformName(element)}</Radio.Button>)}
                     </Radio.Group>
-                </Flex>
+                </Space>
             }
             extra={
                 <Flex gap="small">
                     <StyledSearch
+                        className="w-[200px]"
                         defaultValue={search}
                         onSearch={value => onSearchChange && onSearchChange(value)}
                     />

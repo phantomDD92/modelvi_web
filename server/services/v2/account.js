@@ -116,7 +116,7 @@ const findAccountByAlias = (platform, alias) =>
 const createAccount = (
   platform,
   model,
-  { alias, email, password, chatTeam, description, creator, device }
+  { alias, email, password, chatTeam, description, creator, device, proxy },
 ) =>
   AccountModel.create({
     platform,
@@ -130,6 +130,7 @@ const createAccount = (
     description,
     device,
     creator,
+    proxy
   });
 
 const findAccountById = (accountId) =>

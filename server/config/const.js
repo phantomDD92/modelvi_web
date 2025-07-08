@@ -22,6 +22,7 @@ const Platform = {
     MYCLUB: "MYCLUB",
     MANYVIDS: "MANYVIDS",
     FANVUE: "FANVUE",
+    PORNHUB: "PORNHUB",
 
     FANLIKE: "FANLIKE",
 }

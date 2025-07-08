@@ -33,6 +33,8 @@ export const getPlatformName = (platform) => {
       return "MyClub";
     case Platform.MANYVIDS:
       return "ManyVids";
+    case Platform.PORNHUB:
+      return "PornHub";
     default:
       break;
   }
