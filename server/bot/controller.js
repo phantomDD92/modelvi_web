@@ -13,7 +13,6 @@ const { default: mongoose } = require('mongoose');
 const CommentService = require('../services/comment');
 const UserService = require('../services/user');
 const { PostMode } = require('../config/const');
-const ManagerService = require('../services/manager');
 const { getPricePlan, getDateDelta, hasSufficientBalance, getAccountName, getNoBalanceEmailTemplate } = require('../utils/helper');
 const AccountService2 = require('../services/v2/account');
 const AgencyService2 = require('../services/v2/agency');
