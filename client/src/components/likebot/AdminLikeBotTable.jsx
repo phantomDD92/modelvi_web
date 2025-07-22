@@ -17,7 +17,7 @@ import {
   EyeInvisibleOutlined,
 } from "@ant-design/icons";
 import { Platform } from "@/utils/const"
-import { getPlatformName } from "@/utils/string";
+import { getDateTime, getPlatformName } from "@/utils/string";
 import { StyledSearch } from "../common";
 import { LuSettings, LuTrash } from "react-icons/lu";
 import moment from "moment";
@@ -99,7 +99,12 @@ const AdminLikeBotTable = ({
             {record.verified && <Tag color="success">verified</Tag>}
           </Space>
       },
-
+      {
+        key: 'lastTime',
+        title: 'Last Time',
+        dataIndex: 'updatedAt',
+        render: value => getDateTime(value),
+      },
       {
         key: 'lastError',
         title: 'Last Error',
