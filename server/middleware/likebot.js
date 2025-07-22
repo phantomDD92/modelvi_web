@@ -1,5 +1,3 @@
-const AccountService = require("../services/account");
-
 const jwt = require("jsonwebtoken");
 
 const checkLikeBot = async (req, res, next) => {

@@ -93,20 +93,24 @@ const updateParams = (botId, params) =>
   LikeBotModel.findByIdAndUpdate(botId, { $set: params });
 
 const getLivingBots = (platform) =>
-  LikeBotModel.find({ platform, status: true }, "alias");
+  LikeBotModel
+    .find({ platform, status: true, $or: [{ "params.likeNextTime": { $lt: new Date() } }, { "params.likeNextTime": { $exists: false } }] }, "alias")
+    .sort("-params.likeNextTime");
 
 const updateLikeParams = (botId, likeNextTime, likeCount) =>
-  LikeBotModel.findByIdAndUpdate(botId, { $set: { "params.likeNextTime": likeNextTime }, $inc: { likes: likeCount } });
+  LikeBotModel.findByIdAndUpdate(botId, { $set: { "params.likeNextTime": likeNextTime, updatedAt: new Date() }, $inc: { likes: likeCount } });
 
 const updateFollowParams = (botId, followNextTime, followCount) =>
-  LikeBotModel.findByIdAndUpdate(botId, { $set: { "params.followNextTime": followNextTime }, $inc: { followings: followCount } });
+  LikeBotModel.findByIdAndUpdate(botId, { $set: { "params.followNextTime": followNextTime, updatedAt: new Date() }, $inc: { followings: followCount } });
 
-const updateBotSettings = (platform, {followInterval, likeInterval, likeLimit}) => 
-  LikeBotModel.updateMany({platform}, {$set: {
-    "params.followInterval": followInterval,
-    "params.likeInterval": likeInterval,
-    "params.likeLimit": likeLimit,
-  }});
+const updateBotSettings = (platform, { followInterval, likeInterval, likeLimit }) =>
+  LikeBotModel.updateMany({ platform }, {
+    $set: {
+      "params.followInterval": followInterval,
+      "params.likeInterval": likeInterval,
+      "params.likeLimit": likeLimit,
+    }
+  });
 
 const LikeBotService2 = {
   findBotByPlatformAndEmail,
