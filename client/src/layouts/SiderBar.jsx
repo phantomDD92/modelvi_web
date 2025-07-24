@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Layout, Menu, Typography } from "antd";
-import routes from "@/routes/agencyRoutes";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import {  useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts";
 import { adminMenus, agencyMenus } from "./SideMenus";
 
@@ -35,8 +34,10 @@ const SiderBar = () => {
                 mode="inline"
                 selectedKeys={[key]}
                 items={isAdmin
-                    ? adminMenus.map(({ key, icon, label, path }) => ({ key, icon, label: <Link to={path}>{label}</Link> }))
-                    : agencyMenus.filter(menu => !menu.visible || menu.visible(session?.role)).map(({ key, icon, label, path }) => ({ key, icon, label: <Link to={path}>{label}</Link> }))
+                    ? adminMenus
+                    : agencyMenus.filter(menu => !menu.visible || menu.visible(session?.role))
+                    // ? adminMenus.map(({ key, icon, label, path }) => ({ key, icon, label: <Link to={path}>{label}</Link> }))
+                    // : agencyMenus.filter(menu => !menu.visible || menu.visible(session?.role)).map(({ key, icon, label, path }) => ({ key, icon, label: <Link to={path}>{label}</Link> }))
                 }
             />
         </Layout.Sider>

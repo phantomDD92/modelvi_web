@@ -3,6 +3,7 @@ import {
     Card,
     Flex,
     Image,
+    Radio,
     Space,
     Table,
     Tag,
@@ -24,6 +25,7 @@ import {
 } from "@/utils/const";
 import Media from "../common/Media";
 import { getPlatformName } from "@/utils/string";
+import { useState } from "react";
 
 export const ModelContentTable = ({
     pagination,
@@ -42,6 +44,7 @@ export const ModelContentTable = ({
         onBulkPlatform,
     }
 }) => {
+    const [mode, setMode] = useState("");
 
     const isFancentroStory = (record) => {
         return record.platforms && record.platforms.includes(Platform.FNC) && (record.story && record.story != StoryType.NONE)
@@ -104,15 +107,16 @@ export const ModelContentTable = ({
             key: 'platforms',
             title: 'Platforms',
             dataIndex: 'platforms',
+            width: 250,
             render: (value, record) =>
                 <Space direction="vertical" >
                     <Flex gap="4px 0" wrap>
                         {value.map(tag => getPlatformTag(tag))}
                     </Flex>
                     <Flex gap="4px 0" wrap>
-                        {isF2FStory(record) ? getF2FStoryTag(record): ""}
-                        {isFancentroStory(record) ? getFancentroStoryTag(record): ""}
-                        {isKnkyStory(record) ? getKnkyStoryTag(record): ""}
+                        {isF2FStory(record) ? getF2FStoryTag(record) : ""}
+                        {isFancentroStory(record) ? getFancentroStoryTag(record) : ""}
+                        {isKnkyStory(record) ? getKnkyStoryTag(record) : ""}
                     </Flex>
                 </Space>
 
@@ -139,16 +143,13 @@ export const ModelContentTable = ({
         },
         {
             key: 'title',
-            title: 'Title',
-            width: 450,
+            title: 'Title / Tags',
             dataIndex: 'title',
-        },
-        {
-            key: 'tags',
-            title: 'Tags',
-            width: 200,
-            dataIndex: 'tags',
-            render: (value, record) => record.postTags && record.postTags.length > 0 ? record.postTags.map(tag => `#${tag}`).join(" ") : (record.tags || "-")
+            render: (value, record) =>
+                <div>
+                    <h4>{value}</h4>
+                    <p className="text-sm">{record.postTags && record.postTags.length > 0 ? record.postTags.map(tag => `#${tag}`).join(" ") : "-"}</p>
+                </div>
         },
         {
             key: 'folder',
@@ -175,9 +176,23 @@ export const ModelContentTable = ({
         },
     ]
 
+    const getFilteredSource = (contents) => {
+        if (mode == "")
+            return contents
+        return contents.filter(content => content.mode == mode);
+    }
     return (
         <Card
-            title={model && model.name ? `${model.name}'s Content` : `Model's Content`}
+            title={
+                <Space size="large">
+                    <span>{model && model.name ? `${model.name}'s Content` : `Model's Content`}</span>
+                    <Radio.Group onChange={(e) => setMode(e.target.value)} value={mode}>
+                        <Radio.Button key="all" value="">All</Radio.Button>
+                        <Radio.Button key="image" value="image">Image</Radio.Button>
+                        <Radio.Button key="video" value="video">Video</Radio.Button>
+                    </Radio.Group>
+                </Space>
+            }
             extra={
                 <Flex gap="small">
                     <Button
@@ -240,7 +255,7 @@ export const ModelContentTable = ({
                 }}
                 loading={loading}
                 rowSelection={rowSelection} rowKey={row => row._id}
-                dataSource={model?.contents || []}
+                dataSource={getFilteredSource(model?.contents || [])}
                 columns={columns}
             />
         </Card>

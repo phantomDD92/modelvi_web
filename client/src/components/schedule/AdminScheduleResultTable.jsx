@@ -1,7 +1,7 @@
 import { PostType, ScheduleStatus } from "@/utils/const";
 import { getDateTime, getPlatformName } from "@/utils/string";
-import { Button, Card, Flex, Select, Space, Table, Tooltip, Tag } from "antd";
-import { LuDatabase, LuPencil, LuPlus, LuRefreshCcw, LuSend, LuTrash } from "react-icons/lu";
+import { Button, Card, Flex, Select, Table, Tooltip, Tag } from "antd";
+import { LuPlus, LuRefreshCcw, LuTrash } from "react-icons/lu";
 import Media from "../common/Media";
 
 const AdminScheduleResultTable = ({
@@ -71,13 +71,13 @@ const AdminScheduleResultTable = ({
     },
     {
       key: 'account',
-      title: 'Model/Account',
+      title: 'Model / Account',
       width: 200,
       dataIndex: 'account',
-      render: (value, record) => <Space direction="vertical">
+      render: (value, record) => <div>
         <h5>{`[${record.owner?.name}] ${record.actor?.number}. ${record.actor?.name}`}</h5>
         <p>{`[${getPlatformName(value?.platform)}] ${value?.alias}`}</p>
-      </Space>
+      </div>
     },
     {
       key: 'media',
@@ -101,9 +101,13 @@ const AdminScheduleResultTable = ({
     },
     {
       key: 'title',
-      title: 'Title',
+      title: 'Title / Tags',
       dataIndex: 'schedule',
-      render: (value) => <div><h4>{value.title}</h4><p className="text-xs">{value.tags && value.tags.length > 0 ? value.tags.map(tag => `#${tag}`).join(" ") : "-"}</p></div>
+      render: (value) =>
+        <div>
+          <h4>{value.title}</h4>
+          <p className="text-xs">{value.tags && value.tags.length > 0 ? value.tags.map(tag => `#${tag}`).join(" ") : "-"}</p>
+        </div>
     },
     {
       key: 'type',

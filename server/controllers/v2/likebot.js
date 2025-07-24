@@ -4,6 +4,7 @@ const LikeBotService2 = require("../../services/v2/liketbot");
 const { sendError, sendResult, ApiError } = require("../../utils/resp");
 const AccountService2 = require("../../services/v2/account");
 const ProxyNewService2 = require("../../services/v2/proxyNew");
+const LikeCommentService = require("../../services/v2/likecomment");
 
 const handleLoadLikeBotsForAdmin = async (req, res) => {
   try {
@@ -183,12 +184,57 @@ const handleSetErrorForBot = async (req, res) => {
   }
 }
 
+const handleLoadLikeCommentsForAdmin = async (req, res) => {
+  try {
+    const { search } = req.query;
+    const comments = await LikeCommentService.loadComments(search);
+    sendResult(res, { comments });
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
+const handleDeleteLikeCommentsForAdmin = async (req, res) => {
+  try {
+    const { commentIds } = req.body;
+    await LikeCommentService.deleteComments(commentIds)
+    sendResult(res)
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
+const handleAppendLikeCommentsForAdmin = async (req, res) => {
+  try {
+    const { comments } = req.body;
+    await LikeCommentService.addComments(comments);
+    sendResult(res)
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
+const handleDeleteLikeCommentForAdmin = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    await LikeCommentService.deleteComment(commentId)
+    sendResult(res)
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
 const LikeBotCtrl2 = {
   handleLoadLikeBotsForAdmin,
   handleDeleteLikeBotForAdmin,
   handleChangeLikeBotForAdmin,
   handleAppendLikeBotsForAdmin,
   handleUpdateLikeBotsForAdmin,
+
+  handleLoadLikeCommentsForAdmin,
+  handleAppendLikeCommentsForAdmin,
+  handleDeleteLikeCommentsForAdmin,
+  handleDeleteLikeCommentForAdmin,
 
   handleLoadBotsForBot,
   handleCheckBotForBot,

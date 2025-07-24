@@ -157,6 +157,18 @@ router.route("/stats")
   .all(authenticate, checkManager)
   .get(DashboardCtrl2.handleGetStatsForAdmin)
 
+  router
+  .route("/like/comment")
+  .all(authenticate, checkManager)
+  .get(LikeBotCtrl2.handleLoadLikeCommentsForAdmin)
+  .post(LikeBotCtrl2.handleAppendLikeCommentsForAdmin)
+  .delete(LikeBotCtrl2.handleDeleteLikeCommentsForAdmin)
+
+    router
+  .route("/like/comment/:commentId")
+  .all(authenticate, checkManager)
+  .delete(LikeBotCtrl2.handleDeleteLikeCommentForAdmin)
+
 router
   .route("/like/:platform")
   .all(authenticate, checkManager)

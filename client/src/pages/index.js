@@ -20,3 +20,4 @@ export * from "@/pages/admin/AdminAffiliatePage";
 export * from "@/pages/admin/AdminModelPage";
 export * from "@/pages/admin/AdminModelContentPage";
 export * from "@/pages/admin/AdminProxyNewPage";
+export * from "@/pages/admin/AdminLikeCommentPage";

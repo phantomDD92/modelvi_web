@@ -647,3 +647,38 @@ export const changeLikeBotStatus = (bot, status, callback) => (dispatch) =>
     inform: `Like bot is successfully ${status ? "started" : "stopped"}`,
     callback
   })
+
+export const loadLikeComments = ({ search }, callback) => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: `/v2/admin/like/comment`,
+    params: { search },
+    action: ACTIONS.LOAD_LIKE_COMMENTS,
+    callback
+  })
+};
+
+export const appendLikeComments = (comments, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/v2/admin/like/comment`,
+    data: { comments },
+    inform: `${comments.length} comments are successfully appended`,
+    callback
+  })
+};
+
+export const deleteLikeComments = (commentIds, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/admin/like/comment`,
+    data: { commentIds },
+    inform: `${commentIds.length} comments are successfully deleted`,
+    callback
+  })
+};
+
+export const deleteLikeComment = (comment, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/admin/like/comment/${comment._id}`,
+    inform: `comment is successfully deleted`,
+    callback
+  })
+};

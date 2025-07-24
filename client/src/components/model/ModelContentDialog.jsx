@@ -4,7 +4,6 @@ import {
     Checkbox,
     Flex,
     Form,
-    Input,
     InputNumber,
     Modal,
     Radio,
@@ -60,7 +59,13 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
             if (previews && previews.length > 0) {
                 preview = { name: previewName, mode: previewType }
             }
-            onUpdate({ media, preview, postTags, platforms, ...params });
+            let mode = ""
+            if (mediaType.includes("image"))
+                mode = "image"
+            else if (mediaType.includes("video"))
+                mode = "video";
+
+            onUpdate({ media, preview, postTags, platforms, mode, ...params });
         } catch (e) {
             console.error(e);
         }

@@ -3,6 +3,7 @@ import {
   AdminAgencyListPage,
   AdminChatTeamPage,
   AdminDashboardPage,
+  AdminLikeCommentPage,
   AdminProxyNewPage,
   CommentListPage,
 } from "@/pages"
@@ -27,6 +28,7 @@ const adminRoutes = [
   { key: "admin_comment", path: "/admin/comment", component: <CommentListPage />, },
   { key: "admin_schedule", path: "/admin/schedule", component: <AdminSchedulePage />, },
   { key: "admin_like", path: "/admin/like/:platform", component: <AdminLikeBotPage />, },
+  { key: "admin_like_comment", path: "/admin/like_comment", component: <AdminLikeCommentPage />, },
   { key: "admin_proxy", path: "/admin/proxy", component: <AdminProxyStatPage />, },
   { key: "admin_proxy_new", path: "/admin/proxy_new", component: <AdminProxyNewPage />, },
   { key: "admin_agency_proxy", path: "/admin/proxy/:agencyId", component: <AdminProxyAgencyPage />, },
