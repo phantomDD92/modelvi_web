@@ -199,6 +199,8 @@ const AgencyAccountTable = ({
                             Platform.FANVUE,
                             Platform.MYMFANS,
                             Platform.FOURBASED,
+                            Platform.FETLIFE,
+                            Platform.LOYALFANS,
                             // Platform.ONLYFANS
                         ].map(element => <Radio.Button key={element} value={element}>{getPlatformName(element)}</Radio.Button>)}
                     </Radio.Group>
