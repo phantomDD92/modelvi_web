@@ -44,7 +44,7 @@ const AdminLikeBotImportDialog = ({
             city: item[fields[6]],
           }));
         }
-        setUsers(renamedData.slice(0, 5));
+        setUsers(renamedData);
       },
       error: err => {
         toast.error("Error parsing CSV file");
