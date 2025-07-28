@@ -25,6 +25,7 @@ const Platform = {
     PORNHUB: "PORNHUB",
 
     FANLIKE: "FANLIKE",
+    FETLIFELIKE: "FETLIFELIKE",
 }
 
 const PostType = {

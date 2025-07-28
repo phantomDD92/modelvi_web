@@ -25,6 +25,7 @@ export const getPlatformName = (platform) => {
       return "4Based";
     case Platform.DFANXYZ:
       return "DFanXyz";
+    case Platform.FETLIFELIKE:
     case Platform.FETLIFE:
       return "FetLife";
     case Platform.LOYALFANS:

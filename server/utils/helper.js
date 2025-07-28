@@ -117,9 +117,9 @@ function generateRandomPassword(length = 12) {
   let password = '';
 
   // Generate secure random bytes
-  const bytes = crypto.randomBytes(length-4);
+  const bytes = crypto.randomBytes(length - 4);
 
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < length - 4; i++) {
     // Map each byte to an index in the charset
     const index = bytes[i] % charset.length;
     password += charset[index];

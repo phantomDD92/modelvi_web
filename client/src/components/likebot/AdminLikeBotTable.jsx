@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Button,
   Card,
   Dropdown,
@@ -10,16 +9,10 @@ import {
   Switch,
   Tag,
 } from "antd";
-import {
-  DeleteOutlined,
-  UserAddOutlined,
-  EyeOutlined,
-  EyeInvisibleOutlined,
-} from "@ant-design/icons";
+import { LuEye, LuEyeOff, LuImport, LuSettings, LuTrash, LuUserPlus } from "react-icons/lu";
 import { Platform } from "@/utils/const"
 import { getDateTime, getPlatformName } from "@/utils/string";
 import { StyledSearch } from "../common";
-import { LuSettings, LuTrash } from "react-icons/lu";
 import moment from "moment";
 
 const AdminLikeBotTable = ({
@@ -35,10 +28,11 @@ const AdminLikeBotTable = ({
   actions: {
     onStatus,
     onPlatform,
-    onCreate,
+    // onCreate,
     onDelete,
     // onEdit,
     onSettings,
+    onImport,
     // onHistory,
     onBulkStatus,
     onBulkDelete,
@@ -60,7 +54,7 @@ const AdminLikeBotTable = ({
       },
       {
         key: 'gender',
-        title: 'Gender/Birthday',
+        title: 'Gender / Birthday',
         width: 150,
         dataIndex: 'gender',
         render: (value, record) =>
@@ -70,22 +64,23 @@ const AdminLikeBotTable = ({
           </Space>
 
       },
-      {
-        key: 'proxy',
-        title: 'Proxy',
-        width: 200,
-        dataIndex: 'proxy',
-        render: value => (value || "").split("@")[1] || ""
-      },
+      // {
+      //   key: 'proxy',
+      //   title: 'Proxy',
+      //   width: 200,
+      //   dataIndex: 'proxy',
+      //   render: value => (value || "").split("@")[1] || ""
+      // },
       {
         key: 'following',
-        title: 'Follows/Likes',
+        title: 'Follows / Likes / Comments',
         dataIndex: 'followings',
-        width: 150,
+        width: 250,
         render: (value, record) =>
-          <Space direction="vertical" size={1}>
+          <Space direction="vertical" size={0}>
             <span>{`${record.followings || 0} follows`}</span>
             <span>{`${record.likes || 0} likes`}</span>
+            <span>{`${record.comments || 0} comments`}</span>
           </Space>
       },
       {
@@ -103,7 +98,9 @@ const AdminLikeBotTable = ({
         key: 'lastTime',
         title: 'Last Time',
         dataIndex: 'updatedAt',
-        render: value => getDateTime(value),
+        render: value => moment().subtract(3, "hour").isAfter(value)
+          ? <div className="text-red-500">{getDateTime(value)}</div>
+          : <div className="text-green-500">{getDateTime(value)}</div>,
       },
       {
         key: 'lastError',
@@ -179,7 +176,7 @@ const AdminLikeBotTable = ({
             Like Bot List
           </span>
           <Radio.Group onChange={(e) => onPlatform && onPlatform(e.target.value)} value={platform}>
-            {[Platform.FANLIKE].map(platform => <Radio.Button value={platform}>{getPlatformName(platform)}</Radio.Button>)}
+            {[Platform.FANLIKE, Platform.FETLIFELIKE].map(platform => <Radio.Button value={platform}>{getPlatformName(platform)}</Radio.Button>)}
           </Radio.Group>
         </Flex>
       }
@@ -189,10 +186,15 @@ const AdminLikeBotTable = ({
             defaultValue={search}
             onSearch={value => onSearchChange && onSearchChange(value)}
           />
-          <Button
-            icon={<UserAddOutlined />}
+          {/* <Button
+            icon={<LuUserPlus />}
             onClick={() => onCreate && onCreate()}>
             Create
+          </Button> */}
+          <Button
+            icon={<LuImport />}
+            onClick={() => onImport && onImport()}>
+            Import
           </Button>
           <Button
             icon={<LuSettings />}
@@ -208,19 +210,19 @@ const AdminLikeBotTable = ({
             <h3>Bulk Actions : </h3>
             <Button
               key="enable"
-              icon={<EyeOutlined />}
+              icon={<LuEye />}
               onClick={() => onBulkStatus && onBulkStatus(true)}>
               {`Enable ${rowSelection.selectedRowKeys.length} accounts`}
             </Button>
             <Button
               key="disable"
-              icon={<EyeInvisibleOutlined />}
+              icon={<LuEyeOff />}
               onClick={() => onBulkStatus && onBulkStatus(false)}>
               {`Disable ${rowSelection.selectedRowKeys.length} accounts`}
             </Button>
             <Button
               key="delete"
-              icon={<DeleteOutlined />}
+              icon={<LuTrash />}
               danger
               onClick={() => onBulkDelete && onBulkDelete()}>
               {`Delete ${rowSelection.selectedRowKeys.length} accounts`}

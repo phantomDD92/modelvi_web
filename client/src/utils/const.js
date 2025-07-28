@@ -35,7 +35,8 @@ export const Platform = {
     FANVUE: "FANVUE",
     PORNHUB: "PORNHUB",
 
-    FANLIKE: "FANLIKE"
+    FANLIKE: "FANLIKE",
+    FETLIFELIKE: "FETLIFELIKE",
 }
 
 export const AgencyRole = {

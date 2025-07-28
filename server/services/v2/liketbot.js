@@ -7,7 +7,7 @@ const findBotByPlatformAndEmail = (platform, email) =>
   LikeBotModel.findOne({ platform, email });
 
 const createBots = (platform, users, proxies) => {
-  let bots = users.map(({ firstName, lastName, gender, birthday }) => {
+  let bots = users.map(({ firstName, lastName, gender, birthday, orientation, role, city }) => {
     const alias = generateBotAlias(firstName, lastName);
     const proxyIndex = Math.round(Math.random() * (proxies.length - 1))
     console.log(proxyIndex)
@@ -18,6 +18,9 @@ const createBots = (platform, users, proxies) => {
           firstName,
           lastName,
           gender,
+          orientation,
+          role,
+          city,
           birthday: moment(birthday).toDate(),
           alias,
           email: `${alias}@voure.nl`,
@@ -33,11 +36,17 @@ const createBots = (platform, users, proxies) => {
 const changeStatus = (botId, status) =>
   LikeBotModel.findByIdAndUpdate(botId, { $set: { status, "params.followNextTime": new Date() } });
 
+const changeBulkStatus = (botIds, status) =>
+  LikeBotModel.updateMany({ _id: { $in: botIds } }, { $set: { status, "params.followNextTime": new Date() } });
+
 const findBotById = (botId) =>
   LikeBotModel.findById(botId);
 
 const deleteBot = (botId) =>
   LikeBotModel.findByIdAndDelete(botId);
+
+const deleteBots = (botIds) =>
+  LikeBotModel.deleteMany({ _id: { $in: botIds } });
 
 const loadBots = (platform, { search }) => {
   const searchQuery = search && search != ""
@@ -118,7 +127,9 @@ const LikeBotService2 = {
   findBotById,
   findBotByAlias,
   deleteBot,
+  deleteBots,
   changeStatus,
+  changeBulkStatus,
   loadBots,
   setAccountRegistered,
   setAccountVerified,

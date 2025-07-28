@@ -640,6 +640,14 @@ export const deleteLikeBot = (bot, callback) => (dispatch) =>
     callback
   })
 
+export const deleteLikeBots = (platform, botIds, callback) => (dispatch) =>
+  ApiRequest.deleteAction(dispatch, {
+    path: `/v2/admin/like/${platform}`,
+    data: { botIds },
+    inform: `${botIds.length} like bots are successfully deleted`,
+    callback
+  })
+
 export const changeLikeBotStatus = (bot, status, callback) => (dispatch) =>
   ApiRequest.putAction(dispatch, {
     path: `/v2/admin/like/${bot.platform}/${bot._id}`,
@@ -648,6 +656,13 @@ export const changeLikeBotStatus = (bot, status, callback) => (dispatch) =>
     callback
   })
 
+export const changeLikeBotsStatus = (platform, botIds, status, callback) => (dispatch) =>
+  ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/like/${platform}`,
+    data: { action: "status", status, botIds },
+    inform: `${botIds.length} like bots are successfully ${status ? "started" : "stopped"}`,
+    callback
+  })
 export const loadLikeComments = ({ search }, callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/v2/admin/like/comment`,

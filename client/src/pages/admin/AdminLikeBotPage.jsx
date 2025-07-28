@@ -6,13 +6,14 @@ import { Modal } from "antd";
 
 import { PageMetaData } from "@/components/common"
 import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
-import { AdminLikeBotDialog, AdminLikeBotSettingsDialog, AdminLikeBotTable } from "@/components/likebot";
-import { changeLikeBotStatus, createLikeBot, deleteLikeBot, loadLikeBots, updateLikeBotSettings } from "@/redux/admin/actions";
+import {  AdminLikeBotImportDialog, AdminLikeBotSettingsDialog, AdminLikeBotTable } from "@/components/likebot";
+import { changeLikeBotsStatus, changeLikeBotStatus, createLikeBot, deleteLikeBot, deleteLikeBots, loadLikeBots, updateLikeBotSettings } from "@/redux/admin/actions";
 
 export const AdminLikeBotPage = () => {
 
   const [loading, setLoading] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
+  // const [editOpen, setEditOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
@@ -49,7 +50,7 @@ export const AdminLikeBotPage = () => {
   }
 
   const handleAppendBots = (users) => {
-    dispatch(createLikeBot(platform, users, () => { setEditOpen(false); loadBotsCallback(platform, search) }));
+    dispatch(createLikeBot(platform, users, () => { setImportOpen(false); loadBotsCallback(platform, search) }));
   }
 
   const handleDeleteBot = (bot) => {
@@ -61,15 +62,15 @@ export const AdminLikeBotPage = () => {
 
   const handleChangeBulkBotsStatus = (status) => {
     Modal.confirm({
-      title: `Are you sure to ${status ? "enable" : "disable"} ${selectedRowKeys.length} accounts?`,
-      // onOk: () => dispatch(updateAccountsStatusForAdmin(platform, selectedRowKeys, status, () => { setSelectedRowKeys([]); loadAccountsCallback(platform, search) })),
+      title: `Are you sure to ${status ? "enable" : "disable"} ${selectedRowKeys.length} bots?`,
+      onOk: () => dispatch(changeLikeBotsStatus(platform, selectedRowKeys, status, () => { setSelectedRowKeys([]); loadBotsCallback(platform, search) })),
     });
   }
 
   const handleDeleteBulkBots = () => {
     Modal.confirm({
       title: `Are you sure to delete ${selectedRowKeys.length} bots?`,
-      // onOk: () => dispatch(deleteAccountsForAdmin(platform, selectedRowKeys, () => { setSelectedRowKeys([]); loadAccountsCallback(platform, search) })),
+      onOk: () => dispatch(deleteLikeBots(platform, selectedRowKeys, () => { setSelectedRowKeys([]); loadBotsCallback(platform, search) })),
     });
   }
 
@@ -117,24 +118,30 @@ export const AdminLikeBotPage = () => {
         }}
         actions={{
           onPlatform: handleChangePlatform,
-          onCreate: () => { setEditOpen(true) },
+          // onCreate: () => { setEditOpen(true) },
           onDelete: handleDeleteBot,
           onStatus: handleChangeStatus,
           onBulkDelete: handleDeleteBulkBots,
           onBulkStatus: handleChangeBulkBotsStatus,
           onSettings: () => setSettingsOpen(true),
+          onImport: () => setImportOpen(true),
         }}
       />
-      <AdminLikeBotDialog
+      {/* <AdminLikeBotDialog
         open={editOpen}
         onCancel={() => setEditOpen(false)}
         onAppend={handleAppendBots}
-      />
+      /> */}
       <AdminLikeBotSettingsDialog
         open={settingsOpen}
         settings={likeBots.length > 0 ? likeBots[0] : {}}
         onCancel={() => setSettingsOpen(false)}
         onUpdate={handleUpdateSettings}
+      />
+      <AdminLikeBotImportDialog
+        open={importOpen}
+        onCancel={() => setImportOpen(false)}
+        onImport={handleAppendBots}
       />
     </>
   )

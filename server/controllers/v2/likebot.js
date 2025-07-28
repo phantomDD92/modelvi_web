@@ -32,8 +32,19 @@ const handleAppendLikeBotsForAdmin = async (req, res) => {
 const handleUpdateLikeBotsForAdmin = async (req, res) => {
   try {
     const { platform } = req.params;
-    const params = req.body;
-    await LikeBotService2.updateBotSettings(platform, params);
+    const { action, ...params } = req.body;
+    switch (action) {
+      case "settings":
+        await LikeBotService2.updateBotSettings(platform, params);
+        break;
+      case "status":
+        const { status, botIds } = params;
+        await LikeBotService2.changeBulkStatus(botIds, status);
+        break;
+      default:
+        throw new ApiError("Invalid bots operation");
+    }
+
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -68,6 +79,17 @@ const handleDeleteLikeBotForAdmin = async (req, res) => {
     if (!bot)
       throw new ApiError("Like bot does not exist.");
     await LikeBotService2.deleteBot(botId);
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
+
+const handleDeleteLikeBotsForAdmin = async (req, res) => {
+  try {
+    const { botIds } = req.body;
+    await LikeBotService2.deleteBots(botIds);
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -227,6 +249,7 @@ const handleDeleteLikeCommentForAdmin = async (req, res) => {
 const LikeBotCtrl2 = {
   handleLoadLikeBotsForAdmin,
   handleDeleteLikeBotForAdmin,
+  handleDeleteLikeBotsForAdmin,
   handleChangeLikeBotForAdmin,
   handleAppendLikeBotsForAdmin,
   handleUpdateLikeBotsForAdmin,
