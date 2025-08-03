@@ -127,7 +127,7 @@ const handleUpdateAccountForAgency = async (req, res) => {
   try {
     const { accountId } = req.params;
     const { action, ...params } = req.body;
-    const account = await AccountService2.findAccountById(accountId);
+    const account = await AccountService2.getAccount(accountId);
     if (!account)
       throw new ApiError("Account does not exist.");
     if (!isModelOwner(account, req.manager))
@@ -164,7 +164,7 @@ const handleUpdateAccountForAdmin = async (req, res) => {
   try {
     const { accountId } = req.params;
     const { action, ...params } = req.body;
-    const account = await AccountService2.findAccountById(accountId);
+    const account = await AccountService2.getAccount(accountId);
     if (!account)
       throw new ApiError("Account does not exist.");
     switch (action) {

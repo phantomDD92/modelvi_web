@@ -302,6 +302,11 @@ const getAccountsForPlatform = (platform) =>
 const getIdentifiers = (platform) =>
   AccountModel.find({ platform, status: true }, "alias identifier")
 
+const getAccount = (accountId) =>
+  AccountModel.findById(accountId)
+    .populate("actor", "number name")
+    .populate("owner", "name");
+
 const AccountService2 = {
   getAgencyAccounts,
   getAccountWithModel,
@@ -340,6 +345,7 @@ const AccountService2 = {
   updateIdentifier,
   getAccountsForPlatform,
   getIdentifiers,
+  getAccount,
 };
 
 module.exports = AccountService2;
