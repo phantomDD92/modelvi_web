@@ -74,7 +74,7 @@ const setAccountVerified = (botId) =>
   LikeBotModel.findByIdAndUpdate(botId, { $set: { verified: true } });
 
 const setLastError = (botId, lastError = "", disabled) =>
-  LikeBotModel.findByIdAndUpdate(botId, { $set: { lastError, status: !disabled } });
+  LikeBotModel.findByIdAndUpdate(botId, { $set: { lastError } });
 
 const setBotDevice = (botId, device) =>
   LikeBotModel.findByIdAndUpdate(botId, { $set: { device } });
