@@ -199,15 +199,15 @@ const AdminAccountTable = ({
                     <Radio.Group onChange={(e) => onPlatform && onPlatform(e.target.value)} value={platform}>
                         {[
                             Platform.F2F,
+                            Platform.KNKY,
                             Platform.FNC,
                             Platform.FAN,
-                            Platform.KNKY,
+                            Platform.LOYALFANS,
                             Platform.MALOUM,
                             Platform.FANVUE,
-                            Platform.MYMFANS,
                             Platform.FOURBASED,
+                            Platform.MYMFANS,
                             Platform.FETLIFE,
-                            Platform.LOYALFANS,
                             Platform.ONLYFANS,
                             // Platform.PORNHUB,
                             // Platform.DFANXYZ,
