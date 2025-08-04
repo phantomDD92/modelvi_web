@@ -13,6 +13,7 @@ const LikeBotSchema = new mongoose.Schema({
   params: {},
   followings: { type: Number, default: 0 },
   likes: { type: Number, default: 0 },
+  comments: { type: Number, default: 0 },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   birthday: { type: Date, },

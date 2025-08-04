@@ -149,7 +149,8 @@ const handleUpdateBotForBot = async (req, res) => {
         await LikeBotService2.setBotDevice(req.bot.id, device);
         break;
       case "like":
-        await LikeBotService2.updateLikeParams(req.bot.id, moment().add(bot.params?.likeInterval || 20, "minute").toDate(), count);
+        const { likeCount, commentCount } = params;
+        await LikeBotService2.updateLikeParams(req.bot.id, moment().add(bot.params?.likeInterval || 20, "minute").toDate(), likeCount, commentCount);
         break;
       case "follow":
         await LikeBotService2.updateFollowParams(req.bot.id, moment().add(bot.params?.followInterval || 12, "hour").toDate(), count);
@@ -246,6 +247,16 @@ const handleDeleteLikeCommentForAdmin = async (req, res) => {
   }
 }
 
+const handlePickCommentForBot = async (req, res) => {
+  try {
+    const { count } = req.body;
+    const comments = await LikeCommentService.pickupComments(count || 1)
+    sendResult(res, comments)
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
 const LikeBotCtrl2 = {
   handleLoadLikeBotsForAdmin,
   handleDeleteLikeBotForAdmin,
@@ -266,6 +277,7 @@ const LikeBotCtrl2 = {
   handleLoadTeamsForBot,
   handleCreateHistoryForBot,
   handleSetErrorForBot,
+  handlePickCommentForBot,
 }
 
 module.exports = LikeBotCtrl2

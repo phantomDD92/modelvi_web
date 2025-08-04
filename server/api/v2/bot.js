@@ -24,6 +24,10 @@ router.route("/like/account")
   .get(LikeBotCtrl2.handleGetBotForBot)
   .put(LikeBotCtrl2.handleUpdateBotForBot)
 
+router.route("/like/comment")
+  .all(checkLikeBot)
+  .post(LikeBotCtrl2.handlePickCommentForBot)
+
 router.route("/like/history")
   .all(checkLikeBot)
   .post(LikeBotCtrl2.handleCreateHistoryForBot)

@@ -106,8 +106,8 @@ const getLivingBots = (platform) =>
     .find({ platform, status: true, $or: [{ "params.likeNextTime": { $lt: new Date() } }, { "params.likeNextTime": { $exists: false } }] }, "alias")
     .sort("params.likeNextTime");
 
-const updateLikeParams = (botId, likeNextTime, likeCount) =>
-  LikeBotModel.findByIdAndUpdate(botId, { $set: { "params.likeNextTime": likeNextTime, updatedAt: new Date() }, $inc: { likes: likeCount } });
+const updateLikeParams = (botId, likeNextTime, likeCount, commentCount) =>
+  LikeBotModel.findByIdAndUpdate(botId, { $set: { "params.likeNextTime": likeNextTime, updatedAt: new Date() }, $inc: { likes: likeCount, comments: commentCount } });
 
 const updateFollowParams = (botId, followNextTime, followCount) =>
   LikeBotModel.findByIdAndUpdate(botId, { $set: { "params.followNextTime": followNextTime, updatedAt: new Date() }, $inc: { followings: followCount } });
