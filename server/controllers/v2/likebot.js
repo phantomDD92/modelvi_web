@@ -251,7 +251,7 @@ const handlePickCommentForBot = async (req, res) => {
   try {
     const { count } = req.body;
     const comments = await LikeCommentService.pickupComments(count || 1)
-    sendResult(res, comments)
+    sendResult(res, { comments })
   } catch (error) {
     sendError(res, error);
   }
