@@ -170,8 +170,9 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                         { label: 'Loyalfans', value: Platform.LOYALFANS },
                         { label: 'Maloum', value: Platform.MALOUM },
                         { label: 'Fanvue', value: Platform.FANVUE },
-                        { label: 'MymFans', value: Platform.MYMFANS },
                         { label: '4Based', value: Platform.FOURBASED },
+                        { label: 'MymFans', value: Platform.MYMFANS },
+                        { label: 'FetLife', value: Platform.FETLIFE },
                         { label: 'OnlyFans', value: Platform.ONLYFANS },
                     ]} onChange={handlePlatformsChange} />
                 </Form.Item>

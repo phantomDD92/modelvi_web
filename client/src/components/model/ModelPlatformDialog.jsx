@@ -60,14 +60,16 @@ const ModelPlatformDialog = ({ open, onCancel, onUpdate }) => {
                 <Form.Item name="platforms" label="Platforms" rules={[{ required: true }]}>
                     <Checkbox.Group options={[
                         { label: 'F2F', value: Platform.F2F },
+                        { label: 'Knky', value: Platform.KNKY },
                         { label: 'Fancentro', value: Platform.FNC },
                         { label: 'Fansly', value: Platform.FAN },
-                        { label: 'Knky', value: Platform.KNKY },
+                        { label: 'Loyalfans', value: Platform.LOYALFANS },
                         { label: 'Maloum', value: Platform.MALOUM },
-                        { label: 'OnlyFans', value: Platform.ONLYFANS },
                         { label: 'Fanvue', value: Platform.FANVUE },
-                        { label: 'MymFans', value: Platform.MYMFANS },
                         { label: '4Based', value: Platform.FOURBASED },
+                        { label: 'MymFans', value: Platform.MYMFANS },
+                        { label: 'FetLife', value: Platform.FETLIFE },
+                        { label: 'OnlyFans', value: Platform.ONLYFANS },
                     ]} onChange={handlePlatformsChange} />
                 </Form.Item>
                 {isF2F() &&
@@ -83,7 +85,7 @@ const ModelPlatformDialog = ({ open, onCancel, onUpdate }) => {
                             ]} />
                     </Form.Item>
                 }
-                {isFancentro() &&
+                {/* {isFancentro() &&
                     <Form.Item name="story" label="Fancentro Story">
                         <Radio.Group
                             buttonStyle="solid"
@@ -95,7 +97,7 @@ const ModelPlatformDialog = ({ open, onCancel, onUpdate }) => {
                                 { label: 'Subscribers', value: StoryType.SUBSCRIBER },
                             ]} />
                     </Form.Item>
-                }
+                } */}
                 {isKnky() &&
                     <Form.Item name="knkyStoryType" label="Knky Story">
                         <Radio.Group
