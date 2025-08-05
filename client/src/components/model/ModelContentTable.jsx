@@ -115,7 +115,7 @@ export const ModelContentTable = ({
                     </Flex>
                     <Flex gap="4px 0" wrap>
                         {isF2FStory(record) ? getF2FStoryTag(record) : ""}
-                        {isFancentroStory(record) ? getFancentroStoryTag(record) : ""}
+                        {/* {isFancentroStory(record) ? getFancentroStoryTag(record) : ""} */}
                         {isKnkyStory(record) ? getKnkyStoryTag(record) : ""}
                     </Flex>
                 </Space>
