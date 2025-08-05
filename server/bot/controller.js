@@ -8,7 +8,7 @@ const HistoryService = require('../services/history');
 const ActionService = require('../services/action');
 const moment = require('moment');
 const ActorService = require('../services/actor');
-const { DEFAULT_COMMENT_INTERVAL, DEFAULT_STORY_INTERVAL, DEFAULT_STORY_OFFSETS, DEFAULT_POST_OFFSETS, DEFAULT_CHAT_INTERVAL } = require('../utils/const');
+const { DEFAULT_COMMENT_INTERVAL, DEFAULT_STORY_INTERVAL, DEFAULT_STORY_OFFSETS, DEFAULT_POST_OFFSETS, DEFAULT_CHAT_INTERVAL, DEFAULT_POST_INTERVAL } = require('../utils/const');
 const { default: mongoose } = require('mongoose');
 const CommentService = require('../services/comment');
 const UserService = require('../services/user');
@@ -347,7 +347,7 @@ const handleUpdatePostSetting = async (req, res) => {
       }
       postNextTime = nextTime.toDate();
     } else {
-      postNextTime = moment().add(postInterval || 10, "minute").toDate();
+      postNextTime = moment().add(postInterval || DEFAULT_POST_INTERVAL, "minute").toDate();
     }
     await AccountService.updateParams(account, {
       "params.postNextTime": postNextTime,
