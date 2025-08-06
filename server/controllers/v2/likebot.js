@@ -230,7 +230,7 @@ const handleDeleteLikeCommentsForAdmin = async (req, res) => {
 const handleAppendLikeCommentsForAdmin = async (req, res) => {
   try {
     const { comments } = req.body;
-    await LikeCommentService.addComments(comments);
+    await LikeCommentService.addComments(comments.filter(comment => comment != ""));
     sendResult(res)
   } catch (error) {
     sendError(res, error);
