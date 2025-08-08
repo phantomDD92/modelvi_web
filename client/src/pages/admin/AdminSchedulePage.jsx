@@ -12,6 +12,7 @@ const AdminSchedulePage = () => {
   const [agency, setAgency] = useState('');
   const [model, setModel] = useState('');
   const [status, setStatus] = useState('');
+  const [platform, setPlatform] = useState('');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(100);
   const [loading, setLoading] = useState(false);
@@ -19,8 +20,8 @@ const AdminSchedulePage = () => {
   const dispatch = useDispatch();
   const agencyList = useSelector(state => state.admin.agencyList);
   const modelList = useSelector(state => state.admin.modelList);
-  const schedules = useSelector(state => state.admin.schedules);
-  const schedulesCount = useSelector(state => state.admin.schedulesCount);
+  // const schedules = useSelector(state => state.admin.schedules);
+  // const schedulesCount = useSelector(state => state.admin.schedulesCount);
   const scheduleResults = useSelector(state => state.admin.scheduleResults);
   const scheduleResultsCount = useSelector(state => state.admin.scheduleResultsCount);
 
@@ -32,40 +33,40 @@ const AdminSchedulePage = () => {
     dispatch(loadModelListForAdmin())
   }, [loadModelListForAdmin]);
 
-  const loadSchedulePostsCallback = useCallback(({ agency, model, page }) => {
-    setLoading(true);
-    dispatch(getSchedulePostsForAdmin({ agency, model, page }, () => setLoading(false)))
-  }, [dispatch]);
+  // const loadSchedulePostsCallback = useCallback(({ agency, model, page }) => {
+  //   setLoading(true);
+  //   dispatch(getSchedulePostsForAdmin({ agency, model, page }, () => setLoading(false)))
+  // }, [dispatch]);
 
-  const loadScheduleResultsCallback = useCallback(({ agency, model, status, page, pageSize }) => {
+  const loadScheduleResultsCallback = useCallback(({ agency, model, platform, status, page, pageSize }) => {
     setLoading(true);
-    dispatch(getScheduleResultsForAdmin({ agency, model, status, page, pageSize }, () => setLoading(false)))
+    dispatch(getScheduleResultsForAdmin({ agency, model, platform, status, page, pageSize }, () => setLoading(false)))
   }, [dispatch]);
 
   useEffect(() => {
-    loadScheduleResultsCallback({ agency, model, status, page, pageSize })
-  }, [loadScheduleResultsCallback, agency, model, status, page, pageSize]);
+    loadScheduleResultsCallback({ agency, model, platform, status, page, pageSize })
+  }, [loadScheduleResultsCallback, agency, model, platform, status, page, pageSize]);
 
   const handleUpdateSchedule = (params) => {
     if (post) {
-      dispatch(updateSchedulePostForAdmin(post, params, () => { setEditOpen(false); loadScheduleResultsCallback({ agency, model, status, page, pageSize }) }))
+      dispatch(updateSchedulePostForAdmin(post, params, () => { setEditOpen(false); loadScheduleResultsCallback({ agency, model, platform, status, page, pageSize }) }))
     } else {
-      dispatch(appendSchedulePostForAdmin(params, () => { setEditOpen(false); loadScheduleResultsCallback({ agency, model, status, page, pageSize }) }))
+      dispatch(appendSchedulePostForAdmin(params, () => { setEditOpen(false); loadScheduleResultsCallback({ agency, model, platform, status, page, pageSize }) }))
     }
   }
 
   const handleFixScheduleData = () => {
-    dispatch(fixScheduleResults(() => { loadScheduleResultsCallback({ agency, model, status, page, pageSize }) }))
+    dispatch(fixScheduleResults(() => { loadScheduleResultsCallback({ agency, model, platform, status, page, pageSize }) }))
   }
 
   const handleRetrySchedule = (result) => {
-    dispatch(resetScheduleResultForAdmin(result, () => { loadScheduleResultsCallback({ agency, model, status, page, pageSize }) }))
+    dispatch(resetScheduleResultForAdmin(result, () => { loadScheduleResultsCallback({ agency, model, platform, status, page, pageSize }) }))
   }
 
   const handleDeleteSchedule = (result) => {
     Modal.confirm({
       title: `Are you sure to delete the scheduled post?`,
-      onOk: () => dispatch(deleteScheduleResultForAdmin(result, () => loadScheduleResultsCallback({ agency, model, status, page, pageSize }))),
+      onOk: () => dispatch(deleteScheduleResultForAdmin(result, () => loadScheduleResultsCallback({ agency, model, platform, status, page, pageSize }))),
     });
   }
 
@@ -105,7 +106,9 @@ const AdminSchedulePage = () => {
           agencyList,
           onAgencyChange: value => { setAgency(value); setModel(''); },
           status,
-          onStatusChange: value => setStatus(value)
+          onStatusChange: value => setStatus(value),
+          platform,
+          onPlatformChange: value => setPlatform(value),
         }}
         pagination={{
           current: page,

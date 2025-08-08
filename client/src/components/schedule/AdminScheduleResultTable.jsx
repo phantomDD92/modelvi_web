@@ -1,4 +1,4 @@
-import { PostType, ScheduleStatus } from "@/utils/const";
+import { Platform, PostType, ScheduleStatus } from "@/utils/const";
 import { getDateTime, getPlatformName } from "@/utils/string";
 import { Button, Card, Flex, Select, Table, Tooltip, Tag } from "antd";
 import { LuPlus, LuRefreshCcw, LuTrash } from "react-icons/lu";
@@ -22,6 +22,8 @@ const AdminScheduleResultTable = ({
     onAgencyChange,
     status,
     onStatusChange,
+    platform,
+    onPlatformChange,
   },
   actions: {
     onCreate,
@@ -72,12 +74,13 @@ const AdminScheduleResultTable = ({
     {
       key: 'account',
       title: 'Model / Account',
-      width: 200,
+      width: 350,
       dataIndex: 'account',
-      render: (value, record) => <div>
-        <h5>{`[${record.owner?.name}] ${record.actor?.number}. ${record.actor?.name}`}</h5>
-        <p>{`[${getPlatformName(value?.platform)}] ${value?.alias}`}</p>
-      </div>
+      render: (value, record) =>
+        <div>
+          <div class="flex gap-2 text-blue-500"><h5>{`[${record.owner?.name || "-"}]`}</h5><h5>{`${record.actor?.number || "-"}. ${record.actor?.name || "-"}`}</h5></div>
+          <div class="flex gap-2"><h5 className="text-red-500">{`[${getPlatformName(value?.platform) || "-"}]`}</h5><h5>{`${value?.alias || "-"}`}</h5></div>
+        </div>
     },
     {
       key: 'media',
@@ -92,13 +95,13 @@ const AdminScheduleResultTable = ({
         }
       }
     },
-    {
-      key: 'preview',
-      title: 'Preview',
-      dataIndex: 'schedule',
-      width: 120,
-      render: value => value.preview && value.preview?.name ? <Media src={value.preview.name} type={value.preview.mode} width={100} small /> : '-'
-    },
+    // {
+    //   key: 'preview',
+    //   title: 'Preview',
+    //   dataIndex: 'schedule',
+    //   width: 120,
+    //   render: value => value.preview && value.preview?.name ? <Media src={value.preview.name} type={value.preview.mode} width={100} small /> : '-'
+    // },
     {
       key: 'title',
       title: 'Title / Tags',
@@ -179,6 +182,25 @@ const AdminScheduleResultTable = ({
             showSearch
             filterOption={(input, option) =>
               (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            }
+          />
+          <Select
+            className="min-w-[250px]"
+            value={platform}
+            onChange={value => onPlatformChange && onPlatformChange(value)}
+            options={[{ value: "", label: "All Platforms" }].concat(
+              [Platform.F2F,
+              Platform.KNKY,
+              Platform.FNC,
+              Platform.FAN,
+              Platform.LOYALFANS,
+              Platform.MALOUM,
+              Platform.FANVUE,
+              Platform.FOURBASED,
+              Platform.MYMFANS,
+              Platform.FETLIFE,
+              Platform.ONLYFANS,]
+                .map(platform => ({ value: platform, label: getPlatformName(platform) })))
             }
           />
           <Select

@@ -1,4 +1,4 @@
-import { PostType, ScheduleStatus } from "@/utils/const";
+import { Platform, PostType, ScheduleStatus } from "@/utils/const";
 import { getDateTime, getPlatformName } from "@/utils/string";
 import { Button, Card, Flex, Select, Table, Tooltip, Space, Tag } from "antd";
 import { LuPencil, LuPlus, LuRefreshCcw, LuTrash } from "react-icons/lu";
@@ -19,6 +19,8 @@ const AgencyScheduleResultTable = ({
     onModelChange,
     status,
     onStatusChange,
+    platform,
+    onPlatformChange,
   },
   actions: {
     onCreate,
@@ -67,12 +69,12 @@ const AgencyScheduleResultTable = ({
     },
     {
       key: 'account',
-      title: 'Model/Account',
-      width: 200,
+      title: 'Model / Account',
+      width: 350,
       dataIndex: 'account',
       render: (value, record) => <Space direction="vertical">
-        <h5>{`${record.actor?.number}. ${record.actor?.name}`}</h5>
-        <p>{`[${getPlatformName(value?.platform)}] ${value?.alias}`}</p>
+        <h5 className="text-blue-500">{`${record.actor?.number || "-"}. ${record.actor?.name || "-"}`}</h5>
+        <div class="flex gap-2"><h5 className="text-red-500">{`[${getPlatformName(value?.platform) || "-"}]`}</h5><h5>{`${value?.alias || "-"}`}</h5></div>
       </Space>
     },
     {
@@ -88,13 +90,13 @@ const AgencyScheduleResultTable = ({
         }
       }
     },
-    {
-      key: 'preview',
-      title: 'Preview',
-      dataIndex: 'schedule',
-      width: 120,
-      render: value => value.preview && value.preview?.name ? <Media src={value.preview.name} type={value.preview.mode} width={100} small /> : '-'
-    },
+    // {
+    //   key: 'preview',
+    //   title: 'Preview',
+    //   dataIndex: 'schedule',
+    //   width: 120,
+    //   render: value => value.preview && value.preview?.name ? <Media src={value.preview.name} type={value.preview.mode} width={100} small /> : '-'
+    // },
     {
       key: 'title',
       title: 'Title',
@@ -156,9 +158,28 @@ const AgencyScheduleResultTable = ({
               .map(model => ({ value: model._id, label: `[${model.number}] ${model.name}` })))
             }
             showSearch
-                        filterOption={(input, option) =>
-                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                        }
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            }
+          />
+          <Select
+            className="min-w-[250px]"
+            value={platform}
+            onChange={value => onPlatformChange && onPlatformChange(value)}
+            options={[{ value: "", label: "All Platforms" }].concat(
+              [Platform.F2F,
+              Platform.KNKY,
+              Platform.FNC,
+              Platform.FAN,
+              Platform.LOYALFANS,
+              Platform.MALOUM,
+              Platform.FANVUE,
+              Platform.FOURBASED,
+              Platform.MYMFANS,
+              Platform.FETLIFE,
+              Platform.ONLYFANS,]
+                .map(platform => ({ value: platform, label: getPlatformName(platform) })))
+            }
           />
           <Select
             className="min-w-[150px]"

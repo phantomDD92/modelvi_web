@@ -13,6 +13,7 @@ const AgencySchedulePage = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
   const [status, setStatus] = useState('');
+  const [platform, setPlatform] = useState('');
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
@@ -21,9 +22,9 @@ const AgencySchedulePage = () => {
   const scheduleResults = useSelector(state => state.v2.scheduleResults);
   const scheduleResultsCount = useSelector(state => state.v2.scheduleResultsCount);
 
-  const loadScheduleResultsCallback = useCallback(({ model, status, page, pageSize }) => {
+  const loadScheduleResultsCallback = useCallback(({ model, platform, status, page, pageSize }) => {
     setLoading(true);
-    dispatch(getScheduleResults({ model, status, page, pageSize }, () => setLoading(false)))
+    dispatch(getScheduleResults({ model, platform, status, page, pageSize }, () => setLoading(false)))
   }, [dispatch]);
 
   useEffect(() => {
@@ -31,26 +32,26 @@ const AgencySchedulePage = () => {
   }, [loadModelList]);
 
   useEffect(() => {
-    loadScheduleResultsCallback({ model, status, page, pageSize })
-  }, [loadScheduleResultsCallback, model, status, page, pageSize]);
+    loadScheduleResultsCallback({ model, platform, status, page, pageSize })
+  }, [loadScheduleResultsCallback, model, platform, status, page, pageSize]);
 
   const handleUpdateSchedule = (params) => {
     if (post) {
-      dispatch(updateSchedulePost(post, params, () => { setEditOpen(false); loadScheduleResultsCallback({ model, status, page, pageSize }) }))
+      dispatch(updateSchedulePost(post, params, () => { setEditOpen(false); loadScheduleResultsCallback({ model, platform, status, page, pageSize }) }))
     } else {
-      dispatch(appendSchedulePost(params, () => { setEditOpen(false); loadScheduleResultsCallback({ model, status, page, pageSize }) }))
+      dispatch(appendSchedulePost(params, () => { setEditOpen(false); loadScheduleResultsCallback({ model, platform, status, page, pageSize }) }))
     }
   }
 
   const handleDeleteSchedule = (result) => {
     Modal.confirm({
       title: `Are you sure to delete the scheduled post?`,
-      onOk: () => dispatch(deleteScheduleResult(result, () => loadScheduleResultsCallback({ model, status, page, pageSize }))),
+      onOk: () => dispatch(deleteScheduleResult(result, () => loadScheduleResultsCallback({ model, platform, status, page, pageSize }))),
     });
   }
 
   const handleRetrySchedule = (result) => {
-    dispatch(resetScheduleResult(result, () => { loadScheduleResultsCallback({ model, status, page, pageSize }) }))
+    dispatch(resetScheduleResult(result, () => { loadScheduleResultsCallback({ model, platform, status, page, pageSize }) }))
   }
 
   return (
@@ -64,7 +65,9 @@ const AgencySchedulePage = () => {
           modelList,
           onModelChange: value => setModel(value),
           status,
-          onStatusChange: value => setStatus(value)
+          onStatusChange: value => setStatus(value),
+          platform,
+          onPlatformChange: value => setPlatform(value),
         }}
         pagination={{
           current: page,
