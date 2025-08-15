@@ -697,3 +697,12 @@ export const deleteLikeComment = (comment, callback) => async (dispatch) => {
     callback
   })
 };
+
+export const executeCommandForAdmin = (command, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/v2/admin/command`,
+    data: { command },
+    inform: `Command is successfully executed`,
+    callback
+  })
+};

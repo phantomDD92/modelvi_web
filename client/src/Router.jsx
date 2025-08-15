@@ -11,6 +11,7 @@ import { useAuth } from "./contexts";
 import { AdminRole } from "./utils/const";
 import routes from "./routes/agencyRoutes";
 import adminRoutes from "./routes/adminRoutes";
+import AdminCommandPage from "./pages/admin/AdminCommandPage";
 
 const Router = () => {
   const { isAuthenticated, session } = useAuth();
@@ -35,6 +36,14 @@ const Router = () => {
               path={route.path}
             />
           ))}
+        {isAuthenticated && session?.role == AdminRole.MANAGER && session?.name == "Eric" &&
+          <Route
+            key="command"
+            exact
+            element={<Layouts><AdminCommandPage /></Layouts>}
+            path="/admin/command"
+          />
+        }
         {!isAuthenticated
           ? <Route key="landing" element={<HomePage />} exact path="/" />
           : session?.role == AdminRole.MANAGER

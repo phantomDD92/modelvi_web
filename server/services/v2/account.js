@@ -42,8 +42,14 @@ const getCountStatsByAgencyPlatform = () =>
     }
   ]);
 
-const getFeeStatsByAgency = () =>
-  AccountModel.aggregate([
+const getFeeStatsByAgency = () => {
+  const oneMonthAgo = moment().subtract(30, "day").toDate()
+  return AccountModel.aggregate([
+    {
+      $match: {
+        updatedAt: { $gte: oneMonthAgo }
+      }
+    },
     {
       $group: {
         _id: "$owner",
@@ -51,6 +57,7 @@ const getFeeStatsByAgency = () =>
       }
     },
   ]);
+}
 
 const changeModelNumber = (modelId, number) =>
   AccountModel.updateMany({ actor: modelId }, { $set: { number } });

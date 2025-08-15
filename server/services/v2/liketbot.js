@@ -10,7 +10,6 @@ const createBots = (platform, users, proxies) => {
   let bots = users.map(({ firstName, lastName, gender, birthday, orientation, role, city }) => {
     const alias = generateBotAlias(firstName, lastName);
     const proxyIndex = Math.round(Math.random() * (proxies.length - 1))
-    console.log(proxyIndex)
     return ({
       insertOne: {
         document: {

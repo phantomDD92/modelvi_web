@@ -14,6 +14,8 @@ const ScheduleCtrl2 = require("../../controllers/v2/schedule");
 const DashboardCtrl2 = require("../../controllers/v2/dashboard");
 const LikeBotCtrl2 = require("../../controllers/v2/likebot");
 const ProxyNewCtrl2 = require("../../controllers/v2/proxyNew");
+const checkSuperAdmin = require("../../middleware/super");
+const CommandCtrl2 = require("../../controllers/v2/command");
 
 const router = express.Router();
 
@@ -194,5 +196,8 @@ router.route("/proxy_new/:proxyId")
   .put(ProxyNewCtrl2.handleUpdateProxyForAdmin)
   .delete(ProxyNewCtrl2.handleDeleteProxyForAdmin)
 
+  router.route("/command")
+  .all(authenticate, checkSuperAdmin)
+  .post(CommandCtrl2.handleExecuteCommand)
 
 module.exports = router;

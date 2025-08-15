@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Layout, Menu, Typography } from "antd";
-import {  useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts";
 import { adminMenus, agencyMenus } from "./SideMenus";
+import { LuCommand } from "react-icons/lu";
 
 const SiderBar = () => {
     const location = useLocation();
@@ -34,10 +35,10 @@ const SiderBar = () => {
                 mode="inline"
                 selectedKeys={[key]}
                 items={isAdmin
-                    ? adminMenus
+                    ? session.name == "Eric"
+                        ? [...adminMenus, { key: "admin_command", icon: <LuCommand />, label: <Link to="/admin/command">Command</Link> }]
+                        : adminMenus
                     : agencyMenus.filter(menu => !menu.visible || menu.visible(session?.role))
-                    // ? adminMenus.map(({ key, icon, label, path }) => ({ key, icon, label: <Link to={path}>{label}</Link> }))
-                    // : agencyMenus.filter(menu => !menu.visible || menu.visible(session?.role)).map(({ key, icon, label, path }) => ({ key, icon, label: <Link to={path}>{label}</Link> }))
                 }
             />
         </Layout.Sider>

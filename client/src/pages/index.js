@@ -21,3 +21,4 @@ export * from "@/pages/admin/AdminModelPage";
 export * from "@/pages/admin/AdminModelContentPage";
 export * from "@/pages/admin/AdminProxyNewPage";
 export * from "@/pages/admin/AdminLikeCommentPage";
+export * from "@/pages/admin/AdminCommandPage";
