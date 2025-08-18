@@ -314,6 +314,9 @@ const getAccount = (accountId) =>
     .populate("actor", "number name")
     .populate("owner", "name");
 
+const changeProxy = (accountId, proxy) =>
+  AccountModel.findByIdAndUpdate(accountId, { $set: { proxy } });
+
 const AccountService2 = {
   getAgencyAccounts,
   getAccountWithModel,
@@ -353,6 +356,7 @@ const AccountService2 = {
   getAccountsForPlatform,
   getIdentifiers,
   getAccount,
+  changeProxy,
 };
 
 module.exports = AccountService2;

@@ -19,6 +19,7 @@ const AgencyService2 = require('../services/v2/agency');
 const TransactionService2 = require('../services/v2/transaction');
 const NotifyUtils = require('../utils/notifiy');
 const ScheduleService2 = require('../services/v2/schedule');
+const ProxyNewService2 = require('../services/v2/proxyNew');
 
 
 const handleLoginAccount = async (req, res) => {
@@ -426,16 +427,18 @@ const handleChangeAccount = async (req, res) => {
 }
 
 
-const handleBlockProxy = async (req, res) => {
+const handleChangeProxy = async (req, res) => {
   try {
     const account = await AccountService.findById(req.bot.id);
     if (!account)
       throw new ApiError("unknown account");
-    const { owner, platform, alias } = account.toJSON();
-    let proxy = await ProxyService.findProxyByAccount(owner, platform, alias);
-    if (!proxy)
-      throw new ApiError("proxy not found");
-    await ProxyService.setProxyAccount(proxy._id, platform, "blocked");
+    const proxy = await ProxyNewService2.pickupProxy();
+    await AccountService2.changeProxy(account._id, proxy);
+    // const { owner, platform, alias } = account.toJSON();
+    // let proxy = await ProxyService.findProxyByAccount(owner, platform, alias);
+    // if (!proxy)
+    //   throw new ApiError("proxy not found");
+    // await ProxyService.setProxyAccount(proxy._id, platform, "blocked");
     sendResult(res)
   } catch (error) {
     sendError(res, error)
@@ -591,7 +594,7 @@ const BotController = {
   handleGetCredential,
   handleUpdateAccount,
   handlePickProxy,
-  handleBlockProxy,
+  handleChangeProxy,
   handleCreateHistory,
   handleCreateLastError,
   handleClearLastError,

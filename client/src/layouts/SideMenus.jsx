@@ -1,5 +1,4 @@
 import { AdminRole } from "@/utils/const";
-import { Children } from "react";
 import { LuArchive, LuArrowLeftToLine, LuArrowRightFromLine, LuHome, LuMessageCircle, LuMessageSquareDashed, LuMessagesSquare, LuNetwork, LuSatellite, LuThumbsUp, LuTrophy, LuUser, LuUsers, LuUserSquare, LuWallet } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
@@ -53,7 +52,7 @@ export const adminMenus = [
       { key: "admin_model", icon: <LuUser />, label: <Link to="/admin/model">Model</Link> },
       { key: "admin_account", icon: <LuUserSquare />, label: <Link to="/admin/account/F2F">Account</Link> },
       { key: "admin_schedule", icon: <LuSatellite />, label: <Link to="/admin/schedule">Schedule</Link> },
-      { key: "admin_proxy", icon: <LuNetwork />, label: <Link to="/admin/proxy">Proxy</Link> },
+      // { key: "admin_proxy", icon: <LuNetwork />, label: <Link to="/admin/proxy">Proxy</Link> },
       { key: "admin_chat", icon: <LuMessagesSquare />, label: <Link to="/admin/chat">Chat Team</Link> },
     ]
   },
@@ -61,10 +60,10 @@ export const adminMenus = [
     key: "admin_like", icon: <LuThumbsUp />, label: "Like Bot", children: [
       { key: "admin_like_account", icon: <LuUserSquare />, label: <Link to="/admin/like/FANLIKE" >Account</Link> },
       { key: "admin_like_comment", icon: <LuMessageSquareDashed />, label: <Link to="/admin/like_comment" >Comment</Link> },
-      { key: "admin_proxy_new", icon: <LuNetwork />, label: <Link to="/admin/proxy_new">Proxy</Link> },
     ]
   },
   { key: "admin_agency", icon: <LuUsers />, label: <Link to="/admin/agency">Agency</Link> },
+  { key: "admin_proxy", icon: <LuNetwork />, label: <Link to="/admin/proxy">Proxy</Link> },
   { key: "admin_finance", icon: <LuWallet />, label: <Link to="/admin/finance/payments">Finance</Link> },
   { key: "admin_affiliate", icon: <LuTrophy />, label: <Link to="/admin/affiliate">Affiliate</Link> },
   { key: "to_agency", icon: <LuArrowLeftToLine />, label: <Link to="/dashboard">To Agency</Link> },
