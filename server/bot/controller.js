@@ -523,8 +523,8 @@ const handleCheckBalance = async (req, res) => {
     const agency = await AgencyService2.getAgencyWithReferrer(req.bot.owner);
     if (!agency)
       throw new ApiError("Invalid bot agency");
-    // calculate price
-    const price = getPricePlan(agency, account.platform, revenue);
+    // calculate price + proxy fee
+    const price = getPricePlan(agency, account.platform, revenue) + 2.5;
     // get valid dates
     const dateDelta = getDateDelta(account.expiredAt);
     if (dateDelta <= 0) { // if account is expired

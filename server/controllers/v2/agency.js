@@ -65,6 +65,7 @@ const handleLoadAgenciesForAdmin = async (req, res) => {
         ...agency.toJSON(),
         modelCount: modelStat?.count || 0,
         monthlyFee: feeStat?.monthlyFee || 0,
+        proxyFee: feeStat?.proxyFee || 0,
         accountCount: accountStat.map(item => `${item.platform} ${item.count}`).join(', ')
       })
     });

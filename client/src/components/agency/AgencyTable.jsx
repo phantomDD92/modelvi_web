@@ -22,23 +22,18 @@ export const AgencyTable = ({
     const columns = [
         {
             key: 'name',
-            title: 'Name',
+            title: 'Name, Email, Telegram',
             dataIndex: 'name',
             width: 250,
             render: (value, record) =>
                 <Flex gap="middle" align='center'>
                     <Avatar src="/img/agency.png" />
-                    <Space direction="vertical" size={1}>
+                    <Space direction="vertical" size={0}>
                         <h4>{value}</h4>
                         <span>{record.email || "-"}</span>
+                        <span>{record.telegram ? record.telegram[0] == "@" ? record.telegram : "@" + record.telegram : "-"}</span>
                     </Space>
                 </Flex>
-        },
-        {
-            key: 'telegram',
-            title: 'Telegram',
-            width: 120,
-            dataIndex: 'telegram',
         },
         {
             key: 'referrer',
@@ -50,19 +45,27 @@ export const AgencyTable = ({
         {
             key: 'balance',
             title: 'Balance',
+            width: 150,
             dataIndex: 'balance',
-            render: value => getFiatAmount(value)
+            render: value => <h5>{getFiatAmount(value)}</h5>
         },
         {
             key: 'monthlyFee',
             title: 'Monthly Fee',
             dataIndex: 'monthlyFee',
-            render: value => getFiatAmount(value)
+            width: 200,
+            render: (value, record) =>
+                <Space direction="vertical" size={1}>
+                    <h5>{getFiatAmount(value)}</h5>
+                    <span>{`+ ${getFiatAmount(value)} (Proxy)`}</span>
+                </Space>
+
         },
         {
             key: 'modelCount',
             title: 'Models',
             dataIndex: 'modelCount',
+            width: 50,
             render: value => value || 0
         },
         {
@@ -75,7 +78,7 @@ export const AgencyTable = ({
             key: 'status',
             title: 'Status',
             dataIndex: 'status',
-            width: 200,
+            width: 150,
             render: (value, record) => (
                 <Switch
                     checked={value}
@@ -88,7 +91,7 @@ export const AgencyTable = ({
         {
             key: 'action',
             title: 'Action',
-            width: 200,
+            width: 150,
             render: (_, record) => (
                 <Dropdown.Button
                     onClick={() => onEdit(record)}

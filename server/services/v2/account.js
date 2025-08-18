@@ -53,7 +53,8 @@ const getFeeStatsByAgency = () => {
     {
       $group: {
         _id: "$owner",
-        monthlyFee: { $sum: { $ifNull: ["$fee", 50] } },        // Count the number of documents in each group
+        monthlyFee: { $sum: { $ifNull: ["$fee", 50] } },
+        proxyFee: { $sum: 2.5 },        // Count the number of documents in each group
       }
     },
   ]);
