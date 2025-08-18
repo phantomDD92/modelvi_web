@@ -57,7 +57,7 @@ export const AgencyTable = ({
             render: (value, record) =>
                 <Space direction="vertical" size={1}>
                     <h5>{getFiatAmount(value)}</h5>
-                    <span>{`+ ${getFiatAmount(value)} (Proxy)`}</span>
+                    <span>{`+ ${getFiatAmount(record.proxyFee || 0)} (Proxy)`}</span>
                 </Space>
 
         },
