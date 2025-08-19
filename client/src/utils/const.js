@@ -89,6 +89,7 @@ export const ScheduleStatus = {
     SCHEDULED: 2,
     FINISHED: 3,
     FAILED: 4,
+    EXPIRED: 5,
 }
 
 export const TransactionType = {

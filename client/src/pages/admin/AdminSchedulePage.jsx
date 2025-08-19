@@ -1,6 +1,7 @@
 import { PageMetaData } from "@/components/common";
 import AdminScheduleDialog from "@/components/schedule/AdminScheduleDialog";
 import AdminScheduleResultTable from "@/components/schedule/AdminScheduleResultTable";
+import ScheduleRetryDialog from "@/components/schedule/ScheduleRetryDialog";
 import { appendSchedulePostForAdmin, deleteSchedulePostForAdmin, deleteScheduleResultForAdmin, fixScheduleResults, getSchedulePostsForAdmin, getScheduleResultsForAdmin, loadAgencyListForAdmin, loadModelListForAdmin, resetScheduleResultForAdmin, updateSchedulePostForAdmin } from "@/redux/admin/actions";
 import { Modal } from "antd";
 import { useCallback, useEffect, useState } from "react";
@@ -8,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 const AdminSchedulePage = () => {
   const [editOpen, setEditOpen] = useState(false);
+  const [retryOpen, setRetryOpen] = useState(false);
   const [post, setPost] = useState();
   const [agency, setAgency] = useState('');
   const [model, setModel] = useState('');
@@ -16,6 +18,7 @@ const AdminSchedulePage = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(100);
   const [loading, setLoading] = useState(false);
+  const [current, setCurrent] = useState();
 
   const dispatch = useDispatch();
   const agencyList = useSelector(state => state.admin.agencyList);
@@ -59,8 +62,8 @@ const AdminSchedulePage = () => {
     dispatch(fixScheduleResults(() => { loadScheduleResultsCallback({ agency, model, platform, status, page, pageSize }) }))
   }
 
-  const handleRetrySchedule = (result) => {
-    dispatch(resetScheduleResultForAdmin(result, () => { loadScheduleResultsCallback({ agency, model, platform, status, page, pageSize }) }))
+  const handleRetrySchedule = (scheduledAt) => {
+    dispatch(resetScheduleResultForAdmin(current, scheduledAt, () => { setRetryOpen(false); loadScheduleResultsCallback({ agency, model, platform, status, page, pageSize }) }))
   }
 
   const handleDeleteSchedule = (result) => {
@@ -120,7 +123,7 @@ const AdminSchedulePage = () => {
           onCreate: () => { setPost(); setEditOpen(true) },
           onDelete: handleDeleteSchedule,
           onFix: handleFixScheduleData,
-          onRetry: handleRetrySchedule,
+          onRetry: result => { setCurrent(result); setRetryOpen(true) },
         }}
       />
       <AdminScheduleDialog
@@ -130,6 +133,11 @@ const AdminSchedulePage = () => {
         modelList={modelList}
         onCancel={() => setEditOpen(false)}
         onUpdate={handleUpdateSchedule}
+      />
+      <ScheduleRetryDialog
+        open={retryOpen}
+        onCancel={() => setRetryOpen(false)}
+        onConfirm={handleRetrySchedule}
       />
     </>
   )

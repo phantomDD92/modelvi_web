@@ -197,6 +197,9 @@ const handleUpdateScheduleSetting = async (req, res) => {
       throw new ApiError("Invalid account");
     const scheduleNextTime = moment().add(20, "minute").toDate();
     await AccountService.updateParams(account, { "params.scheduleNextTime": scheduleNextTime });
+    // find expired schedules and set expired flag
+    await ScheduleService2.setExpiredSchedules(req.bot.id);
+    // find waiting and scheduled schedules
     const schedules = await ScheduleService2.loadLivingSchedules(req.bot.id)
     sendResult(res, { schedules });
   } catch (error) {

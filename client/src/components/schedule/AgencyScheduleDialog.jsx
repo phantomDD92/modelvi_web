@@ -13,7 +13,7 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { Platform, PostType, SERVER_PATH } from "@/utils/const";
+import { PostType, SERVER_PATH } from "@/utils/const";
 import Media from "../common/Media";
 import StyledInput from "../common/StyledInput";
 import { getPlatformName } from "@/utils/string";

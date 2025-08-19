@@ -43,6 +43,8 @@ const AdminScheduleResultTable = ({
         return <Tag color="success">success</Tag>
       case ScheduleStatus.FAILED:
         return <Tag color="error">failed</Tag>
+      case ScheduleStatus.EXPIRED:
+        return <Tag color="warning">expired</Tag>
       default:
         break
     }
@@ -67,9 +69,9 @@ const AdminScheduleResultTable = ({
     {
       key: 'scheduledAt',
       title: 'Date/Time',
-      dataIndex: 'schedule',
+      dataIndex: 'scheduledAt',
       width: 120,
-      render: value => getDateTime(value.scheduledAt)
+      render: value => getDateTime(value)
     },
     {
       key: 'account',
@@ -142,7 +144,7 @@ const AdminScheduleResultTable = ({
           <Tooltip title="Delete content">
             <Button icon={<LuTrash />} danger onClick={() => onDelete && onDelete(record)} />
           </Tooltip>
-          {record.status == ScheduleStatus.FAILED &&
+          {record.status >= ScheduleStatus.FAILED &&
             <Tooltip title="Retry posting">
               <Button icon={<LuRefreshCcw />} onClick={() => onRetry && onRetry(record)} />
             </Tooltip>

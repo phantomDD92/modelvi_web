@@ -5,9 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { appendSchedulePost, deleteSchedulePost, deleteScheduleResult, getSchedulePosts, getScheduleResults, loadAccountList, loadModelList, resetScheduleResult, updateSchedulePost } from "@/redux/v2/actions";
 import { Modal } from "antd";
 import AgencyScheduleResultTable from "@/components/schedule/AgencyScheduleResultTable";
+import ScheduleRetryDialog from "@/components/schedule/ScheduleRetryDialog";
 
 const AgencySchedulePage = () => {
   const [editOpen, setEditOpen] = useState(false);
+  const [retryOpen, setRetryOpen] = useState(false);
+  const [current, setCurrent] = useState();
   const [post, setPost] = useState();
   const [model, setModel] = useState('');
   const [page, setPage] = useState(1);
@@ -50,8 +53,8 @@ const AgencySchedulePage = () => {
     });
   }
 
-  const handleRetrySchedule = (result) => {
-    dispatch(resetScheduleResult(result, () => { loadScheduleResultsCallback({ model, platform, status, page, pageSize }) }))
+  const handleRetrySchedule = (scheduledAt) => {
+    dispatch(resetScheduleResult(current, scheduledAt, () => { setRetryOpen(false); loadScheduleResultsCallback({ model, platform, status, page, pageSize }) }))
   }
 
   return (
@@ -78,7 +81,7 @@ const AgencySchedulePage = () => {
         actions={{
           onCreate: () => { setPost(); setEditOpen(true) },
           onDelete: handleDeleteSchedule,
-          onRetry: handleRetrySchedule,
+          onRetry: (record) => { setCurrent(record); setRetryOpen(true); },
           // onEdit: (post) => { setPost(post); setEditOpen(true) },
         }}
       />
@@ -88,6 +91,11 @@ const AgencySchedulePage = () => {
         modelList={modelList}
         onCancel={() => setEditOpen(false)}
         onUpdate={handleUpdateSchedule}
+      />
+      <ScheduleRetryDialog
+        open={retryOpen}
+        onCancel={() => setRetryOpen(false)}
+        onConfirm={handleRetrySchedule}
       />
     </>
   )

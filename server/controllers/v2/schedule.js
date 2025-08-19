@@ -175,7 +175,9 @@ const handleUpdateScheduleResultForAdmin = async (req, res) => {
       throw new ApiError("Scheduled post does not exist");
     switch (action) {
       case "reset":
-        await ScheduleService2.resetScheduleResult(resultId);
+        const { scheduledAt } = params;
+        console.log(scheduledAt);
+        await ScheduleService2.resetScheduleResult(resultId, new Date(scheduledAt));
         break
       default:
         throw new ApiError("Invalid schedule operation")
@@ -223,7 +225,8 @@ const handleUpdateScheduleResultForAgency = async (req, res) => {
       throw new ApiError("Schedule post can be accessed by model owner");
     switch (action) {
       case "reset":
-        await ScheduleService2.resetScheduleResult(resultId);
+        const { scheduledAt } = params;
+        await ScheduleService2.resetScheduleResult(resultId, new Date(scheduledAt));
         break
       default:
         throw new ApiError("Invalid schedule operation")

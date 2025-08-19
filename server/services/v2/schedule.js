@@ -155,6 +155,9 @@ const loadLivingSchedules = (accountId) =>
   ScheduleResultModel.find({ account: accountId, status: { $lte: ScheduleStatus.SCHEDULED } })
     .populate("schedule", "media preview folder title tags type price scheduledAt");
 
+const setExpiredSchedules = (accountId) =>
+  ScheduleResultModel.updateMany({ account: accountId, status: ScheduleStatus.WAITING, scheduledAt: { $gt: new Date() } }, { $set: { status: ScheduleStatus.EXPIRED } })
+
 const createScheduleResults = (scheduleId, accounts, { agencyId, modelId, scheduledAt }) =>
   ScheduleResultModel.bulkWrite(accounts.map(account => ({
     insertOne: {
@@ -181,8 +184,8 @@ const deleteScheduleResult = (resultId) =>
 const getScheduleResult = (resultId) =>
   ScheduleResultModel.findById(resultId);
 
-const resetScheduleResult = (resultId) =>
-  ScheduleResultModel.findByIdAndUpdate(resultId, { $set: { status: ScheduleStatus.WAITING } });
+const resetScheduleResult = (resultId, scheduledAt) =>
+  ScheduleResultModel.findByIdAndUpdate(resultId, { $set: { status: ScheduleStatus.WAITING, scheduledAt } });
 
 
 const getAllScheduleResults = () =>
@@ -231,6 +234,7 @@ const ScheduleService2 = {
 
   getAllScheduleResults,
   fixScheduleResult,
+  setExpiredSchedules,
 }
 
 module.exports = ScheduleService2

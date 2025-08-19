@@ -478,10 +478,10 @@ export const getScheduleResults = ({ model, status, platform, page, pageSize }, 
     callback
   })
 
-export const resetScheduleResult = (result, callback) => (dispatch) =>
+export const resetScheduleResult = (result, scheduledAt, callback) => (dispatch) =>
   ApiRequest.putAction(dispatch, {
     path: `/v2/agency/schedule_result/${result._id}`,
-    data: { action: "reset" },
+    data: { action: "reset", scheduledAt },
     inform: `Scheduled post is successfully reset`,
     callback
   })
