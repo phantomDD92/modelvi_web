@@ -207,6 +207,21 @@ const handleUpdateScheduleSetting = async (req, res) => {
   }
 }
 
+const updateScheduleResult = async (req, res) => {
+  try {
+    const { result } = req.body;
+    const account = await AccountService.findById(req.bot.id);
+    if (!account)
+      throw new ApiError("Invalid account");
+    NotifyUtils.sendDebugMessage(getAccountName(account), "Update Schedule Result", JSON.stringify(results))
+    await ScheduleService2.updateScheduleResult(result);
+    sendResult(res);
+  } catch (error) {
+    console.error(error)
+    sendError(res, error);
+  }
+}
+
 const handleUpdateScheduleResults = async (req, res) => {
   try {
     const { results } = req.body;
@@ -386,6 +401,9 @@ const handleUpdateAccount = async (req, res) => {
         break;
       case "schedule_results":
         handleUpdateScheduleResults(req, res);
+        break;
+      case "schedule_result":
+        updateScheduleResult(req, res);
         break;
       case "post_setting":
         handleUpdatePostSetting(req, res);

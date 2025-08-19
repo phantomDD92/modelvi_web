@@ -151,6 +151,11 @@ const updateScheduleResults = (results) => {
   return ScheduleResultModel.bulkWrite(updates);
 }
 
+const updateScheduleResult = (result) => {
+  const { id, status, post, reason } = result;
+  return ScheduleResultModel.findByIdAndUpdate(id, { $set: { status, post, reason } });
+}
+
 const loadLivingSchedules = (accountId) =>
   ScheduleResultModel.find({ account: accountId, status: { $lte: ScheduleStatus.SCHEDULED } })
     .populate("schedule", "media preview folder title tags type price scheduledAt");
@@ -219,6 +224,7 @@ const ScheduleService2 = {
   createSchedule,
   changeSchedule,
   updateScheduleResults,
+  updateScheduleResult,
   loadSchedulesWithPage,
   loadAgencySchedulesWithPage,
   loadLivingSchedules,
