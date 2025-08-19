@@ -213,7 +213,7 @@ const updateScheduleResult = async (req, res) => {
     const account = await AccountService.findById(req.bot.id);
     if (!account)
       throw new ApiError("Invalid account");
-    NotifyUtils.sendDebugMessage(getAccountName(account), "Update Schedule Result", JSON.stringify(results))
+    NotifyUtils.sendDebugMessage(getAccountName(account), "Update Schedule Result", JSON.stringify(result))
     await ScheduleService2.updateScheduleResult(result);
     sendResult(res);
   } catch (error) {
