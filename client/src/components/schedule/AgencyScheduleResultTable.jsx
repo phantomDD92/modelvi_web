@@ -193,6 +193,7 @@ const AgencyScheduleResultTable = ({
               { value: `${ScheduleStatus.SCHEDULED}`, label: "Scheduled" },
               { value: `${ScheduleStatus.FINISHED}`, label: "Success" },
               { value: `${ScheduleStatus.FAILED}`, label: "Failed" },
+              { value: `${ScheduleStatus.EXPIRED}`, label: "Expired" },
             ]}
           />
         </Flex>}
