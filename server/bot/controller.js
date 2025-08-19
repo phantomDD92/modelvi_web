@@ -524,30 +524,31 @@ const handleCheckBalance = async (req, res) => {
     if (!agency)
       throw new ApiError("Invalid bot agency");
     // calculate price + proxy fee
-    const price = getPricePlan(agency, account.platform, revenue) + 2.5;
+    const price = getPricePlan(agency, account.platform, revenue);
+    const fee = price + 2.5;
     // get valid dates
     const dateDelta = getDateDelta(account.expiredAt);
     if (dateDelta <= 0) { // if account is expired
-      if (hasSufficientBalance(agency, price)) {
+      if (hasSufficientBalance(agency, fee)) {
         // remove balance and create transaction, extend account
-        const { balance } = await AgencyService2.updateBalance(agency._id, -1 * price);
+        const { balance } = await AgencyService2.updateBalance(agency._id, -1 * fee);
         const commission = price * (agency.referrer?.commission || 0) / 100;
         await TransactionService2.createExpenseTransaction(
           agency._id,
           account._id,
-          price,
+          fee,
           balance,
-          balance - price,
+          balance - fee,
           `payout for ${account.platform} ${account.alias}`,
           commission
         );
         await AccountService2.extendAccount(account._id)
-        NotifyUtils.sendExpenseMessage(agency, account, `Monthly Revenue: ${account.revenue}\nPrice: ${price}\nBalance:$${balance.toFixed(2)} => $${(balance - price).toFixed(2)}\n`)
+        NotifyUtils.sendExpenseMessage(agency, account, `Monthly Revenue: ${account.revenue}\nPrice: ${fee}\nBalance:$${balance.toFixed(2)} => $${(balance - fee).toFixed(2)}\n`)
       } else {
         available = false;
         const expiringAccounts = await AccountService2.getExpiringAccounts(agency._id);
         await AccountService2.disableAccount(account._id, "no balance");
-        NotifyUtils.sendDebugMessage(getAccountName(account, agency), "Bot Closed With No Balance", `Monthly Revenue: ${account.revenue}\nPrice: ${price}\nBalance:$${agency.balance?.toFixed(2)}\n`)
+        NotifyUtils.sendDebugMessage(getAccountName(account, agency), "Bot Closed With No Balance", `Monthly Revenue: ${account.revenue}\nPrice: ${fee}\nBalance:$${agency.balance?.toFixed(2)}\n`)
         await NotifyUtils.sendMail(agency.email, `🚫 Bot Paused – Insufficient Funds in Your ModelVI Account`, getNoBalanceEmailTemplate(agency, expiringAccounts));
       }
     } else if (dateDelta == 7) {
