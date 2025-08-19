@@ -156,7 +156,7 @@ const loadLivingSchedules = (accountId) =>
     .populate("schedule", "media preview folder title tags type price scheduledAt");
 
 const setExpiredSchedules = (accountId) =>
-  ScheduleResultModel.updateMany({ account: accountId, status: ScheduleStatus.WAITING, scheduledAt: { $gt: new Date() } }, { $set: { status: ScheduleStatus.EXPIRED } })
+  ScheduleResultModel.updateMany({ account: accountId, status: ScheduleStatus.WAITING, scheduledAt: { $lt: new Date() } }, { $set: { status: ScheduleStatus.EXPIRED } })
 
 const createScheduleResults = (scheduleId, accounts, { agencyId, modelId, scheduledAt }) =>
   ScheduleResultModel.bulkWrite(accounts.map(account => ({
