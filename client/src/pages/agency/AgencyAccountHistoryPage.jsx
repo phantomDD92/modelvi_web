@@ -2,43 +2,43 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createSearchParams, useLocation, useNavigate, useParams } from "react-router-dom";
 import qs from 'query-string';
-import { clearAccountErrorForAdmin, clearAccountHistoryForAdmin, loadAccountHistoryForAdmin } from "@/redux/admin/actions";
+import { clearAccountError, clearAccountHistory, loadAccountHistory } from "@/redux/v2/actions";
 import { PageMetaData } from "@/components/common";
 import HistoryTable from "@/components/account/HistoryTable";
 import { DEFAULT_CURRENT_PAGE, LARGE_PAGE_SIZE } from "@/utils/const";
 
-export const AdminAccountHistoryPage = () => {
-  const [loading, setLoading] = useState(false);
-  const { platform, accountId } = useParams()
-  
+export const AgencyAccountHistoryPage = () => {
   const dispatch = useDispatch()
+  const [loading, setLoading] = useState(false);
+  // const modelProps = useSelector(state => state.model)
+  const { platform, accountId } = useParams()
   const navigate = useNavigate();
   const location = useLocation();
 
   const page = parseInt(qs.parse(location.search)?.page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search)?.size) || LARGE_PAGE_SIZE;
 
-  const history = useSelector(state => state.admin.history)
-  const historyCount = useSelector(state => state.admin.historyCount);
-  const historyAccount = useSelector(state => state.admin.historyAccount);
+
+  const history = useSelector(state => state.v2.history);
+  const historyCount = useSelector(state => state.v2.historyCount);
+  const historyAccount = useSelector(state => state.v2.historyAccount);
 
   useEffect(() => {
     setLoading(true);
-    dispatch(loadAccountHistoryForAdmin(platform, accountId, { page, pageSize }, () => setLoading(false)))
-  }, [loadAccountHistoryForAdmin, platform, accountId, page])
-
+    dispatch(loadAccountHistory(platform, accountId, { page, pageSize }, () => setLoading(false)))
+  }, [loadAccountHistory, platform, accountId, page])
 
   const handleClearHistory = () => {
-    dispatch(clearAccountHistoryForAdmin(platform, accountId, handleReloadData))
+    dispatch(clearAccountHistory(platform, accountId, handleReloadData))
   }
 
   const handleClearError = () => {
-    dispatch(clearAccountErrorForAdmin(platform, accountId));
+    dispatch(clearAccountError(platform, accountId));
   }
 
   const handleReloadData = () => {
     setLoading(true);
-    dispatch(loadAccountHistoryForAdmin(platform, accountId, { page, pageSize }, () => setLoading(false)))
+    dispatch(loadAccountHistory(platform, accountId, { page, pageSize }, () => setLoading(false)))
   }
 
   const handleChangePagination = (pageValue, pageSizeValue) => {
@@ -47,9 +47,10 @@ export const AdminAccountHistoryPage = () => {
       search: createSearchParams({ page: pageValue, size: pageSizeValue }).toString()
     }, { replace: true });
   }
+
   return (
     <>
-      <PageMetaData title="History" />
+      <PageMetaData title="History" admin />
       <HistoryTable
         pagination={{
           current: page,
@@ -70,4 +71,4 @@ export const AdminAccountHistoryPage = () => {
   );
 };
 
-export default AdminAccountHistoryPage;
+export default AgencyAccountHistoryPage;

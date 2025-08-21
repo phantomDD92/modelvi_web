@@ -2,7 +2,6 @@ import ACTIONS from "./types";
 import ApiRequest from "@/utils/api";
 
 
-const waitForTimeout = (secs) => new Promise(resolve => setTimeout(() => resolve(), secs * 1000));
 
 export const loadAccounts = (platform, callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {

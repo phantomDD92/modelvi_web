@@ -19,7 +19,6 @@ const ActorCtrl = require("../controllers/actor.js");
 const AccountCtrl = require("../controllers/account.js");
 const ManagerCtrl = require("../controllers/manager.js");
 const CommentCtrl = require("../controllers/comment.js");
-const HistoryCtrl = require("../controllers/history.js");
 const ScheduleCtrl = require("../controllers/schedule.js");
 const checkManager = require("../middleware/manager.js");
 const UserCtrl = require("../controllers/user.js");
@@ -131,11 +130,6 @@ router
 router.route("/agency/user/:id")
   .all(authenticate)
   .get(UserCtrl.handleLoadAgencyUsers);
-
-router
-  .route("/history/:accountId")
-  .all(authenticate)
-  .get(HistoryCtrl.handleLoadHistories);
 
 router.route("/schedule")
   .all(authenticate)
