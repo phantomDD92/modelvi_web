@@ -3,7 +3,7 @@ import { ImportContentTable } from "@/components/model";
 import { getModelContents, importModelContents } from "@/redux/v2/actions";
 import { F2FStoryType, Platform, SERVER_PATH, StoryType } from "@/utils/const";
 import { getPlatformName } from "@/utils/string";
-import { Button, Card, Form, Row, Col, Steps, List, Upload, Space, Checkbox, Radio, message } from "antd";
+import { Button, Card, Form, Row, Col, Steps, List, Upload, Space, Checkbox, Radio, message, Input } from "antd";
 import { useEffect, useState } from "react";
 import { LuCommand, LuImage, LuInbox, LuStepBack, LuStepForward, LuText, LuUpload } from "react-icons/lu";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,8 +14,8 @@ const AgencyImportContentPage = () => {
   const [step, setStep] = useState(0);
   const [fileList, setFileList] = useState([]);
   const [tagStr, setTagStr] = useState('');
-  const [captions, setCaptions] = useState([]);
-  const [caption, setCaption] = useState('');
+  // const [captions, setCaptions] = useState([]);
+  const [captionStr, setCaptionStr] = useState('');
   const [folder, setFolder] = useState('');
   const [platforms, setPlatforms] = useState([]);
   const [f2fStoryType, setF2fStoryType] = useState(StoryType.NONE);
@@ -53,6 +53,7 @@ const AgencyImportContentPage = () => {
       message.warning("Please upload images");
       return;
     }
+    const captions = captionStr.split("\n").filter(line => line.trim() != "");
     if (captions.length == 0) {
       message.warning("Please input captions");
       return;
@@ -90,7 +91,7 @@ const AgencyImportContentPage = () => {
   const handleDeleteContent = (content) => {
     const newContents = [...contents];
     const contentIndex = newContents.findIndex(item => item._id == content._id)
-    if (contentIndex >=0 ) {
+    if (contentIndex >= 0) {
       newContents.splice(contentIndex, 1);
     }
     console.log(content, contents, contentIndex, newContents);
@@ -211,22 +212,11 @@ const AgencyImportContentPage = () => {
                     onChange={e => setTagStr(e.target.value)} />
                 </Form.Item>
                 <Form.Item label="Captions :">
-                  <List
-                    // size="large"
-                    footer={
-                      <Space.Compact style={{ width: '100%' }}>
-                        <StyledInput
-                          placeholder="input caption"
-                          value={caption}
-                          onChange={e => setCaption(e.target.value)}
-                          onPressEnter={handleAppendCaption}
-                        />
-                        <Button type="primary" onClick={handleAppendCaption}>Add</Button>
-                      </Space.Compact>
-                    }
-                    bordered
-                    dataSource={captions}
-                    renderItem={item => <List.Item>{item}</List.Item>}
+                  <Input.TextArea
+                    value={captionStr}
+                    onChange={e => setCaptionStr(e.target.value)}
+                    rows={10}
+                    maxLength={30}
                   />
                 </Form.Item>
               </Col>
