@@ -12,6 +12,7 @@ export * from "@/pages/agency/BillingTransactionPage";
 export * from "@/pages/agency/AffiliatePage";
 export * from "@/pages/agency/AgencySchedulePage";
 export * from "@/pages/agency/AgencyChatTeamPage";
+export * from "@/pages/agency/AgencyImportContentPage";
 
 export * from "@/pages/admin/AdminChatTeamPage";
 export * from "@/pages/admin/AdminAgencyListPage";

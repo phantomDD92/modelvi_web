@@ -16,7 +16,7 @@ import {
   ModelContentTable,
   ModelContentDialog
 } from "@/components/model";
-import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE } from "@/utils/const";
+import { DEFAULT_CURRENT_PAGE, LARGE_PAGE_SIZE } from "@/utils/const";
 import { Modal } from "antd";
 import ModelPlatformDialog from "@/components/model/ModelPlatformDialog";
 
@@ -34,7 +34,7 @@ export const AgencyModelContentPage = () => {
   const routeParams = useParams()
 
   const page = parseInt(qs.parse(location.search).page) || DEFAULT_CURRENT_PAGE;
-  const pageSize = parseInt(qs.parse(location.search).size) || 100;
+  const pageSize = parseInt(qs.parse(location.search).size) || LARGE_PAGE_SIZE;
 
   const model = useSelector(state => state.v2.contentModel);
   const loadModelContentCallback = useCallback(() => {

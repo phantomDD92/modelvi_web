@@ -181,6 +181,14 @@ const getCountStats = async (agencyId) => {
   }
 }
 
+const importContents = (modelId, contents) => {
+  return ActorModel.findByIdAndUpdate(modelId, {
+    $push: { contents: { $each: contents.map(({ _id, media, ...params }) => ({ ...params, media: [media] })) } },
+    $inc: { contentsLength: contents.length },
+    $set: { updated: true },
+  })
+}
+
 const ModelService2 = {
   findAgencyModels,
   loadAgencyModels,
@@ -211,6 +219,7 @@ const ModelService2 = {
   getModelWithContents,
   appendAccount,
   removeAccount,
+  importContents,
 
   loadAgencyModelList,
   loadModelList,

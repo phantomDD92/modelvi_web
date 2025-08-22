@@ -11,9 +11,6 @@ import {
 } from "antd";
 import {
     DeleteOutlined,
-    EditOutlined,
-    PlusOutlined,
-    RollbackOutlined,
     UploadOutlined,
 } from "@ant-design/icons";
 import {
@@ -21,11 +18,12 @@ import {
     KnkyStoryType,
     Platform,
     SERVER_PATH,
-    StoryType
 } from "@/utils/const";
 import Media from "../common/Media";
 import { getPlatformName } from "@/utils/string";
 import { useState } from "react";
+import { LuArrowUpLeftSquare, LuCornerDownLeft, LuImport, LuPencilLine, LuPlus, LuTrash, LuTrash2, LuUpload } from "react-icons/lu";
+import { Link } from "react-router-dom";
 
 export const ModelContentTable = ({
     pagination,
@@ -40,29 +38,30 @@ export const ModelContentTable = ({
         onBack,
         onClear,
         onSync,
+        onImport,
         onBulkDelete,
         onBulkPlatform,
     }
 }) => {
     const [mode, setMode] = useState("");
 
-    const isFancentroStory = (record) => {
-        return record.platforms && record.platforms.includes(Platform.FNC) && (record.story && record.story != StoryType.NONE)
-    }
+    // const isFancentroStory = (record) => {
+    //     return record.platforms && record.platforms.includes(Platform.FNC) && (record.story && record.story != StoryType.NONE)
+    // }
 
-    const getFancentroStoryTag = (record) => {
-        switch (record.story) {
-            case StoryType.PUBLIC:
-                return <Tag color="error">FNC Story - Public</Tag>
-            case StoryType.FOLLOWER:
-                return <Tag color="error">FNC Story - Followers</Tag>
-            case StoryType.SUBSCRIBER:
-                return <Tag color="error">FNC Story - Subscribers</Tag>
-            default:
-                break;
-        }
-        return ""
-    }
+    // const getFancentroStoryTag = (record) => {
+    //     switch (record.story) {
+    //         case StoryType.PUBLIC:
+    //             return <Tag color="error">FNC Story - Public</Tag>
+    //         case StoryType.FOLLOWER:
+    //             return <Tag color="error">FNC Story - Followers</Tag>
+    //         case StoryType.SUBSCRIBER:
+    //             return <Tag color="error">FNC Story - Subscribers</Tag>
+    //         default:
+    //             break;
+    //     }
+    //     return ""
+    // }
 
     const isKnkyStory = (record) => {
         return record.platforms && record.platforms.includes(Platform.KNKY) && (record.knkyStoryType && record.knkyStoryType != KnkyStoryType.NONE)
@@ -165,11 +164,11 @@ export const ModelContentTable = ({
             render: (_, record) => (
                 <Flex gap="small">
                     <Tooltip title="Edit content">
-                        <Button icon={<EditOutlined />} onClick={() => onEdit && onEdit(record)} />
+                        <Button icon={<LuPencilLine />} onClick={() => onEdit && onEdit(record)} />
                     </Tooltip>
 
                     <Tooltip title="Delete content">
-                        <Button icon={<DeleteOutlined />} danger onClick={() => onDelete && onDelete(record)} />
+                        <Button icon={<LuTrash />} danger onClick={() => onDelete && onDelete(record)} />
                     </Tooltip>
                 </Flex>
             )
@@ -195,15 +194,22 @@ export const ModelContentTable = ({
             }
             extra={
                 <Flex gap="small">
+                    <Link to={`/import/${model?._id}`}>
+                        <Button
+                            key="import"
+                            icon={<LuImport />}>
+                            Import
+                        </Button>
+                    </Link>
                     <Button
                         key="create"
-                        icon={<PlusOutlined />}
+                        icon={<LuPlus />}
                         onClick={() => onCreate && onCreate()}>
                         Create
                     </Button>
                     <Button
                         key="clear"
-                        icon={<DeleteOutlined />}
+                        icon={<LuTrash2 />}
                         onClick={() => onClear && onClear()}
                         danger>
                         Clear
@@ -212,14 +218,14 @@ export const ModelContentTable = ({
                         model && model.updated &&
                         <Button
                             key="sync"
-                            icon={<UploadOutlined />}
+                            icon={<LuUpload />}
                             onClick={() => onSync && onSync()}>
                             Sync
                         </Button>
                     }
                     <Button
                         key="return"
-                        icon={<RollbackOutlined />}
+                        icon={<LuCornerDownLeft />}
                         onClick={onBack}>
                         Return
                     </Button>
@@ -232,13 +238,13 @@ export const ModelContentTable = ({
                         <h3>Bulk Actions : </h3>
                         <Button
                             key="disable"
-                            icon={<UploadOutlined />}
+                            icon={<LuPencilLine />}
                             onClick={() => onBulkPlatform && onBulkPlatform()}>
                             {`Change ${rowSelection.selectedRowKeys.length} contents' platform`}
                         </Button>
                         <Button
                             key="delete"
-                            icon={<DeleteOutlined />}
+                            icon={<LuTrash />}
                             danger
                             onClick={() => onBulkDelete && onBulkDelete()}>
                             {`Delete ${rowSelection.selectedRowKeys.length} contents`}
