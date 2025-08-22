@@ -47,7 +47,7 @@ const deleteBot = (botId) =>
 const deleteBots = (botIds) =>
   LikeBotModel.deleteMany({ _id: { $in: botIds } });
 
-const loadBots = (platform, { search }) => {
+const loadBots = (platform, { search, page, pageSize }) => {
   const searchQuery = search && search != ""
     ? {
       $or: [
@@ -60,7 +60,12 @@ const loadBots = (platform, { search }) => {
     platform,
     ...searchQuery,
   }
-  return LikeBotModel.find(query)
+  return Promise.all([
+    LikeBotModel.find(query)
+      .skip((parseInt(page) - 1) * parseInt(pageSize))
+      .limit(parseInt(pageSize)),
+    LikeBotModel.countDocuments(query),
+  ]);
 }
 
 const findBotByAlias = (alias) =>

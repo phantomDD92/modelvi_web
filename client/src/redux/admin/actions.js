@@ -608,10 +608,10 @@ export const getStatisticsForAdmin = (callback) => async (dispatch) => {
   })
 };
 
-export const loadLikeBots = (platform, { search }, callback) => async (dispatch) => {
+export const loadLikeBots = (platform, { search, page, pageSize }, callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/v2/admin/like/${platform}`,
-    params: { search },
+    params: { search, page, pageSize },
     action: ACTIONS.LOAD_LIKE_BOTS,
     callback
   })

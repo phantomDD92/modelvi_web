@@ -27,16 +27,17 @@ export const AdminLikeBotPage = () => {
   const search = qs.parse(location.search)?.search || '';
 
   const likeBots = useSelector(state => state.admin.likeBots);
+  const likeBotsCount = useSelector(state => state.admin.likeBotsCount);
 
-  const loadBotsCallback = useCallback((platform, search) => {
+  const loadBotsCallback = useCallback((platform, search, page, pageSize) => {
     setLoading(true);
-    dispatch(loadLikeBots(platform, { search }, () => setLoading(false)));
+    dispatch(loadLikeBots(platform, { search, page, pageSize }, () => setLoading(false)));
   }, [dispatch]);
 
 
   useEffect(() => {
-    loadBotsCallback(platform, search);
-  }, [loadBotsCallback, platform, search])
+    loadBotsCallback(platform, search, page, pageSize);
+  }, [loadBotsCallback, platform, search, page, pageSize])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -46,31 +47,31 @@ export const AdminLikeBotPage = () => {
   });
 
   const handleChangeStatus = (bot, status) => {
-    dispatch(changeLikeBotStatus(bot, status, () => loadBotsCallback(platform, search)))
+    dispatch(changeLikeBotStatus(bot, status, () => loadBotsCallback(platform, search, page, pageSize)))
   }
 
   const handleAppendBots = (users) => {
-    dispatch(createLikeBot(platform, users, () => { setImportOpen(false); loadBotsCallback(platform, search) }));
+    dispatch(createLikeBot(platform, users, () => { setImportOpen(false); loadBotsCallback(platform, search, page, pageSize) }));
   }
 
   const handleDeleteBot = (bot) => {
     Modal.confirm({
       title: `Are you sure to delete the bot(${bot.email})?`,
-      onOk: () => { dispatch(deleteLikeBot(bot, () => loadBotsCallback(platform, search))); },
+      onOk: () => { dispatch(deleteLikeBot(bot, () => loadBotsCallback(platform, search, page, pageSize))); },
     });
   }
 
   const handleChangeBulkBotsStatus = (status) => {
     Modal.confirm({
       title: `Are you sure to ${status ? "enable" : "disable"} ${selectedRowKeys.length} bots?`,
-      onOk: () => dispatch(changeLikeBotsStatus(platform, selectedRowKeys, status, () => { setSelectedRowKeys([]); loadBotsCallback(platform, search) })),
+      onOk: () => dispatch(changeLikeBotsStatus(platform, selectedRowKeys, status, () => { setSelectedRowKeys([]); loadBotsCallback(platform, search, page, pageSize) })),
     });
   }
 
   const handleDeleteBulkBots = () => {
     Modal.confirm({
       title: `Are you sure to delete ${selectedRowKeys.length} bots?`,
-      onOk: () => dispatch(deleteLikeBots(platform, selectedRowKeys, () => { setSelectedRowKeys([]); loadBotsCallback(platform, search) })),
+      onOk: () => dispatch(deleteLikeBots(platform, selectedRowKeys, () => { setSelectedRowKeys([]); loadBotsCallback(platform, search, page, pageSize) })),
     });
   }
 
@@ -101,6 +102,7 @@ export const AdminLikeBotPage = () => {
         pagination={{
           current: page,
           pageSize: pageSize,
+          total: likeBotsCount,
           onChange: handleChangePagination
         }}
         rowSelection={{

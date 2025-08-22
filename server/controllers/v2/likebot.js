@@ -9,9 +9,9 @@ const LikeCommentService = require("../../services/v2/likecomment");
 const handleLoadLikeBotsForAdmin = async (req, res) => {
   try {
     const { platform } = req.params;
-    const { search } = req.query;
-    const bots = await LikeBotService2.loadBots(platform, { search });
-    sendResult(res, { bots });
+    const { search, page, pageSize } = req.query;
+    const [bots, botsCount] = await LikeBotService2.loadBots(platform, { search, page, pageSize });
+    sendResult(res, { bots, botsCount });
   } catch (error) {
     sendError(res, error);
   }

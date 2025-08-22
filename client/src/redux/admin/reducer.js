@@ -59,6 +59,7 @@ const initialState = {
   scheduleResultsCount: 0,
 
   likeBots: [],
+  likeBotsCount: 0,
   likeComments: [],
 }
 
@@ -176,6 +177,7 @@ const adminReducer = (state = initialState, action) => {
       return {
         ...state,
         likeBots: action.payload.bots,
+        likeBotsCount: action.payload.botsCount,
       }
     case ACTIONS.LOAD_LIKE_COMMENTS:
       return {
