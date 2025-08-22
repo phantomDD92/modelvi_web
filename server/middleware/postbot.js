@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const checkBot = async (req, res, next) => {
+const checkPostBot = async (req, res, next) => {
   try {
     let token = req.headers.authorization;
     if (!token) {
@@ -22,4 +22,4 @@ const checkBot = async (req, res, next) => {
   }
 }
 
-module.exports = checkBot
+module.exports = checkPostBot

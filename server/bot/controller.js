@@ -4,7 +4,6 @@ const AccountService = require("../services/account");
 const jwt = require("jsonwebtoken");
 const { ApiError, sendError, sendResult } = require("../utils/resp");
 const ProxyService = require("../services/proxy");
-const HistoryService = require('../services/history');
 const ActionService = require('../services/action');
 const moment = require('moment');
 const ActorService = require('../services/actor');
@@ -20,6 +19,7 @@ const TransactionService2 = require('../services/v2/transaction');
 const NotifyUtils = require('../utils/notifiy');
 const ScheduleService2 = require('../services/v2/schedule');
 const ProxyNewService2 = require('../services/v2/proxyNew');
+const HistoryService2 = require('../services/v2/history');
 
 
 const handleLoginAccount = async (req, res) => {
@@ -96,7 +96,7 @@ const handleUpdateTime = async (req, res) => {
 const handleCreateHistory = async (req, res) => {
   try {
     const { action } = req.body;
-    await HistoryService.createHistory(req.bot.id, action);
+    await HistoryService2.createHistory(req.bot.id, action);
     sendResult(res)
   } catch (error) {
     sendError(res, error)
@@ -109,7 +109,7 @@ const handleCreateLastError = async (req, res) => {
     const account = await AccountService.findById(req.bot.id);
     const failures = (account.failures || 0);
     const status = !disabled && (failures < 10)
-    await HistoryService.createHistory(req.bot.id, action);
+    await HistoryService2.createHistory(req.bot.id, action);
     await AccountService.updateParameter(req.bot.id, { $set: { lastError: action, status }, $inc: { failures: 1 } });
     sendResult(res)
   } catch (error) {
@@ -119,7 +119,6 @@ const handleCreateLastError = async (req, res) => {
 
 const handleClearLastError = async (req, res) => {
   try {
-    // await HistoryService.clearHistory(req.bot.id);
     await AccountService.updateParams(req.bot.id, { lastError: "", failures: 0 });
     sendResult(res)
   } catch (error) {
@@ -503,7 +502,7 @@ const handleCreateCommentAction = async (req, res) => {
   try {
     const { creator, uuid, action } = req.body;
     await ActionService.createAction(req.bot.id, creator, uuid, action);
-    await HistoryService.createHistory(req.bot.id, `bot followed ${creator}'s post`);
+    await HistoryService2.createHistory(req.bot.id, `bot followed ${creator}'s post`);
     sendResult(res);
   } catch (error) {
     sendError(res, error)

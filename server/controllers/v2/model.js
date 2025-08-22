@@ -458,6 +458,10 @@ const handleUpdateContentsForAgency = async (req, res) => {
       case "clear":
         await ModelService2.clearContents(modelId);
         break;
+      case "import":
+        const { contents } = params;
+        await ModelService2.importContents(modelId, contents);
+        break;
       default:
         throw new ApiError("Invalid content operation");
     }

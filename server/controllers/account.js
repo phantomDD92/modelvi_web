@@ -1,8 +1,7 @@
 const { AdminRole } = require("../config/const");
 const AccountService = require("../services/account");
 const ActorService = require("../services/actor");
-const HistoryService = require("../services/history");
-const ChatTeamService2 = require("../services/v2/chatteam");
+const HistoryService2 = require("../services/v2/history");
 const NotifyUtils = require("../utils/notifiy");
 const { sendResult, sendError, ApiError } = require("../utils/resp");
 
@@ -152,7 +151,7 @@ const handleLoadHistory = async (req, res) => {
     const { id } = req.params;
     const { page, pageSize } = req.query;
     const account = await AccountService.findById(id);
-    const [history, historyCount] = await HistoryService.loadHistories(id, { page, pageSize: pageSize || "10" })
+    const [history, historyCount] = await HistoryService2.loadHistories(id, { page, pageSize: pageSize || "10" })
     sendResult(res, { history, historyCount, account });
   } catch (error) {
     sendError(res, error);
@@ -167,7 +166,7 @@ const handleClearHistory = async (req, res) => {
       throw new ApiError("The account does not exist.");
     if (req.manager.role != AdminRole.MANAGER && account.owner.toString() !== req.manager._id.toString())
       throw new ApiError(`The model is able to update only by owner.`)
-    await HistoryService.clearHistory(id)
+    await HistoryService2.clearHistory(id)
     sendResult(res);
   } catch (error) {
     sendError(res, error);

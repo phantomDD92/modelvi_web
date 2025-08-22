@@ -2,6 +2,7 @@ const express = require("express");
 const LikeBotCtrl2 = require("../../controllers/v2/likebot");
 const checkLikeBot = require("../../middleware/likebot");
 const AccountCtrl2 = require("../../controllers/v2/account");
+const checkPostBot = require("../../middleware/postbot");
 
 const router = express.Router();
 
@@ -33,4 +34,7 @@ router.route("/like/history")
   .post(LikeBotCtrl2.handleCreateHistoryForBot)
   .put(LikeBotCtrl2.handleSetErrorForBot)
 
+router.route("/post/account")
+  .all(checkPostBot)
+  
 module.exports = router;

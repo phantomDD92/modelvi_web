@@ -4,7 +4,7 @@ import {
     AgencyModelPage,
     AgencyModelContentPage,
     AgencyAccountPage,
-    AccountHistoryPage,
+    AgencyAccountHistoryPage,
     AgencyProxyPage,
     CommentListPage,
     BillingPage,
@@ -12,13 +12,15 @@ import {
 } from "@/pages";
 import AffiliatePage from "@/pages/agency/AffiliatePage";
 import AgencySchedulePage from "@/pages/agency/AgencySchedulePage";
+import AgencyImportContentPage from "@/pages/agency/AgencyImportContentPage";
 
 const routes = [
     { key: "dashboard", path: "/dashboard", component: <AgencyDashboardPage />, },
     { key: "model", path: "/model", component: <AgencyModelPage />, },
     { key: "content", path: "/model/:modelId", component: <AgencyModelContentPage />, },
+    { key: "import", path: "/import/:modelId", component: <AgencyImportContentPage />, },
     { key: "account", path: "/account/:platform", component: <AgencyAccountPage />, },
-    { key: "history", path: "/history/:platform/:accountId", component: <AccountHistoryPage /> },
+    { key: "history", path: "/history/:platform/:accountId", component: <AgencyAccountHistoryPage /> },
     { key: "chat", path: "/chat", component: <AgencyChatTeamPage />, },
     { key: "schedule", path: "/schedule", component: <AgencySchedulePage />, },
     { key: "comment", path: "/comment", component: <CommentListPage />, },

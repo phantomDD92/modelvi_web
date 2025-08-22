@@ -11,11 +11,11 @@ const ActorSchema = new Schema({
   accounts: [{ type: SchemaTypes.ObjectId, ref: "Account" }],
   contentsLength: { type: Number, default: 0 },
   contents: [{
-    image: String,
+    // image: String,
     folder: String,
     title: String,
-    tags: String,
-    story: Number,
+    // tags: String,
+    // story: Number,
     mode: String,
     platforms: [String],  // platform
     media: [{ name: String, mode: String, uuid: String }],  // photo or video

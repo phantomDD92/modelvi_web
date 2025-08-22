@@ -1,6 +1,6 @@
 const express = require("express");
 const BotController = require("./controller");
-const checkBot = require("../middleware/bot");
+const checkBot = require("../middleware/postbot");
 
 
 const router = express.Router();
