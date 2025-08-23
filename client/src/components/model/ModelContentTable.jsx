@@ -194,13 +194,13 @@ export const ModelContentTable = ({
             }
             extra={
                 <Flex gap="small">
-                    <Link to={`/import/${model?._id}`}>
+                    {/* <Link to={`/import/${model?._id}`}>
                         <Button
                             key="import"
                             icon={<LuImport />}>
                             Import
                         </Button>
-                    </Link>
+                    </Link> */}
                     <Button
                         key="create"
                         icon={<LuPlus />}

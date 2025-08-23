@@ -17,6 +17,8 @@ import {
 } from "@ant-design/icons";
 import { getPlatformName } from "@/utils/string";
 import { StyledSearch } from "../common";
+import { LuImport } from "react-icons/lu";
+import { Link } from "react-router-dom";
 
 export const AgencyModelTable = ({
     filters: {
@@ -135,6 +137,12 @@ export const AgencyModelTable = ({
                         onClick={onCreate}>
                         Create
                     </Button>
+                    <Link to="/import">
+                        <Button
+                            icon={<LuImport />}>
+                            Import Contents
+                        </Button>
+                    </Link>
                 </Flex>
             }
         >

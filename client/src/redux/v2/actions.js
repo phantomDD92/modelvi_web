@@ -273,12 +273,12 @@ export const clearModelContents = (model, callback) => async (dispatch) => {
   })
 };
 
-export const importModelContents = (model, contents, callback) => async (dispatch) => {
+export const importModelContents = (modelId, contents, callback) => async (dispatch) => {
   await ApiRequest.putAction(dispatch, {
-    path: `/v2/agency/content/${model._id}`,
+    path: `/v2/agency/content/${modelId}`,
     data: { action: "import", contents },
     action: ACTIONS.GET_MODEL_CONTENTS,
-    inform: `Model (${model.name})'s contents are successfully imported`,
+    inform: `Model's contents are successfully imported`,
     callback
   })
 };

@@ -18,7 +18,7 @@ const routes = [
     { key: "dashboard", path: "/dashboard", component: <AgencyDashboardPage />, },
     { key: "model", path: "/model", component: <AgencyModelPage />, },
     { key: "content", path: "/model/:modelId", component: <AgencyModelContentPage />, },
-    { key: "import", path: "/import/:modelId", component: <AgencyImportContentPage />, },
+    { key: "import", path: "/import", component: <AgencyImportContentPage />, },
     { key: "account", path: "/account/:platform", component: <AgencyAccountPage />, },
     { key: "history", path: "/history/:platform/:accountId", component: <AgencyAccountHistoryPage /> },
     { key: "chat", path: "/chat", component: <AgencyChatTeamPage />, },

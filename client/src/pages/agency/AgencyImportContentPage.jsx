@@ -1,41 +1,46 @@
 import { PageMetaData, StyledInput } from "@/components/common";
 import { ImportContentTable } from "@/components/model";
-import { getModelContents, importModelContents } from "@/redux/v2/actions";
-import { F2FStoryType, Platform, SERVER_PATH, StoryType } from "@/utils/const";
-import { getPlatformName } from "@/utils/string";
-import { Button, Card, Form, Row, Col, Steps, List, Upload, Space, Checkbox, Radio, message, Input } from "antd";
+import { importModelContents, loadModelList } from "@/redux/v2/actions";
+import { Platform, SERVER_PATH, StoryType } from "@/utils/const";
+import { getPlatformName, shuffleArray } from "@/utils/string";
+import { Button, Card, Form, Row, Col, Upload, Space, Checkbox, Radio, message, Input, Select } from "antd";
 import { useEffect, useState } from "react";
-import { LuCommand, LuImage, LuInbox, LuStepBack, LuStepForward, LuText, LuUpload } from "react-icons/lu";
+import { LuCommand, LuStepBack, LuStepForward, LuUpload } from "react-icons/lu";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const AgencyImportContentPage = () => {
 
   const [step, setStep] = useState(0);
   const [fileList, setFileList] = useState([]);
   const [tagStr, setTagStr] = useState('');
-  // const [captions, setCaptions] = useState([]);
   const [captionStr, setCaptionStr] = useState('');
   const [folder, setFolder] = useState('');
   const [platforms, setPlatforms] = useState([]);
   const [f2fStoryType, setF2fStoryType] = useState(StoryType.NONE);
   const [knkyStoryType, setKnkyStoryType] = useState(StoryType.NONE);
   const [contents, setContents] = useState([]);
-  const { modelId } = useParams();
+  // const { modelId } = useParams();
+  const [model, setModel] = useState();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const model = useSelector(state => state.v2.contentModel);
-
+  const modelList = useSelector(state => state.v2.modelList);
+  
   const ImportStep = {
     INPUT: 0,
     IMPORT: 2,
   }
 
   useEffect(() => {
-    dispatch(getModelContents(modelId));
+    dispatch(loadModelList());
+    // dispatch(getModelContents(modelId));
   }, []);
 
   const handleNextClick = () => {
+    if (!model) {
+      message.warning("Please select a model");
+      return;
+    }
     // check elements
     if (platforms.length == 0) {
       message.warning("Please select platforms");
@@ -58,13 +63,14 @@ const AgencyImportContentPage = () => {
       message.warning("Please input captions");
       return;
     }
+    const mediaList = shuffleArray(fileList.map(fileInfo => ({ name: fileInfo.response?.file, mode: fileInfo.type })));
     setStep(ImportStep.IMPORT);
     // prepare contents
     let importContents = [];
     let id = 0;
     const captionsLen = captions.length;
     const tags = tagStr.replaceAll("#", " ").trim().split(/\s+/);
-    for (var fileInfo of fileList) {
+    for (var media of mediaList) {
       const randomIndex = Math.floor(Math.random() * captionsLen);
       importContents.push({
         _id: id++,
@@ -73,8 +79,8 @@ const AgencyImportContentPage = () => {
         f2fStoryType,
         title: captions[randomIndex],
         postTags: tags,
-        media: { name: fileInfo.response?.file, mode: fileInfo.type },
-        mode: (fileInfo.type || "image").split("/")[0],
+        media,
+        mode: (media.mode || "image").split("/")[0],
         folder: folder,
       });
     }
@@ -85,7 +91,7 @@ const AgencyImportContentPage = () => {
     setStep(ImportStep.INPUT);
   }
   const handleFinishClick = () => {
-    dispatch(importModelContents(model, contents, () => navigate(-1)));
+    dispatch(importModelContents(model, contents, () => navigate(`/model/${model}`)));
   }
 
   const handleDeleteContent = (content) => {
@@ -102,18 +108,11 @@ const AgencyImportContentPage = () => {
     setFileList(fileList);
   }
 
-  const handleAppendCaption = () => {
-    const newCaptions = captions;
-    newCaptions.push(caption)
-    setCaptions(newCaptions);
-    setCaption("");
-  }
-
   return (
     <>
       <PageMetaData title="Import" />
       <Card
-        title={model ? `Import Contents - [${model.owner?.name}] ${model.number}. ${model.name} ` : "Import Contents"}
+        title={"Import Contents"}
         extra={step == ImportStep.INPUT
           ? <Button type="primary" icon={<LuStepForward />} onClick={handleNextClick}>Next</Button>
           : <Space>
@@ -122,6 +121,22 @@ const AgencyImportContentPage = () => {
           </Space>
         }
       >
+        <Form.Item label="Model" className="px-10">
+          <Select
+            className="max-w-[300px]"
+            options={(modelList || [])
+              .map(model => ({
+                label: `${model.number}. ${model.name}`,
+                value: model._id
+              }))}
+            showSearch
+            value={model}
+            onChange={value => setModel(value)}
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            }
+          />
+        </Form.Item>
         {step == ImportStep.INPUT
           ? <Form
             layout="vertical"
