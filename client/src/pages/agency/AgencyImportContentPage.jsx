@@ -231,7 +231,7 @@ const AgencyImportContentPage = () => {
                     value={captionStr}
                     onChange={e => setCaptionStr(e.target.value)}
                     rows={10}
-                    maxLength={30}
+                    // maxLength={30}
                   />
                 </Form.Item>
               </Col>
