@@ -27,10 +27,6 @@ const apiRouterV2 = require("./v2");
 
 const router = express.Router();
 
-// router.route("/temp")
-//   .all(authenticate, checkManager)
-//   .post(ManagerCtrl.handleUpdateDB);
-
 router.route("/manager")
   .all(authenticate, checkManager)
   .get(ManagerCtrl.handleLoadAgencies)
@@ -144,9 +140,6 @@ router.route("/schedule/:id")
 router.route("/upload")
   .post(imageUpload.single('file'), (req, res) => { res.json({ file: req.file.filename }) })
 
-
-router.route("/contact")
-  .post(ManagerCtrl.handleSendContact)
-
 router.use("/v2", apiRouterV2);
+
 module.exports = router;

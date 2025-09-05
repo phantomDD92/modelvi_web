@@ -1,12 +1,16 @@
 import { LuComponent, LuLayers, LuLayoutGrid } from "react-icons/lu";
 
 const supportPlatforms = [
-  "Fancentro",
   "F2F",
-  "Fansly",
-  "Fanvue",
   "Knky",
-  "Maloum"
+  "Fancentro",
+  "Fansly",
+  "Loyalfans",
+  "Maloum",
+  "Fanvue",
+  "4Based",
+  "Mymfans",
+  "Fetlife",
 ];
 
 const pricingPlans = [
@@ -144,4 +148,4 @@ const features = [
   },
 ];
 
-export { homeSwiperSlides, services,  faqContents, supportPlatforms, features, pricingPlans };
+export { homeSwiperSlides, services, faqContents, supportPlatforms, features, pricingPlans };

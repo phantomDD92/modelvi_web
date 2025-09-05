@@ -1,13 +1,12 @@
-import { useNavigate } from "react-router-dom";
 import { PageMetaData } from "@/components/common";
 import {
   TopNavBar,
   Hero,
   ServicesMarquee,
   ContactUs,
-  FAQs,
+  // FAQs,
   Features,
-  Pricing,
+  // Pricing,
   Footer,
   Services
 } from "@/components/landing";
@@ -16,7 +15,6 @@ import { useDispatch } from "react-redux";
 import { setAffiliateClick } from "@/redux/v2/actions";
 
 const HomePage = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [refCode, setRefCode] = useState();
 
@@ -39,7 +37,7 @@ const HomePage = () => {
           "home",
           "services",
           "features",
-          "pricing",
+          // "pricing",
           "contact",
         ]}
       />
@@ -47,8 +45,7 @@ const HomePage = () => {
       <ServicesMarquee />
       <Services />
       <Features />
-      <Pricing referralCode={refCode} />
-      {/* <FAQs /> */}
+      {/* <Pricing referralCode={refCode} /> */}
       <ContactUs />
       <Footer />
     </>

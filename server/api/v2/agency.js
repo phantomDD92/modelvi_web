@@ -1,7 +1,7 @@
 const express = require("express");
-const PaymentCtrl = require("../../controllers/v2/payment");
 const authenticate = require("../../middleware/auth");
-const TransactionCtrl = require("../../controllers/v2/transaction");
+const PaymentCtrl2 = require("../../controllers/v2/payment");
+const TransactionCtrl2 = require("../../controllers/v2/transaction");
 const ProxyCtrl2 = require("../../controllers/v2/proxy");
 const ModelCtrl2 = require("../../controllers/v2/model");
 const AccountCtrl2 = require("../../controllers/v2/account");
@@ -17,20 +17,20 @@ router.route("/version")
 
 router.route("/payment")
   .all(authenticate)
-  .get(PaymentCtrl.handleLoadPayments)
-  .post(PaymentCtrl.handleCreatePayment)
+  .get(PaymentCtrl2.handleLoadPayments)
+  .post(PaymentCtrl2.handleCreatePayment)
 
 router.route("/payment_callback")
-  .post(PaymentCtrl.handleProcessPayment)
+  .post(PaymentCtrl2.handleProcessPayment)
 
 router.route("/payment/:id")
   .all(authenticate)
-  .get(PaymentCtrl.handleGetPayment)
-  .delete(PaymentCtrl.handleCancelPayment)
+  .get(PaymentCtrl2.handleGetPayment)
+  .delete(PaymentCtrl2.handleCancelPayment)
 
 router.route("/transaction")
   .all(authenticate)
-  .get(TransactionCtrl.handleLoadTransactions)
+  .get(TransactionCtrl2.handleLoadTransactions)
 
 // Proxy related apis
 router.route("/proxy")

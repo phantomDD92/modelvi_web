@@ -555,3 +555,12 @@ export const getStatistics = (callback) => async (dispatch) => {
   })
 };
 
+
+export const sendContact = (data, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: '/v2/contact',
+    data,
+    inform: "Email sent successfully",
+    callback
+  })
+}

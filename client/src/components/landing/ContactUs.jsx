@@ -1,13 +1,15 @@
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
-import { LuSend } from "react-icons/lu";
 import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { LuSend } from "react-icons/lu";
+import { LoadingOutlined } from "@ant-design/icons";
+
 import TextFormInput from "./TextFormInput";
 import TextAreaFormInput from "./TextAreaFormInput";
-import { useDispatch } from "react-redux";
-import { sendContact } from "@/redux/dashboard/actions";
-import { useState } from "react";
-import { LoadingOutlined } from "@ant-design/icons";
+import { sendContact } from "@/redux/v2/actions";
+
 const ContactUs = () => {
   const [waiting, setWaiting] = useState(false);
   const dispatch = useDispatch();

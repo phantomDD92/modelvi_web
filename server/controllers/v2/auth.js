@@ -13,6 +13,7 @@ const AgencyService2 = require('../../services/v2/agency');
 const TransactionService2 = require('../../services/v2/transaction');
 const { sendMail } = require('../../utils/notifiy');
 const { getVerifyEmailTemplate } = require('../../utils/helper');
+const NotifyUtils = require('../../utils/notifiy');
 
 const handleRegisterAgency = async (req, res) => {
   try {
@@ -174,14 +175,29 @@ const handleVerifyAgency = async (req, res) => {
   }
 }
 
-const AuthCtrl = {
+
+const handleSendContact = async (req, res) => {
+  try {
+    const { name, email, message, subject } = req.body;
+    if (!name || !email || !message || !subject)
+      throw new ApiError("All fields are required");
+    const htmlContent = message.split("\n").map(p => `<p>${p.replace(/\n/g, '')}</p>`).join('') + `<br><p>From <b>${name}</b></p>`;
+    await NotifyUtils.sendContactMail(email, subject, htmlContent)
+    sendResult(res);
+  } catch (error) {
+    sendError(res, error)
+  }
+}
+
+const AuthCtrl2 = {
   handleRegisterAgency,
   handleLoginAgency,
   handleGetProfile,
   handleGetAffiliate,
   handleCreateAffiliateClick,
   handleUpdateAffiliateRegistration,
-  handleVerifyAgency
+  handleVerifyAgency,
+  handleSendContact
 };
 
-module.exports = AuthCtrl
+module.exports = AuthCtrl2

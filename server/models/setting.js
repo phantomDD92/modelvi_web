@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const SettingSchema = new Schema({
   _id: { type: String },
-  captcha: { type: String },
+  params: { type: String },
 });
 
 const SettingModel = mongoose.model("Setting", SettingSchema);
