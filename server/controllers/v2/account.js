@@ -289,7 +289,7 @@ const handleLoadAccountList = async (req, res) => {
 const handleLoadAccountsForBot = async (req, res) => {
   try {
     const { platform } = req.params;
-    const accounts = await AccountService2.getAccountsForPlatform(platform);
+    const accounts = await AccountService2.getLivingAccountsForPlatform(platform);
     sendResult(res, { accounts })
   } catch (error) {
     sendError(res, error)

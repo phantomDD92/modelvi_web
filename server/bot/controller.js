@@ -303,7 +303,7 @@ const handleUpdateAccountId = async (req, res) => {
 const handleUpdatePostSetting = async (req, res) => {
   try {
     const { next, postId, deleteIds } = req.body;
-    const account = await AccountService2.findAccountById(req.bot.id);
+    const account = await AccountService2.getAccount(req.bot.id);
     if (!account)
       throw new ApiError("unknown account")
     const { params } = account.toJSON();
