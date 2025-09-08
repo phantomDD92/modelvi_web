@@ -9,20 +9,14 @@ router.route("/platform/:platform")
   .get(BotController.handleLoadAccounts)
   .post(BotController.handleLoginAccount)
 
-router.route("/console")
-  .get(BotController.handleGetIdleAccounts)
-  .post(BotController.handleReleaseAccounts);
-
 router.route("/account")
   .all(checkBot)
   .get(BotController.handleGetAccount)
   .post(BotController.handleUpdateAccount)
-  .put(BotController.handleChangeAccount)
   .delete(BotController.handleGetCredential)
 
 router.route("/proxy")
   .all(checkBot)
-  .get(BotController.handlePickProxy)
   .put(BotController.handleChangeProxy)
 
 router.route("/history")
@@ -40,11 +34,6 @@ router.route("/schedule")
 
 router.route("/daily")
   .all(checkBot)
-
-router.route("/action")
-  .all(checkBot)
-  .put(BotController.handleFindCommentAction)
-  .post(BotController.handleCreateCommentAction)
 
 router.route("/balance")
   .all(checkBot)

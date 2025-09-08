@@ -174,8 +174,8 @@ const setStatus = (accountId, status) =>
 const clearError = (accountId) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { lastError: "" } })
 
-const updateParams = (accountId, params) =>
-  AccountModel.findByIdAndUpdate(accountId, { $set: params });
+const updateParameters = (accountId, params) =>
+  AccountModel.findByIdAndUpdate(accountId, params );
 
 const getAccounts = (accountIds, agencyId = undefined) =>
   agencyId
@@ -304,7 +304,7 @@ const getExpiringAccounts = (agencyId) =>
 const updateIdentifier = (accountId, { alias, identifier }) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { alias, identifier } });
 
-const getAccountsForPlatform = (platform) =>
+const getLivingAccountsForPlatform = (platform) =>
   AccountModel.find({ platform, status: true }, "alias");
 
 const getIdentifiers = (platform) =>
@@ -317,6 +317,17 @@ const getAccount = (accountId) =>
 
 const changeProxy = (accountId, proxy) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { proxy } });
+
+const clearContents = (accountId) =>
+  AccountModel.findByIdAndUpdate(accountId, { $set: { "params.contents": [] } })
+
+const setContents = (accountId, contents) => {
+  const newContents = contents.map(({ _id, platforms, ...params }) => ({ ...params }));
+  return AccountModel.findByIdAndUpdate(accountId, {
+    $push: { "params.contents": { $each: newContents } },
+    $set: { "params.recent": true, "params.uploaded": false }
+  });
+}
 
 const AccountService2 = {
   getAgencyAccounts,
@@ -341,7 +352,7 @@ const AccountService2 = {
   updateAccount,
   setStatus,
   clearError,
-  updateParams,
+  updateParameters,
   getAccounts,
   updateAccountsStatus,
   deleteAccounts,
@@ -354,10 +365,12 @@ const AccountService2 = {
   getDisabledAccounts,
   getExpiringAccounts,
   updateIdentifier,
-  getAccountsForPlatform,
+  getLivingAccountsForPlatform,
   getIdentifiers,
   getAccount,
   changeProxy,
+  clearContents,
+  setContents
 };
 
 module.exports = AccountService2;

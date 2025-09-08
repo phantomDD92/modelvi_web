@@ -149,7 +149,7 @@ const handleUpdateAccountForAgency = async (req, res) => {
           `${status ? 'ENABLE' : 'DISABLE'} A BOT`);
         break;
       case "setting":
-        await AccountService2.updateParams(accountId, { params: { ...account.params, ...params } });
+        await AccountService2.updateParameters(accountId, { $set: { params: { ...account.params, ...params } } });
         break;
       default:
         throw new ApiError("Invalid account operation");
@@ -184,7 +184,7 @@ const handleUpdateAccountForAdmin = async (req, res) => {
           `${status ? 'ENABLE' : 'DISABLE'} A BOT`);
         break;
       case "setting":
-        await AccountService2.updateParams(accountId, { params: { ...account.params, ...params } });
+        await AccountService2.updateParameters(accountId, { $set: { params: { ...account.params, ...params } } });
         break;
       default:
         throw new ApiError("Invalid account operation");

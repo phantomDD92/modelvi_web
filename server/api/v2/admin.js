@@ -9,7 +9,7 @@ const ModelCtrl2 = require("../../controllers/v2/model");
 const AccountCtrl2 = require("../../controllers/v2/account");
 const HistoryCtrl2 = require("../../controllers/v2/history");
 const PaymentCtrl2 = require("../../controllers/v2/payment");
-const TransactionCtrl = require("../../controllers/v2/transaction");
+const TransactionCtrl2 = require("../../controllers/v2/transaction");
 const ScheduleCtrl2 = require("../../controllers/v2/schedule");
 const DashboardCtrl2 = require("../../controllers/v2/dashboard");
 const LikeBotCtrl2 = require("../../controllers/v2/likebot");
@@ -130,7 +130,7 @@ router
 router
   .route("/transaction")
   .all(authenticate, checkManager)
-  .get(TransactionCtrl.handleLoadTransactionForAdmin)
+  .get(TransactionCtrl2.handleLoadTransactionForAdmin)
 
 router
   .route("/schedule")
