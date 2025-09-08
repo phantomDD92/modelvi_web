@@ -143,7 +143,7 @@ const handleUpdateContents = async (req, res) => {
     const account = await AccountService2.getAccount(req.bot.id);
     if (!account)
       throw new ApiError("unknown account")
-    const actor = await ModelService2.findModelById(account.actor._id);
+    const actor = await ModelService2.getModelWithContents(account.actor._id);
     if (!actor)
       throw new ApiError("unknown model");
     const actorJson = actor.toJSON();
