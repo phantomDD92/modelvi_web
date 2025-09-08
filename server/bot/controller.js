@@ -70,7 +70,7 @@ const handleGetAccount = async (req, res) => {
 
 const handleGetCredential = async (req, res) => {
   try {
-    const account = await AccountService2.findAccountById(req.bot.id);
+    const account = await AccountService2.getAccount(req.bot.id);
     if (!account)
       throw new ApiError("unknown account")
     const { email, password } = account.toJSON()
@@ -102,7 +102,7 @@ const handleCreateHistory = async (req, res) => {
 const handleCreateLastError = async (req, res) => {
   try {
     const { action, disabled } = req.body;
-    const account = await AccountService2.findAccountById(req.bot.id);
+    const account = await AccountService2.getAccount(req.bot.id);
     const failures = (account.failures || 0);
     const status = !disabled && (failures < 10)
     await HistoryService2.createHistory(req.bot.id, action);
@@ -124,7 +124,7 @@ const handleClearLastError = async (req, res) => {
 
 const handleCommentInterval = async (req, res) => {
   try {
-    const account = await AccountService2.findAccountById(req.bot.id);
+    const account = await AccountService2.getAccount(req.bot.id);
     const { params } = account.toJSON();
     await AccountService2.updateParameters(req.bot.id, { $set: { "params.commentNextTime": moment().add(params.commentInterval || 10, "minute").toDate() } })
     sendResult(res);
@@ -140,7 +140,7 @@ const handleCommentInterval = async (req, res) => {
  */
 const handleUpdateContents = async (req, res) => {
   try {
-    const account = await AccountService2.findAccountById(req.bot.id);
+    const account = await AccountService2.getAccount(req.bot.id);
     if (!account)
       throw new ApiError("unknown account")
     const actor = await ModelService2.findModelById(account.actor._id);
@@ -160,7 +160,7 @@ const handleUpdateContents = async (req, res) => {
 const handleUpdateMedia = async (req, res) => {
   try {
     const { id, uuid, subject } = req.body;
-    const account = await AccountService2.findAccountById(req.bot.id);
+    const account = await AccountService2.getAccount(req.bot.id);
     if (!account)
       throw new ApiError("unknown account")
     field = subject == "content_media" ? `params.contents.${id}.media.0.uuid` : `params.contents.${id}.preview.uuid`;
@@ -173,7 +173,7 @@ const handleUpdateMedia = async (req, res) => {
 
 const handleUpdateChatSetting = async (req, res) => {
   try {
-    const account = await AccountService2.findAccountById(req.bot.id);
+    const account = await AccountService2.getAccount(req.bot.id);
     if (!account)
       throw new ApiError("Invalid account");
     const accountJson = account.toJSON();
@@ -187,7 +187,7 @@ const handleUpdateChatSetting = async (req, res) => {
 
 const handleUpdateScheduleSetting = async (req, res) => {
   try {
-    const account = await AccountService2.findAccountById(req.bot.id);
+    const account = await AccountService2.getAccount(req.bot.id);
     if (!account)
       throw new ApiError("Invalid account");
     const scheduleNextTime = moment().add(20, "minute").toDate();
@@ -205,7 +205,7 @@ const handleUpdateScheduleSetting = async (req, res) => {
 const updateScheduleResult = async (req, res) => {
   try {
     const { result } = req.body;
-    const account = await AccountService2.findAccountById(req.bot.id);
+    const account = await AccountService2.getAccount(req.bot.id);
     if (!account)
       throw new ApiError("Invalid account");
     NotifyUtils.sendDebugMessage(getAccountName(account), "Update Schedule Result", JSON.stringify(result))
@@ -220,7 +220,7 @@ const updateScheduleResult = async (req, res) => {
 const handleUpdateScheduleResults = async (req, res) => {
   try {
     const { results } = req.body;
-    const account = await AccountService2.findAccountById(req.bot.id);
+    const account = await AccountService2.getAccount(req.bot.id);
     if (!account)
       throw new ApiError("Invalid account");
     NotifyUtils.sendDebugMessage(getAccountName(account), "Update Schedule Results", JSON.stringify(results))
@@ -235,7 +235,7 @@ const handleUpdateScheduleResults = async (req, res) => {
 const handleUpdateStorySetting = async (req, res) => {
   try {
     const { index } = req.body;
-    const account = await AccountService2.findAccountById(req.bot.id);
+    const account = await AccountService2.getAccount(req.bot.id);
     if (!account)
       throw new ApiError("unknown account")
     const accountJson = account.toJSON();
@@ -269,7 +269,7 @@ const handleUpdateStorySetting = async (req, res) => {
 
 const handleUpdateCommentSetting = async (req, res) => {
   try {
-    const account = await AccountService2.findAccountById(req.bot.id);
+    const account = await AccountService2.getAccount(req.bot.id);
     if (!account)
       throw new ApiError("unknown account")
     const accountJson = account.toJSON();
@@ -289,7 +289,7 @@ const handleUpdateCommentSetting = async (req, res) => {
 
 const handleUpdateAccountId = async (req, res) => {
   try {
-    const account = await AccountService2.findAccountById(req.bot.id);
+    const account = await AccountService2.getAccount(req.bot.id);
     if (!account)
       throw new ApiError("unknown account")
     const { alias, identifier } = req.body;
@@ -421,7 +421,7 @@ const handleUpdateAccount = async (req, res) => {
 
 const handleChangeProxy = async (req, res) => {
   try {
-    const account = await AccountService2.findAccountById(req.bot.id);
+    const account = await AccountService2.getAccount(req.bot.id);
     if (!account)
       throw new ApiError("unknown account");
     const proxy = await ProxyNewService2.pickupProxy();
