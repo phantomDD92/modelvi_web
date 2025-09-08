@@ -9,6 +9,8 @@ const HistoryCtrl2 = require("../../controllers/v2/history");
 const ScheduleCtrl2 = require("../../controllers/v2/schedule");
 const ChatTeamCtrl2 = require("../../controllers/v2/chatteam");
 const DashboardCtrl2 = require("../../controllers/v2/dashboard");
+const CommentCtrl2 = require("../../controllers/v2/comment");
+const BlockUserCtrl2 = require("../../controllers/v2/blockUser");
 
 const router = express.Router();
 
@@ -139,5 +141,30 @@ router
 router.route("/stats")
   .all(authenticate)
   .get(DashboardCtrl2.handleGetStatsForAgency)
+
+router
+  .route("/comment")
+  .all(authenticate)
+  .get(CommentCtrl2.handleLoadCommentsForAgency)
+  .post(CommentCtrl2.handleAppendCommentForAgency)
+  .delete(CommentCtrl2.handleClearCommentsForAgency);
+
+router
+  .route("/comment/:commentId")
+  .all(authenticate)
+  .delete(CommentCtrl2.handleDeleteCommentForAgency);
+
+router
+  .route("/user")
+  .all(authenticate)
+  .get(BlockUserCtrl2.handleLoadBlockUsersForAgency)
+  .post(BlockUserCtrl2.handleAppendBlockUsersForAgency)
+  .delete(BlockUserCtrl2.handleClearBlockUsersForAgency);
+
+router
+  .route("/user/:userId")
+  .all(authenticate)
+  .delete(BlockUserCtrl2.handleDeleteBlockUserForAgency);
+
 
 module.exports = router;

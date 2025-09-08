@@ -103,6 +103,24 @@ const handleGetProfile = async (req, res) => {
   }
 }
 
+const handleChangePassword = async (req, res) => {
+  try {
+    const { password, newPassword } = req.body;
+    const agency = await AgencyService2.findAgencyById(req.manager._id);
+    if (!agency)
+      throw new ApiError(`Agency does not exist.`)
+    const passwordCompare = await bcryptjs.compare(password, agency.password);
+    if (!passwordCompare)
+      throw new ApiError("Old password is incorrect");
+    await AgencyService2.changePassword(agency._id, bcryptjs.hashSync(newPassword, 12));
+    sendResult(res);
+  } catch (error) {
+    console.error(error)
+    sendError(res, error);
+  }
+}
+
+
 const handleGetAffiliate = async (req, res) => {
   try {
     // first get referral code
@@ -197,7 +215,8 @@ const AuthCtrl2 = {
   handleCreateAffiliateClick,
   handleUpdateAffiliateRegistration,
   handleVerifyAgency,
-  handleSendContact
+  handleSendContact,
+  handleChangePassword,
 };
 
 module.exports = AuthCtrl2

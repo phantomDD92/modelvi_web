@@ -39,13 +39,6 @@ router.route("/manager/:id")
   .put(ManagerCtrl.handleUpdateAgency)
   .delete(ManagerCtrl.handleDeleteAgency)
 
-
-router.route("/auth")
-  .post(ManagerCtrl.handleLoginManager)
-  .put(ManagerCtrl.handleChangePassword)
-  // .patch(ManagerCtrl.handleUpdateManager)
-  .get(authenticate, ManagerCtrl.handleReloadManager)
-
 router
   .route("/actor")
   .all(authenticate)

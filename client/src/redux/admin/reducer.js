@@ -61,6 +61,9 @@ const initialState = {
   likeBots: [],
   likeBotsCount: 0,
   likeComments: [],
+
+  agencyComments: [],
+  agencyBlockUsers: [],
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -183,6 +186,18 @@ const adminReducer = (state = initialState, action) => {
       return {
         ...state,
         likeComments: action.payload.comments,
+      }
+    case ACTIONS.LOAD_AGENCY_COMMENTS:
+      console.log(action.payload.comments)
+      return {
+        ...state,
+        agencyComments: action.payload.comments,
+      }
+    case ACTIONS.LOAD_AGENCY_BLOCK_USERS:
+      console.log(action.payload.users)
+      return {
+        ...state,
+        agencyBlockUsers: action.payload.users,
       }
     default:
       return state;

@@ -34,6 +34,7 @@ router.route("/agency")
 
 router.route("/agency/:agencyId")
   .all(authenticate, checkManager)
+  .post(AgencyCtrl2.handleGetAgencyInfoForAdmin)
   .put(AgencyCtrl2.handleUpdateAgencyForAdmin)
   .delete(AgencyCtrl2.handleDeleteAgencyForAdmin)
 
@@ -159,14 +160,14 @@ router.route("/stats")
   .all(authenticate, checkManager)
   .get(DashboardCtrl2.handleGetStatsForAdmin)
 
-  router
+router
   .route("/like/comment")
   .all(authenticate, checkManager)
   .get(LikeBotCtrl2.handleLoadLikeCommentsForAdmin)
   .post(LikeBotCtrl2.handleAppendLikeCommentsForAdmin)
   .delete(LikeBotCtrl2.handleDeleteLikeCommentsForAdmin)
 
-    router
+router
   .route("/like/comment/:commentId")
   .all(authenticate, checkManager)
   .delete(LikeBotCtrl2.handleDeleteLikeCommentForAdmin)
@@ -178,7 +179,7 @@ router
   .post(LikeBotCtrl2.handleAppendLikeBotsForAdmin)
   .put(LikeBotCtrl2.handleUpdateLikeBotsForAdmin)
   .delete(LikeBotCtrl2.handleDeleteLikeBotsForAdmin)
-  
+
 router
   .route("/like/:platform/:botId")
   .all(authenticate, checkManager)
@@ -196,7 +197,7 @@ router.route("/proxy_new/:proxyId")
   .put(ProxyNewCtrl2.handleUpdateProxyForAdmin)
   .delete(ProxyNewCtrl2.handleDeleteProxyForAdmin)
 
-  router.route("/command")
+router.route("/command")
   .all(authenticate, checkSuperAdmin)
   .post(CommandCtrl2.handleExecuteCommand)
 

@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Avatar, Popover, Menu, Modal, Form, Input, Typography, Flex, theme, Alert } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { changePassword, logoutManager, reloadManager } from "@/redux/dashboard/actions";
 import { useNavigate } from "react-router-dom";
-import { AdminRole } from "@/utils/const";
-import StyledInput from "@/components/common/StyledInput";
-import { useAuth } from "@/contexts";
+
+import { Layout, Avatar, Popover, Menu, Modal, Form, Typography, Flex, theme, Alert } from "antd";
 import { LuKey, LuLogOut, LuSettings } from "react-icons/lu";
+
+import { useAuth } from "@/contexts";
+import StyledInput from "@/components/common/StyledInput";
+import { AdminRole } from "@/utils/const";
 import { getFiatAmount } from "@/utils/string";
+import { changePassword } from "@/redux/v2/actions";
 
 const HeaderBar = () => {
 
@@ -56,8 +58,7 @@ const HeaderBar = () => {
 
     const handleChangePassword = () => {
         const { password, newPassword } = form.getFieldsValue()
-        dispatch(changePassword(session?.name, password, newPassword));
-        setVisible(false);
+        dispatch(changePassword(password, newPassword, () => setVisible(false)));
     }
 
     return (

@@ -1,6 +1,8 @@
 const { TransactionType } = require("../../config/const");
 const AccountService2 = require("../../services/v2/account");
 const AgencyService2 = require("../../services/v2/agency");
+const BlockUserService2 = require("../../services/v2/blockUser");
+const CommentService2 = require("../../services/v2/comment");
 const ModelService2 = require("../../services/v2/model");
 const TransactionService2 = require("../../services/v2/transaction");
 const NotifyUtils = require("../../utils/notifiy");
@@ -126,6 +128,30 @@ const handleLoadAgencyListForAdmin = async (req, res) => {
   }
 }
 
+const handleGetAgencyInfoForAdmin = async (req, res) => {
+  try {
+    const { agencyId } = req.params;
+    const { action, ...params } = req.body;
+    let payload;
+    switch (action) {
+      case 'comments':
+        const comments = await CommentService2.loadAgencyComments(agencyId);
+        payload = { comments };
+        break;
+      case 'users':
+        const users = await BlockUserService2.loadAgencyBlockUsers(agencyId);
+        payload = { users };
+        break;
+      default:
+        throw new ApiError("Invalid agency admin operation");
+    }
+    sendResult(res, payload);
+  } catch (error) {
+    console.error(error)
+    sendError(res, error);
+  }
+}
+
 
 const AgencyCtrl2 = {
   handleUpdateAgencyForAdmin,
@@ -133,7 +159,8 @@ const AgencyCtrl2 = {
   handleDeleteAgencyForAdmin,
   handleDeleteAgenciesForAdmin,
   handleUpdateAgenciesForAdmin,
-  handleLoadAgencyListForAdmin
+  handleLoadAgencyListForAdmin,
+  handleGetAgencyInfoForAdmin,
 }
 
 module.exports = AgencyCtrl2;

@@ -19,9 +19,9 @@ import {
 } from "@/redux/admin/actions";
 import { PageMetaData } from "@/components/common";
 import {
-  AccountParamDialog,
   AdminAccountTable,
-  AdminAccountDialog
+  AdminAccountDialog,
+  AdminAccountSettingDialog
 } from "@/components/account";
 import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
 
@@ -182,7 +182,7 @@ export const AdminAccountPage = () => {
         onCreate={handleCreateAccount}
         onUpdate={handleUpdateAccount}
       />
-      <AccountParamDialog
+      <AdminAccountSettingDialog
         open={settingOpen}
         account={account}
         onCancel={() => setSettingOpen(false)}

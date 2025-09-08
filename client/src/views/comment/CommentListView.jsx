@@ -1,29 +1,26 @@
 import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import CommentListComponent from "@/components/comment/CommentListComponent";
-import { useDispatch, useSelector } from "react-redux";
-import { createComment, deleteComment, loadComments } from "@/redux/dashboard/actions";
+import { createComment, deleteComment, loadComments } from "@/redux/v2/actions";
 
 const CommentListView = ({ }) => {
-  const homeProps = useSelector(state => state.home);
+  const comments = useSelector(state => state.v2.comments);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(loadComments());
   }, [loadComments]);
 
-  const handleReloadData = () => {
-    dispatch(loadComments());
-  }
   const handleDeleteComment = (commentId) => {
-    dispatch(deleteComment(commentId, handleReloadData));
+    dispatch(deleteComment(commentId));
   }
   const handleAppendComment = (comment) => {
-    dispatch(createComment(comment, handleReloadData));
+    dispatch(createComment(comment));
   }
   return (
     <CommentListComponent
-      comments={homeProps.comments}
+      comments={comments}
       onDelete={handleDeleteComment}
       onAdd={handleAppendComment}
     />

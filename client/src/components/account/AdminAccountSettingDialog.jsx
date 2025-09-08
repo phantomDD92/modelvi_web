@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import {
     Modal,
@@ -23,14 +22,13 @@ import {
 } from "@/utils/const";
 import { getPlatformName } from "@/utils/string";
 
-import { loadAgencyComments, loadAgencyUsers } from "@/redux/dashboard/actions";
 import StyledInput from "../common/StyledInput";
-import { useAuth } from "@/contexts";
+import { loadAgencyBlockUsersForAdmin, loadAgencyCommentsForAdmin } from "@/redux/admin/actions";
 
 const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
     const dispatch = useDispatch();
-    const { session } = useAuth();
-    const homeProps = useSelector(state => state.home);
+    const comments = useSelector(state => state.admin.agencyComments);
+    const blockUsers = useSelector(state => state.admin.agencyBlockUsers);
 
     const [postMode, setPostMode] = useState(PostMode.INTERVAL);
     const [storyMode, setStoryMode] = useState(PostMode.INTERVAL);
@@ -74,10 +72,10 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
 
     useEffect(() => {
         if (open && account) {
-            dispatch(loadAgencyComments(account.owner?._id));
-            dispatch(loadAgencyUsers(account.owner?._id));
+            dispatch(loadAgencyCommentsForAdmin(account.owner?._id));
+            dispatch(loadAgencyBlockUsersForAdmin(account.owner?._id));
         }
-    }, [open, account, loadAgencyComments, loadAgencyUsers, dispatch]);
+    }, [open, account, loadAgencyCommentsForAdmin, loadAgencyBlockUsersForAdmin, dispatch]);
 
     const handleOffsetsValidation = (_, value) => {
         try {
@@ -213,18 +211,15 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
                         <Form.Item
                             // name="commentBlockLists"
                             label="Block Users List">
-                            {account?.owner?._id === session?.id ?
-                                <Link to={"/comment"}>{homeProps.agencyUsers.filter(user => user.status == "block").length} Users Blocked</Link> :
-                                <span>{homeProps.agencyUsers.filter(user => user.status == "block").length} Users Blocked</span>
-                            }
+
+                            <span>{blockUsers.length} Users Blocked</span>
+
                         </Form.Item>
                         <Form.Item
                             // name="commentLists"
                             label="Comments List">
-                            {account?.owner?._id === session?.id ?
-                                <Link to={"/comment"}>{homeProps.agencyComments.length} Comments Available</Link> :
-                                <span>{homeProps.agencyComments.length} Comments Available</span>
-                            }
+                            <span>{comments.length} Comments Available</span>
+
                         </Form.Item>
                     </>
                 }

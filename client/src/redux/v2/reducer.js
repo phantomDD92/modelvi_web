@@ -1,6 +1,9 @@
 import ACTIONS from "./types";
 
 const initialState = {
+
+  theme: localStorage.getItem("theme"),
+
   stats: {},
   disabledAccounts: [],
   profile: {},
@@ -34,6 +37,9 @@ const initialState = {
 
   chatTeams: [],
   chatTeamStats: [],
+
+  comments: [],
+  blockUsers: [],
 }
 
 const v2Reducer = (state = initialState, action) => {
@@ -131,6 +137,22 @@ const v2Reducer = (state = initialState, action) => {
         chatTeams: action.payload.teams,
         chatTeamStats: action.payload.teamsStat,
       };
+    case ACTIONS.CHANGE_THEME:
+      localStorage.setItem("theme", action.payload.theme)
+      return {
+        ...state,
+        theme: action.payload.theme,
+      }
+    case ACTIONS.LOAD_COMMENTS:
+      return {
+        ...state,
+        comments: action.payload.comments,
+      }
+    case ACTIONS.LOAD_BLOCK_USERS:
+      return {
+        ...state,
+        blockUsers: action.payload.users,
+      }
     default:
       return state;
   }

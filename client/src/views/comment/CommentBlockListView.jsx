@@ -2,27 +2,26 @@ import React, { useEffect } from "react";
 
 import UserListComponent from "@/components/comment/UserListComponent";
 import { useDispatch, useSelector } from "react-redux";
-import { createUser, deleteUser, loadUsers } from "@/redux/dashboard/actions";
+import { createBlockUser, deleteBlockUser, loadBlockUsers } from "@/redux/v2/actions";
 
 const CommentBlockListView = ({ }) => {
-  const homeProps = useSelector(state => state.home);
+  const blockUsers = useSelector(state => state.v2.blockUsers);
   const dispatch = useDispatch();
+
   useEffect(() => {
-    dispatch(loadUsers());
-  })
-  const handleReloadData = () => {
-    dispatch(loadUsers());
-  }
+    dispatch(loadBlockUsers());
+  }, [loadBlockUsers])
+
   const handleAppendUser = (alias) => {
-    dispatch(createUser(alias, "block", handleReloadData));
+    dispatch(createBlockUser(alias));
   }
   const handleDeleteUser = (userId) => {
-    dispatch(deleteUser(userId, handleReloadData));
+    dispatch(deleteBlockUser(userId));
   }
   return (
     <UserListComponent
       title="Block User List"
-      users={homeProps.users.filter(user => user.status == "block")}
+      users={blockUsers}
       onAppend={handleAppendUser}
       onDelete={handleDeleteUser}
     />

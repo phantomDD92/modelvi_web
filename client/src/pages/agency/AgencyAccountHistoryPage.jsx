@@ -10,7 +10,6 @@ import { DEFAULT_CURRENT_PAGE, LARGE_PAGE_SIZE } from "@/utils/const";
 export const AgencyAccountHistoryPage = () => {
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false);
-  // const modelProps = useSelector(state => state.model)
   const { platform, accountId } = useParams()
   const navigate = useNavigate();
   const location = useLocation();

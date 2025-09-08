@@ -19,6 +19,15 @@ export const loginAgency = (params, callback) => async (dispatch) => {
   callback && callback(payload);
 };
 
+export const changePassword = (password, newPassword, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/profile`,
+    inform: `Password is successfully changed`,
+    data: { password, newPassword },
+    callback
+  })
+};
+
 export const getProfile = (callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/v2/profile`,
@@ -26,7 +35,6 @@ export const getProfile = (callback) => async (dispatch) => {
     callback,
   })
 };
-
 
 export const createPayment = (currency, callback) => async (dispatch) => {
   try {
@@ -564,3 +572,76 @@ export const sendContact = (data, callback) => async (dispatch) => {
     callback
   })
 }
+
+export const changeTheme = (theme) => async (dispatch) => {
+  dispatch({ type: ACTIONS.CHANGE_THEME, payload: { theme } });
+};
+
+export const loadComments = () => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: '/v2/agency/comment',
+    action: ACTIONS.LOAD_COMMENTS,
+  })
+};
+
+export const createComment = (text, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: '/v2/agency/comment',
+    data: { comments: [text] },
+    inform: 'comment is successfully created.',
+    action: ACTIONS.LOAD_COMMENTS,
+    callback
+  })
+};
+
+export const deleteComment = (commentId, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/agency/comment/${commentId}`,
+    inform: 'Comment is successfully deleted.',
+    action: ACTIONS.LOAD_COMMENTS,
+    callback
+  })
+};
+
+export const clearComments = (callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/agency/comment`,
+    inform: 'Comments are all cleared.',
+    callback,
+    action: ACTIONS.LOAD_COMMENTS,
+  })
+};
+
+export const clearBlockUsers = (callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: '/v2/agency/user',
+    inform: 'User is successfully appended to block list',
+    callback,
+    action: ACTIONS.LOAD_BLOCK_USERS
+  })
+};
+export const createBlockUser = (alias, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: '/v2/agency/user',
+    data: { users: [alias] },
+    inform: 'User is successfully appended to block list.',
+    callback,
+    action: ACTIONS.LOAD_BLOCK_USERS
+  })
+};
+
+export const deleteBlockUser = (userId, callback) => async (dispatch) => {
+  await ApiRequest.deleteAction(dispatch, {
+    path: `/v2/agency/user/${userId}`,
+    inform: 'User is successfully removed from block list.',
+    callback,
+    action: ACTIONS.LOAD_BLOCK_USERS
+  });
+};
+
+export const loadBlockUsers = () => async (dispatch) => {
+  await ApiRequest.getAction(dispatch, {
+    path: '/v2/agency/user',
+    action: ACTIONS.LOAD_BLOCK_USERS,
+  });
+};

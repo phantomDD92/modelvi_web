@@ -18,7 +18,9 @@ router.route("/auth")
   .patch(authenticate, AuthCtrl2.handleGetProfile)
 
 router.route("/profile")
-  .get(authenticate, AuthCtrl2.handleGetProfile)
+  .all(authenticate)
+  .get(AuthCtrl2.handleGetProfile)
+  .put(AuthCtrl2.handleChangePassword)
 
 router.route("/contact")
   .post(AuthCtrl2.handleSendContact)

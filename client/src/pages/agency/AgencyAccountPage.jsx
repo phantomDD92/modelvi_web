@@ -16,8 +16,8 @@ import {
   loadChatTeams
 } from "@/redux/v2/actions";
 import {
-  AccountParamDialog,
   AgencyAccountDialog,
+  AgencyAccountSettingDialog,
   AgencyAccountTable
 } from "@/components/account";
 import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_REFRESH_TIMEOUT } from "@/utils/const";
@@ -164,7 +164,7 @@ export const AgencyAccountPage = () => {
         onCreate={handleCreateAccount}
         onUpdate={handleUpdateAccount}
       />
-      <AccountParamDialog
+      <AgencyAccountSettingDialog
         open={settingOpen}
         account={account}
         onCancel={() => setSettingOpen(false)}

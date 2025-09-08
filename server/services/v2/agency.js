@@ -70,6 +70,9 @@ const getAgencyWithReferrer = (agencyId) =>
 const getAgencyList = () =>
   ManagerModel.find({}, "name");
 
+const changePassword = (agencyId, password) => 
+  ManagerModel.findByIdAndUpdate(agencyId, { $set: { password } });
+
 const AgencyService2 = {
   createAgency,
   findReferees,
@@ -89,7 +92,8 @@ const AgencyService2 = {
   changePricePlans,
   changeReferrer,
   changeCommission,
-  getAgencyList
+  getAgencyList,
+  changePassword,
 }
 
 module.exports = AgencyService2

@@ -1,7 +1,11 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 import { API_PATH } from "./const";
-import { logoutManager } from "@/redux/dashboard/actions";
+
+const logout = async () => {
+    localStorage.clear("token");
+    window.history.go("/");
+}
 
 const postAction = async (dispatch, { action, path, data, params, inform, callback }) => {
     try {
@@ -23,7 +27,7 @@ const postAction = async (dispatch, { action, path, data, params, inform, callba
     } catch (error) {
         console.error("###\n", error)
         if (error.response?.status === 401) {
-            dispatch(logoutManager());
+            logout();
         } else {
             toast.error("network failed");
         }
@@ -51,7 +55,7 @@ const patchAction = async (dispatch, { action, path, data, params, inform, callb
         }
     } catch (error) {
         if (error.response?.status === 401) {
-            dispatch(logoutManager());
+            logout();
         } else {
             toast.error("network failed");
         }
@@ -78,7 +82,7 @@ const getAction = async (dispatch, { action, path, params, callback, inform }) =
         callback && callback();
     } catch (error) {
         if (error.response?.status === 401) {
-            dispatch(logoutManager());
+            logout();
         } else {
             toast.error("network failed");
         }
@@ -102,7 +106,7 @@ const putAction = async (dispatch, { action, path, data, params, inform, callbac
         callback && callback();
     } catch (error) {
         if (error.response?.status === 401) {
-            dispatch(logoutManager());
+            logout();
         } else {
             toast.error("network failed");
         }
@@ -130,7 +134,7 @@ const deleteAction = async (dispatch, { action, path, data, params, callback, in
     } catch (error) {
         console.error(error);
         if (error.response?.status === 401) {
-            dispatch(logoutManager());
+            logout();
         } else {
             toast.error("network failed");
         }

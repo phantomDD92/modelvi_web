@@ -706,3 +706,21 @@ export const executeCommandForAdmin = (command, callback) => async (dispatch) =>
     callback
   })
 };
+
+export const loadAgencyCommentsForAdmin = (agencyId, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/v2/admin/agency/${agencyId}`,
+    data: { action: "comments" },
+    action: ACTIONS.LOAD_AGENCY_COMMENTS,
+    callback
+  })
+};
+
+export const loadAgencyBlockUsersForAdmin = (agencyId, callback) => async (dispatch) => {
+  await ApiRequest.postAction(dispatch, {
+    path: `/v2/admin/agency/${agencyId}`,
+    data: { action: "users" },
+    action: ACTIONS.LOAD_AGENCY_BLOCK_USERS,
+    callback
+  })
+};

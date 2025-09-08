@@ -4,12 +4,12 @@ import { ConfigProvider, FloatButton, theme } from "antd";
 import { SunOutlined, MoonOutlined } from "@ant-design/icons";
 
 import { useDispatch, useSelector } from "react-redux";
-import { changeTheme } from "./redux/dashboard/actions";
 import { AuthProvider, LayoutProvider } from "./contexts";
 import { HelmetProvider } from "react-helmet-async";
+import { changeTheme } from "./redux/v2/actions";
 
 function App() {
-  const currentTheme = useSelector(state => state.home.theme);
+  const currentTheme = useSelector(state => state.v2.theme);
   const dispatch = useDispatch();
 
   const handleChangeTheme = () => {
