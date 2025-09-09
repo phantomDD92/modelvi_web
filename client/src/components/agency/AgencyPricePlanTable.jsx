@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Form, Input, InputNumber, Table } from 'antd';
+import { Form, InputNumber, Table } from 'antd';
 import { Platform } from '@/utils/const';
 
 var __awaiter =
@@ -114,11 +114,16 @@ const AgencyPricePlanTable = ({ dataSource, onChange }) => {
     {
       title: 'revenue',
       dataIndex: 'revenue',
-      width: '30%',
+      width: 300,
     },
     {
       title: "F2F",
       dataIndex: Platform.F2F,
+      editable: true,
+    },
+    {
+      title: "Knky",
+      dataIndex: Platform.KNKY,
       editable: true,
     },
     {
@@ -132,13 +137,28 @@ const AgencyPricePlanTable = ({ dataSource, onChange }) => {
       editable: true,
     },
     {
-      title: "Knky",
-      dataIndex: Platform.KNKY,
+      title: "LoyalFans",
+      dataIndex: Platform.LOYALFANS,
       editable: true,
     },
     {
       title: "Maloum",
       dataIndex: Platform.MALOUM,
+      editable: true,
+    },
+    {
+      title: "Fanvue",
+      dataIndex: Platform.FANVUE,
+      editable: true,
+    },
+    {
+      title: "4Based",
+      dataIndex: Platform.FOURBASED,
+      editable: true,
+    },
+    {
+      title: "MymFans",
+      dataIndex: Platform.MYMFANS,
       editable: true,
     },
   ];
@@ -148,7 +168,7 @@ const AgencyPricePlanTable = ({ dataSource, onChange }) => {
     const index = newData.findIndex(item => row.key === item.key);
     const item = newData[index];
     newData.splice(index, 1, Object.assign(Object.assign({}, item), row));
-    
+
     onChange && onChange(newData);
   };
   const components = {

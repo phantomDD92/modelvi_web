@@ -1,7 +1,5 @@
-import { Modal, Form, Input, Row, Col, InputNumber } from "antd";
+import { Modal } from "antd";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import StyledInput from "../common/StyledInput";
 import AgencyPricePlanTable from "./AgencyPricePlanTable";
 import { Platform } from "@/utils/const";
 
@@ -28,10 +26,14 @@ const AgencyPricePlanDialog = ({
         const newDataSource = DEFAULT_PRICE_PLANS.map((plan, index) => ({
             ...plan,
             [Platform.F2F]: pricePlans && pricePlans[Platform.F2F] ? pricePlans[Platform.F2F][index] : plan.price,
+            [Platform.KNKY]: pricePlans && pricePlans[Platform.KNKY] ? pricePlans[Platform.KNKY][index] : plan.price,
             [Platform.FNC]: pricePlans && pricePlans[Platform.FNC] ? pricePlans[Platform.FNC][index] : plan.price,
             [Platform.FAN]: pricePlans && pricePlans[Platform.FAN] ? pricePlans[Platform.FAN][index] : plan.price,
-            [Platform.KNKY]: pricePlans && pricePlans[Platform.KNKY] ? pricePlans[Platform.KNKY][index] : plan.price,
+            [Platform.LOYALFANS]: pricePlans && pricePlans[Platform.LOYALFANS] ? pricePlans[Platform.LOYALFANS][index] : plan.price,
             [Platform.MALOUM]: pricePlans && pricePlans[Platform.MALOUM] ? pricePlans[Platform.MALOUM][index] : plan.price,
+            [Platform.FANVUE]: pricePlans && pricePlans[Platform.FANVUE] ? pricePlans[Platform.FANVUE][index] : plan.price,
+            [Platform.FOURBASED]: pricePlans && pricePlans[Platform.FOURBASED] ? pricePlans[Platform.FOURBASED][index] : plan.price,
+            [Platform.MYMFANS]: pricePlans && pricePlans[Platform.MYMFANS] ? pricePlans[Platform.MYMFANS][index] : plan.price,
         }))
         setDataSource(newDataSource);
     }, [agency]);
@@ -39,17 +41,25 @@ const AgencyPricePlanDialog = ({
     const getPricePlans = (source) => {
         const plans = {
             [Platform.F2F]: Array(8).fill(0),
+            [Platform.KNKY]: Array(8).fill(0),
             [Platform.FNC]: Array(8).fill(0),
             [Platform.FAN]: Array(8).fill(0),
-            [Platform.KNKY]: Array(8).fill(0),
+            [Platform.LOYALFANS]: Array(8).fill(0),
             [Platform.MALOUM]: Array(8).fill(0),
+            [Platform.FANVUE]: Array(8).fill(0),
+            [Platform.FOURBASED]: Array(8).fill(0),
+            [Platform.MYMFANS]: Array(8).fill(0),
         }
         for (var i = 0; i < source.length; i++) {
             plans[Platform.F2F][i] = source[i][Platform.F2F];
+            plans[Platform.KNKY][i] = source[i][Platform.KNKY]
             plans[Platform.FNC][i] = source[i][Platform.FNC]
             plans[Platform.FAN][i] = source[i][Platform.FAN]
-            plans[Platform.KNKY][i] = source[i][Platform.KNKY]
+            plans[Platform.LOYALFANS][i] = source[i][Platform.LOYALFANS]
             plans[Platform.MALOUM][i] = source[i][Platform.MALOUM]
+            plans[Platform.FANVUE][i] = source[i][Platform.FANVUE]
+            plans[Platform.FOURBASED][i] = source[i][Platform.FOURBASED]
+            plans[Platform.MYMFANS][i] = source[i][Platform.MYMFANS]
         }
         return plans;
     };
@@ -64,7 +74,7 @@ const AgencyPricePlanDialog = ({
         <Modal
             title={`${agency?.name || "Agency"}'s Price Plans`}
             open={open}
-            width={800}
+            width={1000}
             onOk={handleOkClick}
             onCancel={onCancel}>
             <AgencyPricePlanTable
