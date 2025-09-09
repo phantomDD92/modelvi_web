@@ -116,7 +116,7 @@ export const BillingPage = () => {
             />
             {
               key == "payments"
-                ? <BillingPaymentPage vip={profile?.vip} />
+                ? <BillingPaymentPage />
                 : key == "transactions"
                   ? <BillingTransactionPage />
                   // : key == "overview"

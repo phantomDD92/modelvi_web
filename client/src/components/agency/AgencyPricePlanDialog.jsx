@@ -8,10 +8,10 @@ import { Platform } from "@/utils/const";
 const DEFAULT_PRICE_PLANS = [
     { "key": "0", price: 50.00, revenue: "$0 ~ $2500" },
     { "key": "1", price: 65.00, revenue: "$2500 ~ $5000" },
-    { "key": "3", price: 85.00, revenue: "$5000 ~ $7500" },
-    { "key": "4", price: 100.00, revenue: "$7500 ~ $15000" },
-    { "key": "5", price: 125.00, revenue: "$15000 ~ $20000" },
-    { "key": "7", price: 150.00, revenue: "$20000 +" }
+    { "key": "2", price: 85.00, revenue: "$5000 ~ $7500" },
+    { "key": "3", price: 100.00, revenue: "$7500 ~ $15000" },
+    { "key": "4", price: 125.00, revenue: "$15000 ~ $20000" },
+    { "key": "5", price: 150.00, revenue: "$20000 +" }
 ];
 
 const AgencyPricePlanDialog = ({
