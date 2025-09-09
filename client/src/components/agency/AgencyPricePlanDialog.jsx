@@ -6,14 +6,12 @@ import AgencyPricePlanTable from "./AgencyPricePlanTable";
 import { Platform } from "@/utils/const";
 
 const DEFAULT_PRICE_PLANS = [
-    { "key": "0", price: 50.00, revenue: "$0 ~ $1000" },
-    { "key": "1", price: 75.00, revenue: "$1000 ~ $2500" },
-    { "key": "2", price: 75.00, revenue: "$2500 ~ $5000" },
-    { "key": "3", price: 100.00, revenue: "$5000 ~ $7500" },
-    { "key": "4", price: 100.00, revenue: "$7500 ~ $10000" },
-    { "key": "5", price: 125.00, revenue: "$10000 ~ $15000" },
-    { "key": "6", price: 150.00, revenue: "$15000 ~ $20000" },
-    { "key": "7", price: 200.00, revenue: "$20000 +" }
+    { "key": "0", price: 50.00, revenue: "$0 ~ $2500" },
+    { "key": "1", price: 65.00, revenue: "$2500 ~ $5000" },
+    { "key": "3", price: 85.00, revenue: "$5000 ~ $7500" },
+    { "key": "4", price: 100.00, revenue: "$7500 ~ $15000" },
+    { "key": "5", price: 125.00, revenue: "$15000 ~ $20000" },
+    { "key": "7", price: 150.00, revenue: "$20000 +" }
 ];
 
 const AgencyPricePlanDialog = ({
