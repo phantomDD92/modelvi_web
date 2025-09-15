@@ -126,7 +126,7 @@ const SignUp = () => {
 
       {/* <ThirdPartyAuth /> */}
 
-      <p className="shrink text-center text-zinc-200">
+      <p className="shrink text-center text-zinc-200 mt-5">
         Already have an account ?
         <Link to={refCode ? `/sign-in?ref=${refCode}` : "/sign-in"} className="ms-1 text-primary">
           <b>Login</b>
