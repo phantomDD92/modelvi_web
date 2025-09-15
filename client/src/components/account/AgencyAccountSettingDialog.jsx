@@ -50,7 +50,7 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
         if (open) {
             if (account) {
                 form.setFieldsValue({
-                    postMode: account.params?.postMode || PostMode.INTERVAL,
+                    postMode: account.platform == Platform.F2F ? PostMode.LIMITED : (account.params?.postMode || PostMode.INTERVAL),
                     postOffsets: (account.params?.postOffsets) ? account.params?.postOffsets.join(",") : DEFAULT_POST_OFFSETS,
                     postInterval: account.params?.postInterval || DEFAULT_POST_INTERVAL,
                     postStart: dayjs(account.params?.postStart || "0:00", "HH:mm"),
@@ -65,7 +65,7 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
                 });
                 setStoryEnabled(account.params?.storyEnabled || false);
                 setCommentEnabled(account.params?.commentEnabled || false);
-                setPostMode(account.params?.postMode || PostMode.INTERVAL);
+                setPostMode(account.platform == Platform.F2F ? PostMode.LIMITED : (account.params?.postMode || PostMode.INTERVAL));
                 setStoryMode(account.params?.storyMode || PostMode.INTERVAL);
             }
         } else {
@@ -123,7 +123,9 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
 
     const hasStorySupport = (platform) => (platform == Platform.FNC || platform == Platform.KNKY || platform == Platform.F2F);
 
-    const hasOffsetsPostingSupport = (platform) => (platform == Platform.F2F || platform == Platform.FNC || platform == Platform.FAN);
+    const hasOffsetsPostingSupport = (platform) => (platform == Platform.FNC || platform == Platform.FAN);
+
+    const hasIntervalPostingSupport = (platform) => (platform != Platform.F2F);
 
     const hasLimitedPostingSupport = (platform) => platform == Platform.F2F;
 
@@ -143,7 +145,9 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
                 </div>
                 <Form.Item label="Posting Method" name="postMode">
                     <Radio.Group onChange={e => setPostMode(e.target.value)}>
-                        <Radio.Button key={PostMode.INTERVAL} value={PostMode.INTERVAL}>Interval</Radio.Button>
+                        {hasIntervalPostingSupport(account?.platform) &&
+                            <Radio.Button key={PostMode.INTERVAL} value={PostMode.INTERVAL}>Interval</Radio.Button>
+                        }
                         {hasOffsetsPostingSupport(account?.platform) &&
                             <Radio.Button key={PostMode.OFFSET} value={PostMode.OFFSET}>Offset</Radio.Button>
                         }
