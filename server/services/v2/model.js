@@ -1,13 +1,16 @@
 const ActorModel = require("../../models/actor");
 
 const findAgencyModels = (agencyId) =>
-  ActorModel.find({ owner: agencyId }, "-contents");
+  ActorModel.find({ owner: agencyId, deleted: false }, "-contents");
 
 const getAgencyModelCount = (agencyId) =>
-  ActorModel.countDocuments({ owner: agencyId });
+  ActorModel.countDocuments({ owner: agencyId, deleted: false });
 
 const getCountStatsByAgency = () =>
   ActorModel.aggregate([
+    {
+      $match: { deleted: false },
+    },
     {
       $group: {
         _id: "$owner",     // Group by creator
@@ -35,13 +38,14 @@ const loadModels = ({ search, agency }) => {
       }
     : {}
   const query = {
+    deleted: false,
     ...agencyQuery,
     ...searchQuery,
   }
   return ActorModel.find(query, "-contents")
     .sort({ owner: 1, number: 1 })
     .populate("owner", "name")
-    .populate("accounts", "platform alias");
+    .populate("accounts", "platform alias revenue fee");
 }
 
 const loadAgencyModels = (agencyId, search) => {
@@ -57,13 +61,14 @@ const loadAgencyModels = (agencyId, search) => {
       }
     : {}
   const query = {
+    deleted: false,
     ...agencyQuery,
     ...searchQuery,
   }
   return ActorModel.find(query, "-contents")
     .sort({ number: 1 })
     .populate("owner", "name")
-    .populate("accounts", "platform alias");;
+    .populate("accounts", "platform alias revenue fee");
 }
 
 const findModelByName = (agencyId, name) =>
@@ -82,15 +87,15 @@ const getModelWithContents = (modelId) =>
   ActorModel.findById(modelId).populate("owner", "name");
 
 const deleteModel = (modelId) =>
-  ActorModel.findByIdAndDelete(modelId);
+  ActorModel.findByIdAndUpdate(modelId, { $set: { deleted: true } });
 
 const deleteModels = (modelIds) =>
-  ActorModel.deleteMany({ _id: { $in: modelIds } });
+  ActorModel.updateMany({ _id: { $in: modelIds } }, { $set: { deleted: false } });
 
 const findEmptyModels = (modelIds, agencyId) =>
   agencyId
-    ? ActorModel.find({ _id: { $in: modelIds }, accounts: { $size: 0 }, owner: agencyId }, "-contents").populate("owner", "name")
-    : ActorModel.find({ _id: { $in: modelIds }, accounts: { $size: 0 } }, "-contents").populate("owner", "name")
+    ? ActorModel.find({ _id: { $in: modelIds }, accounts: { $size: 0 }, owner: agencyId, deleted: false }, "-contents").populate("owner", "name")
+    : ActorModel.find({ _id: { $in: modelIds }, accounts: { $size: 0 }, deleted: false }, "-contents").populate("owner", "name")
 
 const changeModel = (modelId, { number, name, }) =>
   ActorModel.findByIdAndUpdate(modelId, { $set: { number, name, }, });
@@ -154,19 +159,19 @@ const removeAccount = (modelId, accountId) =>
   ActorModel.findByIdAndUpdate(modelId, { $pull: { accounts: accountId } });
 
 const loadAgencyModelList = (agencyId) =>
-  ActorModel.find({ owner: agencyId }, "number name")
+  ActorModel.find({ owner: agencyId, deleted: false }, "number name")
     .sort({ number: 1 })
     .populate("accounts", "platform alias");
 
 const loadModelList = () =>
-  ActorModel.find({}, "owner number name")
+  ActorModel.find({ deleted: false }, "owner number name")
     .sort({ owner: 1, number: 1 })
     .populate("accounts", "platform alias");
 
 const getCountStats = async (agencyId) => {
   const result = await ActorModel.aggregate([
     {
-      $match: agencyId ? { owner: agencyId } : {}
+      $match: agencyId ? { owner: agencyId, deleted: false } : { deleted: false }
     },
     {
       $facet: {

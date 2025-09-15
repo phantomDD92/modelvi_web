@@ -1,5 +1,6 @@
 const moment = require('moment');
 const { default: mongoose } = require("mongoose");
+
 const AccountModel = require("../../models/account");
 
 const updateRevenue = (accountId, revenue, fee) =>
@@ -20,10 +21,15 @@ const getAccountWithModelChat = (accountId) =>
     .populate("chatTeam", "discord");
 
 const findAgencyAccounts = (agencyId) =>
-  AccountModel.find({ owner: agencyId });
+  AccountModel.find({ owner: agencyId, deleted: false });
 
 const getCountStatsByAgencyPlatform = () =>
   AccountModel.aggregate([
+    {
+      $match: {
+        deleted: false
+      }
+    },
     {
       $group: {
         _id: {
@@ -73,7 +79,7 @@ const changeOwner = (modelId, agencyId) =>
   AccountModel.updateMany({ actor: modelId }, { $set: { owner: agencyId } });
 
 const loadAccounts = (platform, { agency, search }) => {
-  const agencyQuery = agency ? { owner: agency, platform } : { platform };
+  const agencyQuery = agency ? { owner: agency } : {};
   const searchQuery = search
     ? isNaN(Number(search))
       ? { alias: { $regex: search, $options: "i" } }
@@ -85,9 +91,12 @@ const loadAccounts = (platform, { agency, search }) => {
       }
     : {}
   const query = {
+    platform,
+    deleted: false,
     ...agencyQuery,
     ...searchQuery,
   }
+
   return AccountModel.find(query, "-params.contents")
     .sort({ owner: 1, number: 1 })
     .populate("owner", "name")
@@ -108,6 +117,7 @@ const loadAgencyAccounts = (platform, agencyId, search) => {
       }
     : {}
   const query = {
+    deleted: false,
     ...agencyQuery,
     ...searchQuery,
   }
@@ -147,7 +157,7 @@ const findAccountById = (accountId) =>
     .populate("owner", "name");
 
 const deleteAccount = (accountId) =>
-  AccountModel.findByIdAndDelete(accountId);
+  AccountModel.findByIdAndUpdate(accountId, { deleted: true });
 
 const updateAccount = (
   accountId,
@@ -175,7 +185,7 @@ const clearError = (accountId) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { lastError: "" } })
 
 const updateParameters = (accountId, params) =>
-  AccountModel.findByIdAndUpdate(accountId, params );
+  AccountModel.findByIdAndUpdate(accountId, params);
 
 const getAccounts = (accountIds, agencyId = undefined) =>
   agencyId
@@ -190,15 +200,15 @@ const updateAccountsStatus = (accountIds, status) =>
   AccountModel.updateMany({ _id: { $in: accountIds } }, { $set: { status } })
 
 const deleteAccounts = (accountIds) =>
-  AccountModel.deleteMany({ _id: { $in: accountIds } });
+  AccountModel.updateMany({ _id: { $in: accountIds } }, { $set: { deleted: true } });
 
 const getAgencyAccounts = (agencyId) =>
-  AccountModel.find({ owner: agencyId }, "platform number actor alias")
+  AccountModel.find({ owner: agencyId, deleted: false }, "platform number actor alias")
     .populate("actor", "number name")
     .sort({ platform: 1, number: 1 });
 
 const getModelAccounts = (modelId, platforms) =>
-  AccountModel.find({ actor: modelId, platform: { $in: platforms } }, "platform number alias");
+  AccountModel.find({ actor: modelId, deleted: false, platform: { $in: platforms } }, "platform number alias");
 
 const removeChatTeam = (teamId) =>
   AccountModel.updateMany({ chatTeam: teamId }, { $set: { chatTeam: undefined } });
@@ -210,6 +220,7 @@ const getStatsByChatTeam = () =>
   AccountModel.aggregate([
     {
       $match: {
+        deleted: false,
         chatTeam: { $exists: true, $ne: null }
       }
     },
@@ -252,7 +263,7 @@ const getStatsForChatTeam = (teamId) =>
 const getCountStats = (agencyId) =>
   AccountModel.aggregate([
     {
-      $match: agencyId ? { owner: agencyId } : {}
+      $match: agencyId ? { owner: agencyId, deleted: false } : { deleted: false }
     },
     {
       $group: {
@@ -290,14 +301,14 @@ const getCountStats = (agencyId) =>
   ]);
 
 const getDisabledAccounts = (agencyId) =>
-  AccountModel.find(agencyId ? { owner: agencyId, status: false } : { status: false }, "-params")
+  AccountModel.find(agencyId ? { owner: agencyId, status: false, deleted: false } : { status: false, deleted: false }, "-params")
     .sort("-updatedAt")
     .populate("owner", "name")
     .populate("actor", "number name");
 
 const getExpiringAccounts = (agencyId) =>
   AccountModel.find(
-    { owner: agencyId, status: true, expiredAt: { $lte: moment().endOf('day') } },
+    { owner: agencyId, status: true, deleted: false, expiredAt: { $lte: moment().endOf('day') } },
     'platform alias actor'
   ).populate('actor', 'number name');
 
@@ -305,10 +316,10 @@ const updateIdentifier = (accountId, { alias, identifier }) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { alias, identifier } });
 
 const getLivingAccountsForPlatform = (platform) =>
-  AccountModel.find({ platform, status: true }, "alias");
+  AccountModel.find({ platform, status: true, deleted: false }, "alias");
 
 const getIdentifiers = (platform) =>
-  AccountModel.find({ platform, status: true }, "alias identifier")
+  AccountModel.find({ platform, status: true, deleted: false }, "alias identifier")
 
 const getAccount = (accountId) =>
   AccountModel.findById(accountId)

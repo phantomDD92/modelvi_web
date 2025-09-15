@@ -26,6 +26,7 @@ const ActorSchema = new Schema({
     f2fStoryType: Number,
   }],
   updated: { type: Boolean, default: false },
+  deleted: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });

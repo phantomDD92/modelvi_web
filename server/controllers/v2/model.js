@@ -24,10 +24,10 @@ const handleCreateModelForAdmin = async (req, res) => {
       throw new ApiError("Agency does not exist.");
     // check if model name is duplicated
     let model = await ModelService2.findModelByName(agencyId, name);
-    if (model) throw new ApiError(`Model Name(${name}) already exists.`);
+    if (model && !model.deleted) throw new ApiError(`Model Name(${name}) already exists.`);
     // check if model number is duplicated
     model = await ModelService2.findModelByNumber(agencyId, number);
-    if (model)
+    if (model && !model.deleted)
       throw new ApiError(`Model number(${number}) is already existed.`);
     // create model
     model = await ModelService2.createModel({ number, name, owner: agencyId });
@@ -98,10 +98,10 @@ const handleCreateModelForAgency = async (req, res) => {
     const { number, name, ...params } = req.body;
     // check if model name is duplicated
     let model = await ModelService2.findModelByName(req.manager._id, name);
-    if (model) throw new ApiError(`Model Name(${name}) already exists.`);
+    if (model && !model.deleted) throw new ApiError(`Model Name(${name}) already exists.`);
     // check if model number is duplicated
     model = await ModelService2.findModelByNumber(req.manager._id, number);
-    if (model)
+    if (model && !model.deleted)
       throw new ApiError(`Model number(${number}) is already existed.`);
     // create model
     model = await ModelService2.createModel({ number, name, owner: req.manager._id });

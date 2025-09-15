@@ -1,9 +1,9 @@
 const AccountService2 = require("../../services/v2/account");
-const ChatTeamService2 = require("../../services/v2/chatteam");
 const ModelService2 = require("../../services/v2/model");
 const ProxyNewService2 = require("../../services/v2/proxyNew");
-const { isModelOwner } = require("../../utils/helper");
+
 const NotifyUtils = require("../../utils/notifiy");
+const { isModelOwner } = require("../../utils/helper");
 const { sendResult, sendError } = require("../../utils/resp");
 
 const handleLoadAccountsForAgency = async (req, res) => {
@@ -43,7 +43,7 @@ const handleCreateAccountForAgency = async (req, res) => {
     // check duplication
     const { alias } = params;
     const dupAccount = await AccountService2.findAccountByAlias(platform, alias);
-    if (dupAccount)
+    if (dupAccount && !dupAccount.deleted)
       throw new ApiError(`Account alias(${alias}) already exists.`);
     const proxy = await ProxyNewService2.pickupProxy();
     const account = await AccountService2.createAccount(platform, model, { ...params, chatTeam, creator: req.manager._id, proxy });
