@@ -77,8 +77,8 @@ const handleDeleteScheduleForAgency = async (req, res) => {
 
 const handleLoadSchedulesForAdmin = async (req, res) => {
   try {
-    const { agency, model, page } = req.query;
-    const [schedules, schedulesCount] = await ScheduleService2.loadSchedulesWithPage({ agency, model }, page || "1")
+    const { agency, model, page, pageSize } = req.query;
+    const [schedules, schedulesCount] = await ScheduleService2.loadSchedulesWithPage({ agency, model, page: page || "1", pageSize: pageSize || "20" })
     sendResult(res, { schedules, schedulesCount })
   } catch (error) {
     sendError(res, error)

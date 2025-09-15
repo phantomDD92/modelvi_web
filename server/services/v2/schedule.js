@@ -1,3 +1,4 @@
+const moment = require('moment');
 const { ScheduleStatus } = require("../../config/const");
 const ScheduleModel = require("../../models/schedule");
 const ScheduleResultModel = require("../../models/scheduleResult");
@@ -16,10 +17,13 @@ const createSchedule = (agencyId, modelId, { media, preview, title, folder, tags
     scheduledAt,
   })
 
-const loadSchedulesWithPage = ({ agency, model }, page) => {
+const loadSchedulesWithPage = ({ agency, model, page, pageSize }) => {
+  console.log("HERE");
+  const timeQuery = { scheduledAt: { $gte: moment().subtract(7, "day").toDate() } }
   const agencyQuery = agency && agency != "" ? { owner: agency } : {};
   const modelQuery = model && model != "" ? { actor: model } : {};
   const query = {
+    ...timeQuery,
     ...agencyQuery,
     ...modelQuery,
   }
@@ -27,8 +31,9 @@ const loadSchedulesWithPage = ({ agency, model }, page) => {
     ScheduleModel
       .find(query)
       .sort("scheduledAt")
-      .skip((parseInt(page) - 1) * 10)
-      .limit(10)
+      .skip((parseInt(page) - 1) * parseInt(pageSize))
+      .limit(parseInt(pageSize))
+      .lean()
       .populate("owner", "name")
       .populate("actor", "number name")
       .populate({
@@ -39,7 +44,7 @@ const loadSchedulesWithPage = ({ agency, model }, page) => {
           select: "platform number name"
         }
       }),
-    ScheduleModel.countDocuments()
+    ScheduleModel.countDocuments(query)
   ]);
 }
 
@@ -66,7 +71,7 @@ const loadAgencySchedulesWithPage = (agencyId, { model }, page) => {
           select: "platform number name"
         }
       }),
-    ScheduleModel.countDocuments()
+    ScheduleModel.countDocuments(query)
   ]);
 }
 
@@ -94,11 +99,13 @@ const changeSchedule = (scheduleId, { media, preview, title, folder, tags, type,
   )
 
 const loadScheduleResultsWithPage = ({ agency, model, status, platform }, page, pageSize) => {
+  const timeQuery = { scheduledAt: { $gte: moment().subtract(7, "day").toDate() } }
   const agencyQuery = agency && agency != "" ? { owner: agency } : {};
   const modelQuery = model && model != "" ? { actor: model } : {};
   const statusQuery = status && status != "" ? { status } : {};
   const platformQuery = platform && platform != "" ? { platform } : {};
   const query = {
+    ...timeQuery,
     ...agencyQuery,
     ...modelQuery,
     ...statusQuery,
@@ -119,11 +126,13 @@ const loadScheduleResultsWithPage = ({ agency, model, status, platform }, page, 
 }
 
 const loadAgencyScheduleResultsWithPage = (agencyId, { model, status, platform }, page, pageSize) => {
+  const timeQuery = { scheduledAt: { $gte: moment().subtract(7, "day").toDate() } }
   const modelQuery = model && model != "" ? { actor: model } : {};
   const statusQuery = status && status != "" ? { status } : {};
   const platformQuery = platform && platform != "" ? { platform } : {};
   const query = {
     owner: agencyId,
+    ...timeQuery,
     ...modelQuery,
     ...statusQuery,
     ...platformQuery,
