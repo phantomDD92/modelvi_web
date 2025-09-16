@@ -1,8 +1,9 @@
-import { Card, Row, Col , Statistic} from 'antd';
+import React from 'react';
+import { Card, Row, Col, Statistic } from 'antd';
 
-const StatsBox = ({ loading, items = [] }) => {
+const StatsBox = ({ loading, items = [], ...props }) => {
   return (
-    <Card>
+    <Card {...props}>
       <Row gutter={16}>
         {items.map(item =>
           <Col span={8}>

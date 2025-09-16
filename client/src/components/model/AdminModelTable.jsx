@@ -16,9 +16,10 @@ import {
     UserAddOutlined,
     UploadOutlined,
 } from "@ant-design/icons";
-import { getPlatformName } from "@/utils/string";
+import { getFiatAmount, getPlatformName } from "@/utils/string";
 import { AgencySelect } from "../agency";
 import { StyledSearch } from "../common";
+import moment from "moment";
 
 export const AdminModelTable = ({
     filters: {
@@ -71,7 +72,22 @@ export const AdminModelTable = ({
             title: 'Accounts',
             dataIndex: 'accounts',
             render: value => value.length == 0 ? '-' : <Flex gap="small">{value.map(el => getPlatformTag(el.platform))}</Flex>
-        }, {
+        },
+        {
+            key: 'revenue',
+            title: 'Revenue',
+            dataIndex: 'accounts',
+            width: 150,
+            render: value => value.length == 0 ? '-' : getFiatAmount(value.filter(account => moment().endOf("day").isBefore(account.expiredAt) && account.revenue != -1).reduce((sum, account) => sum + account.revenue, 0))
+        },
+        {
+            key: 'fee',
+            title: 'Monthly Fee',
+            dataIndex: 'accounts',
+            width: 100,
+            render: value => value.length == 0 ? '-' : getFiatAmount(value.filter(account => moment().endOf("day").isBefore(account.expiredAt)).reduce((sum, account) => sum + account.fee, 0))
+        },
+        {
             key: 'contents',
             title: 'Contents',
             dataIndex: 'contentsLength',

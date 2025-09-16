@@ -1,5 +1,6 @@
 const AccountModel = require("../../models/account");
 const ScheduleResultModel = require("../../models/scheduleResult");
+const HistoryService2 = require("../../services/v2/history");
 const ProxyNewService2 = require("../../services/v2/proxyNew");
 const { sendError, ApiError, sendResult } = require("../../utils/resp");
 
@@ -39,6 +40,11 @@ const executeClearSchedule = async () => {
   return `${count} schedules are removed`;
 }
 
+const executeClearHistories = async () => {
+  await HistoryService2.clearOldHistories();
+  return `Old histories are cleared`;
+}
+
 const handleExecuteCommand = async (req, res) => {
   try {
     const { command } = req.body;
@@ -52,6 +58,9 @@ const handleExecuteCommand = async (req, res) => {
         break;
       case "clear_schedule":
         message = await executeClearSchedule();
+        break;
+      case "clear_history":
+        message = await executeClearHistories();
         break;
       default:
         throw new ApiError("unknown command");

@@ -14,7 +14,7 @@ const AgencySelect = ({ dataSource, all, ...props }) => {
   }
   return (
     <Select
-      className="w-[200px]"
+      className="min-w-[200px]"
       options={getOptions(all, dataSource)}
       showSearch
       filterOption={(input, option) =>

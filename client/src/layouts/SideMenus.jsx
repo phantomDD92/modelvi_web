@@ -1,5 +1,5 @@
 import { AdminRole } from "@/utils/const";
-import { LuArchive, LuArrowLeftToLine, LuArrowRightFromLine, LuHome, LuMessageCircle, LuMessageSquareDashed, LuMessagesSquare, LuNetwork, LuSatellite, LuThumbsUp, LuTrophy, LuUser, LuUsers, LuUserSquare, LuWallet } from "react-icons/lu";
+import { LuArchive, LuArrowLeftToLine, LuArrowRightFromLine, LuBook, LuHome, LuMessageCircle, LuMessageSquareDashed, LuMessagesSquare, LuNetwork, LuSatellite, LuThumbsUp, LuTrophy, LuUser, LuUsers, LuUserSquare, LuWallet } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
 // export const agencyMenus = [
@@ -35,6 +35,7 @@ import { Link } from "react-router-dom";
 
 export const agencyMenus = [
   { key: "dashboard", icon: <LuHome />, label: <Link to="/">Dashboard</Link> },
+  { key: "guide", icon: <LuBook />, label: <Link to="/guide">Guide</Link> },
   { key: "model", icon: <LuUser />, label: <Link to="/model">Model</Link> },
   { key: "account", icon: <LuUserSquare />, label: <Link to="/account/F2F">Account</Link> },
   { key: "schedule", icon: <LuSatellite />, label: <Link to="/schedule">Schedule</Link> },

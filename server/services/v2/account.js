@@ -49,11 +49,11 @@ const getCountStatsByAgencyPlatform = () =>
   ]);
 
 const getFeeStatsByAgency = () => {
-  const oneMonthAgo = moment().subtract(30, "day").toDate()
+  // const oneMonthAgo = moment().subtract(30, "day").toDate()
   return AccountModel.aggregate([
     {
       $match: {
-        updatedAt: { $gte: oneMonthAgo }
+        expiredAt: { $gte: moment().startOf("day").toDate() }
       }
     },
     {
@@ -148,7 +148,8 @@ const createAccount = (
     description,
     device,
     creator,
-    proxy
+    proxy,
+    expiredAt: moment().subtract(1, "day").toDate(),
   });
 
 const findAccountById = (accountId) =>

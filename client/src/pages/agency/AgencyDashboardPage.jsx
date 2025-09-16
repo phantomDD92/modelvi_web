@@ -49,6 +49,7 @@ export const AgencyDashboardPage = () => {
         <Row gutter={[16, 16]}>
           <Col md={8} sm={12} >
             <StatsBox
+              key="model"
               loading={loading}
               items={[
                 { label: "Total Models", icon: <LuUser />, value: stats.modelStats?.totalModels || 0 },
@@ -58,6 +59,7 @@ export const AgencyDashboardPage = () => {
           </Col>
           <Col md={8} sm={0} >
             <StatsBox
+              key="account"
               loading={loading}
               items={[
                 { label: `Total Accounts`, icon: <LuUser2 />, value: (stats.accountStats || []).reduce((sum, item) => sum += (item.totalAccounts || 0), 0) },
@@ -68,6 +70,7 @@ export const AgencyDashboardPage = () => {
           </Col>
           <Col md={8} sm={12} >
             <StatsBox
+              key="chat"
               loading={loading}
               items={[
                 { label: "Chat Teams", icon: <LuMessagesSquare />, value: stats.teamCount || 0 },

@@ -96,7 +96,7 @@ const AdminAccountTable = ({
                 title: 'Monthly Fee',
                 dataIndex: 'fee',
                 width: 100,
-                render: value => getFiatAmount(value)
+                render: (value, record) => moment().endOf("day").isBefore(moment(record.expiredAt)) ? getFiatAmount(value) : "-"
             },
             {
                 key: 'expiredAt',
@@ -196,6 +196,7 @@ const AdminAccountTable = ({
                     <span className="mr-8">
                         Account List
                     </span>
+                    
                     <Radio.Group onChange={(e) => onPlatform && onPlatform(e.target.value)} value={platform}>
                         {[
                             Platform.F2F,

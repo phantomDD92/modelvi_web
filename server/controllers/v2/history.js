@@ -41,7 +41,7 @@ const handleClearHistoryForAgency = async (req, res) => {
       throw new ApiError("The account does not exist.");
     if (!isModelOwner(account, req.manager))
       throw new ApiError("Account can be accessible by owner");
-    await HistoryService2.clearHistory(accountId)
+    await HistoryService2.clearAccountHistory(accountId)
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -54,7 +54,7 @@ const handleClearHistoryForAdmin = async (req, res) => {
     const account = await AccountService2.findAccountById(accountId);
     if (!account)
       throw new ApiError("The account does not exist.");
-    await HistoryService2.clearHistory(accountId)
+    await HistoryService2.clearAccountHistory(accountId)
     sendResult(res);
   } catch (error) {
     sendError(res, error);

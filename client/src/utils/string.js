@@ -86,3 +86,7 @@ export function shuffleArray(arr) {
   }
   return a;
 }
+
+export function isBotRunning(account) {
+  return account.updatedAt && moment().diff(moment(account.updatedAt), 'minute', false) < 10;
+}

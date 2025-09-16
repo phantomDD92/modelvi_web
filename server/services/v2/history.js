@@ -1,3 +1,4 @@
+const moment = require("moment");
 const HistoryModel = require("../../models/history");
 
 const loadHistories = (accountId, { page, pageSize }) =>
@@ -19,16 +20,20 @@ const loadHistories = (accountId, { page, pageSize }) =>
   ])
 
 
-const clearHistory = (accountId) =>
+const clearAccountHistory = (accountId) =>
   HistoryModel.deleteMany({ account: accountId })
 
 const createHistory = (accountId, action) =>
-  HistoryModel.create({ account: accountId, action })
+  HistoryModel.create({ account: accountId, action });
+
+const clearOldHistories = () =>
+  HistoryModel.deleteMany({ createdAt: { $lte: moment().subtract(7, "day").toDate() } })
 
 const HistoryService2 = {
   loadHistories,
-  clearHistory,
+  clearAccountHistory,
   createHistory,
+  clearOldHistories,
 }
 
 module.exports = HistoryService2;

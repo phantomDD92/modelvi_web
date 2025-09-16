@@ -7,8 +7,7 @@ const StyledSearch = ({ className, ...params }) => {
   return (
     <Input.Search
       allowClear
-      
-      className={clsx(currentTheme === "dark" ? "dark-theme" : "light-theme", className)}
+      className={clsx(currentTheme === "dark" ? "dark-theme" : "light-theme", className, "max-w-[250px]")}
       {...params} />
   )
 }

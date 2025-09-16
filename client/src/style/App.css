@@ -88,6 +88,8 @@
   border-width: 1px;
   border-style: solid;
   border-color: #d9d9d9;
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
 
 .ant-input-search.focus.light-theme .ant-input-outlined,
@@ -125,6 +127,8 @@
   border-width: 1px;
   border-style: solid;
   border-color: #424242;
+    padding-top: 0px;
+  padding-bottom: 0px;
 }
 
 .ant-input-search.focus.dark-theme .ant-input-outlined,

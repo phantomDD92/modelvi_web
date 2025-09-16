@@ -1,7 +1,7 @@
 import { Card, Table, Button, Flex, Switch, Tag, Avatar, Space } from "antd";
 import { ReadOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { getPlatformName } from "@/utils/string";
+import { getPlatformName, isBotRunning } from "@/utils/string";
 
 const DisabledAccountTable = ({ accounts, loading, onHistory, onStatusChange }) => {
     const columns = [
@@ -22,7 +22,7 @@ const DisabledAccountTable = ({ accounts, loading, onHistory, onStatusChange }) 
         {
             key: 'alias',
             title: 'Account',
-            width: 150,
+            width: 200,
             dataIndex: 'alias',
             render: (value, record) =>
                 <Space direction="vertical" size={1}>
@@ -30,42 +30,41 @@ const DisabledAccountTable = ({ accounts, loading, onHistory, onStatusChange }) 
                     <span>{`${value}`}</span>
                 </Space>
         },
-        {
-            key: 'email',
-            title: 'Email',
-            width: 150,
-            dataIndex: 'email',
-        },
-        {
-            key: 'bot',
-            title: 'Bot',
-            dataIndex: 'updatedAt',
-            width: 150,
-            render: value => value ? moment().diff(moment(value), 'minute', false) < 10 ? <Tag color="success">Running</Tag> : <Tag color="error">Closed</Tag> : <Tag color="error">Closed</Tag>
-        },
+
+        // {
+        //     key: 'bot',
+        //     title: 'Bot',
+        //     dataIndex: 'updatedAt',
+        //     width: 150,
+        //     render: value => value && moment().diff(moment(value), 'minute', false) < 10 ? <Tag color="success">Running</Tag> : <Tag color="error">Closed</Tag>
+        // },
         {
             key: 'lastError',
-            title: 'LastError',
+            title: 'Last Error',
             dataIndex: 'lastError',
         },
         {
             key: 'updatedAt',
-            title: 'LastTime',
+            title: 'Last Time',
             dataIndex: 'updatedAt',
+            width: 200,
             render: value => moment(value).format("YYYY-MM-DD hh:mm")
         },
         {
             key: 'status',
-            title: 'Status',
+            title: 'Bot Status',
             dataIndex: 'status',
             width: 120,
             render: (value, record) => (
-                <Switch
-                    checked={value}
-                    checkedChildren="Enabled"
-                    unCheckedChildren="Disabled"
-                    onChange={(status) => onStatusChange(record, status)}
-                />
+                <Flex>
+                    {isBotRunning(record) ? <Tag color="success">Running</Tag> : <Tag color="error">Closed</Tag>}
+                    <Switch
+                        checked={value}
+                        checkedChildren="Enabled"
+                        unCheckedChildren="Disabled"
+                        onChange={(status) => onStatusChange(record, status)}
+                    />
+                </Flex>
             )
         },
         {
@@ -73,10 +72,13 @@ const DisabledAccountTable = ({ accounts, loading, onHistory, onStatusChange }) 
             title: 'Action',
             width: 150,
             render: (_, record) =>
+
                 <Button
                     onClick={() => onHistory(record)}>
                     <ReadOutlined /> History
                 </Button>
+
+
         },
     ]
 

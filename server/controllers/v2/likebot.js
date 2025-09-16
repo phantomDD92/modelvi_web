@@ -187,8 +187,8 @@ const handleLoadTeamsForBot = async (req, res) => {
 
 const handleCreateHistoryForBot = async (req, res) => {
   try {
-    const { action } = req.body;
-    await LikeBotService2.createHistory(req.bot.id, action);
+    // const { action } = req.body;
+    // await LikeBotService2.createHistory(req.bot.id, action);
     sendResult(res);
   } catch (error) {
     sendError(res, error);

@@ -10,6 +10,7 @@ import {
     Table,
     Tag,
     Switch,
+    Select,
 } from "antd";
 import {
     DeleteOutlined,
@@ -88,7 +89,7 @@ const AgencyAccountTable = ({
             title: 'Monthly Fee',
             dataIndex: 'fee',
             width: 200,
-            render: value => getFiatAmount(value)
+            render: (value, record) => moment().endOf("day").isBefore(moment(record.expiredAt)) ? getFiatAmount(value) : "-"
         },
         {
             key: 'expiredAt',
@@ -189,7 +190,26 @@ const AgencyAccountTable = ({
                     <span className="mr-8">
                         Account List
                     </span>
-                    <Radio.Group onChange={(e) => onPlatform && onPlatform(e.target.value)} value={platform}>
+                    <Select
+                        className="min-w-[150px]"
+                        value={platform}
+                        onChange={value => onPlatform && onPlatform(value)}
+                        options={[
+                            Platform.F2F,
+                            Platform.KNKY,
+                            Platform.FNC,
+                            Platform.FAN,
+                            Platform.LOYALFANS,
+                            Platform.MALOUM,
+                            Platform.FANVUE,
+                            Platform.FOURBASED,
+                            Platform.MYMFANS,
+                            Platform.FETLIFE,
+                            Platform.ONLYFANS,
+                        ].map(platform => ({ value: platform, label: getPlatformName(platform) }))
+                        }
+                    />
+                    {/* <Radio.Group onChange={(e) => onPlatform && onPlatform(e.target.value)} value={platform}>
                         {[
                             Platform.F2F,
                             Platform.KNKY,
@@ -203,7 +223,7 @@ const AgencyAccountTable = ({
                             Platform.FETLIFE,
                             // Platform.ONLYFANS
                         ].map(element => <Radio.Button key={element} value={element}>{getPlatformName(element)}</Radio.Button>)}
-                    </Radio.Group>
+                    </Radio.Group> */}
                 </Flex>
             }
             extra={

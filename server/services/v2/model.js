@@ -45,7 +45,7 @@ const loadModels = ({ search, agency }) => {
   return ActorModel.find(query, "-contents")
     .sort({ owner: 1, number: 1 })
     .populate("owner", "name")
-    .populate("accounts", "platform alias revenue fee");
+    .populate("accounts", "platform alias revenue fee expiredAt");
 }
 
 const loadAgencyModels = (agencyId, search) => {
@@ -68,7 +68,7 @@ const loadAgencyModels = (agencyId, search) => {
   return ActorModel.find(query, "-contents")
     .sort({ number: 1 })
     .populate("owner", "name")
-    .populate("accounts", "platform alias revenue fee");
+    .populate("accounts", "platform alias fee expiredAt");
 }
 
 const findModelByName = (agencyId, name) =>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Button, Card, List, Flex, Input } from "antd";
+import { Button, Card, List } from "antd";
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
-import StyledInput from "../common/StyledInput";
+import { StyledSearch } from "../common";
 
 const CommentListComponent = ({ comments, onAdd, onDelete }) => {
   const [comment, setComment] = useState('');
@@ -13,15 +13,17 @@ const CommentListComponent = ({ comments, onAdd, onDelete }) => {
   }
   return (
     <Card title="Comment List">
-      <Flex className="mb-3">
-        <StyledInput
-          value={comment}
-          onChange={e => setComment(e.target.value)}
-          onPressEnter={handleAddClick} />
-        <Button
-          icon={<PlusOutlined />}
-          onClick={handleAddClick}>Add</Button>
-      </Flex>
+      <StyledSearch
+        value={comment}
+        onChange={e => setComment(e.target.value)}
+        onSearch={handleAddClick}
+        enterButton={
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}>
+            Add
+          </Button>}
+      />
       <List
         dataSource={comments}
         pagination={{

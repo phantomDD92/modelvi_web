@@ -1,7 +1,7 @@
 import { Card, List, Button, Flex, Input } from "antd";
 import React, { useState } from "react";
 import { PlusOutlined, DeleteOutlined} from "@ant-design/icons";
-import { StyledInput } from "../common";
+import { StyledInput, StyledSearch } from "../common";
 
 const UserListComponent = ({ title, users = [], onAppend, onDelete }) => {
   const [alias, setAlias] = useState('');
@@ -13,15 +13,17 @@ const UserListComponent = ({ title, users = [], onAppend, onDelete }) => {
   }
   return (
     <Card title={title}>
-      <Flex className="mb-3">
-        <StyledInput
-          value={alias}
-          onChange={e => setAlias(e.target.value)}
-          onPressEnter={handleAddClick} />
-        <Button
-          icon={<PlusOutlined />}
-          onClick={handleAddClick}>Add</Button>
-      </Flex>
+      <StyledSearch
+        value={alias}
+        onChange={e => setAlias(e.target.value)}
+        onSearch={handleAddClick}
+        enterButton={
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}>
+            Add
+          </Button>}
+      />
       <List
         dataSource={users}
         pagination={{
