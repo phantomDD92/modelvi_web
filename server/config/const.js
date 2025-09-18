@@ -82,6 +82,11 @@ const ScheduleStatus = {
     EXPIRED: 5,
 }
 
+const PostResultType = {
+    SUCCESS: 0,
+    FAILED: 1,
+    PROHIBITED: 2,
+}
 
 module.exports = {
     Status,
@@ -94,4 +99,5 @@ module.exports = {
     PaymentStatus,
     TransactionType,
     ScheduleStatus,
+    PostResultType
 }

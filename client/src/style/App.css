@@ -106,7 +106,7 @@
 .ant-input[type='password'].dark-theme {
     box-sizing: border-box;
     margin: 0;
-    padding: 4px 11px;
+    padding: 4px 11px!important;
     color: rgba(255, 255, 255, 0.85);
     font-size: 14px;
     line-height: 1.5714285714285714;
@@ -127,8 +127,6 @@
   border-width: 1px;
   border-style: solid;
   border-color: #424242;
-    padding-top: 0px;
-  padding-bottom: 0px;
 }
 
 .ant-input-search.focus.dark-theme .ant-input-outlined,

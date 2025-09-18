@@ -88,6 +88,17 @@ const sendExpenseMessage = (agency, account, message) => {
   }
 }
 
+const sendNotification = (agency, account, message) => {
+  if (agency?.discord) {
+    axios.post(agency?.discord, {
+      username: `${getAccountName(account, agency)}`,
+      content: `[ ${moment().format("YYYY-MM-DD HH:mm:ss")} ]\n${message}`
+    })
+      .then(() => { })
+      .catch(() => { });
+  }
+}
+
 const NotifyUtils = {
   sendContactMail,
   sendMail,
@@ -95,6 +106,7 @@ const NotifyUtils = {
   sendDebugMessage,  // send debug information
   sendPaymentMessage,
   sendExpenseMessage,
+  sendNotification,
 }
 
 module.exports = NotifyUtils;

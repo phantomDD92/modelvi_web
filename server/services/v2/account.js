@@ -9,6 +9,9 @@ const updateRevenue = (accountId, revenue, fee) =>
 const getAccountWithModel = (accountId, fields) =>
   AccountModel.findById(accountId, fields).populate("actor", "number name");
 
+const getAccountWithAgencyAndModel = (accountId) =>
+  AccountModel.findById(accountId, "-params").populate("actor", "number name").populate("owner", "name discord");
+
 const disableAccount = (accountId, reason) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { status: false, lastError: reason } })
 
@@ -341,10 +344,14 @@ const setContents = (accountId, contents) => {
   });
 }
 
+const removeContentByIndex = (accountId, postIndex) =>
+  AccountModel.findByIdAndUpdate(accountId, { $pull: { "params.contents": { index: postIndex } } })
+
 const AccountService2 = {
   getAgencyAccounts,
   getAccountWithModel,
   getAccountWithModelChat,
+  getAccountWithAgencyAndModel,
   updateRevenue,
   disableAccount,
   extendAccount,

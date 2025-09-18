@@ -8,6 +8,7 @@ const ManagerSchema = new mongoose.Schema({
   email: { type: String, trim: true },   // email address
   password: { type: String, required: true }, // password
   telegram: { type: String }, // telegram id
+  discord: { type: String },
   createdAt: { type: Date, default: Date.now },
 
   // payment-related fields

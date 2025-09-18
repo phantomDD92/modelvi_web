@@ -1,43 +1,37 @@
 const express = require("express");
-const BotController = require("./controller");
 const checkBot = require("../middleware/postbot");
+const PostBotCtrl2 = require("../controllers/v2/postbot");
 
 
 const router = express.Router();
 
 router.route("/platform/:platform")
-  .get(BotController.handleLoadAccounts)
-  .post(BotController.handleLoginAccount)
+  .get(PostBotCtrl2.handleLoadAccounts)
+  .post(PostBotCtrl2.handleLoginAccount)
 
 router.route("/account")
   .all(checkBot)
-  .get(BotController.handleGetAccount)
-  .post(BotController.handleUpdateAccount)
-  .delete(BotController.handleGetCredential)
+  .get(PostBotCtrl2.handleGetAccount)
+  .post(PostBotCtrl2.handleUpdateAccount)
+  .delete(PostBotCtrl2.handleGetCredential)
 
 router.route("/proxy")
   .all(checkBot)
-  .put(BotController.handleChangeProxy)
+  .put(PostBotCtrl2.handleChangeProxy)
 
 router.route("/history")
   .all(checkBot)
-  .post(BotController.handleCreateHistory)
-  .put(BotController.handleCreateLastError)
-  .delete(BotController.handleClearLastError)
+  .post(PostBotCtrl2.handleCreateHistory)
+  .put(PostBotCtrl2.handleCreateLastError)
+  .delete(PostBotCtrl2.handleClearLastError)
 
 router.route("/time")
   .all(checkBot)
-  .post(BotController.handleUpdateTime)
-
-router.route("/schedule")
-  .all(checkBot)
-
-router.route("/daily")
-  .all(checkBot)
+  .post(PostBotCtrl2.handleUpdateTime)
 
 router.route("/balance")
   .all(checkBot)
-  .post(BotController.handleCheckBalance)
-  .put(BotController.handleTestBalance)
+  .post(PostBotCtrl2.handleCheckBalance)
+  .put(PostBotCtrl2.handleTestBalance)
 
 module.exports = router;
