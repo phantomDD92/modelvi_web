@@ -5,6 +5,7 @@ const createLog = (account, success, action, log, extra) =>
         account: account._id,
         model: account.actor._id || account.actor,
         agency: account.owner_id || account.owner,
+        action,
         success,
         log,
         extra
