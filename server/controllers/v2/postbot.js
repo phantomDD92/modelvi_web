@@ -47,8 +47,7 @@ const handleLoadAccounts = async (req, res) => {
   try {
     const { platform } = req.params;
     const accounts = await AccountService2.getLivingAccountsForPlatform(platform)
-    const accountNames = accounts.map(account => account.alias);
-    sendResult(res, { accounts: accountNames })
+    sendResult(res, { accounts })
   } catch (error) {
     sendError(res, error)
   }
