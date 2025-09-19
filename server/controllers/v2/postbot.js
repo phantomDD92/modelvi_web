@@ -106,7 +106,7 @@ const handleCreateLastError = async (req, res) => {
     const account = await AccountService2.getAccount(req.bot.id);
     const failures = (account.failures || 0);
     const status = !disabled && (failures < 10)
-    await HistoryService2.createHistory(req.bot.id, action);
+    // await HistoryService2.createHistory(req.bot.id, action);
     await AccountService2.updateParameters(req.bot.id, { $set: { lastError: action, status }, $inc: { failures: 1 } });
     sendResult(res)
   } catch (error) {
@@ -608,6 +608,7 @@ const handleCreateLog = async (req, res) => {
     if (!account)
       throw new ApiError("Invalid bot account")
     await LogService2.createLog(account, success, action, log, extra);
+    await HistoryService2.createHistory(account._id, log);
     if (extra?.disableNeeded)
       await AccountService2.disableAccount(account._id, log);
     if (extra?.notifyNeeded)
