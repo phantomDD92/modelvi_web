@@ -1,14 +1,11 @@
 const LogModel = require("../../models/log");
 
-const createLog = (account, success, action, log, extra) =>
+const createLog = (account, params) =>
     LogModel.create({
         account: account._id,
         model: account.actor._id || account.actor,
         agency: account.owner_id || account.owner,
-        action,
-        success,
-        log,
-        extra
+        ...params
     });
 
 const LogService2 = {

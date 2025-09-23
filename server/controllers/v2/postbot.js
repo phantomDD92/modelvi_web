@@ -602,16 +602,18 @@ const handleTestBalance = async (req, res) => {
 
 const handleCreateLog = async (req, res) => {
   try {
-    const { success, log, action, extra } = req.body;
+    const params = req.body;
     const account = await AccountService2.getAccountWithAgencyAndModel(req.bot.id);
     if (!account)
       throw new ApiError("Invalid bot account")
-    await LogService2.createLog(account, success, action, log, extra);
-    await HistoryService2.createHistory(account._id, log);
-    if (extra?.disableNeeded)
-      await AccountService2.disableAccount(account._id, log);
-    if (extra?.notifyNeeded)
-      NotifyUtils.sendNotification(account.owner, account, extra?.notifyMessage || log);
+    await LogService2.createLog(account, params);
+    await HistoryService2.createHistory(account._id, params.message);
+    if (params.disabled)
+      await AccountService2.updateParameters(req.bot.id, { $set: { status: false } });
+    if (params.error)
+      await AccountService2.updateParameters(req.bot.id, { $set: { lastError: params.error } });
+    if (params.notified)
+      NotifyUtils.sendNotification(account.owner, account, params.message);
     sendResult(res);
   } catch (error) {
     sendError(res, error);
