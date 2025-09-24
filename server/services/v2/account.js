@@ -340,12 +340,10 @@ const setContents = (accountId, contents) => {
   const newContents = contents.map(({ _id, platforms, ...params }) => ({ ...params }));
   return AccountModel.findByIdAndUpdate(accountId, {
     $push: { "params.contents": { $each: newContents } },
-    $set: { "params.recent": true, "params.uploaded": false }
+    $set: { "params.recent": true, "params.uploaded": false, "contentsLength": newContents.length }
   });
 }
 
-const removeContentByIndex = (accountId, postIndex) =>
-  AccountModel.findByIdAndUpdate(accountId, { $pull: { "params.contents": { index: postIndex } } })
 
 const AccountService2 = {
   getAgencyAccounts,

@@ -55,7 +55,7 @@ const AdminAccountTable = ({
             {
                 key: 'name',
                 title: 'Name',
-                width: 300,
+                width: 250,
                 dataIndex: 'actor',
                 render: (value, record) =>
                     <Flex gap="middle" align='center'>
@@ -76,6 +76,13 @@ const AdminAccountTable = ({
                         <h5>{`[${getPlatformName(record.platform)}]`}</h5>
                         <span>{`${value}`}</span>
                     </Space>
+            },
+            {
+                key: 'contents',
+                title: 'Contents',
+                width: 100,
+                dataIndex: 'contentsLength',
+                render: (value) => value || 0,
             },
             {
                 key: 'chatTeam',
@@ -109,7 +116,7 @@ const AdminAccountTable = ({
                 key: 'bot',
                 title: 'Bot',
                 dataIndex: 'updatedAt',
-                width: 250,
+                width: 200,
                 render: (value, record) => {
                     if (value && moment().diff(moment(value), 'minute', false) < 10) {
                         const ops = ["posting"]
@@ -196,7 +203,7 @@ const AdminAccountTable = ({
                     <span className="mr-8">
                         Account List
                     </span>
-                    
+
                     <Radio.Group onChange={(e) => onPlatform && onPlatform(e.target.value)} value={platform}>
                         {[
                             Platform.F2F,

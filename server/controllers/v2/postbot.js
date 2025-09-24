@@ -147,7 +147,7 @@ const handleUpdateContents = async (req, res) => {
     if (!actor)
       throw new ApiError("unknown model");
     const actorJson = actor.toJSON();
-    const contents = actorJson.contents.filter(content => content.platforms.includes(account.platform));
+    const contents = actorJson.contents.filter(content => content.platforms.includes(account.platform) && content.media.length > 0 && content.media[0].name);
     await NotifyUtils.sendDebugMessage(`${account.platform} - ${account.alias}`, "Update contents", `update ${contents.length} contents from ${actorJson.contents?.length} contents`)
     await AccountService2.clearContents(req.bot.id);
     await AccountService2.setContents(req.bot.id, contents);
@@ -446,9 +446,10 @@ const handleUpdatePostResult = async (req, res) => {
       postNextTime = moment().add(postInterval || DEFAULT_POST_INTERVAL, "minute").toDate();
     }
     // process next posting time limit
-    if (result == PostResultType.SUCCESS && nextTimeLimit && moment(postNextTime).isBefore(nextTimeLimit)) {
+    if (nextTimeLimit && moment(postNextTime).isBefore(nextTimeLimit)) {
       postNextTime = moment(nextTimeLimit)
     }
+
     await AccountService2.updateParameters(req.bot.id, {
       $set: {
         "params.postNextTime": postNextTime,
