@@ -447,7 +447,7 @@ const handleUpdatePostResult = async (req, res) => {
     }
     // process next posting time limit
     if (nextTimeLimit && moment(postNextTime).isBefore(nextTimeLimit)) {
-      postNextTime = moment(nextTimeLimit)
+      postNextTime = moment(nextTimeLimit).toDate()
     }
 
     await AccountService2.updateParameters(req.bot.id, {

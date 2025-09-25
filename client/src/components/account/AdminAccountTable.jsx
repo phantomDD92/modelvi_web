@@ -82,7 +82,7 @@ const AdminAccountTable = ({
                 title: 'Contents',
                 width: 100,
                 dataIndex: 'contentsLength',
-                render: (value) => value || 0,
+                render: (value) => value || "-",
             },
             {
                 key: 'chatTeam',

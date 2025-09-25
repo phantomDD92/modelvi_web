@@ -35,7 +35,7 @@ const DisabledAccountTable = ({ accounts, loading, onHistory, onStatusChange }) 
             title: 'Contents',
             width: 100,
             dataIndex: 'contentsLength',
-            render: (value, record) => value || 0
+            render: (value, record) => value || "-"
         },
         // {
         //     key: 'bot',
