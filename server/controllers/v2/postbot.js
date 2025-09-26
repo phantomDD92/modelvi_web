@@ -12,7 +12,6 @@ const TransactionService2 = require('../../services/v2/transaction');
 const NotifyUtils = require('../../utils/notifiy');
 const ScheduleService2 = require('../../services/v2/schedule');
 const ProxyNewService2 = require('../../services/v2/proxyNew');
-const HistoryService2 = require('../../services/v2/history');
 const CommentService2 = require('../../services/v2/comment');
 const BlockUserService2 = require('../../services/v2/blockUser');
 const ModelService2 = require('../../services/v2/model');
@@ -91,8 +90,6 @@ const handleUpdateTime = async (req, res) => {
 
 const handleCreateHistory = async (req, res) => {
   try {
-    const { action } = req.body;
-    await HistoryService2.createHistory(req.bot.id, action);
     sendResult(res)
   } catch (error) {
     sendError(res, error)
@@ -105,7 +102,6 @@ const handleCreateLastError = async (req, res) => {
     const account = await AccountService2.getAccount(req.bot.id);
     const failures = (account.failures || 0);
     const status = !disabled && (failures < 10)
-    // await HistoryService2.createHistory(req.bot.id, action);
     await AccountService2.updateParameters(req.bot.id, { $set: { lastError: action, status }, $inc: { failures: 1 } });
     sendResult(res)
   } catch (error) {
@@ -608,7 +604,6 @@ const handleCreateLog = async (req, res) => {
     if (!account)
       throw new ApiError("Invalid bot account")
     await LogService2.createLog(account, params);
-    await HistoryService2.createHistory(account._id, params.message);
     if (params.disabled)
       await AccountService2.updateParameters(req.bot.id, { $set: { status: false } });
     if (params.error)

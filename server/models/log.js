@@ -7,7 +7,6 @@ const LogSchema = new Schema({
     account: { type: SchemaTypes.ObjectId, ref: "Account", required: true },
     action: { type: Number, required: true },
     success: { type: Boolean, required: true },
-    log: { type: String },
     message: { type: String },
     disabled: { type: Boolean },
     notified: { type: Boolean },

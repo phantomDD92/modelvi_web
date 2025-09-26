@@ -493,10 +493,10 @@ export const deleteAccountForAdmin = (platform, account, callback) => async (dis
   })
 };
 
-export const loadAccountHistoryForAdmin = (platform, accountId, { page, pageSize }, callback) => async (dispatch) => {
+export const loadAccountHistoryForAdmin = (platform, accountId, { failedOnly, page, pageSize }, callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/v2/admin/history/${platform}/${accountId}`,
-    params: { page, pageSize },
+    params: { failedOnly, page, pageSize },
     action: ACTIONS.LOAD_ACCOUNT_HISTORY,
     callback
   })

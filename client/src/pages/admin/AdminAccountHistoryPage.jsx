@@ -4,13 +4,14 @@ import { createSearchParams, useLocation, useNavigate, useParams } from "react-r
 import qs from 'query-string';
 import { clearAccountErrorForAdmin, clearAccountHistoryForAdmin, loadAccountHistoryForAdmin } from "@/redux/admin/actions";
 import { PageMetaData } from "@/components/common";
-import HistoryTable from "@/components/account/HistoryTable";
+
 import { DEFAULT_CURRENT_PAGE, LARGE_PAGE_SIZE } from "@/utils/const";
+import { LogTable } from "@/components/account";
 
 export const AdminAccountHistoryPage = () => {
   const [loading, setLoading] = useState(false);
   const { platform, accountId } = useParams()
-  
+  const [failedOnly, setFailedOnly] = useState(false);
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const location = useLocation();
@@ -18,14 +19,14 @@ export const AdminAccountHistoryPage = () => {
   const page = parseInt(qs.parse(location.search)?.page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search)?.size) || LARGE_PAGE_SIZE;
 
-  const history = useSelector(state => state.admin.history)
-  const historyCount = useSelector(state => state.admin.historyCount);
-  const historyAccount = useSelector(state => state.admin.historyAccount);
+  const logs = useSelector(state => state.admin.logs)
+  const logsCount = useSelector(state => state.admin.logsCount);
+  const logAccount = useSelector(state => state.admin.logAccount);
 
   useEffect(() => {
     setLoading(true);
-    dispatch(loadAccountHistoryForAdmin(platform, accountId, { page, pageSize }, () => setLoading(false)))
-  }, [loadAccountHistoryForAdmin, platform, accountId, page])
+    dispatch(loadAccountHistoryForAdmin(platform, accountId, { failedOnly, page, pageSize }, () => setLoading(false)))
+  }, [loadAccountHistoryForAdmin, platform, accountId, failedOnly, page])
 
 
   const handleClearHistory = () => {
@@ -38,7 +39,7 @@ export const AdminAccountHistoryPage = () => {
 
   const handleReloadData = () => {
     setLoading(true);
-    dispatch(loadAccountHistoryForAdmin(platform, accountId, { page, pageSize }, () => setLoading(false)))
+    dispatch(loadAccountHistoryForAdmin(platform, accountId, {failedOnly, page, pageSize }, () => setLoading(false)))
   }
 
   const handleChangePagination = (pageValue, pageSizeValue) => {
@@ -50,7 +51,25 @@ export const AdminAccountHistoryPage = () => {
   return (
     <>
       <PageMetaData title="History" />
-      <HistoryTable
+      <LogTable
+        pagination={{
+          current: page,
+          pageSize: pageSize,
+          total: logsCount,
+          onChange: handleChangePagination
+        }}
+        dataSource={logs}
+        loading={loading}
+        account={logAccount}
+        actions={{
+          failedOnly,
+          onFailed: value => { console.log(value); setFailedOnly(value)},
+          onClear: handleClearHistory,
+          onError: handleClearError,
+          onReturn: () => navigate(-1)
+        }}
+      /> 
+      {/* <HistoryTable
         pagination={{
           current: page,
           pageSize: pageSize,
@@ -65,7 +84,7 @@ export const AdminAccountHistoryPage = () => {
           onError: handleClearError,
           onReturn: () => navigate(-1)
         }}
-      />
+      /> */}
     </>
   );
 };

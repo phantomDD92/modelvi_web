@@ -98,3 +98,15 @@ export const TransactionType = {
     EXPENSE: 2,
     CHARGE_INVOICE: 3,
 }
+
+export const ActionType = {
+    LOGIN: 0,
+    UPDATE: 1,
+    UPLOAD: 2,
+    POST: 3,
+    STORY: 4,
+    COMMENT: 5,
+    CHAT: 6,
+    BALANCE: 7,
+    SCHEDULE: 8,
+};
