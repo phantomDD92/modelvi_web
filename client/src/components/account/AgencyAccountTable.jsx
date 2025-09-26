@@ -84,20 +84,20 @@ const AgencyAccountTable = ({
             width: 120,
             render: value => value?.name || "-"
         },
-        {
-            key: 'fee',
-            title: 'Monthly Fee',
-            dataIndex: 'fee',
-            width: 200,
-            render: (value, record) => moment().endOf("day").isBefore(moment(record.expiredAt)) ? getFiatAmount(value) : "-"
-        },
-        {
-            key: 'expiredAt',
-            title: 'Expiration',
-            dataIndex: 'expiredAt',
-            width: 120,
-            render: value => value ? getDate(value) : "-"
-        },
+        // {
+        //     key: 'fee',
+        //     title: 'Monthly Fee',
+        //     dataIndex: 'fee',
+        //     width: 200,
+        //     render: (value, record) => moment().endOf("day").isBefore(moment(record.expiredAt)) ? getFiatAmount(value) : "-"
+        // },
+        // {
+        //     key: 'expiredAt',
+        //     title: 'Expiration',
+        //     dataIndex: 'expiredAt',
+        //     width: 120,
+        //     render: value => value ? getDate(value) : "-"
+        // },
         {
             key: 'bot',
             title: 'Bot',

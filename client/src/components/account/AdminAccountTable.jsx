@@ -95,23 +95,23 @@ const AdminAccountTable = ({
                 key: 'revenue',
                 title: 'Revenue',
                 dataIndex: 'revenue',
-                width: 100,
+                width: 150,
                 render: value => getFiatAmount(value)
             },
-            {
-                key: 'fee',
-                title: 'Monthly Fee',
-                dataIndex: 'fee',
-                width: 100,
-                render: (value, record) => moment().endOf("day").isBefore(moment(record.expiredAt)) ? getFiatAmount(value) : "-"
-            },
-            {
-                key: 'expiredAt',
-                title: 'Expiration',
-                dataIndex: 'expiredAt',
-                width: 120,
-                render: value => value ? getDate(value) : "-"
-            },
+            // {
+            //     key: 'fee',
+            //     title: 'Monthly Fee',
+            //     dataIndex: 'fee',
+            //     width: 100,
+            //     render: (value, record) => moment().endOf("day").isBefore(moment(record.expiredAt)) ? getFiatAmount(value) : "-"
+            // },
+            // {
+            //     key: 'expiredAt',
+            //     title: 'Expiration',
+            //     dataIndex: 'expiredAt',
+            //     width: 120,
+            //     render: value => value ? getDate(value) : "-"
+            // },
             {
                 key: 'bot',
                 title: 'Bot',

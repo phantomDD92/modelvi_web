@@ -40,6 +40,7 @@ const loadAgenciesForAffiliate = () =>
 
 const loadAgencies = () =>
   ManagerModel.find({})
+    .sort({ order: -1 })
     .populate("referrer", "name")
 
 const deleteAgency = (agencyId) =>
@@ -70,7 +71,7 @@ const getAgencyWithReferrer = (agencyId) =>
 const getAgencyList = () =>
   ManagerModel.find({}, "name");
 
-const changePassword = (agencyId, password) => 
+const changePassword = (agencyId, password) =>
   ManagerModel.findByIdAndUpdate(agencyId, { $set: { password } });
 
 const AgencyService2 = {

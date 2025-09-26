@@ -5,6 +5,7 @@ const BlockUserService2 = require("../../services/v2/blockUser");
 const CommentService2 = require("../../services/v2/comment");
 const ModelService2 = require("../../services/v2/model");
 const TransactionService2 = require("../../services/v2/transaction");
+const { getPricePlan, getModelPricePlan } = require("../../utils/helper");
 const NotifyUtils = require("../../utils/notifiy");
 const { sendError, sendResult, ApiError } = require("../../utils/resp");
 
@@ -58,17 +59,29 @@ const handleLoadAgenciesForAdmin = async (req, res) => {
     const agencies = await AgencyService2.loadAgencies();
     const modelStats = await ModelService2.getCountStatsByAgency();
     const accountStats = await AccountService2.getCountStatsByAgencyPlatform();
-    const feeStats = await AccountService2.getFeeStatsByAgency();
+    const items = await AccountService2.getAgenciesRevenue();
+    const feeStats = items.map(item => {
+      return ({
+        _id: item._id,
+        monthlyFee: item.models.reduce((sum, model) => sum += getModelPricePlan(undefined, model.revenue) + (model.count) * 10, 0),
+        proxyFee: item.count * 2.5,
+        // models: item.models.map(model => {
+        //   const fee = getModelPricePlan(undefined, model.revenue) + (model.count) * 10
+        //   return { ...model, fee }
+        // })
+      });
+    })
     const agencyInfos = agencies.map(agency => {
       const modelStat = modelStats.find(stat => stat._id.toString() == agency._id.toString());
       const accountStat = accountStats.filter(stat => stat._id?.creator?.toString() == agency._id.toString());
       const feeStat = feeStats.find(stat => stat._id.toString() == agency._id.toString());
       return ({
         ...agency.toJSON(),
+        accountCount: accountStat.map(item => `${item.platform} ${item.count}`).join(', '),
         modelCount: modelStat?.count || 0,
         monthlyFee: feeStat?.monthlyFee || 0,
         proxyFee: feeStat?.proxyFee || 0,
-        accountCount: accountStat.map(item => `${item.platform} ${item.count}`).join(', ')
+        // models: feeStat?.models || []
       })
     });
 

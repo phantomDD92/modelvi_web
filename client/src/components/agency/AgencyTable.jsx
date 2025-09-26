@@ -54,11 +54,12 @@ export const AgencyTable = ({
             title: 'Monthly Fee',
             dataIndex: 'monthlyFee',
             width: 200,
-            render: (value, record) =>
+            render: (value, record) => value > 0 ?
                 <Space direction="vertical" size={1}>
                     <h5>{getFiatAmount(value)}</h5>
                     <span>{`+ ${getFiatAmount(record.proxyFee || 0)} (Proxy)`}</span>
                 </Space>
+                : "-"
 
         },
         {

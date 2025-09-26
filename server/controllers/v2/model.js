@@ -1,7 +1,7 @@
 const AccountService2 = require("../../services/v2/account");
 const AgencyService2 = require("../../services/v2/agency");
 const ModelService2 = require("../../services/v2/model");
-const { isModelOwner } = require("../../utils/helper");
+const { isModelOwner, getModelPricePlan } = require("../../utils/helper");
 const NotifyUtils = require("../../utils/notifiy");
 const { sendError, sendResult, ApiError } = require("../../utils/resp");
 
@@ -9,7 +9,16 @@ const handleLoadModelsForAdmin = async (req, res) => {
   try {
     const { search, agency } = req.query;
     const models = await ModelService2.loadModels({ search, agency });
-    sendResult(res, { models });
+    const items = await AccountService2.getModelsRevenue();
+    const modelsStat = items.map(item => {
+      return ({
+        _id: item._id,
+        revenue: item.revenue,
+        fee: getModelPricePlan(undefined, item.revenue) + (item.accounts.length) * 10,
+        accounts: item.accounts,
+      })
+    })
+    sendResult(res, { models, modelsStat });
   } catch (error) {
     console.error(error);
     sendError(res, error)
@@ -86,7 +95,16 @@ const handleLoadModelsForAgency = async (req, res) => {
   try {
     const { search } = req.query;
     const models = await ModelService2.loadAgencyModels(req.manager._id, search);
-    sendResult(res, { models });
+    const items = await AccountService2.getAgencyModelsRevenue(req.manager._id);
+    const modelsStat = items.map(item => {
+      return ({
+        _id: item._id,
+        revenue: item.revenue,
+        fee: getModelPricePlan(undefined, item.revenue) + (item.accounts.length) * 10,
+        accounts: item.accounts,
+      })
+    });
+    sendResult(res, { models, modelsStat });
   } catch (error) {
     console.error(error);
     sendError(res, error)

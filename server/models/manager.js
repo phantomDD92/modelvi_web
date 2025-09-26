@@ -26,7 +26,7 @@ const ManagerSchema = new mongoose.Schema({
   version: { type: Number, default: 1 },
   status: { type: Boolean, default: true }, // status
   verified: { type: Boolean, default: false },
-
+  order: {type: Number}
 });
 
 const ManagerModel = mongoose.model("Manager", ManagerSchema);

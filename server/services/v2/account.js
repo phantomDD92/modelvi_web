@@ -344,6 +344,122 @@ const setContents = (accountId, contents) => {
   });
 }
 
+const getAgencyModelsRevenue = (agencyId) => {
+  return AccountModel.aggregate([
+    {
+      $match: {
+        owner: agencyId,
+        expiredAt: { $gte: moment().startOf("day").toDate() }
+      }
+    },
+    {
+      $group:
+      {
+        _id: {
+          actor: "$actor",
+          owner: "$owner"
+        },
+        accounts: {
+          $push: {
+            platform: "$platform",
+            alias: "$alias",
+            revenue: "$revenue"
+          }
+        },
+        revenue: {
+          $sum: "$revenue"
+        }
+      }
+    },
+    {
+      $project: {
+        _id: "$_id.actor",
+        revenue: 1,
+        accounts: 1,
+      }
+    }
+  ])
+}
+
+const getModelsRevenue = () => {
+  return AccountModel.aggregate([
+    {
+      $match: {
+        expiredAt: { $gte: moment().startOf("day").toDate() }
+      }
+    },
+    {
+      $group:
+      {
+        _id: {
+          actor: "$actor",
+          owner: "$owner"
+        },
+        accounts: {
+          $push: {
+            platform: "$platform",
+            alias: "$alias",
+            revenue: "$revenue"
+          }
+        },
+        revenue: {
+          $sum: "$revenue"
+        }
+      }
+    },
+    {
+      $project: {
+        _id: "$_id.actor",
+        revenue: 1,
+        accounts: 1,
+      }
+    }
+  ])
+}
+
+const getAgenciesRevenue = () => {
+  return AccountModel.aggregate([
+    {
+      $match: {
+        expiredAt: { $gte: moment().startOf("day").toDate() }
+      }
+    },
+    {
+      $group:
+      {
+        _id: {
+          actor: "$actor",
+          owner: "$owner"
+        },
+        accounts: {
+          $push: {
+            platform: "$platform",
+            alias: "$alias",
+            revenue: "$revenue"
+          }
+        },
+        count: { $sum: 1 },
+        revenue: {
+          $sum: "$revenue"
+        }
+      }
+    },
+    {
+      $group: {
+        _id: "$_id.owner",
+        models: {
+          $push: {
+            model: "$_id.actor",
+            revenue: "$revenue",
+            count: "$count",
+            // accounts: "$accounts",
+          },
+        },
+        count: { $sum: "$count" }
+      }
+    }
+  ])
+}
 
 const AccountService2 = {
   getAgencyAccounts,
@@ -387,7 +503,11 @@ const AccountService2 = {
   getAccount,
   changeProxy,
   clearContents,
-  setContents
+  setContents,
+
+  getAgencyModelsRevenue,
+  getModelsRevenue,
+  getAgenciesRevenue
 };
 
 module.exports = AccountService2;

@@ -32,7 +32,7 @@ export const AdminModelTable = ({
     pagination,
     rowSelection,
     loading,
-    dataSource,
+    dataSource: {models, modelsStat},
     actions: {
         onDelete,
         onCreate,
@@ -76,16 +76,16 @@ export const AdminModelTable = ({
         {
             key: 'revenue',
             title: 'Revenue',
-            dataIndex: 'accounts',
+            dataIndex: '_id',
             width: 150,
-            render: value => value.length == 0 ? '-' : getFiatAmount(value.filter(account => moment().endOf("day").isBefore(account.expiredAt) && account.revenue != -1).reduce((sum, account) => sum + account.revenue, 0))
+            render: value => getFiatAmount(modelsStat.find(stat => stat._id == value)?.revenue || 0)
         },
         {
             key: 'fee',
             title: 'Monthly Fee',
-            dataIndex: 'accounts',
+            dataIndex: '_id',
             width: 100,
-            render: value => value.length == 0 ? '-' : getFiatAmount(value.filter(account => moment().endOf("day").isBefore(account.expiredAt)).reduce((sum, account) => sum + account.fee, 0))
+            render: value => getFiatAmount(modelsStat.find(stat => stat._id == value)?.fee || 0)
         },
         {
             key: 'contents',
@@ -203,7 +203,7 @@ export const AdminModelTable = ({
                 loading={loading}
                 rowSelection={rowSelection}
                 rowKey={row => row._id}
-                dataSource={dataSource}
+                dataSource={models}
                 columns={columns}
             />
         </Card>

@@ -13,6 +13,7 @@ const initialState = {
 
   // proxy related state
   proxies: [],
+
   // statistics per agency
   proxyStats: [],
   accountStats: [],
@@ -35,6 +36,7 @@ const initialState = {
 
   // model related state
   models: [],
+  modelsStat: [],
   modelList: [],
 
   contentModel: undefined,
@@ -129,6 +131,7 @@ const adminReducer = (state = initialState, action) => {
       return {
         ...state,
         models: action.payload.models,
+        modelsStat: action.payload.modelsStat,
       };
     case ACTIONS.LOAD_MODEL_LIST:
       return {

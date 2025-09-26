@@ -56,7 +56,7 @@ export const getCurrencyAmount = (value, code, status) => {
   return value.toFixed(2);
 }
 
-export const getFiatAmount = (amount, defValue = "-") => amount >= 0 ? `$${(amount || 0).toFixed(2)}` : defValue;
+export const getFiatAmount = (amount, defValue = "-") => amount > 0 ? `$${(amount || 0).toFixed(2)}` : defValue;
 
 export const getFullFiatAmount = (amount) => amount >= 0 ? `$${(amount || 0).toFixed(2)}` : `- $${(amount * -1).toFixed(2)}`;
 

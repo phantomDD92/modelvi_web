@@ -55,7 +55,6 @@ const handleClearHistoryForAdmin = async (req, res) => {
     if (!account)
       throw new ApiError("The account does not exist.");
     await LogService2.clearAccountLogs(accountId);
-    // await HistoryService2.clearAccountHistory(accountId)
     sendResult(res);
   } catch (error) {
     sendError(res, error);

@@ -26,6 +26,7 @@ const AdminModelPage = () => {
   const agency = qs.parse(location.search)?.agency || ''
   const agencyList = useSelector(state => state.admin.agencyList);
   const models = useSelector(state => state.admin.models);
+  const modelsStat = useSelector(state => state.admin.modelsStat);
 
   const loadModelsCallback = useCallback((agency, search) => {
     setLoading(true);
@@ -93,7 +94,7 @@ const AdminModelPage = () => {
     <>
       <PageMetaData title="Models" admin />
       <AdminModelTable
-        dataSource={models}
+        dataSource={{models, modelsStat}}
         loading={loading}
         pagination={{
           current: page,
