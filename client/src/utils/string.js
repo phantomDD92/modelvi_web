@@ -1,5 +1,5 @@
 import moment from "moment";
-import { Platform } from "./const";
+import { ActionType, Platform } from "./const";
 import { cryptoCurrencies } from "@/data/crypto";
 
 export const getPlatformName = (platform) => {
@@ -89,4 +89,26 @@ export function shuffleArray(arr) {
 
 export function isBotRunning(account) {
   return account.updatedAt && moment().diff(moment(account.updatedAt), 'minute', false) < 10;
+}
+
+export function getLogAction(action) {
+  switch (action) {
+    case ActionType.LOGIN:
+      return "auth";
+    case ActionType.POST:
+      return "posting";
+    case ActionType.STORY:
+      return "story";
+    case ActionType.SCHEDULE:
+      return "schedule";
+    case ActionType.COMMENT:
+      return "comment";
+    case ActionType.UPDATE:
+      return "content";
+    case ActionType.CHAT:
+      return "chatting";
+    default:
+      break;
+  }
+  return "-"
 }

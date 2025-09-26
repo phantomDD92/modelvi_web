@@ -1,19 +1,19 @@
 const AccountService2 = require("../../services/v2/account");
-const HistoryService2 = require("../../services/v2/history");
+const LogService2 = require("../../services/v2/log");
 const { isModelOwner } = require("../../utils/helper");
 const { sendError, sendResult } = require("../../utils/resp");
 
 const handleLoadHistoryForAgency = async (req, res) => {
   try {
     const { accountId } = req.params;
-    const { page, pageSize } = req.query;
+    const { failedOnly, page, pageSize } = req.query;
     const account = await AccountService2.findAccountById(accountId);
     if (!account)
       throw new ApiError("Account does not exist");
     if (!isModelOwner(account, req.manager))
       throw new ApiError("Account can be accessible by owner");
-    const [history, historyCount] = await HistoryService2.loadHistories(accountId, { page, pageSize: pageSize || "20" })
-    sendResult(res, { history, historyCount, account });
+    const [logs, logsCount] = await LogService2.loadAccountLogs(accountId, { failedOnly, page, pageSize: pageSize || "20" })
+    sendResult(res, { logs, logsCount, account });
   } catch (error) {
     sendError(res, error);
   }
@@ -22,12 +22,12 @@ const handleLoadHistoryForAgency = async (req, res) => {
 const handleLoadHistoryForAdmin = async (req, res) => {
   try {
     const { accountId } = req.params;
-    const { page, pageSize } = req.query;
+    const { failedOnly, page, pageSize } = req.query;
     const account = await AccountService2.findAccountById(accountId);
     if (!account)
       throw new ApiError("Account does not exist");
-    const [history, historyCount] = await HistoryService2.loadHistories(accountId, { page, pageSize: pageSize || "20" })
-    sendResult(res, { history, historyCount, account });
+    const [logs, logsCount] = await LogService2.loadAccountLogs(accountId, { failedOnly, page, pageSize: pageSize || "20" })
+    sendResult(res, { logs, logsCount, account });
   } catch (error) {
     sendError(res, error);
   }
@@ -41,7 +41,7 @@ const handleClearHistoryForAgency = async (req, res) => {
       throw new ApiError("The account does not exist.");
     if (!isModelOwner(account, req.manager))
       throw new ApiError("Account can be accessible by owner");
-    await HistoryService2.clearAccountHistory(accountId)
+    await LogService2.clearAccountLogs(accountId);
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -54,7 +54,8 @@ const handleClearHistoryForAdmin = async (req, res) => {
     const account = await AccountService2.findAccountById(accountId);
     if (!account)
       throw new ApiError("The account does not exist.");
-    await HistoryService2.clearAccountHistory(accountId)
+    await LogService2.clearAccountLogs(accountId);
+    // await HistoryService2.clearAccountHistory(accountId)
     sendResult(res);
   } catch (error) {
     sendError(res, error);

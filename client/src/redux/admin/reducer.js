@@ -42,9 +42,9 @@ const initialState = {
   accounts: [],
   accountsCount: 0,
   // For Account History Page
-  history: [],
-  historyCount: 0,
-  historyAccount: undefined,
+  logs: [],
+  logsCount: 0,
+  logAccount: undefined,
 
   payments: [],
   paymentsCount: 0,
@@ -148,9 +148,9 @@ const adminReducer = (state = initialState, action) => {
     case ACTIONS.LOAD_ACCOUNT_HISTORY:
       return {
         ...state,
-        history: action.payload.history,
-        historyCount: action.payload.historyCount,
-        historyAccount: action.payload.account
+        logs: action.payload.logs,
+        logsCount: action.payload.logsCount,
+        logAccount: action.payload.account
       };
     case ACTIONS.LOAD_PAYMENTS:
       return {
@@ -188,13 +188,11 @@ const adminReducer = (state = initialState, action) => {
         likeComments: action.payload.comments,
       }
     case ACTIONS.LOAD_AGENCY_COMMENTS:
-      console.log(action.payload.comments)
       return {
         ...state,
         agencyComments: action.payload.comments,
       }
     case ACTIONS.LOAD_AGENCY_BLOCK_USERS:
-      console.log(action.payload.users)
       return {
         ...state,
         agencyBlockUsers: action.payload.users,

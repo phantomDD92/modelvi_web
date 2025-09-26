@@ -25,9 +25,9 @@ const initialState = {
   accountsCount: 0,
   accountList: [],
 
-  history: [],
-  historyCount: 0,
-  historyAccount: undefined,
+  logs: [],
+  logsCount: 0,
+  logAccount: undefined,
 
   schedules: [],
   schedulesCount: 0,
@@ -115,9 +115,9 @@ const v2Reducer = (state = initialState, action) => {
     case ACTIONS.LOAD_ACCOUNT_HISTORY:
       return {
         ...state,
-        history: action.payload.history,
-        historyCount: action.payload.historyCount,
-        historyAccount: action.payload.account
+        logs: action.payload.logs,
+        logsCount: action.payload.logsCount,
+        logAccount: action.payload.account
       };
     case ACTIONS.LOAD_SCHEDULE_CONTENTS:
       return {
