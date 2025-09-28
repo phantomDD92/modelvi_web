@@ -1,6 +1,6 @@
 import { Platform, PostType, ScheduleStatus } from "@/utils/const";
 import { getDateTime, getPlatformName } from "@/utils/string";
-import { Button, Card, Flex, Select, Table, Tooltip, Tag } from "antd";
+import { Button, Card, Flex, Select, Table, Tooltip, Tag, Carousel } from "antd";
 import { LuPlus, LuRefreshCcw, LuTrash } from "react-icons/lu";
 import Media from "../common/Media";
 
@@ -89,21 +89,11 @@ const AdminScheduleResultTable = ({
       title: 'Media',
       dataIndex: 'schedule',
       width: 120,
-      render: (value) => {
-        if (value.media) {
-          return <Media src={value.media.name} type={value.media.mode} width={100} small />
-        } else if (value.image) {
-          return <Image src={`${SERVER_PATH}/uploads/${value.image}`} width={100} />
-        }
-      }
+      render: (value) =>
+        <Carousel autoplay={{ dotDuration: true }} autoplaySpeed={5000} >
+          {value.medias.map(media => <Media src={media.name} type={media.mode} width={100} small />)}
+        </Carousel>
     },
-    // {
-    //   key: 'preview',
-    //   title: 'Preview',
-    //   dataIndex: 'schedule',
-    //   width: 120,
-    //   render: value => value.preview && value.preview?.name ? <Media src={value.preview.name} type={value.preview.mode} width={100} small /> : '-'
-    // },
     {
       key: 'title',
       title: 'Title / Tags',

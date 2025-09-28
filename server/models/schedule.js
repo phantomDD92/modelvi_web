@@ -6,6 +6,7 @@ const ScheduleSchema = new Schema({
     owner: { type: SchemaTypes.ObjectId, ref: "Manager" },
     actor: { type: SchemaTypes.ObjectId, ref: "Actor" },
     media: { name: String, mode: String },
+    medias: [{ name: String, mode: String }],
     preview: { name: String, mode: String },
     title: { type: String, required: true },
     folder: { type: String },

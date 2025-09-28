@@ -82,7 +82,7 @@ const EditableCell = _a => {
         toggleEdit();
         handleSave(Object.assign(Object.assign({}, record), values));
       } catch (errInfo) {
-        // console.log('Save failed:', errInfo);
+        
       }
     });
   let childNode = children;

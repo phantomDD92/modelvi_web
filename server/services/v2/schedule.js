@@ -3,11 +3,12 @@ const { ScheduleStatus } = require("../../config/const");
 const ScheduleModel = require("../../models/schedule");
 const ScheduleResultModel = require("../../models/scheduleResult");
 
-const createSchedule = (agencyId, modelId, { media, preview, title, folder, tags, type, price, scheduledAt }) =>
+const createSchedule = (agencyId, modelId, { medias, preview, title, folder, tags, type, price, scheduledAt }) =>
   ScheduleModel.create({
     owner: agencyId,
     actor: modelId,
-    media,
+    medias,
+    media: medias[0],
     preview,
     title,
     folder,
@@ -18,7 +19,6 @@ const createSchedule = (agencyId, modelId, { media, preview, title, folder, tags
   })
 
 const loadSchedulesWithPage = ({ agency, model, page, pageSize }) => {
-  console.log("HERE");
   const timeQuery = { scheduledAt: { $gte: moment().subtract(7, "day").toDate() } }
   const agencyQuery = agency && agency != "" ? { owner: agency } : {};
   const modelQuery = model && model != "" ? { actor: model } : {};

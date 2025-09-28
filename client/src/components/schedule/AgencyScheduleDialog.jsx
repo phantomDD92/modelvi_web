@@ -17,9 +17,11 @@ import { PostType, SERVER_PATH } from "@/utils/const";
 import Media from "../common/Media";
 import StyledInput from "../common/StyledInput";
 import { getPlatformName } from "@/utils/string";
+import { LuUpload } from "react-icons/lu";
 
 const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
+    const [fileList, setFileList] = useState([]);
     const [mediaName, setMediaName] = useState();
     const [mediaType, setMediaType] = useState();
     const [previewName, setPreviewName] = useState();
@@ -27,43 +29,32 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
     const [postType, setPostType] = useState(PostType.FREE);
     const [model, setModel] = useState();
 
-    const handleMediaChange = ({ file }) => {
-        if (file.status == 'done') {
-            setMediaType("image/png");
-            setMediaName(file.response.file);
-            setMediaType(file.type);
-        } else if (file.status == "uploading") {
-            setMediaType();
-            setMediaName();
-        }
+    const handleMediaChange = ({ fileList }) => {
+        setFileList(fileList);
     }
 
-    const handlePreviewChange = ({ file }) => {
-        if (file.status == 'done') {
-            setPreviewType("image/png");
-            setPreviewName(file.response.file);
-            setPreviewType(file.type);
-        } else if (file.status == "uploading") {
-            setPreviewName();
-            setPreviewType();
-        }
-    }
+    // const handlePreviewChange = ({ file }) => {
+    //     if (file.status == 'done') {
+    //         setPreviewType("image/png");
+    //         setPreviewName(file.response.file);
+    //         setPreviewType(file.type);
+    //     } else if (file.status == "uploading") {
+    //         setPreviewName();
+    //         setPreviewType();
+    //     }
+    // }
 
     const handleOkClick = async () => {
         try {
             await form.validateFields();
-            const { medias, previews, tags, scheduledAt, ...params } = form.getFieldsValue();
+            const { tags, scheduledAt, ...params } = form.getFieldsValue();
             let postTags = [];
             const tagsStr = tags.replaceAll("#", " ").trim()
             if (tagsStr != "") {
                 postTags = tagsStr.split(/\s+/);
             }
-            let media = { name: mediaName, mode: mediaType };
-            let preview;
-            if (previews && previews.length > 0) {
-                preview = { name: previewName, mode: previewType }
-            }
-            onUpdate({ media, preview, tags: postTags, type: postType, model, scheduledAt: scheduledAt.toDate(), ...params });
+            let medias = fileList.map(fileInfo => ({ name: fileInfo.response?.file, mode: fileInfo.type }));
+            onUpdate({ medias, tags: postTags, type: postType, model, scheduledAt: scheduledAt.toDate(), ...params });
         } catch (e) {
             console.error(e);
         }
@@ -73,7 +64,6 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
         if (open && data) {
             const { media, preview, actor, type: postType, tags: postTags, scheduledAt, results, ...params } = data;
             let medias = [];
-            let previews = [];
             if (media) {
                 setMediaType(media.mode);
                 setMediaName(media.name);
@@ -82,17 +72,11 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
                 setMediaName();
                 setMediaType();
             }
-            if (preview) {
-                setPreviewType(preview.mode);
-                setPreviewName(preview.name);
-                previews = [preview.name];
-            }
             if (postType)
                 setPostType(postType)
             setModel(actor._id)
             form.setFieldsValue({
                 medias,
-                previews,
                 platforms: (results || []).map(result => result.account?.platform),
                 tags: (postTags || []).map(tag => `#${tag}`).join(" "),
                 scheduledAt: moment(scheduledAt),
@@ -100,10 +84,11 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
             })
         } else {
             form.resetFields();
-            setMediaName();
-            setMediaType();
-            setPreviewName();
-            setPreviewType();
+            setFileList([]);
+            // setMediaName();
+            // setMediaType();
+            // setPreviewName();
+            // setPreviewType();
             setModel();
             setPostType(PostType.FREE)
         }
@@ -167,31 +152,22 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
                 </Form.Item>
                 <Form.Item
                     label="Media"
-                    name="medias"
-                    valuePropName="fileList"
+                    // name="medias"
+                    // valuePropName="fileList"
                     rules={[{ required: true }]}
-                    getValueFromEvent={normFile}
+                    // getValueFromEvent={normFile}
                 >
                     <Upload
                         name="file"
+                        multiple
                         action={`${SERVER_PATH}/api/upload`}
-                        headers={{ authorization: 'authorization-text' }}
-                        showUploadList={false}
-                        maxCount={1}
+                        fileList={fileList}
                         onChange={handleMediaChange}
                     >
-                        <Button icon={<UploadOutlined />}>Upload Media</Button>
+                        <Button icon={<LuUpload />}>Upload Media</Button>
                     </Upload>
                 </Form.Item>
 
-                <Form.Item>
-                    <Flex justify="center">
-                        <Media
-                            width={400}
-                            src={mediaName}
-                            type={mediaType} />
-                    </Flex>
-                </Form.Item>
                 {/* <Form.Item
                     label="Preview"
                     name="previews"

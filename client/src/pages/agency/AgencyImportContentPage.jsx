@@ -100,7 +100,6 @@ const AgencyImportContentPage = () => {
     if (contentIndex >= 0) {
       newContents.splice(contentIndex, 1);
     }
-    console.log(content, contents, contentIndex, newContents);
     setContents(newContents);
   }
 
@@ -207,7 +206,7 @@ const AgencyImportContentPage = () => {
                     value={folder}
                     onChange={e => setFolder(e.target.value)} />
                 </Form.Item>
-                <Form.Item label="Images :">
+                <Form.Item label="Media :">
                   <Upload
                     name="file"
                     multiple
@@ -215,7 +214,7 @@ const AgencyImportContentPage = () => {
                     onChange={handleMediaChange}
                     fileList={fileList}
                   >
-                    <Button icon={<LuUpload />}>Upload Images</Button>
+                    <Button icon={<LuUpload />}>Upload Media</Button>
                   </Upload>
                 </Form.Item>
               </Col>

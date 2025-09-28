@@ -1,6 +1,6 @@
 import { Platform, PostType, ScheduleStatus } from "@/utils/const";
 import { getDateTime, getPlatformName } from "@/utils/string";
-import { Button, Card, Flex, Select, Table, Tooltip, Space, Tag } from "antd";
+import { Button, Card, Flex, Select, Table, Tooltip, Space, Tag, Carousel } from "antd";
 import { LuPencil, LuPlus, LuRefreshCcw, LuTrash } from "react-icons/lu";
 import Media from "../common/Media";
 
@@ -84,21 +84,11 @@ const AgencyScheduleResultTable = ({
       title: 'Media',
       dataIndex: 'schedule',
       width: 120,
-      render: (value) => {
-        if (value.media) {
-          return <Media src={value.media.name} type={value.media.mode} width={100} small />
-        } else if (value.image) {
-          return <Image src={`${SERVER_PATH}/uploads/${value.image}`} width={100} />
-        }
-      }
+      render: (value) =>
+        <Carousel autoplay={{ dotDuration: true }} autoplaySpeed={3000} className="w-[100px]" >
+          {value.medias.map(media => <Media src={media.name} type={media.mode} width={100} small />)}
+        </Carousel>
     },
-    // {
-    //   key: 'preview',
-    //   title: 'Preview',
-    //   dataIndex: 'schedule',
-    //   width: 120,
-    //   render: value => value.preview && value.preview?.name ? <Media src={value.preview.name} type={value.preview.mode} width={100} small /> : '-'
-    // },
     {
       key: 'title',
       title: 'Title',

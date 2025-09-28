@@ -1,6 +1,7 @@
 const { Platform } = require("../../config/const");
 const AccountModel = require("../../models/account");
 const LogModel = require("../../models/log");
+const ScheduleModel = require("../../models/schedule");
 const ScheduleResultModel = require("../../models/scheduleResult");
 const LogService2 = require("../../services/v2/log");
 const ProxyNewService2 = require("../../services/v2/proxyNew");
@@ -47,20 +48,15 @@ const executeClearHistories = async () => {
   return `Old histories are cleared`;
 }
 
-const executeFixF2F = async () => {
-  const accounts = await AccountModel.find({ platform: Platform.F2F }, "alias params.postRemains")
-  for (var account of accounts) {
-    const logs = await LogModel.find({ account: account._id, success: true, action: 3 }, "target");
-    const newPostIds = await logs.filter(log => log.target).map(log => log.target)
+const executeFixSchedule = async () => {
+  const schedules = await ScheduleModel.find();
+  for (var schedule of schedules) {
+    await ScheduleModel.findByIdAndUpdate(schedule._id, { $set: { medias: [schedule.media] } });
     
-    console.log(`### ${account.alias} : old = ${(account.params?.postRemains || []).length} : new = ${newPostIds.length}`)
-    console.log(`--- ${newPostIds}`)
-    if (account.alias != "gaby" && newPostIds.length > 0) {
-      const mergeIds = [...(account.params?.postRemains || []), ...newPostIds]
-      await AccountModel.findByIdAndUpdate(account._id, { $set: { "params.postRemains": mergeIds } })
-    }
   }
+  return `All schedules are updated`;
 }
+
 
 const handleExecuteCommand = async (req, res) => {
   try {
@@ -78,6 +74,9 @@ const handleExecuteCommand = async (req, res) => {
         break;
       case "clear_history":
         message = await executeClearHistories();
+        break;
+      case "fix_schedule":
+        message = await executeFixSchedule();
         break;
       default:
         throw new ApiError("unknown command");

@@ -176,7 +176,6 @@ const handleUpdateScheduleResultForAdmin = async (req, res) => {
     switch (action) {
       case "reset":
         const { scheduledAt } = params;
-        console.log(scheduledAt);
         await ScheduleService2.resetScheduleResult(resultId, new Date(scheduledAt));
         break
       default:

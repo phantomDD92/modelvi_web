@@ -63,7 +63,7 @@ export const AdminAccountHistoryPage = () => {
         account={logAccount}
         actions={{
           failedOnly,
-          onFailed: value => { console.log(value); setFailedOnly(value)},
+          onFailed: value => setFailedOnly(value),
           onClear: handleClearHistory,
           onError: handleClearError,
           onReturn: () => navigate(-1)
