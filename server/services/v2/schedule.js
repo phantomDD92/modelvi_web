@@ -167,7 +167,7 @@ const updateScheduleResult = (result) => {
 
 const loadLivingSchedules = (accountId) =>
   ScheduleResultModel.find({ account: accountId, status: { $lte: ScheduleStatus.SCHEDULED } })
-    .populate("schedule", "media preview folder title tags type price scheduledAt");
+    .populate("schedule", "media preview folder title tags type price medias scheduledAt");
 
 const setExpiredSchedules = (accountId) =>
   ScheduleResultModel.updateMany({ account: accountId, status: ScheduleStatus.WAITING, scheduledAt: { $lt: new Date() } }, { $set: { status: ScheduleStatus.EXPIRED } })
