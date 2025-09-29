@@ -1,7 +1,9 @@
 import { DatePicker, Form, Modal } from "antd";
 import dayjs from 'dayjs';
+import moment from "moment";
+import { useEffect } from "react";
 
-const ScheduleRetryDialog = ({ open, onCancel, onConfirm }) => {
+const ScheduleRetryDialog = ({ open, data, onCancel, onConfirm }) => {
   const [form] = Form.useForm();
 
   const handleOkClick = async () => {
@@ -14,6 +16,12 @@ const ScheduleRetryDialog = ({ open, onCancel, onConfirm }) => {
     }
   }
 
+  useEffect(() => {
+    if (open && data) {
+      form.setFieldsValue({scheduledAt: moment(data.scheduledAt).isBefore(moment()) ? moment().add(2, "hour").startOf("hour") : moment(data.scheduledAt)})
+    }
+  }, [open, data]);
+
   return (
     <Modal
       title={"Retry Scheduled Posting"}
@@ -25,9 +33,7 @@ const ScheduleRetryDialog = ({ open, onCancel, onConfirm }) => {
         form={form}
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 20 }}
-        initialValues={{
-          scheduledAt: dayjs().add(30, "minute"),
-        }}>
+        >
         <Form.Item
           label="Date/Time"
           name="scheduledAt"

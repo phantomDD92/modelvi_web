@@ -135,6 +135,7 @@ const AdminSchedulePage = () => {
         onUpdate={handleUpdateSchedule}
       />
       <ScheduleRetryDialog
+        data={current}
         open={retryOpen}
         onCancel={() => setRetryOpen(false)}
         onConfirm={handleRetrySchedule}
