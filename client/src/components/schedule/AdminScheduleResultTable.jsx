@@ -90,7 +90,7 @@ const AdminScheduleResultTable = ({
       dataIndex: 'schedule',
       width: 120,
       render: (value) =>
-        <Carousel autoplay={{ dotDuration: true }} autoplaySpeed={5000} >
+        <Carousel autoplay={{ dotDuration: true }} autoplaySpeed={5000} className="w-[150px]">
           {value.medias.map(media => <Media src={media.name} type={media.mode} width={100} small />)}
         </Carousel>
     },
