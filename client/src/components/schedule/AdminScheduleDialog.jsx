@@ -160,6 +160,7 @@ const AdminScheduleDialog = ({ open, data, agencyList, modelList, onCancel, onUp
                 >
                     <Upload
                         name="file"
+                        maxCount={6}
                         multiple
                         action={`${SERVER_PATH}/api/upload`}
                         fileList={fileList}

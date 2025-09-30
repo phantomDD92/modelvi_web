@@ -137,11 +137,12 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
                     <Upload
                         name="file"
                         multiple
+                        maxCount={6}
                         action={`${SERVER_PATH}/api/upload`}
                         fileList={fileList}
                         onChange={handleMediaChange}
                     >
-                        <Button icon={<LuUpload />}>Upload Media</Button>
+                        <Button icon={<LuUpload />}>Upload Media (Max : 6)</Button>
                     </Upload>
                 </Form.Item>
 
