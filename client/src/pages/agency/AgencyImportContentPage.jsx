@@ -25,7 +25,7 @@ const AgencyImportContentPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const modelList = useSelector(state => state.v2.modelList);
-  
+
   const ImportStep = {
     INPUT: 0,
     IMPORT: 2,
@@ -58,12 +58,17 @@ const AgencyImportContentPage = () => {
       message.warning("Please upload images");
       return;
     }
+    if (fileList.filter(fileInfo => !(fileInfo.response?.file)).length > 0) {
+      message.warning("Please wait to upload all images");
+      return;
+    }
+    
     const captions = captionStr.split("\n").filter(line => line.trim() != "");
     if (captions.length == 0) {
       message.warning("Please input captions");
       return;
     }
-    const mediaList = shuffleArray(fileList.map(fileInfo => ({ name: fileInfo.response?.file, mode: fileInfo.type })));
+    const mediaList = shuffleArray(fileList.filter(fileInfo => fileInfo.response?.file).map(fileInfo => ({ name: fileInfo.response?.file, mode: fileInfo.type })));
     setStep(ImportStep.IMPORT);
     // prepare contents
     let importContents = [];
@@ -230,7 +235,7 @@ const AgencyImportContentPage = () => {
                     value={captionStr}
                     onChange={e => setCaptionStr(e.target.value)}
                     rows={10}
-                    // maxLength={30}
+                  // maxLength={30}
                   />
                 </Form.Item>
               </Col>

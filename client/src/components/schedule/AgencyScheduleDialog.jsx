@@ -6,15 +6,14 @@ import {
     Flex,
     Form,
     InputNumber,
+    message,
     Modal,
     Radio,
     Select,
     Upload,
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { PostType, SERVER_PATH } from "@/utils/const";
-import Media from "../common/Media";
 import StyledInput from "../common/StyledInput";
 import { getPlatformName } from "@/utils/string";
 import { LuUpload } from "react-icons/lu";
@@ -22,27 +21,12 @@ import { LuUpload } from "react-icons/lu";
 const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
     const [fileList, setFileList] = useState([]);
-    const [mediaName, setMediaName] = useState();
-    const [mediaType, setMediaType] = useState();
-    const [previewName, setPreviewName] = useState();
-    const [previewType, setPreviewType] = useState();
     const [postType, setPostType] = useState(PostType.FREE);
     const [model, setModel] = useState();
 
     const handleMediaChange = ({ fileList }) => {
         setFileList(fileList);
     }
-
-    // const handlePreviewChange = ({ file }) => {
-    //     if (file.status == 'done') {
-    //         setPreviewType("image/png");
-    //         setPreviewName(file.response.file);
-    //         setPreviewType(file.type);
-    //     } else if (file.status == "uploading") {
-    //         setPreviewName();
-    //         setPreviewType();
-    //     }
-    // }
 
     const handleOkClick = async () => {
         try {
@@ -53,7 +37,15 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
             if (tagsStr != "") {
                 postTags = tagsStr.split(/\s+/);
             }
-            let medias = fileList.map(fileInfo => ({ name: fileInfo.response?.file, mode: fileInfo.type }));
+            if (fileList.filter(fileInfo => !fileInfo.response?.file).length > 0) {
+                message.error("Please wait to upload all media files");
+                return;
+            }
+            let medias = fileList.filter(fileInfo => fileInfo.response?.file).map(fileInfo => ({ name: fileInfo.response?.file, mode: fileInfo.type }));
+            if (medias.length == 0) {
+                toast.error("Scheduled post has no valid media files");
+                return;
+            }
             onUpdate({ medias, tags: postTags, type: postType, model, scheduledAt: scheduledAt.toDate(), ...params });
         } catch (e) {
             console.error(e);
@@ -64,14 +56,6 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
         if (open && data) {
             const { media, preview, actor, type: postType, tags: postTags, scheduledAt, results, ...params } = data;
             let medias = [];
-            if (media) {
-                setMediaType(media.mode);
-                setMediaName(media.name);
-                medias = [media.name]
-            } else {
-                setMediaName();
-                setMediaType();
-            }
             if (postType)
                 setPostType(postType)
             setModel(actor._id)
@@ -85,10 +69,6 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
         } else {
             form.resetFields();
             setFileList([]);
-            // setMediaName();
-            // setMediaType();
-            // setPreviewName();
-            // setPreviewType();
             setModel();
             setPostType(PostType.FREE)
         }
@@ -152,10 +132,7 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
                 </Form.Item>
                 <Form.Item
                     label="Media"
-                    // name="medias"
-                    // valuePropName="fileList"
                     rules={[{ required: true }]}
-                    // getValueFromEvent={normFile}
                 >
                     <Upload
                         name="file"

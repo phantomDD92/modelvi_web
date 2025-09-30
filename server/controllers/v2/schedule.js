@@ -17,7 +17,7 @@ const handleLoadSchedulesForAgency = async (req, res) => {
 
 const handleCreateScheduleForAgency = async (req, res) => {
   try {
-    const { model: modelId, platforms, ...params } = req.body;
+    const { model: modelId, platforms, medias, ...params } = req.body;
     const model = await ModelService2.getModel(modelId);
     if (!model)
       throw new ApiError("Model does not exist");
@@ -26,7 +26,10 @@ const handleCreateScheduleForAgency = async (req, res) => {
     const accounts = await AccountService2.getModelAccounts(modelId, platforms);
     if (accounts.length == 0)
       throw new ApiError("Model has no accounts");
-    const schedule = await ScheduleService2.createSchedule(req.manager._id, modelId, params);
+    const validMedias = medias.filter(media => media.name);
+    if (validMedias.length == 0)
+      throw new ApiError("Scheduled post has no valid media files");
+    const schedule = await ScheduleService2.createSchedule(req.manager._id, modelId, { medias: validMedias, ...params });
     const result = await ScheduleService2.createScheduleResults(schedule._id, accounts, { agencyId: req.manager._id, modelId: model._id, scheduledAt: params.scheduledAt });
     await ScheduleService2.setScheduleResults(schedule._id, Object.values(result.insertedIds));
     sendResult(res)
@@ -87,14 +90,17 @@ const handleLoadSchedulesForAdmin = async (req, res) => {
 
 const handleCreateScheduleForAdmin = async (req, res) => {
   try {
-    const { model: modelId, platforms, ...params } = req.body;
+    const { model: modelId, platforms, medias, ...params } = req.body;
     const model = await ModelService2.getModel(modelId);
     if (!model)
       throw new ApiError("Model does not exist");
     const accounts = await AccountService2.getModelAccounts(modelId, platforms);
     if (accounts.length == 0)
       throw new ApiError("Model has no accounts");
-    const schedule = await ScheduleService2.createSchedule(model.owner, modelId, params);
+    validMedias = medias.filter(media => media.name);
+    if (validMedias.length == 0)
+      throw new ApiError("Scheduled post has no media files")
+    const schedule = await ScheduleService2.createSchedule(model.owner, modelId, { medias: validMedias, ...params });
     const result = await ScheduleService2.createScheduleResults(schedule._id, accounts.map(account => account._id), { agencyId: model.owner, modelId, scheduledAt: params.scheduledAt });
     await ScheduleService2.setScheduleResults(schedule._id, Object.values(result.insertedIds));
     sendResult(res)

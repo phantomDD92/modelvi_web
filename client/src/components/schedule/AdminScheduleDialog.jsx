@@ -17,54 +17,39 @@ import { Platform, PostType, SERVER_PATH } from "@/utils/const";
 import Media from "../common/Media";
 import StyledInput from "../common/StyledInput";
 import { getPlatformName } from "@/utils/string";
+import { LuUpload } from "react-icons/lu";
+import toast from "react-hot-toast";
 
 const AdminScheduleDialog = ({ open, data, agencyList, modelList, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
-    const [mediaName, setMediaName] = useState();
-    const [mediaType, setMediaType] = useState();
-    const [previewName, setPreviewName] = useState();
-    const [previewType, setPreviewType] = useState();
+    const [fileList, setFileList] = useState([]);
     const [postType, setPostType] = useState(PostType.FREE);
     const [agency, setAgency] = useState();
     const [model, setModel] = useState();
 
-    const handleMediaChange = ({ file }) => {
-        if (file.status == 'done') {
-            setMediaType("image/png");
-            setMediaName(file.response.file);
-            setMediaType(file.type);
-        } else if (file.status == "uploading") {
-            setMediaType();
-            setMediaName();
-        }
-    }
-
-    const handlePreviewChange = ({ file }) => {
-        if (file.status == 'done') {
-            setPreviewType("image/png");
-            setPreviewName(file.response.file);
-            setPreviewType(file.type);
-        } else if (file.status == "uploading") {
-            setPreviewName();
-            setPreviewType();
-        }
+    const handleMediaChange = ({ fileList }) => {
+        setFileList(fileList);
     }
 
     const handleOkClick = async () => {
         try {
             await form.validateFields();
-            const { medias, previews, tags, scheduledAt, ...params } = form.getFieldsValue();
+            const { tags, scheduledAt, ...params } = form.getFieldsValue();
             let postTags = [];
             const tagsStr = tags.replaceAll("#", " ").trim()
             if (tagsStr != "") {
                 postTags = tagsStr.split(/\s+/);
             }
-            let media = { name: mediaName, mode: mediaType };
-            let preview;
-            if (previews && previews.length > 0) {
-                preview = { name: previewName, mode: previewType }
+            if (fileList.filter(fileInfo => !fileInfo.response?.file).length > 0) {
+                message.error("Please wait to upload all media files");
+                return;
             }
-            onUpdate({ media, preview, tags: postTags, model, type: postType, scheduledAt: scheduledAt.toDate(), ...params });
+            let medias = fileList.filter(fileInfo => fileInfo.response?.file).map(fileInfo => ({ name: fileInfo.response?.file, mode: fileInfo.type }));
+            if (medias.length == 0) {
+                toast.error("Scheduled post has no valid media files");
+                return;
+            }
+            onUpdate({ medias, tags: postTags, type: postType, model, scheduledAt: scheduledAt.toDate(), ...params });
         } catch (e) {
             console.error(e);
         }
@@ -72,29 +57,14 @@ const AdminScheduleDialog = ({ open, data, agencyList, modelList, onCancel, onUp
 
     useEffect(() => {
         if (open && data) {
-            const { media, preview, actor, type: postType, tags: postTags, scheduledAt, owner, results, ...params } = data;
+            const { media, preview, actor, type: postType, tags: postTags, scheduledAt, results, ...params } = data;
             let medias = [];
-            let previews = [];
-            if (media) {
-                setMediaType(media.mode);
-                setMediaName(media.name);
-                medias = [media.name]
-            } else {
-                setMediaName();
-                setMediaType();
-            }
-            if (preview) {
-                setPreviewType(preview.mode);
-                setPreviewName(preview.name);
-                previews = [preview.name];
-            }
             if (postType)
                 setPostType(postType)
-            setAgency(owner._id);
-            setModel(actor._id);
+            setAgency(actor.owner)
+            setModel(actor._id)
             form.setFieldsValue({
                 medias,
-                previews,
                 platforms: (results || []).map(result => result.account?.platform),
                 tags: (postTags || []).map(tag => `#${tag}`).join(" "),
                 scheduledAt: moment(scheduledAt),
@@ -102,12 +72,9 @@ const AdminScheduleDialog = ({ open, data, agencyList, modelList, onCancel, onUp
             })
         } else {
             form.resetFields();
-            setMediaName();
-            setMediaType();
-            setPreviewName();
-            setAgency();
+            setFileList([]);
+            setAgency()
             setModel();
-            setPreviewType();
             setPostType(PostType.FREE)
         }
     }, [data, open]);
@@ -144,6 +111,7 @@ const AdminScheduleDialog = ({ open, data, agencyList, modelList, onCancel, onUp
                 }}>
                 <Form.Item
                     label="Agency"
+                    rules={[{ required: true }]}
                 >
                     <Select
                         disabled={data != undefined}
@@ -188,56 +156,18 @@ const AdminScheduleDialog = ({ open, data, agencyList, modelList, onCancel, onUp
                 </Form.Item>
                 <Form.Item
                     label="Media"
-                    name="medias"
-                    valuePropName="fileList"
                     rules={[{ required: true }]}
-                    getValueFromEvent={normFile}
                 >
                     <Upload
                         name="file"
+                        multiple
                         action={`${SERVER_PATH}/api/upload`}
-                        headers={{ authorization: 'authorization-text' }}
-                        showUploadList={false}
-                        maxCount={1}
+                        fileList={fileList}
                         onChange={handleMediaChange}
                     >
-                        <Button icon={<UploadOutlined />}>Upload Media</Button>
+                        <Button icon={<LuUpload />}>Upload Media (Max : 6)</Button>
                     </Upload>
                 </Form.Item>
-
-                <Form.Item>
-                    <Flex justify="center">
-                        <Media
-                            width={400}
-                            src={mediaName}
-                            type={mediaType} />
-                    </Flex>
-                </Form.Item>
-                {/* <Form.Item
-                    label="Preview"
-                    name="previews"
-                    valuePropName="fileList"
-                    getValueFromEvent={normFile}
-                >
-                    <Upload
-                        name="file"
-                        action={`${SERVER_PATH}/api/upload`}
-                        headers={{ authorization: 'authorization-text' }}
-                        showUploadList={false}
-                        maxCount={1}
-                        onChange={handlePreviewChange}
-                    >
-                        <Button icon={<UploadOutlined />}>Upload Preview</Button>
-                    </Upload>
-                </Form.Item>
-                <Form.Item>
-                    <Flex justify="center">
-                        <Media
-                            width={400}
-                            src={previewName}
-                            type={previewType} />
-                    </Flex>
-                </Form.Item> */}
                 <Form.Item name="title" label="Title" rules={[{ required: true }]}>
                     <StyledInput />
                 </Form.Item>
