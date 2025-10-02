@@ -534,10 +534,10 @@ const handleCheckBalance = async (req, res) => {
     if (!agency)
       throw new ApiError("Invalid bot agency");
     // calculate price + proxy fee
-    // const price = getPricePlan(agency, account.platform, revenue);
-    // const fee = price + 2.5;
+    const price = getPricePlan(agency, account.platform, revenue);
+    const fee = price + 2.5;
     // get valid dates
-    // const dateDelta = getDateDelta(account.expiredAt);
+    const dateDelta = getDateDelta(account.expiredAt);
     if (dateDelta <= 0) { // if account is expired
       if (hasSufficientBalance(agency, fee)) {
         // remove balance and create transaction, extend account
