@@ -167,9 +167,18 @@ const updateScheduleResult = (result) => {
 
 const loadLivingSchedules = (accountId) =>
   ScheduleResultModel.find({
-    account: accountId,
-    status: { $in: [ScheduleStatus.WAITING, ScheduleStatus.SCHEDULED, ScheduleStatus.FAILED] },
-    scheduledAt: { $gte: new Date(), $lt: new Date(Date.now() + 48 * 60 * 60 * 1000) }
+    $or: [
+      {
+        account: accountId,
+        status: ScheduleStatus.SCHEDULED
+      },
+      {
+        account: accountId,
+        status: { $in: [ScheduleStatus.WAITING, ScheduleStatus.FAILED] },
+        scheduledAt: { $gte: new Date(), $lt: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000) }
+      }
+    ]
+
   })
     .populate("schedule", "media preview folder title tags type price medias scheduledAt");
 
