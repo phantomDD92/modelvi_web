@@ -48,11 +48,12 @@ const executeClearHistories = async () => {
   return `Old histories are cleared`;
 }
 
-const executeFixSchedule = async () => {
-  const schedules = await ScheduleModel.find();
-  for (var schedule of schedules) {
-    await ScheduleModel.findByIdAndUpdate(schedule._id, { $set: { medias: [schedule.media] } });
-    
+const executeFixMedia = async () => {
+  const accounts = await AccountModel.find({}, "platform alias params.contents").limit(2);
+  for (var account of accounts) {
+    const contents = account.params.contents || [];
+    const newContents = contents.filter(content => content.media && content.media.length > 0 && content.media[0].name);
+    console.log(`### [${account.platform}] ${account.alias} ::: ${contents.length} => ${newContents.length}`);
   }
   return `All schedules are updated`;
 }
@@ -75,8 +76,8 @@ const handleExecuteCommand = async (req, res) => {
       case "clear_history":
         message = await executeClearHistories();
         break;
-      case "fix_schedule":
-        message = await executeFixSchedule();
+      case "fix_media":
+        message = await executeFixMedia();
         break;
       default:
         throw new ApiError("unknown command");
