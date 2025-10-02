@@ -5,6 +5,7 @@ import { LuPlus, LuRefreshCcw, LuTrash } from "react-icons/lu";
 import Media from "../common/Media";
 
 const AdminScheduleResultTable = ({
+  limited,
   loading,
   dataSource,
   pagination: {
@@ -89,8 +90,9 @@ const AdminScheduleResultTable = ({
       title: 'Media',
       dataIndex: 'schedule',
       width: 120,
-      render: (value) =>
-        <Carousel autoplay={{ dotDuration: true }} autoplaySpeed={5000} className="w-[150px]">
+      render: (value) => limited
+        ? value.medias.length
+        : <Carousel autoplay={{ dotDuration: true }} autoplaySpeed={5000} className="w-[150px]">
           {value.medias.map(media => <Media src={media.name} type={media.mode} width={100} small />)}
         </Carousel>
     },
@@ -99,10 +101,12 @@ const AdminScheduleResultTable = ({
       title: 'Title / Tags',
       dataIndex: 'schedule',
       render: (value) =>
-        <div>
-          <h4>{value.title}</h4>
-          <p className="text-xs">{value.tags && value.tags.length > 0 ? value.tags.map(tag => `#${tag}`).join(" ") : "-"}</p>
-        </div>
+        limited
+          ? "*".repeat(value.title.length)
+          : <div>
+            <h4>{value.title}</h4>
+            <p className="text-xs">{value.tags && value.tags.length > 0 ? value.tags.map(tag => `#${tag}`).join(" ") : "-"}</p>
+          </div>
     },
     {
       key: 'type',

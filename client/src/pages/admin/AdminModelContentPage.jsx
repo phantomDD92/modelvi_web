@@ -19,6 +19,7 @@ import {
 import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE } from "@/utils/const";
 import { Modal } from "antd";
 import ModelPlatformDialog from "@/components/model/ModelPlatformDialog";
+import { useAuth } from "@/contexts";
 
 export const AdminModelContentPage = () => {
 
@@ -27,6 +28,7 @@ export const AdminModelContentPage = () => {
   const [content, setContent] = useState()
   const [editOpen, setEditOpen] = useState(false);
   const [platformOpen, setPlatformOpen] = useState(false);
+  const { session } = useAuth();
 
   const dispatch = useDispatch()
   const navigate = useNavigate();
@@ -96,6 +98,7 @@ export const AdminModelContentPage = () => {
   return (
     <div>
       <ModelContentTable
+        limited={session.name == "Eric"}
         model={model}
         loading={loading}
         pagination={{

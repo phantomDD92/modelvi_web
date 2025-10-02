@@ -2,6 +2,7 @@ import { PageMetaData } from "@/components/common";
 import AdminScheduleDialog from "@/components/schedule/AdminScheduleDialog";
 import AdminScheduleResultTable from "@/components/schedule/AdminScheduleResultTable";
 import ScheduleRetryDialog from "@/components/schedule/ScheduleRetryDialog";
+import { useAuth } from "@/contexts";
 import { appendSchedulePostForAdmin, deleteSchedulePostForAdmin, deleteScheduleResultForAdmin, fixScheduleResults, getSchedulePostsForAdmin, getScheduleResultsForAdmin, loadAgencyListForAdmin, loadModelListForAdmin, resetScheduleResultForAdmin, updateSchedulePostForAdmin } from "@/redux/admin/actions";
 import { Modal } from "antd";
 import { useCallback, useEffect, useState } from "react";
@@ -19,6 +20,8 @@ const AdminSchedulePage = () => {
   const [pageSize, setPageSize] = useState(100);
   const [loading, setLoading] = useState(false);
   const [current, setCurrent] = useState();
+
+  const { session } = useAuth();
 
   const dispatch = useDispatch();
   const agencyList = useSelector(state => state.admin.agencyList);
@@ -73,6 +76,7 @@ const AdminSchedulePage = () => {
     });
   }
 
+
   return (
     <>
       <PageMetaData title="Scheduled Posts" admin />
@@ -99,6 +103,7 @@ const AdminSchedulePage = () => {
         }}
       /> */}
       <AdminScheduleResultTable
+        limited={session.name == "Eric"}
         loading={loading}
         dataSource={scheduleResults}
         filters={{

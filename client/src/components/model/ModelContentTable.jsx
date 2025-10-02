@@ -29,6 +29,7 @@ export const ModelContentTable = ({
     pagination,
     rowSelection,
     loading,
+    limited,
     // dataSource,
     model,
     actions: {
@@ -126,7 +127,9 @@ export const ModelContentTable = ({
             dataIndex: 'image',
             width: 150,
             render: (value, record) => {
-                if (record.media && record.media.length > 0) {
+                if (limited) {
+                    return record.media[0]?.name;
+                } else if (record.media && record.media.length > 0) {
                     return <Media src={record.media[0].name} type={record.media[0].mode} width={100} small />
                 } else if (record.image) {
                     return <Image src={`${SERVER_PATH}/uploads/${value}`} width={100} />
@@ -144,8 +147,9 @@ export const ModelContentTable = ({
             key: 'title',
             title: 'Title / Tags',
             dataIndex: 'title',
-            render: (value, record) =>
-                <div>
+            render: (value, record) => limited
+                ? "*".repeat(value.length)
+                : <div>
                     <h4>{value}</h4>
                     <p className="text-sm">{record.postTags && record.postTags.length > 0 ? record.postTags.map(tag => `#${tag}`).join(" ") : "-"}</p>
                 </div>
