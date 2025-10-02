@@ -166,11 +166,15 @@ const updateScheduleResult = (result) => {
 }
 
 const loadLivingSchedules = (accountId) =>
-  ScheduleResultModel.find({ account: accountId, status: { $lte: ScheduleStatus.SCHEDULED } })
+  ScheduleResultModel.find({
+    account: accountId,
+    status: { $in: [ScheduleStatus.WAITING, ScheduleStatus.SCHEDULED, ScheduleStatus.FAILED] },
+    scheduledAt: { $gte: new Date(), $lt: new Date(Date.now() + 48 * 60 * 60 * 1000) }
+  })
     .populate("schedule", "media preview folder title tags type price medias scheduledAt");
 
 const setExpiredSchedules = (accountId) =>
-  ScheduleResultModel.updateMany({ account: accountId, status: ScheduleStatus.WAITING, scheduledAt: { $lt: new Date() } }, { $set: { status: ScheduleStatus.EXPIRED } })
+  ScheduleResultModel.updateMany({ account: accountId, status: { $in: [ScheduleStatus.WAITING] }, scheduledAt: { $lt: new Date() } }, { $set: { status: ScheduleStatus.EXPIRED } })
 
 const createScheduleResults = (scheduleId, accounts, { agencyId, modelId, scheduledAt }) =>
   ScheduleResultModel.bulkWrite(accounts.map(account => ({
