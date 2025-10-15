@@ -175,10 +175,9 @@ const loadLivingSchedules = (accountId) =>
       {
         account: accountId,
         status: { $in: [ScheduleStatus.WAITING, ScheduleStatus.FAILED] },
-        scheduledAt: { $gte: new Date(), $lt: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000) }
+        scheduledAt: { $gte: new Date(), $lt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) }
       }
     ]
-
   })
     .populate("schedule", "media preview folder title tags type price medias scheduledAt");
 
