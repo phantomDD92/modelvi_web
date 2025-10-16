@@ -41,7 +41,7 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
                 message.error("Please wait to upload all media files");
                 return;
             }
-            let medias = fileList.filter(fileInfo => fileInfo.response?.file).map(fileInfo => ({ name: fileInfo.response?.file, mode: fileInfo.type }));
+            let medias = fileList.filter(fileInfo => fileInfo.response?.file).map(fileInfo => ({ name: fileInfo.response?.file, mode: fileInfo.type, size: fileInfo.size }));
             if (medias.length == 0) {
                 toast.error("Scheduled post has no valid media files");
                 return;

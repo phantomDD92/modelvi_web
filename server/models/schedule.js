@@ -5,7 +5,7 @@ const { Schema, SchemaTypes } = mongoose;
 const ScheduleSchema = new Schema({
     owner: { type: SchemaTypes.ObjectId, ref: "Manager" },
     actor: { type: SchemaTypes.ObjectId, ref: "Actor" },
-    media: { name: String, mode: String },
+    media: { name: String, mode: String, size: Number},
     medias: [{ name: String, mode: String }],
     preview: { name: String, mode: String },
     title: { type: String, required: true },

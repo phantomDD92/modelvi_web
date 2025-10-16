@@ -1,7 +1,6 @@
-const { Platform } = require("../../config/const");
+const fs = require('fs');
 const AccountModel = require("../../models/account");
-const LogModel = require("../../models/log");
-const ScheduleModel = require("../../models/schedule");
+const ActorModel = require("../../models/actor");
 const ScheduleResultModel = require("../../models/scheduleResult");
 const LogService2 = require("../../services/v2/log");
 const ProxyNewService2 = require("../../services/v2/proxyNew");
@@ -49,13 +48,24 @@ const executeClearHistories = async () => {
 }
 
 const executeFixMedia = async () => {
-  const accounts = await AccountModel.find({}, "platform alias params.contents").limit(2);
-  for (var account of accounts) {
-    const contents = account.params.contents || [];
-    const newContents = contents.filter(content => content.media && content.media.length > 0 && content.media[0].name);
-    console.log(`### [${account.platform}] ${account.alias} ::: ${contents.length} => ${newContents.length}`);
+  console.log("$$$ FIX MEDIA");
+  const models = await ActorModel.find({}, "number name contents").limit(10);
+    console.log(`$$$ FIND ${models.length} models`);
+  for (var model of models) {
+    const contents = model.contents || [];
+    if (contents.length == 0)
+      continue;
+    console.log(`### ${model.number}. ${model.name} => ${contents.length} contents`)
+    const newContents = contents.map(content => {
+      const newMedia = content.media.map(media => {
+        const stats = fs.statSync(`uploads/${media.name}`);
+        return ({ ...media, size: stats.size });
+      });
+      return ({ ...content, media: newMedia });
+    });
+    console.log(newContents);
+    break;
   }
-  return `All schedules are updated`;
 }
 
 

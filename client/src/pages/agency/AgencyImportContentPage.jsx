@@ -62,13 +62,13 @@ const AgencyImportContentPage = () => {
       message.warning("Please wait to upload all images");
       return;
     }
-    
+
     const captions = captionStr.split("\n").filter(line => line.trim() != "");
     if (captions.length == 0) {
       message.warning("Please input captions");
       return;
     }
-    const mediaList = shuffleArray(fileList.filter(fileInfo => fileInfo.response?.file).map(fileInfo => ({ name: fileInfo.response?.file, mode: fileInfo.type })));
+    const mediaList = shuffleArray(fileList.filter(fileInfo => fileInfo.response?.file).map(fileInfo => ({ name: fileInfo.response?.file, mode: fileInfo.type, size: fileInfo.size })));
     setStep(ImportStep.IMPORT);
     // prepare contents
     let importContents = [];

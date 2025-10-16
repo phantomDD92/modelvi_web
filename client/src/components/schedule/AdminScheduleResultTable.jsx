@@ -1,5 +1,5 @@
 import { Platform, PostType, ScheduleStatus } from "@/utils/const";
-import { getDateTime, getPlatformName } from "@/utils/string";
+import { formatBytes, getDateTime, getPlatformName } from "@/utils/string";
 import { Button, Card, Flex, Select, Table, Tooltip, Tag, Carousel } from "antd";
 import { LuPlus, LuRefreshCcw, LuTrash } from "react-icons/lu";
 import Media from "../common/Media";
@@ -95,6 +95,13 @@ const AdminScheduleResultTable = ({
         : <Carousel autoplay={{ dotDuration: true }} autoplaySpeed={5000} className="w-[150px]">
           {value.medias.map(media => <Media src={media.name} type={media.mode} width={100} small />)}
         </Carousel>
+    },
+    {
+      key: 'size',
+      title: 'Size',
+      dataIndex: 'schedule',
+      width: 100,
+      render: (value) => value.medias.map(media => formatBytes(media.size)).join(",")
     },
     {
       key: 'title',

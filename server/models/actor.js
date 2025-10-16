@@ -18,8 +18,8 @@ const ActorSchema = new Schema({
     // story: Number,
     mode: String,
     platforms: [String],  // platform
-    media: [{ name: String, mode: String, uuid: String }],  // photo or video
-    preview: { name: String, mode: String, uuid: String }, // preview video for fansly only
+    media: [{ name: String, mode: String, uuid: String, size: Number, }],  // photo or video
+    preview: { name: String, mode: String, uuid: String, size: Number }, // preview video for fansly only
     postTags: [String],  // tags array
     knkyStoryType: Number,
     knkyStoryPrice: Number,

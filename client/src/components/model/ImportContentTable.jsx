@@ -89,6 +89,13 @@ export const ImportContentTable = ({
       }
     },
     {
+      key: 'size',
+      title: 'Size',
+      dataIndex: 'media',
+      width: 100,
+      render: (value, record) => formatBytes(record.media?.size)
+    },
+    {
       key: 'title',
       title: 'Title / Tags',
       dataIndex: 'title',

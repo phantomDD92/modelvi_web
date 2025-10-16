@@ -112,3 +112,17 @@ export function getLogAction(action) {
   }
   return "-"
 }
+
+export function formatBytes(bytes) {
+  if (bytes == undefined)
+    return "?"
+  if (bytes < 1024) return `${bytes} B`;
+  const units = ['KB', 'MB', 'GB', 'TB'];
+  let i = -1;
+  let value = bytes;
+  do {
+    value = value / 1024;
+    i++;
+  } while (value >= 1024 && i < units.length - 1);
+  return `${value.toFixed(2)} ${units[i]}`;
+}

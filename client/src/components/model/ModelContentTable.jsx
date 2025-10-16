@@ -20,7 +20,7 @@ import {
     SERVER_PATH,
 } from "@/utils/const";
 import Media from "../common/Media";
-import { getPlatformName } from "@/utils/string";
+import { formatBytes, getPlatformName } from "@/utils/string";
 import { useState } from "react";
 import { LuArrowUpLeftSquare, LuCornerDownLeft, LuImport, LuPencilLine, LuPlus, LuTrash, LuTrash2, LuUpload } from "react-icons/lu";
 import { Link } from "react-router-dom";
@@ -137,12 +137,19 @@ export const ModelContentTable = ({
             }
         },
         {
-            key: 'preview',
-            title: 'Preview',
-            dataIndex: 'preview',
-            width: 150,
-            render: value => value && value.name ? <Media src={value.name} type={value.mode} width={100} small /> : '-'
+            key: 'size',
+            title: 'Size',
+            dataIndex: 'media',
+            width: 100,
+            render: (value, record) => formatBytes(record.media[0]?.size)
         },
+        // {
+        //     key: 'preview',
+        //     title: 'Preview',
+        //     dataIndex: 'preview',
+        //     width: 150,
+        //     render: value => value && value.name ? <Media src={value.name} type={value.mode} width={100} small /> : '-'
+        // },
         {
             key: 'title',
             title: 'Title / Tags',

@@ -18,6 +18,8 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
     const [mediaName, setMediaName] = useState();
     const [mediaType, setMediaType] = useState();
+    const [mediaSize, setMediaSize] = useState();
+    const [previewSize, setPreviewSize] = useState();
     const [previewName, setPreviewName] = useState();
     const [previewType, setPreviewType] = useState();
     const [platforms, setPlatforms] = useState([]);
@@ -28,6 +30,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
             setMediaType("image/png");
             setMediaName(file.response.file);
             setMediaType(file.type);
+            setMediaSize(file.size);
         } else if (file.status == "uploading") {
             setMediaType();
             setMediaName();
@@ -39,6 +42,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
             setPreviewType("image/png");
             setPreviewName(file.response.file);
             setPreviewType(file.type);
+            setPreviewSize(file.size);
         } else if (file.status == "uploading") {
             setPreviewName();
             setPreviewType();
@@ -54,10 +58,10 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
             if (tagsStr != "") {
                 postTags = tagsStr.split(/\s+/);
             }
-            let media = [{ name: mediaName, mode: mediaType }];
+            let media = [{ name: mediaName, mode: mediaType, size: mediaSize }];
             let preview;
             if (previews && previews.length > 0) {
-                preview = { name: previewName, mode: previewType }
+                preview = { name: previewName, mode: previewType, size: mediaSize }
             }
             let mode = ""
             if (mediaType.includes("image"))
