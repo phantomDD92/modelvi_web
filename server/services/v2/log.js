@@ -30,7 +30,7 @@ const clearAccountLogs = (accountId) =>
     LogModel.deleteMany({ account: accountId, createdAt: { $lte: moment().subtract(7, "day").toDate() } });
 
 const clearLogs = () =>
-    HistoryModel.deleteMany({ createdAt: { $lte: moment().subtract(7, "day").toDate() } })
+    LogModel.deleteMany({ createdAt: { $lte: moment().subtract(7, "day").toDate() } })
 
 const LogService2 = {
     createLog,
