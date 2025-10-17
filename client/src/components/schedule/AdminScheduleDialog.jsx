@@ -3,22 +3,36 @@ import {
     Button,
     Checkbox,
     DatePicker,
-    Flex,
     Form,
     InputNumber,
+    message,
     Modal,
     Radio,
     Select,
     Upload,
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { Platform, PostType, SERVER_PATH } from "@/utils/const";
-import Media from "../common/Media";
+import { PostType, SERVER_PATH } from "@/utils/const";
 import StyledInput from "../common/StyledInput";
 import { getPlatformName } from "@/utils/string";
 import { LuUpload } from "react-icons/lu";
-import toast from "react-hot-toast";
+
+const beforeUpload = (file) => {
+    // Accept specific mime types or extensions
+    const isAllowed = /\.(jpe?g|png|mp4|webm|avi)$/i.test(file.name);
+    if (!isAllowed) {
+        message.error(`${file.name} has an unsupported file type.`);
+        return Upload.LIST_IGNORE; // prevents upload
+    }
+    // Optional: further filter by extension
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (ext === 'mov' || ext === 'heic') {
+        message.error(`${file.name} is not allowed.`);
+        return Upload.LIST_IGNORE;
+    }
+    // If you want to allow, return true (or just omit)
+    return true;
+}
 
 const AdminScheduleDialog = ({ open, data, agencyList, modelList, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
@@ -28,7 +42,6 @@ const AdminScheduleDialog = ({ open, data, agencyList, modelList, onCancel, onUp
     const [model, setModel] = useState();
 
     const handleMediaChange = ({ fileList }) => {
-        console.log(fileList);
         setFileList(fileList);
     }
 
@@ -47,7 +60,7 @@ const AdminScheduleDialog = ({ open, data, agencyList, modelList, onCancel, onUp
             }
             let medias = fileList.filter(fileInfo => fileInfo.response?.file).map(fileInfo => ({ name: fileInfo.response?.file, mode: fileInfo.type, size: fileInfo.size }));
             if (medias.length == 0) {
-                toast.error("Scheduled post has no valid media files");
+                message.error("Scheduled post has no valid media files");
                 return;
             }
             onUpdate({ medias, tags: postTags, type: postType, model, scheduledAt: scheduledAt.toDate(), ...params });
@@ -87,13 +100,6 @@ const AdminScheduleDialog = ({ open, data, agencyList, modelList, onCancel, onUp
             return []
         return target.accounts.map(account => ({ value: account.platform, label: getPlatformName(account.platform) }))
     }
-
-    const normFile = (e) => {
-        if (Array.isArray(e)) {
-            return e;
-        }
-        return e?.fileList;
-    };
 
     return (
         <Modal
@@ -160,6 +166,8 @@ const AdminScheduleDialog = ({ open, data, agencyList, modelList, onCancel, onUp
                     rules={[{ required: true }]}
                 >
                     <Upload
+                        beforeUpload={beforeUpload}
+                        accept="image/*,video/*"
                         name="file"
                         maxCount={6}
                         multiple

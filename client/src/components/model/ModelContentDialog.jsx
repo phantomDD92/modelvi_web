@@ -5,6 +5,7 @@ import {
     Flex,
     Form,
     InputNumber,
+    message,
     Modal,
     Radio,
     Upload,
@@ -13,6 +14,23 @@ import { UploadOutlined } from "@ant-design/icons";
 import { F2FStoryType, KnkyStoryType, Platform, SERVER_PATH, StoryType } from "@/utils/const";
 import Media from "../common/Media";
 import StyledInput from "../common/StyledInput";
+
+const beforeUpload = (file) => {
+    // Accept specific mime types or extensions
+    const isAllowed = /\.(jpe?g|png|mp4|webm|avi)$/i.test(file.name);
+    if (!isAllowed) {
+        message.error(`${file.name} has an unsupported file type.`);
+        return Upload.LIST_IGNORE; // prevents upload
+    }
+    // Optional: further filter by extension
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (ext === 'mov' || ext === 'heic') {
+        message.error(`${file.name} is not allowed.`);
+        return Upload.LIST_IGNORE;
+    }
+    // If you want to allow, return true (or just omit)
+    return true;
+}
 
 const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
@@ -233,6 +251,8 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                     getValueFromEvent={normFile}
                 >
                     <Upload
+                        beforeUpload={beforeUpload}
+                        accept="image/*,video/*"
                         name="file"
                         action={`${SERVER_PATH}/api/upload`}
                         headers={{ authorization: 'authorization-text' }}

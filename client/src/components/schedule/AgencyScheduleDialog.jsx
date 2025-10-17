@@ -3,7 +3,6 @@ import {
     Button,
     Checkbox,
     DatePicker,
-    Flex,
     Form,
     InputNumber,
     message,
@@ -18,13 +17,30 @@ import StyledInput from "../common/StyledInput";
 import { getPlatformName } from "@/utils/string";
 import { LuUpload } from "react-icons/lu";
 
+const beforeUpload = (file) => {
+    // Accept specific mime types or extensions
+    const isAllowed = /\.(jpe?g|png|mp4|webm|avi)$/i.test(file.name);
+    if (!isAllowed) {
+        message.error(`${file.name} has an unsupported file type.`);
+        return Upload.LIST_IGNORE; // prevents upload
+    }
+    // Optional: further filter by extension
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (ext === 'mov' || ext === 'heic') {
+        message.error(`${file.name} is not allowed.`);
+        return Upload.LIST_IGNORE;
+    }
+    // If you want to allow, return true (or just omit)
+    return true;
+}
+
 const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
     const [fileList, setFileList] = useState([]);
     const [postType, setPostType] = useState(PostType.FREE);
     const [model, setModel] = useState();
 
-    const handleMediaChange = ({ fileList }) => {
+    const handleMediaChange = ({ fileList, event }) => {
         setFileList(fileList);
     }
 
@@ -43,7 +59,7 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
             }
             let medias = fileList.filter(fileInfo => fileInfo.response?.file).map(fileInfo => ({ name: fileInfo.response?.file, mode: fileInfo.type, size: fileInfo.size }));
             if (medias.length == 0) {
-                toast.error("Scheduled post has no valid media files");
+                message.error("Scheduled post has no valid media files");
                 return;
             }
             onUpdate({ medias, tags: postTags, type: postType, model, scheduledAt: scheduledAt.toDate(), ...params });
@@ -75,12 +91,7 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
     }, [data, open]);
 
 
-    const normFile = (e) => {
-        if (Array.isArray(e)) {
-            return e;
-        }
-        return e?.fileList;
-    };
+
 
     const getPlatformOptions = (modelList, model) => {
         const target = modelList.find(element => element._id == model);
@@ -135,6 +146,8 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
                     rules={[{ required: true }]}
                 >
                     <Upload
+                        beforeUpload={beforeUpload}
+                        accept="image/*,video/*"
                         name="file"
                         multiple
                         maxCount={6}

@@ -9,6 +9,23 @@ import { LuCommand, LuStepBack, LuStepForward, LuUpload } from "react-icons/lu";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
+const beforeUpload = (file) => {
+  // Accept specific mime types or extensions
+  const isAllowed = /\.(jpe?g|png|mp4|webm|avi)$/i.test(file.name);
+  if (!isAllowed) {
+    message.error(`${file.name} has an unsupported file type.`);
+    return Upload.LIST_IGNORE; // prevents upload
+  }
+  // Optional: further filter by extension
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (ext === 'mov' || ext === 'heic') {
+    message.error(`${file.name} is not allowed.`);
+    return Upload.LIST_IGNORE;
+  }
+  // If you want to allow, return true (or just omit)
+  return true;
+}
+
 const AgencyImportContentPage = () => {
 
   const [step, setStep] = useState(0);
@@ -213,6 +230,8 @@ const AgencyImportContentPage = () => {
                 </Form.Item>
                 <Form.Item label="Media :">
                   <Upload
+                    beforeUpload={beforeUpload}
+                    accept="image/*,video/*"
                     name="file"
                     multiple
                     action={`${SERVER_PATH}/api/upload`}

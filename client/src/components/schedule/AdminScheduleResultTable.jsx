@@ -100,8 +100,8 @@ const AdminScheduleResultTable = ({
       key: 'size',
       title: 'Size',
       dataIndex: 'schedule',
-      width: 100,
-      render: (value) => value.medias.map(media => formatBytes(media.size)).join(",")
+      width: 120,
+      render: (value) => value.medias.map(media => <p>{formatBytes(media.size)}</p>)
     },
     {
       key: 'title',
