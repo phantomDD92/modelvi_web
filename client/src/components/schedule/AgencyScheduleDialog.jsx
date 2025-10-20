@@ -12,7 +12,7 @@ import {
     Upload,
 } from "antd";
 import moment from "moment";
-import { PostType, SERVER_PATH } from "@/utils/const";
+import { Platform, PostType, SERVER_PATH } from "@/utils/const";
 import StyledInput from "../common/StyledInput";
 import { getPlatformName } from "@/utils/string";
 import { LuUpload } from "react-icons/lu";
@@ -47,8 +47,9 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
     const handleOkClick = async () => {
         try {
             await form.validateFields();
-            const { tags, scheduledAt, ...params } = form.getFieldsValue();
+            const { tags, scheduledAt, platforms, ...params } = form.getFieldsValue();
             let postTags = [];
+            let newPlatforms = platforms;
             const tagsStr = tags.replaceAll("#", " ").trim()
             if (tagsStr != "") {
                 postTags = tagsStr.split(/\s+/);
@@ -62,7 +63,10 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
                 message.error("Scheduled post has no valid media files");
                 return;
             }
-            onUpdate({ medias, tags: postTags, type: postType, model, scheduledAt: scheduledAt.toDate(), ...params });
+            if (postType == PostType.FAN) {
+                newPlatforms = platforms.filter(platform => platform != Platform.KNKY)
+            }
+            onUpdate({ medias, tags: postTags, type: postType, model, platforms: newPlatforms, scheduledAt: scheduledAt.toDate(), ...params });
         } catch (e) {
             console.error(e);
         }
