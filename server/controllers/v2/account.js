@@ -4,7 +4,8 @@ const ProxyNewService2 = require("../../services/v2/proxyNew");
 
 const NotifyUtils = require("../../utils/notifiy");
 const { isModelOwner } = require("../../utils/helper");
-const { sendResult, sendError } = require("../../utils/resp");
+const { sendResult, sendError, ApiError } = require("../../utils/resp");
+const AgencyService2 = require("../../services/v2/agency");
 
 const handleLoadAccountsForAgency = async (req, res) => {
   try {
@@ -143,6 +144,9 @@ const handleUpdateAccountForAgency = async (req, res) => {
       case "status":
         const { status } = params;
         await AccountService2.setStatus(accountId, status);
+        const agency = await AgencyService2.findAgencyById(req.manager._id)
+        if ((agency.balance || 0) < agency.fee)
+          throw new ApiError("Agency has insufficient funds to start bot.");
         NotifyUtils.sendMessage(
           `${req.manager.name}`,
           `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`,
@@ -177,6 +181,9 @@ const handleUpdateAccountForAdmin = async (req, res) => {
         break;
       case "status":
         const { status } = params;
+        const agency = await AgencyService2.findAgencyById(account.owner);
+        if ((agency.balance || 0) < agency.fee)
+          throw new ApiError("Agency has insufficient funds to start bot.");
         await AccountService2.setStatus(accountId, status);
         NotifyUtils.sendMessage(
           `${req.manager.name} (Admin)`,
@@ -201,6 +208,9 @@ const handleUpdateAccountsForAgency = async (req, res) => {
     const { action, accountIds, status } = req.body;
     switch (action) {
       case "status":
+        const agency = await AgencyService2.findAgencyById(req.manager._id)
+        if ((agency.balance || 0) < agency.fee)
+          throw new ApiError("Agency has insufficient funds to start bots.");
         const accounts = await AccountService2.getAccounts(accountIds, req.manager._id);
         const agencyAccountIds = accounts.map(account => account._id);
         await AccountService2.updateAccountsStatus(agencyAccountIds, status);

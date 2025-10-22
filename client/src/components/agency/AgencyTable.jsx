@@ -1,8 +1,9 @@
-import { AdminRole } from '@/utils/const'
-import { Card, Table, Button, Flex, Switch, Avatar, Dropdown, Space, Typography } from "antd";
+import { AdminRole, PricePlanMode } from '@/utils/const'
+import { Card, Table, Button, Flex, Switch, Avatar, Dropdown, Space, Typography, Radio } from "antd";
 import { DeleteOutlined, UserAddOutlined, EditOutlined, KeyOutlined, DatabaseOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import { LuGlobe, LuTrash, LuUser, LuWallet } from 'react-icons/lu';
-import { getFiatAmount } from '@/utils/string';
+import { closeDueDate, getBalanceAmount, getDueDate, getFiatAmount } from '@/utils/string';
+import moment from 'moment';
 
 export const AgencyTable = ({
     pagination,
@@ -17,6 +18,7 @@ export const AgencyTable = ({
         onBalance,
         onPricePlans,
         onReferrer,
+        onPricePlanMode,
     },
 }) => {
     const columns = [
@@ -47,33 +49,41 @@ export const AgencyTable = ({
             title: 'Balance',
             width: 150,
             dataIndex: 'balance',
-            render: value => <h5>{getFiatAmount(value)}</h5>
+            render: value => <h5>{getBalanceAmount(value)}</h5>
         },
         {
             key: 'monthlyFee',
             title: 'Monthly Fee',
-            dataIndex: 'monthlyFee',
-            width: 200,
+            dataIndex: 'fee',
+            width: 150,
             render: (value, record) => value > 0 ?
                 <Space direction="vertical" size={1}>
                     <h5>{getFiatAmount(value)}</h5>
                     <span>{`+ ${getFiatAmount(record.proxyFee || 0)} (Proxy)`}</span>
+                    {closeDueDate(record.dueDate) ? <span className='text-red-500'>{`( ${getDueDate(record.dueDate)} )`}</span> : <span className='text-green-500'>{`( ${getDueDate(record.dueDate)} )`}</span>}
                 </Space>
                 : "-"
-
         },
         {
-            key: 'modelCount',
-            title: 'Models',
-            dataIndex: 'modelCount',
-            width: 50,
-            render: value => value || 0
+            key: 'pricePlan',
+            title: 'Price Plan',
+            dataIndex: 'pricePlanMode',
+            width: 150,
+            render: (value, record) => (
+                <Radio.Group onChange={(e) => onPricePlanMode && onPricePlanMode(record, e.target.value)} value={value} buttonStyle='solid'>
+                    <Radio.Button value={PricePlanMode.PER_MODEL}>Per Model</Radio.Button>
+                    <Radio.Button value={PricePlanMode.PER_ACCOUNT}>Per Account</Radio.Button>
+                </Radio.Group>
+            )
         },
         {
             key: 'accountCount',
-            title: 'Accounts',
+            title: 'Models / Accounts',
             dataIndex: 'accountCount',
-            render: value => value || "-"
+            render: (value, record) => <Space direction="vertical" size={0}>
+                <span>{`${record.modelCount} Models` || "-"}</span>
+                <span>{value || "-"}</span>
+            </Space>
         },
         {
             key: 'status',

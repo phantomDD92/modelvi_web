@@ -58,6 +58,9 @@ const changeStatuses = (agencyIds, status) =>
 const changePricePlans = (agencyId, pricePlans) =>
   ManagerModel.findByIdAndUpdate(agencyId, { $set: { pricePlans } });
 
+const changePricePlanMode = (agencyId, mode) =>
+  ManagerModel.findByIdAndUpdate(agencyId, { $set: { pricePlanMode: mode } });
+
 const changeReferrer = (agencyId, referrer) =>
   ManagerModel.findByIdAndUpdate(agencyId, { $set: { referrer } });
 
@@ -73,6 +76,12 @@ const getAgencyList = () =>
 
 const changePassword = (agencyId, password) =>
   ManagerModel.findByIdAndUpdate(agencyId, { $set: { password } });
+
+const bulkWrite = (bulkOperations) =>
+  ManagerModel.bulkWrite(bulkOperations)
+
+const updateFee = (agencyId, fee) =>
+  ManagerModel.findByIdAndUpdate(agencyId, { $set: { fee } });
 
 const AgencyService2 = {
   createAgency,
@@ -95,6 +104,9 @@ const AgencyService2 = {
   changeCommission,
   getAgencyList,
   changePassword,
+  changePricePlanMode,
+  bulkWrite,
+  updateFee,
 }
 
 module.exports = AgencyService2

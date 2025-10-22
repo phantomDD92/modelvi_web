@@ -1,6 +1,6 @@
 const moment = require("moment");
 const crypto = require("crypto");
-const { DEFAULT_PRICE_PLANS, REVENUE_THRESHOLDS, MODEL_REVENUE_THRESHOLDS, MODEL_PRICE_PLANS } = require("./const");
+const { DEFAULT_PRICE_PLANS, REVENUE_THRESHOLDS, MODEL_REVENUE_THRESHOLDS, MODEL_PRICE_PLANS, DEFAULT_DUE_DATE } = require("./const");
 const nodemailer = require('nodemailer');
 const dotenv = require("dotenv");
 dotenv.config();
@@ -16,13 +16,35 @@ function getPricePlan(agency, platform, revenue) {
   return pricePlans[pricePlans.length - 1];
 }
 
+
 function getModelPricePlan(agency, revenue) {
-  const pricePlans = MODEL_PRICE_PLANS;
+  const pricePlans = (agency?.pricePlans && agency.pricePlans["MODEL"]) ? agency.pricePlans["MODEL"] : MODEL_PRICE_PLANS;
   for (var i = 0; i < pricePlans.length; i++) {
     if (revenue < MODEL_REVENUE_THRESHOLDS[i])
       return pricePlans[i];
   }
   return pricePlans[pricePlans.length - 1];
+}
+
+function getAccountFee(agency, platform, revenue) {
+  const pricePlans = (agency?.pricePlans && agency.pricePlans[platform]) ? agency.pricePlans[platform] || DEFAULT_PRICE_PLANS : DEFAULT_PRICE_PLANS;
+  for (var i = 0; i < pricePlans.length; i++) {
+    if (revenue < REVENUE_THRESHOLDS[i])
+      return pricePlans[i];
+  }
+  return pricePlans[pricePlans.length - 1];
+}
+
+function getModelFee(agency, revenue, accounts) {
+  if (!accounts || accounts.length == 0)
+    return 0;
+  const pricePlans = (agency?.pricePlans && agency.pricePlans["MODEL"]) ? agency.pricePlans["MODEL"] : MODEL_PRICE_PLANS;
+  const plusFee = ((agency?.pricePlans) ? (agency.pricePlans["PLUS"] || 10) : 10) * (accounts.length - 1)
+  for (var i = 0; i < pricePlans.length; i++) {
+    if (revenue < MODEL_REVENUE_THRESHOLDS[i])
+      return pricePlans[i] + plusFee;
+  }
+  return pricePlans[pricePlans.length - 1] + plusFee;
 }
 
 function getDateDelta(date) {
@@ -169,12 +191,12 @@ function generateBotAlias(firstName, lastName) {
 }
 
 
-function getNoBalanceEmailTemplate(agency, accounts) {
+function getWarningEmailTemplate(agency, title, dueDate, serviceFee, proxyFee) {
   return `<!DOCTYPE html>
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your ModelVI Bot Has Been Paused</title>
+    <title>Insufficient funds for automatic renewal</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -220,20 +242,18 @@ function getNoBalanceEmailTemplate(agency, accounts) {
   </head>
   <body>
     <div class="header">
-        <h2>Bot Paused – Insufficient Funds</h2>
+        <h2>${title}</h2>
     </div>
     
     <div class="content">
         
-        <p>Hi ${agency.name},</p>
-        
-        <p>Your ModelVI bot has been paused due to insufficient funds on your account.</p>
-        
-        <p><strong>Affected accounts:</strong><br>
-        ${accounts.map(account => `[${account.platform}] ${account.actor?.number}. ${account.actor?.name} (${account.alias}) <br>`)}
-        </p>
-        
-        <p>To keep your automation running smoothly and avoid service interruption, please top up your balance as soon as possible.</p>
+        <p>Dear ${agency.name},</p>
+        <p>We want to inform you that you have insufficient funds for automatic renewal of the Modelvi Service</p>
+        <p><strong>Due Date:</strong>&nbsp; ${moment(dueDate).format("YYYY-MM-DD")}</p>
+        <p><strong>Estimated Service Fee:</strong>&nbsp; ${getFiatAmount(serviceFee)}</p>
+        <p><strong>Estimated Proxy Fee:</strong>&nbsp; ${getFiatAmount(proxyFee)}</p>
+        <p><strong>Current Balance:</strong>&nbsp; ${getFiatAmount(agency.balance || 0)}</p>
+        <p>To keep your automation running smoothly and avoid service interruption, please top up your funds as soon as possible.</p>
         
         <div>
             <a href="https://modelvi.com/billing/payments" class="button">👉 Top Up Now</a>
@@ -241,7 +261,7 @@ function getNoBalanceEmailTemplate(agency, accounts) {
         
         <div class="divider"></div>
         
-        <p>Thank you for using ModelVI,</p>
+        <p>Thank you for using ModelVI</p>
         <p><strong>ModelVI Team</strong></p>
     </div>
     
@@ -252,20 +272,115 @@ function getNoBalanceEmailTemplate(agency, accounts) {
   </html>`
 }
 
+function getErrorEmailTemplate(agency, dueDate, fee) {
+  return `<!DOCTYPE html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelvi Service Paused</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 25px;
+            border-radius: 8px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #4F46E5;
+            color: white !important;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #777777;
+            text-align: center;
+        }
+        .alert-icon {
+            color: #DC2626;
+            font-size: 24px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+        <h2>Modelvi Service Paused</h2>
+    </div>
+    
+    <div class="content">
+        
+        <p>Dear ${agency.name},</p>
+        <p>We want to inform you that your Modelvi service paused because of insufficient funds</p>
+        <p><strong>Paused Date:</strong>&nbsp; ${moment(dueDate).format("YYYY-MM-DD")}</p>
+        <p><strong>Current Balance:</strong>&nbsp; ${getFiatAmount((agency.balance || 0) - fee)}</p>
+        <p>To restart your service, please top up your funds.</p>
+        
+        <div>
+            <a href="https://modelvi.com/billing/payments" class="button">👉 Top Up Now</a>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <p>Thank you for using Modelvi</p>
+        <p><strong>Modelvi Team</strong></p>
+    </div>
+    
+    <div class="footer">
+        <p>© 2023 Modelvi. All rights reserved.</p>
+    </div>
+  </body>
+  </html>`
+}
+
+const getFiatAmount = (amount) => `$${(amount || 0).toFixed(2)}`;
+
+const getDueDate = (agency) => {
+  let nthDate = moment().date(agency.dueDate || DEFAULT_DUE_DATE);
+  if (moment().isAfter(nthDate, "day"))
+    nthDate = nthDate.add(1, "month").startOf("day");
+  return nthDate
+}
+
+
 
 module.exports = {
   getPricePlan,
   getModelPricePlan,
+  getModelFee,
+  getAccountFee,
+  getAccountFee,
   getDateDelta,
   hasSufficientBalance,
   generateReferralCode,
   getClientIp,
   getVerifyEmailTemplate,
-  getNoBalanceEmailTemplate,
+  getWarningEmailTemplate,
+  getErrorEmailTemplate,
   getAccountName,
+  getFiatAmount,
   isModelOwner,
   generateRandomPassword,
   generateFourDigitString,
   checkLikeBotEmail,
-  generateBotAlias
+  generateBotAlias,
+  getDueDate
 }

@@ -88,6 +88,11 @@ const PostResultType = {
     PROHIBITED: 2,
 }
 
+const PricePlanMode = {
+    PER_MODEL: 0,
+    PER_ACCOUNT: 1,
+};
+
 module.exports = {
     Status,
     Platform,
@@ -99,5 +104,6 @@ module.exports = {
     PaymentStatus,
     TransactionType,
     ScheduleStatus,
-    PostResultType
+    PostResultType,
+    PricePlanMode
 }

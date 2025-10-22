@@ -36,10 +36,10 @@ const createChargeTransaction = (agencyId, type, amount, from, to, desc) =>
     description: desc
   });
 
-const createExpenseTransaction = (agencyId, accountId, amount, from, to, desc, commission) =>
+const createExpenseTransaction = (agencyId, amount, from, to, desc, commission) =>
   TransactionModel.create({
     agency: agencyId,
-    account: accountId,
+    // account: accountId,
     type: TransactionType.EXPENSE,
     amount: -1 * amount,
     from,

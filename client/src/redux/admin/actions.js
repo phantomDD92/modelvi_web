@@ -269,6 +269,14 @@ export const appendAgencyBalanceForAdmin = (agency, balance, callback) => async 
   })
 }
 
+export const changeAgencyPricePlanModeForAdmin = (agency, mode, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/agency/${agency._id}`,
+    data: { action: 'mode', mode },
+    inform: `Agency(${agency.name}) price plan mode is successfully updated.`,
+    callback
+  })
+}
 
 export const loadAccountStatsForAdmin = (platform, callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {

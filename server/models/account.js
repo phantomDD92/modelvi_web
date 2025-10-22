@@ -27,6 +27,7 @@ const AccountSchema = new Schema({
   revenue: { type: Number, default: 0 },
   fee: { type: Number, default: 50 },
   expiredAt: { type: Date, default: Date.now },
+  accessedAt: { type: Date },
   updatedAt: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now },
 });

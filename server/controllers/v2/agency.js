@@ -1,13 +1,47 @@
-const { TransactionType } = require("../../config/const");
+const { TransactionType, PricePlanMode } = require("../../config/const");
 const AccountService2 = require("../../services/v2/account");
 const AgencyService2 = require("../../services/v2/agency");
 const BlockUserService2 = require("../../services/v2/blockUser");
 const CommentService2 = require("../../services/v2/comment");
 const ModelService2 = require("../../services/v2/model");
 const TransactionService2 = require("../../services/v2/transaction");
-const { getPricePlan, getModelPricePlan } = require("../../utils/helper");
+const { DEFAULT_PROXY_FEE } = require("../../utils/const");
+const { getAccountFee, getModelFee } = require("../../utils/helper");
 const NotifyUtils = require("../../utils/notifiy");
 const { sendError, sendResult, ApiError } = require("../../utils/resp");
+
+const calculateAgencyFee = async (agency) => {
+  const pricePlanMode = agency.pricePlanMode || PricePlanMode.PER_MODEL;
+  let fee = 0;
+  if (pricePlanMode == PricePlanMode.PER_ACCOUNT) {
+    const accounts = await AccountService2.getAgencyPayableAccounts(agency._id);
+    for (var account of accounts) {
+      const accountFee = getAccountFee(agency, account.platform, account.revenue);
+      // console.log(`[${account.platform}] ${account.alias} : ${account.revenue} => ${accountFee}`);
+      fee += accountFee
+    }
+    // console.log(`##### [PER_ACCOUNT] ${agency.name} => ${fee}`);
+  } else {
+    const models = await AccountService2.getAgencyPayableModels(agency._id);
+    for (var model of models) {
+      const modelFee = getModelFee(agency, model.revenue, model.accounts);
+      // console.log(`[${model.model} (${(model.accounts || []).length} accounts)]: ${model.revenue} => ${modelFee}`);
+      fee += modelFee
+    }
+    // console.log(`##### [PER_MODEL] ${agency.name} => ${fee}`);
+  }
+  return fee;
+}
+
+const updateAgencyFee = async (agencyId) => {
+  try {
+    const agency = await AgencyService2.findAgencyById(agencyId);
+    const fee = await calculateAgencyFee(agency);
+    await AgencyService2.updateFee(agencyId, fee);
+  } catch (error) {
+
+  }
+}
 
 const handleUpdateAgencyForAdmin = async (req, res) => {
   try {
@@ -28,9 +62,15 @@ const handleUpdateAgencyForAdmin = async (req, res) => {
         const { status } = params;
         await AgencyService2.changeStatus(agencyId, status);
         break;
+      case "mode":
+        const { mode } = params;
+        await AgencyService2.changePricePlanMode(agencyId, mode);
+        await updateAgencyFee(agencyId);
+        break;
       case "plan":
         const { pricePlans } = params;
         await AgencyService2.changePricePlans(agencyId, pricePlans);
+        await updateAgencyFee(agencyId);
         break;
       case "referrer":
         const { referrer } = params;
@@ -59,29 +99,14 @@ const handleLoadAgenciesForAdmin = async (req, res) => {
     const agencies = await AgencyService2.loadAgencies();
     const modelStats = await ModelService2.getCountStatsByAgency();
     const accountStats = await AccountService2.getCountStatsByAgencyPlatform();
-    const items = await AccountService2.getAgenciesRevenue();
-    const feeStats = items.map(item => {
-      return ({
-        _id: item._id,
-        monthlyFee: item.models.reduce((sum, model) => sum += getModelPricePlan(undefined, model.revenue) + (model.count) * 10, 0),
-        proxyFee: item.count * 2.5,
-        // models: item.models.map(model => {
-        //   const fee = getModelPricePlan(undefined, model.revenue) + (model.count) * 10
-        //   return { ...model, fee }
-        // })
-      });
-    })
     const agencyInfos = agencies.map(agency => {
       const modelStat = modelStats.find(stat => stat._id.toString() == agency._id.toString());
       const accountStat = accountStats.filter(stat => stat._id?.creator?.toString() == agency._id.toString());
-      const feeStat = feeStats.find(stat => stat._id.toString() == agency._id.toString());
       return ({
         ...agency.toJSON(),
         accountCount: accountStat.map(item => `${item.platform} ${item.count}`).join(', '),
         modelCount: modelStat?.count || 0,
-        monthlyFee: feeStat?.monthlyFee || 0,
-        proxyFee: feeStat?.proxyFee || 0,
-        // models: feeStat?.models || []
+        proxyFee: accountStat.reduce((sum, item) => sum += item.count, 0) * DEFAULT_PROXY_FEE,
       })
     });
 

@@ -58,7 +58,22 @@ export const getCurrencyAmount = (value, code, status) => {
 
 export const getFiatAmount = (amount, defValue = "-") => amount > 0 ? `$${(amount || 0).toFixed(2)}` : defValue;
 
+export const getBalanceAmount = (amount) => `$${(amount || 0).toFixed(2)}`;
 export const getFullFiatAmount = (amount) => amount >= 0 ? `$${(amount || 0).toFixed(2)}` : `- $${(amount * -1).toFixed(2)}`;
+
+export const getDueDate = (dueDate) => {
+  let nthDate = moment().date(dueDate || DEFAULT_DUE_DATE);
+  if (moment().isAfter(nthDate, "day"))
+    nthDate = nthDate.add(1, "month");
+  return nthDate.format("YYYY-MM-DD");
+}
+
+export const closeDueDate = (dueDate) => {
+  let nthDate = moment().date(dueDate || DEFAULT_DUE_DATE);
+  if (moment().isAfter(nthDate, "day"))
+    nthDate = nthDate.add(1, "month");
+  return nthDate.diff(moment(), "day") < 5;
+}
 
 export const getCryptoAmount = (amount, ticker, defValue = "-") =>
   amount > 0

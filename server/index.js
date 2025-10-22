@@ -4,13 +4,16 @@ const path = require('path')
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const db = require("./config/db");
+const cron = require('node-cron');
 
 const apiRouter = require("./api");
 const botRouter = require("./bot/api");
+const CommandCtrl2 = require("./controllers/v2/command");
 dotenv.config();
 
 const app = express();
 const buildPath = path.join(__dirname, 'client')
+
 app.set('trust proxy', true);
 app.use(express.static(buildPath));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
@@ -29,6 +32,11 @@ app.get('*', (req, res) => {
 })
 
 db();
+
+cron.schedule('18 16 * * *', () => {
+  CommandCtrl2.handleCalculateFee();
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log("server is running", PORT);

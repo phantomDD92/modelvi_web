@@ -15,6 +15,9 @@ const getAccountWithAgencyAndModel = (accountId) =>
 const disableAccount = (accountId, reason) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { status: false, lastError: reason } })
 
+const disableAgencyAccounts = (agencyId, reason) =>
+  AccountModel.updateMany({ owner: agencyId }, { $set: { status: false, lastError: reason } });
+
 const extendAccount = (accountId) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { expiredAt: new Date(Date.now() + (3600 * 1000 * 24 * 30)) } })
 
@@ -344,6 +347,70 @@ const setContents = (accountId, contents) => {
   });
 }
 
+const getAgencyPayableAccounts = (agencyId) =>
+  AccountModel.find({
+    owner: agencyId,
+    accessedAt: { $gte: moment().startOf("day").subtract(30, "day").toDate() }
+  }, "alias platform revenue");
+
+const getAgencyPayableModels = (agencyId) =>
+  AccountModel.aggregate([
+    {
+      $match: {
+        owner: agencyId,
+        accessedAt: { $gte: moment().startOf("day").subtract(30, "day").toDate() }
+      }
+    },
+    {
+      $group:
+      {
+        _id: {
+          actor: "$actor",
+          owner: "$owner"
+        },
+        accounts: {
+          $push: {
+            platform: "$platform",
+            alias: "$alias",
+            revenue: "$revenue"
+          }
+        },
+        revenue: {
+          $sum: "$revenue"
+        }
+      }
+    },
+    {
+      $project: {
+        _id: "$_id.actor",
+        revenue: 1,
+        accounts: 1,
+      }
+    },
+    {
+      $lookup: {
+        from: "actors",
+        localField: "_id",
+        foreignField: "_id",
+        as: "model"
+      }
+    },
+    {
+      $unwind: {
+        path: "$model",
+        preserveNullAndEmptyArrays: false
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        revenue: 1,
+        accounts: 1,
+        model: "$model.name"
+      }
+    }
+  ])
+
 const getAgencyModelsRevenue = (agencyId) => {
   return AccountModel.aggregate([
     {
@@ -461,6 +528,9 @@ const getAgenciesRevenue = () => {
   ])
 }
 
+const getAgencyProxyCount = (agencyId) =>
+  AccountModel.countDocuments({ owner: agencyId, deleted: false });
+
 const AccountService2 = {
   getAgencyAccounts,
   getAccountWithModel,
@@ -468,6 +538,7 @@ const AccountService2 = {
   getAccountWithAgencyAndModel,
   updateRevenue,
   disableAccount,
+  disableAgencyAccounts,
   extendAccount,
   findAgencyAccounts,
   getCountStatsByAgencyPlatform,
@@ -507,7 +578,10 @@ const AccountService2 = {
 
   getAgencyModelsRevenue,
   getModelsRevenue,
-  getAgenciesRevenue
+  getAgenciesRevenue,
+  getAgencyPayableAccounts,
+  getAgencyPayableModels,
+  getAgencyProxyCount,
 };
 
 module.exports = AccountService2;

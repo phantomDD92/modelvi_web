@@ -17,6 +17,8 @@ export const DEFAULT_STORY_INTERVAL = 10;
 export const DEFAULT_STORY_COUNT = 6;
 export const DEFAULT_STORY_REPLACE = 1;
 
+export const DEFAULT_DUE_DATE = 1;
+
 export const Platform = {
     ALL: "ALL",
     F2F: "F2F",
@@ -66,6 +68,11 @@ export const KnkyStoryType = {
     PRIME: 2,
     PAYTOVIEW: 4,
 };
+
+export const PricePlanMode = {
+    PER_MODEL: 0,
+    PER_ACCOUNT: 1,
+}
 
 export const F2FStoryType = {
     NONE: 0,

@@ -109,76 +109,16 @@ const EditableCell = _a => {
 };
 
 
-const AgencyPricePlanTable = ({ dataSource, onChange }) => {
+const AgencyModelPricePlanTable = ({ dataSource, onChange }) => {
   const defaultColumns = [
     {
-      title: 'Account Revenue',
+      title: 'Model Revenue',
       dataIndex: 'revenue',
       width: 150,
     },
     {
-      title: "F2F",
-      dataIndex: Platform.F2F,
-      width: 70,
-      editable: true,
-    },
-    {
-      title: "Knky",
-      dataIndex: Platform.KNKY,
-      width: 70,
-      editable: true,
-    },
-    {
-      title: "Fancentro",
-      dataIndex: Platform.FNC,
-      width: 70,
-      editable: true,
-    },
-    {
-      title: "Fansly",
-      dataIndex: Platform.FAN,
-      width: 70,
-      editable: true,
-    },
-    {
-      title: "LoyalFans",
-      dataIndex: Platform.LOYALFANS,
-      width: 70,
-      editable: true,
-    },
-    {
-      title: "Maloum",
-      dataIndex: Platform.MALOUM,
-      width: 70,
-      editable: true,
-    },
-    {
-      title: "Fanvue",
-      dataIndex: Platform.FANVUE,
-      width: 70,
-      editable: true,
-    },
-    {
-      title: "4Based",
-      dataIndex: Platform.FOURBASED,
-      width: 70,
-      editable: true,
-    },
-    {
-      title: "MymFans",
-      dataIndex: Platform.MYMFANS,
-      width: 70,
-      editable: true,
-    },
-    {
-      title: "OnlyFans",
-      dataIndex: Platform.ONLYFANS,
-      width: 70,
-      editable: true,
-    },
-    {
-      title: "Fetlife",
-      dataIndex: Platform.FETLIFE,
+      title: "Price",
+      dataIndex: "MODEL",
       width: 70,
       editable: true,
     },
@@ -223,4 +163,4 @@ const AgencyPricePlanTable = ({ dataSource, onChange }) => {
     />
   );
 };
-export default AgencyPricePlanTable;
+export default AgencyModelPricePlanTable;

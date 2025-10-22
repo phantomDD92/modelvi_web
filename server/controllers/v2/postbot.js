@@ -5,7 +5,7 @@ const moment = require('moment');
 const { ApiError, sendError, sendResult } = require("../../utils/resp");
 const { DEFAULT_COMMENT_INTERVAL, DEFAULT_STORY_INTERVAL, DEFAULT_STORY_OFFSETS, DEFAULT_POST_OFFSETS, DEFAULT_CHAT_INTERVAL, DEFAULT_POST_INTERVAL } = require('../../utils/const');
 const { PostMode, PostResultType } = require('../../config/const');
-const { getPricePlan, getDateDelta, hasSufficientBalance, getAccountName, getNoBalanceEmailTemplate } = require('../../utils/helper');
+const { getPricePlan,  getAccountName } = require('../../utils/helper');
 const AccountService2 = require('../../services/v2/account');
 const AgencyService2 = require('../../services/v2/agency');
 const TransactionService2 = require('../../services/v2/transaction');
@@ -111,7 +111,7 @@ const handleCreateLastError = async (req, res) => {
 
 const handleClearLastError = async (req, res) => {
   try {
-    await AccountService2.updateParameters(req.bot.id, { $set: { lastError: "", failures: 0 } });
+    await AccountService2.updateParameters(req.bot.id, { $set: { lastError: "", failures: 0, accessedAt: new Date() } });
     sendResult(res)
   } catch (error) {
     sendError(res, error)
@@ -533,40 +533,47 @@ const handleCheckBalance = async (req, res) => {
     const agency = await AgencyService2.getAgencyWithReferrer(req.bot.owner);
     if (!agency)
       throw new ApiError("Invalid bot agency");
-    // calculate price + proxy fee
+
+    // calculate price and update revenue
     const price = getPricePlan(agency, account.platform, revenue);
-    const fee = price + 2.5;
-    // get valid dates
-    const dateDelta = getDateDelta(account.expiredAt);
-    if (dateDelta <= 0) { // if account is expired
-      if (hasSufficientBalance(agency, fee)) {
-        // remove balance and create transaction, extend account
-        const { balance } = await AgencyService2.updateBalance(agency._id, -1 * fee);
-        const commission = price * (agency.referrer?.commission || 0) / 100;
-        await TransactionService2.createExpenseTransaction(
-          agency._id,
-          account._id,
-          fee,
-          balance,
-          balance - fee,
-          `payout for ${account.platform} ${account.alias}`,
-          commission
-        );
-        await AccountService2.extendAccount(account._id)
-        NotifyUtils.sendExpenseMessage(agency, account, `Monthly Revenue: ${account.revenue}\nPrice: ${fee}\nBalance:$${balance.toFixed(2)} => $${(balance - fee).toFixed(2)}\n`)
-      } else {
-        available = false;
-        const expiringAccounts = await AccountService2.getExpiringAccounts(agency._id);
-        await AccountService2.disableAccount(account._id, "no balance");
-        NotifyUtils.sendDebugMessage(getAccountName(account, agency), "Bot Closed With No Balance", `Monthly Revenue: ${account.revenue}\nPrice: ${fee}\nBalance:$${agency.balance?.toFixed(2)}\n`)
-        await NotifyUtils.sendMail(agency.email, `🚫 Bot Paused – Insufficient Funds in Your ModelVI Account`, getNoBalanceEmailTemplate(agency, expiringAccounts));
-      }
-    } else if (dateDelta == 7) {
-      // send notification
-    } else if (dateDelta == 1) {
-      // send notification
-    }
     await AccountService2.updateRevenue(req.bot.id, revenue, price);
+
+    if (agency.balance <= 0) {
+      available = false;
+      await AccountService2.disableAccount(account._id, "no balance");
+      NotifyUtils.sendDebugMessage(getAccountName(account, agency), "Bot Closed With No Balance", `Monthly Revenue: ${revenue}\nBalance:$${agency.balance?.toFixed(2)}\n`)
+    }
+    // // get valid dates
+    // const dateDelta = getDateDelta(account.expiredAt);
+    // if (dateDelta <= 0) { // if account is expired
+    //   if (hasSufficientBalance(agency, fee)) {
+    //     // remove balance and create transaction, extend account
+    //     const { balance } = await AgencyService2.updateBalance(agency._id, -1 * fee);
+    //     const commission = price * (agency.referrer?.commission || 0) / 100;
+    //     await TransactionService2.createExpenseTransaction(
+    //       agency._id,
+    //       account._id,
+    //       fee,
+    //       balance,
+    //       balance - fee,
+    //       `payout for ${account.platform} ${account.alias}`,
+    //       commission
+    //     );
+    //     await AccountService2.extendAccount(account._id)
+    //     NotifyUtils.sendExpenseMessage(agency, account, `Monthly Revenue: ${account.revenue}\nPrice: ${fee}\nBalance:$${balance.toFixed(2)} => $${(balance - fee).toFixed(2)}\n`)
+    //   } else {
+    //     available = false;
+    //     const expiringAccounts = await AccountService2.getExpiringAccounts(agency._id);
+    //     await AccountService2.disableAccount(account._id, "no balance");
+    //     NotifyUtils.sendDebugMessage(getAccountName(account, agency), "Bot Closed With No Balance", `Monthly Revenue: ${account.revenue}\nPrice: ${fee}\nBalance:$${agency.balance?.toFixed(2)}\n`)
+    //     await NotifyUtils.sendMail(agency.email, `🚫 Bot Paused – Insufficient Funds in Your ModelVI Account`, getNoBalanceEmailTemplate(agency, expiringAccounts));
+    //   }
+    // } else if (dateDelta == 7) {
+    //   // send notification
+    // } else if (dateDelta == 1) {
+    //   // send notification
+    // }
+    // await AccountService2.updateRevenue(req.bot.id, revenue, price);
     sendResult(res, { available });
   } catch (error) {
     console.error(error);

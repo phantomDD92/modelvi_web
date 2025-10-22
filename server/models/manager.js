@@ -13,6 +13,8 @@ const ManagerSchema = new mongoose.Schema({
 
   // payment-related fields
   balance: { type: Number, default: 0 },
+  fee: { type: Number, default: 0 },
+  dueDate: { type: Number, default: 1 },
   vip: { type: Boolean, default: false },
 
   // affiliate-related fields
@@ -20,13 +22,15 @@ const ManagerSchema = new mongoose.Schema({
   commission: { type: Number, default: 10 },
   referrer: { type: SchemaTypes.ObjectId, ref: "Manager" },
 
+  pricePlanMode: { type: Number, default: 0 },
   pricePlans: {},
+
   // management-related fields
   role: { type: String, default: AdminRole.AGENCY },  // role : manager, agency
   version: { type: Number, default: 1 },
   status: { type: Boolean, default: true }, // status
   verified: { type: Boolean, default: false },
-  order: {type: Number}
+  order: { type: Number }
 });
 
 const ManagerModel = mongoose.model("Manager", ManagerSchema);

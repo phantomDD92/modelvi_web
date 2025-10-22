@@ -14,6 +14,7 @@ import PageMetaData from "@/components/common/PageMetaData";
 import {
   appendAgencyBalanceForAdmin,
   changeAgenciesStatusForAdmin,
+  changeAgencyPricePlanModeForAdmin,
   changeAgencyPricePlansForAdmin,
   changeAgencyReferrerForAdmin,
   changeAgencyStatusForAdmin,
@@ -85,6 +86,10 @@ export const AdminAgencyListPage = () => {
       dispatch(appendAgencyBalanceForAdmin(agency, balance, () => { setBalanceOpen(false); loadAgenciesCallback(); }))
   }
 
+  const handleChangePricePlanMode = (agency, mode) => {
+    dispatch(changeAgencyPricePlanModeForAdmin(agency, mode, () => { loadAgenciesCallback(); }))
+  }
+
   const handleDeleteBulkAgencies = () => {
     Modal.confirm({
       title: `Are you sure to delete ${selectedRowKeys.length} agencies?`,
@@ -94,14 +99,14 @@ export const AdminAgencyListPage = () => {
 
   const handleUpdatePricePlans = (plans) => {
     if (agency)
-      dispatch(changeAgencyPricePlansForAdmin(agency, plans, () => { setPlanOpen(false) }))
+      dispatch(changeAgencyPricePlansForAdmin(agency, plans, () => { setPlanOpen(false); loadAgenciesCallback()  }))
   }
 
   const handleChangeReferrer = (referrer) => {
     if (agency)
       dispatch(changeAgencyReferrerForAdmin(agency, referrer, () => { setReferrerOpen(false); loadAgenciesCallback() }))
   }
-  
+
   return (
     <>
       <PageMetaData title="Agencies" />
@@ -125,6 +130,7 @@ export const AdminAgencyListPage = () => {
           onBalance: (agency) => { setAgency(agency); setBalanceOpen(true) },
           onPricePlans: (agency) => { setAgency(agency); setPlanOpen(true) },
           onReferrer: (agency) => { setAgency(agency); setReferrerOpen(true) },
+          onPricePlanMode: handleChangePricePlanMode,
         }} />
       {/* <AgencyDialog
         agency={agency}
