@@ -80,13 +80,13 @@ export const AdminModelTable = ({
             width: 150,
             render: value => getFiatAmount(modelsStat.find(stat => stat._id == value)?.revenue || 0)
         },
-        {
-            key: 'fee',
-            title: 'Monthly Fee',
-            dataIndex: '_id',
-            width: 100,
-            render: value => getFiatAmount(modelsStat.find(stat => stat._id == value)?.fee || 0)
-        },
+        // {
+        //     key: 'fee',
+        //     title: 'Monthly Fee',
+        //     dataIndex: '_id',
+        //     width: 100,
+        //     render: value => getFiatAmount(modelsStat.find(stat => stat._id == value)?.fee || 0)
+        // },
         {
             key: 'contents',
             title: 'Contents',
