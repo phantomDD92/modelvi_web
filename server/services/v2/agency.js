@@ -1,4 +1,5 @@
 const ManagerModel = require("../../models/manager")
+const bcrypt = require('bcryptjs');
 
 const updateBalance = (agencyId, amount) =>
   ManagerModel.findByIdAndUpdate(agencyId, { $inc: { balance: amount } })

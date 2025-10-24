@@ -15,7 +15,6 @@ const loadAccountLogs = (accountId, { failedOnly, page, pageSize }) => {
         account: accountId,
         ...resultQuery,
     }
-    console.log(query);
     return Promise.all([
         LogModel
             .find(query, "action success message createdAt")
