@@ -12,7 +12,6 @@ import {
   SERVER_PATH,
 } from "@/utils/const";
 import Media from "../common/Media";
-import { getPlatformName } from "@/utils/string";
 import { LuTrash } from "react-icons/lu";
 import { formatBytes, getPlatformName } from "@/utils/string";
 
