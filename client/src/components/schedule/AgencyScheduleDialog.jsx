@@ -15,7 +15,7 @@ import moment from "moment";
 import { Platform, PostType, SERVER_PATH } from "@/utils/const";
 import StyledInput from "../common/StyledInput";
 import { getPlatformName } from "@/utils/string";
-import { LuUpload } from "react-icons/lu";
+import { Upload as UploadIcon } from "lucide-react";
 
 const beforeUpload = (file) => {
     // Accept specific mime types or extensions
@@ -159,7 +159,7 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
                         fileList={fileList}
                         onChange={handleMediaChange}
                     >
-                        <Button icon={<LuUpload />}>Upload Media (Max : 6)</Button>
+                        <Button icon={<UploadIcon />}>Upload Media (Max : 6)</Button>
                     </Upload>
                 </Form.Item>
 

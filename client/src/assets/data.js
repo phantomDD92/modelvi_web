@@ -1,4 +1,4 @@
-import { LuFacebook, LuInstagram, LuLinkedin, LuTwitter } from "react-icons/lu";
+import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
 
 export const footerLinks = [
   {
@@ -26,19 +26,19 @@ export const footerLinks = [
     items: [
       {
         name: "Facebook",
-        icon: LuFacebook,
+        icon: Facebook,
       },
       {
         name: "Instagram",
-        icon: LuInstagram,
+        icon: Instagram,
       },
       {
         name: "Twitter",
-        icon: LuTwitter,
+        icon: Twitter,
       },
       {
         name: "Linkedin",
-        icon: LuLinkedin,
+        icon: Linkedin,
       },
     ],
   },

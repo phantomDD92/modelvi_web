@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Controller } from "react-hook-form";
-import { LuAlertCircle, LuEye, LuEyeOff } from "react-icons/lu";
+import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/utils";
 
 const PasswordFormInput = ({
@@ -54,7 +54,7 @@ const PasswordFormInput = ({
 
               {!noValidate && fieldState.error?.message && (
                 <div className="pointer-events-none absolute inset-y-0 end-4 flex items-center">
-                  <LuAlertCircle size={20} className="text-red-500" />
+                  <AlertCircle size={20} className="text-red-500" />
                 </div>
               )}
             </div>
@@ -66,9 +66,9 @@ const PasswordFormInput = ({
               }}
             >
               {showPassword ? (
-                <LuEyeOff size={20} className="size-5 text-zinc-100" />
+                <EyeOff size={20} className="size-5 text-zinc-100" />
               ) : (
-                <LuEye size={20} className="size-5 text-zinc-100" />
+                <Eye size={20} className="size-5 text-zinc-100" />
               )}
             </button>
           </div>

@@ -9,7 +9,7 @@ import {
   Switch,
   Tag,
 } from "antd";
-import { LuEye, LuEyeOff, LuImport, LuSettings, LuTrash, LuUserPlus } from "react-icons/lu";
+import { Eye, EyeOff, Import, Settings, Trash, UserPlus } from "lucide-react";
 import { Platform } from "@/utils/const"
 import { getDateTime, getPlatformName } from "@/utils/string";
 import { StyledSearch } from "../common";
@@ -163,7 +163,7 @@ const AdminLikeBotTable = ({
                 }
               }
             }}>
-            <LuTrash /> Delete
+            <Trash /> Delete
           </Dropdown.Button>
       },
     ]
@@ -192,12 +192,12 @@ const AdminLikeBotTable = ({
             Create
           </Button> */}
           <Button
-            icon={<LuImport />}
+            icon={<Import />}
             onClick={() => onImport && onImport()}>
             Import
           </Button>
           <Button
-            icon={<LuSettings />}
+            icon={<Settings />}
             onClick={() => onSettings && onSettings()}>
             Settings
           </Button>
@@ -210,19 +210,19 @@ const AdminLikeBotTable = ({
             <h3>Bulk Actions : </h3>
             <Button
               key="enable"
-              icon={<LuEye />}
+              icon={<Eye />}
               onClick={() => onBulkStatus && onBulkStatus(true)}>
               {`Enable ${rowSelection.selectedRowKeys.length} accounts`}
             </Button>
             <Button
               key="disable"
-              icon={<LuEyeOff />}
+              icon={<EyeOff />}
               onClick={() => onBulkStatus && onBulkStatus(false)}>
               {`Disable ${rowSelection.selectedRowKeys.length} accounts`}
             </Button>
             <Button
               key="delete"
-              icon={<LuTrash />}
+              icon={<Trash />}
               danger
               onClick={() => onBulkDelete && onBulkDelete()}>
               {`Delete ${rowSelection.selectedRowKeys.length} accounts`}

@@ -1,7 +1,7 @@
 import { AdminRole, PricePlanMode } from '@/utils/const'
 import { Card, Table, Button, Flex, Switch, Avatar, Dropdown, Space, Typography, Radio } from "antd";
 import { DeleteOutlined, UserAddOutlined, EditOutlined, KeyOutlined, DatabaseOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-import { LuGlobe, LuTrash, LuUser, LuWallet } from 'react-icons/lu';
+import { Globe, Trash, User, Wallet } from 'lucide-react';
 import { closeDueDate, getBalanceAmount, getDueDate, getFiatAmount } from '@/utils/string';
 import moment from 'moment';
 
@@ -111,22 +111,22 @@ export const AgencyTable = ({
                             {
                                 label: 'Add Balance',
                                 key: 'balance',
-                                icon: <LuWallet />,
+                                icon: <Wallet />,
                             },
                             {
                                 label: 'Change Price Plans',
                                 key: 'plan',
-                                icon: <LuGlobe />,
+                                icon: <Globe />,
                             },
                             {
                                 label: 'Change Referrer',
                                 key: 'referrer',
-                                icon: <LuUser />,
+                                icon: <User />,
                             },
                             {
                                 label: 'Delete Agency',
                                 key: 'delete',
-                                icon: <LuTrash />,
+                                icon: <Trash />,
                                 danger: true,
                             },
                         ],

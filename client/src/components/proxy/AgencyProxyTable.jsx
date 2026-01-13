@@ -16,7 +16,7 @@ import {
 } from "@ant-design/icons";
 import moment from "moment";
 import { Platform } from "@/utils/const";
-import { LuBrush, LuCornerDownLeft, LuUpload } from "react-icons/lu";
+import { Brush, CornerDownLeft, Upload } from "lucide-react";
 
 const AgencyProxyTable = ({
     agency,
@@ -146,19 +146,19 @@ const AgencyProxyTable = ({
                     <Button
                         key="clear"
                         danger
-                        icon={<LuBrush />}
+                        icon={<Brush />}
                         onClick={onClear}>
                         Clear
                     </Button>
                     <Button
                         key="append"
-                        icon={<LuUpload />}
+                        icon={<Upload />}
                         onClick={onAppend}>
                         Append
                     </Button>
                     <Button
                         key="back"
-                        icon={<LuCornerDownLeft />}
+                        icon={<CornerDownLeft />}
                         onClick={onBack}>
                         Back
                     </Button>

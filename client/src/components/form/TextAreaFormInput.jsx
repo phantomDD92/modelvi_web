@@ -1,5 +1,5 @@
 import { Controller } from "react-hook-form";
-import { LuAlertCircle } from "react-icons/lu";
+import { AlertCircle } from "lucide-react";
 import { cn } from "@/utils";
 
 const TextAreaFormInput = ({
@@ -50,7 +50,7 @@ const TextAreaFormInput = ({
             />
             {!noValidate && fieldState.error?.message && (
               <div className="pointer-events-none absolute inset-y-0 end-4 flex items-center">
-                <LuAlertCircle size={20} className="text-red-500" />
+                <AlertCircle size={20} className="text-red-500" />
               </div>
             )}
           </div>

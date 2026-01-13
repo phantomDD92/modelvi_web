@@ -3,7 +3,7 @@ import { Layout, Menu, Typography } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts";
 import { adminMenus, agencyMenus } from "./SideMenus";
-import { LuCommand } from "react-icons/lu";
+import { Command } from "lucide-react";
 
 const SiderBar = () => {
     const location = useLocation();
@@ -36,7 +36,7 @@ const SiderBar = () => {
                 selectedKeys={[key]}
                 items={isAdmin
                     ? session.name == "Eric"
-                        ? [...adminMenus, { key: "admin_command", icon: <LuCommand />, label: <Link to="/admin/command">Command</Link> }]
+                        ? [...adminMenus, { key: "admin_command", icon: <Command />, label: <Link to="/admin/command">Command</Link> }]
                         : adminMenus
                     : agencyMenus.filter(menu => !menu.visible || menu.visible(session?.role))
                 }

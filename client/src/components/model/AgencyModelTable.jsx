@@ -17,7 +17,7 @@ import {
 } from "@ant-design/icons";
 import { getPlatformName } from "@/utils/string";
 import { StyledSearch } from "../common";
-import { LuImport } from "react-icons/lu";
+import { Import } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const AgencyModelTable = ({
@@ -139,7 +139,7 @@ export const AgencyModelTable = ({
                     </Button>
                     <Link to="/import">
                         <Button
-                            icon={<LuImport />}>
+                            icon={<Import />}>
                             Import Contents
                         </Button>
                     </Link>

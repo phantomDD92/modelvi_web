@@ -5,7 +5,7 @@ import {
     Dropdown,
     Table,
 } from "antd";
-import { LuDelete, LuPlus, LuView } from "react-icons/lu";
+import { Delete, Plus, Eye } from "lucide-react";
 
 const ProxyAdminTable = ({
     pagination,
@@ -63,7 +63,7 @@ const ProxyAdminTable = ({
                             {
                                 label: 'Delete',
                                 key: 'delete',
-                                icon: <LuDelete />,
+                                icon: <Delete />,
                                 danger: true
                             },
                         ],
@@ -77,7 +77,7 @@ const ProxyAdminTable = ({
                             }
                         }
                     }}>
-                    <LuView /> View
+                    <Eye /> View
                 </Dropdown.Button>
             )
         },
@@ -87,7 +87,7 @@ const ProxyAdminTable = ({
         <Card
             title="Agency Proxies"
             extra={
-                <Button icon={<LuPlus />} onClick={() => onAppend && onAppend()}>Append</Button>
+                <Button icon={<Plus />} onClick={() => onAppend && onAppend()}>Append</Button>
             }>
             <Table
                 pagination={{

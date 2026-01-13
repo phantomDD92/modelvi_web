@@ -19,6 +19,7 @@ import {
 import { getFiatAmount, getPlatformName } from "@/utils/string";
 import { AgencySelect } from "../agency";
 import { StyledSearch } from "../common";
+import { Platform } from "@/utils/const";
 import moment from "moment";
 
 export const AdminModelTable = ({
@@ -46,6 +47,24 @@ export const AdminModelTable = ({
     const getPlatformTag = (platform) =>
         <Tag key={platform} color="processing">{getPlatformName(platform)}</Tag>;
 
+    // Sort accounts by platform order defined in Platform const
+    const sortAccountsByPlatform = (accounts) => {
+        // Create an array of platform values in order
+        const platformOrder = Object.values(Platform);
+        
+        return [...accounts].sort((a, b) => {
+            const indexA = platformOrder.indexOf(a.platform);
+            const indexB = platformOrder.indexOf(b.platform);
+            
+            // If platform not found in order, put it at the end
+            if (indexA === -1 && indexB === -1) return 0;
+            if (indexA === -1) return 1;
+            if (indexB === -1) return -1;
+            
+            return indexA - indexB;
+        });
+    };
+
     const columns = [
         {
             key: 'name',
@@ -69,9 +88,13 @@ export const AdminModelTable = ({
         },
         {
             key: 'accounts',
-            title: 'Accounts',
+            title: 'Platform',
             dataIndex: 'accounts',
-            render: value => value.length == 0 ? '-' : <Flex gap="small">{value.map(el => getPlatformTag(el.platform))}</Flex>
+            render: value => {
+                if (value.length == 0) return '-';
+                const sortedAccounts = sortAccountsByPlatform(value);
+                return <Flex gap="small">{sortedAccounts.map(el => getPlatformTag(el.platform))}</Flex>;
+            }
         },
         {
             key: 'revenue',

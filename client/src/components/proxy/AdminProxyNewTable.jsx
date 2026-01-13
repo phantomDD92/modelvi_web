@@ -15,7 +15,7 @@ import {
 } from "@ant-design/icons";
 import moment from "moment";
 import { Platform } from "@/utils/const";
-import { LuBrush, LuCornerDownLeft, LuUpload } from "react-icons/lu";
+import { Brush, CornerDownLeft, Upload } from "lucide-react";
 
 const AdminProxyNewTable = ({
     pagination,
@@ -74,13 +74,13 @@ const AdminProxyNewTable = ({
                     <Button
                         key="clear"
                         danger
-                        icon={<LuBrush />}
+                        icon={<Brush />}
                         onClick={onClear}>
                         Clear
                     </Button>
                     <Button
                         key="append"
-                        icon={<LuUpload />}
+                        icon={<Upload />}
                         onClick={onAppend}>
                         Append
                     </Button>

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { Layout, Avatar, Popover, Menu, Modal, Form, Typography, Flex, theme, Alert } from "antd";
-import { LuKey, LuLogOut, LuSettings } from "react-icons/lu";
+import { Key, LogOut, Settings } from "lucide-react";
 
 import { useAuth } from "@/contexts";
 import StyledInput from "@/components/common/StyledInput";
@@ -25,12 +25,12 @@ const HeaderBar = () => {
         {
             key: 'settings',
             label: 'Settings',
-            icon: <LuSettings />,
+            icon: <Settings />,
         },
         {
             key: 'password',
             label: 'Change Password',
-            icon: <LuKey />,
+            icon: <Key />,
         },
         {
             type: "divider",
@@ -38,7 +38,7 @@ const HeaderBar = () => {
         {
             key: 'logout',
             label: 'Logout',
-            icon: <LuLogOut />,
+            icon: <LogOut />,
         }
     ];
 

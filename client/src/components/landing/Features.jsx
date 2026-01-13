@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { features } from "./data";
-import { LuArrowUpRight } from "react-icons/lu";
+import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/utils";
 
 const Features = () => {
@@ -37,7 +37,7 @@ const Features = () => {
                       </div>
                       <div>
                         <div className="flex w-10 h-10 items-center justify-center rounded-full border border-default-200 text-default-950 transition-all duration-500 group-hover:border-transparent group-hover:bg-black group-hover:text-white">
-                          <LuArrowUpRight className="w-6 h-6" />
+                          <ArrowUpRight className="w-6 h-6" />
                         </div>
                       </div>
                     </div>
@@ -63,7 +63,7 @@ const Features = () => {
                       </div>
                       <div>
                         <div className="flex w-10 h-10 items-center justify-center rounded-full border border-default-200 text-default-950 transition-all duration-500 group-hover:border-transparent group-hover:bg-black group-hover:text-white">
-                          <LuArrowUpRight className="w-6 h-6" />
+                          <ArrowUpRight className="w-6 h-6" />
                         </div>
                       </div>
                     </div>

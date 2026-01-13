@@ -5,7 +5,7 @@ import { Platform, SERVER_PATH, StoryType } from "@/utils/const";
 import { getPlatformName, shuffleArray } from "@/utils/string";
 import { Button, Card, Form, Row, Col, Upload, Space, Checkbox, Radio, message, Input, Select } from "antd";
 import { useEffect, useState } from "react";
-import { LuCommand, LuStepBack, LuStepForward, LuUpload } from "react-icons/lu";
+import { Command, StepBack, StepForward, Upload as UploadIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -135,10 +135,10 @@ const AgencyImportContentPage = () => {
       <Card
         title={"Import Contents"}
         extra={step == ImportStep.INPUT
-          ? <Button type="primary" icon={<LuStepForward />} onClick={handleNextClick}>Next</Button>
+          ? <Button type="primary" icon={<StepForward />} onClick={handleNextClick}>Next</Button>
           : <Space>
-            <Button icon={<LuStepBack />} onClick={handleBackClick}>Back</Button>
-            <Button type="primary" icon={<LuCommand />} onClick={handleFinishClick}>Finish</Button>
+            <Button icon={<StepBack />} onClick={handleBackClick}>Back</Button>
+            <Button type="primary" icon={<Command />} onClick={handleFinishClick}>Finish</Button>
           </Space>
         }
       >
@@ -238,7 +238,7 @@ const AgencyImportContentPage = () => {
                     onChange={handleMediaChange}
                     fileList={fileList}
                   >
-                    <Button icon={<LuUpload />}>Upload Media</Button>
+                    <Button icon={<UploadIcon />}>Upload Media</Button>
                   </Upload>
                 </Form.Item>
               </Col>

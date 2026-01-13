@@ -1,7 +1,7 @@
 import { PostType, ScheduleStatus } from "@/utils/const";
 import { getDateTime } from "@/utils/string";
 import { Button, Card, Flex, Select, Table, Tooltip } from "antd";
-import { LuPencil, LuPlus, LuTrash } from "react-icons/lu";
+import { Pencil, Plus, Trash } from "lucide-react";
 import Media from "../common/Media";
 
 const AgencyScheduleTable = ({
@@ -123,10 +123,10 @@ const AgencyScheduleTable = ({
       render: (_, record) => (
         <Flex gap="small">
           <Tooltip title="Edit content">
-            <Button icon={<LuPencil />} onClick={() => onEdit && onEdit(record)} />
+            <Button icon={<Pencil />} onClick={() => onEdit && onEdit(record)} />
           </Tooltip>
           <Tooltip title="Delete content">
-            <Button icon={<LuTrash />} danger onClick={() => onDelete && onDelete(record)} />
+            <Button icon={<Trash />} danger onClick={() => onDelete && onDelete(record)} />
           </Tooltip>
         </Flex>
       )
@@ -155,7 +155,7 @@ const AgencyScheduleTable = ({
       extra={
         <Flex gap="small">
           <Button
-            icon={<LuPlus />}
+            icon={<Plus />}
             onClick={() => onCreate && onCreate()}>
             Create
           </Button>

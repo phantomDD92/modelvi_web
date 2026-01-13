@@ -22,7 +22,7 @@ import {
 import Media from "../common/Media";
 import { formatBytes, getPlatformName } from "@/utils/string";
 import { useState } from "react";
-import { LuArrowUpLeftSquare, LuCornerDownLeft, LuImport, LuPencilLine, LuPlus, LuTrash, LuTrash2, LuUpload } from "react-icons/lu";
+import { ArrowUpLeftSquare, CornerDownLeft, Import, PencilLine, Plus, Trash, Trash2, Upload } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const ModelContentTable = ({
@@ -175,11 +175,11 @@ export const ModelContentTable = ({
             render: (_, record) => (
                 <Flex gap="small">
                     <Tooltip title="Edit content">
-                        <Button icon={<LuPencilLine />} onClick={() => onEdit && onEdit(record)} />
+                        <Button icon={<PencilLine />} onClick={() => onEdit && onEdit(record)} />
                     </Tooltip>
 
                     <Tooltip title="Delete content">
-                        <Button icon={<LuTrash />} danger onClick={() => onDelete && onDelete(record)} />
+                        <Button icon={<Trash />} danger onClick={() => onDelete && onDelete(record)} />
                     </Tooltip>
                 </Flex>
             )
@@ -214,13 +214,13 @@ export const ModelContentTable = ({
                     </Link> */}
                     <Button
                         key="create"
-                        icon={<LuPlus />}
+                        icon={<Plus />}
                         onClick={() => onCreate && onCreate()}>
                         Create
                     </Button>
                     <Button
                         key="clear"
-                        icon={<LuTrash2 />}
+                        icon={<Trash2 />}
                         onClick={() => onClear && onClear()}
                         danger>
                         Clear
@@ -229,14 +229,14 @@ export const ModelContentTable = ({
                         model && model.updated &&
                         <Button
                             key="sync"
-                            icon={<LuUpload />}
+                            icon={<Upload />}
                             onClick={() => onSync && onSync()}>
                             Sync
                         </Button>
                     }
                     <Button
                         key="return"
-                        icon={<LuCornerDownLeft />}
+                        icon={<CornerDownLeft />}
                         onClick={onBack}>
                         Return
                     </Button>
@@ -249,13 +249,13 @@ export const ModelContentTable = ({
                         <h3>Bulk Actions : </h3>
                         <Button
                             key="disable"
-                            icon={<LuPencilLine />}
+                            icon={<PencilLine />}
                             onClick={() => onBulkPlatform && onBulkPlatform()}>
                             {`Change ${rowSelection.selectedRowKeys.length} contents' platform`}
                         </Button>
                         <Button
                             key="delete"
-                            icon={<LuTrash />}
+                            icon={<Trash />}
                             danger
                             onClick={() => onBulkDelete && onBulkDelete()}>
                             {`Delete ${rowSelection.selectedRowKeys.length} contents`}

@@ -1,6 +1,6 @@
 import { cn } from "@/utils";
 import { faqContents } from "./data";
-import { LuChevronUp } from "react-icons/lu";
+import { ChevronUp } from "lucide-react";
 
 import marketing9 from "@/assets/images/landing/img-10.jpg";
 // import marketing10 from "@/assets/images/landing/img-10.png";
@@ -51,7 +51,7 @@ const FAQs = () => {
                       <h5 className="text-base font-medium flex">
                         {faq.title}
                       </h5>
-                      <LuChevronUp className="lucide lucide-chevron-up h-4 w-4 transition-all duration-300 hs-accordion-active:-rotate-180" />
+                      <ChevronUp className="lucide lucide-chevron-up h-4 w-4 transition-all duration-300 hs-accordion-active:-rotate-180" />
                     </button>
                     <div
                       id="faq-accordion-1"

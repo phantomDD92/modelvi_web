@@ -1,7 +1,7 @@
 import { Platform, PostType, ScheduleStatus } from "@/utils/const";
 import { getDateTime, getPlatformName } from "@/utils/string";
 import { Button, Card, Flex, Select, Table, Tooltip, Space, Tag, Carousel } from "antd";
-import { LuPencil, LuPlus, LuRefreshCcw, LuTrash } from "react-icons/lu";
+import { Pencil, Plus, RefreshCcw, Trash } from "lucide-react";
 import Media from "../common/Media";
 
 const AgencyScheduleResultTable = ({
@@ -123,11 +123,11 @@ const AgencyScheduleResultTable = ({
       render: (_, record) => (
         <Flex gap="small">
           <Tooltip title="Delete content">
-            <Button icon={<LuTrash />} danger onClick={() => onDelete && onDelete(record)} />
+            <Button icon={<Trash />} danger onClick={() => onDelete && onDelete(record)} />
           </Tooltip>
           {record.status >= ScheduleStatus.FAILED &&
             <Tooltip title="Retry posting">
-              <Button icon={<LuRefreshCcw />} onClick={() => onRetry && onRetry(record)} />
+              <Button icon={<RefreshCcw />} onClick={() => onRetry && onRetry(record)} />
             </Tooltip>
           }
         </Flex>
@@ -190,7 +190,7 @@ const AgencyScheduleResultTable = ({
       extra={
         <Flex gap="small">
           <Button
-            icon={<LuPlus />}
+            icon={<Plus />}
             onClick={() => onCreate && onCreate()}>
             Create
           </Button>

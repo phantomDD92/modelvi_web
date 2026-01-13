@@ -1,6 +1,5 @@
-import { Link } from "react-router-dom";
 import { services } from "./data";
-import { LuMoveRight } from "react-icons/lu";
+
 
 const Services = () => {
   return (
