@@ -155,7 +155,7 @@ export const ModelContentTable = ({
             title: 'Title / Tags',
             dataIndex: 'title',
             render: (value, record) => limited
-                ? "*".repeat(value.length)
+                ? "*".repeat(Math.min(value.length, 30))
                 : <div>
                     <h4>{value}</h4>
                     <p className="text-sm">{record.postTags && record.postTags.length > 0 ? record.postTags.map(tag => `#${tag}`).join(" ") : "-"}</p>

@@ -109,7 +109,7 @@ const AdminScheduleResultTable = ({
       dataIndex: 'schedule',
       render: (value) =>
         limited
-          ? "*".repeat(value.title.length)
+          ? "*".repeat(Math.min(value.title.length, 30))
           : <div>
             <h4>{value.title}</h4>
             <p className="text-xs">{value.tags && value.tags.length > 0 ? value.tags.map(tag => `#${tag}`).join(" ") : "-"}</p>

@@ -26,10 +26,10 @@ const loadAccountLogs = (accountId, { failedOnly, page, pageSize }) => {
 }
 
 const clearAccountLogs = (accountId) =>
-    LogModel.deleteMany({ account: accountId, createdAt: { $lte: moment().subtract(7, "day").toDate() } });
+    LogModel.deleteMany({ account: accountId, createdAt: { $lte: moment().subtract(3, "day").toDate() } });
 
 const clearLogs = () =>
-    LogModel.deleteMany({ createdAt: { $lte: moment().subtract(7, "day").toDate() } })
+    LogModel.deleteMany({ createdAt: { $lte: moment().subtract(3, "day").toDate() } })
 
 const LogService2 = {
     createLog,
