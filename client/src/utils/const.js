@@ -37,7 +37,7 @@ export const Platform = {
     MANYVIDS: "MANYVIDS",
     FANVUE: "FANVUE",
     PORNHUB: "PORNHUB",
-
+    BESTFANS: "BESTFANS",
     FANLIKE: "FANLIKE",
     FETLIFELIKE: "FETLIFELIKE",
 }

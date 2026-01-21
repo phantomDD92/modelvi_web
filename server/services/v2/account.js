@@ -137,6 +137,9 @@ const loadAgencyAccounts = (platform, agencyId, search) => {
 const findAccountByAlias = (platform, alias) =>
   AccountModel.findOne({ platform, alias });
 
+const findLiveAccountByAlias = (platform, alias) => 
+  AccountModel.findOne({ platform, alias, deleted: false });
+
 const createAccount = (
   platform,
   model,
@@ -550,6 +553,7 @@ const AccountService2 = {
   loadAccounts,
   loadAgencyAccounts,
   findAccountByAlias,
+  findLiveAccountByAlias,
   findAccountById,
   createAccount,
   deleteAccount,

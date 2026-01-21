@@ -23,7 +23,7 @@ const handleLoginAccount = async (req, res) => {
     const { platform } = req.params;
     const { alias } = req.body;
     const decodedAlias = Buffer.from(alias, 'base64').toString('ascii');
-    const account = await AccountService2.findAccountByAlias(platform, decodedAlias);
+    const account = await AccountService2.findLiveAccountByAlias(platform, decodedAlias);
     if (!account)
       throw new ApiError(`unknown account`);
     const { email, password } = account.toJSON();
