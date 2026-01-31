@@ -6,6 +6,7 @@ const NotifyUtils = require("../../utils/notifiy");
 const { isModelOwner } = require("../../utils/helper");
 const { sendResult, sendError, ApiError } = require("../../utils/resp");
 const AgencyService2 = require("../../services/v2/agency");
+const moment = require('moment');
 
 const handleLoadAccountsForAgency = async (req, res) => {
   try {
@@ -192,6 +193,9 @@ const handleUpdateAccountForAdmin = async (req, res) => {
         break;
       case "setting":
         await AccountService2.updateParameters(accountId, { $set: { params: { ...account.params, ...params } } });
+        break;
+      case "repost":
+        await AccountService2.updateParameters(accountId, { $set: { params: { ...account.params, "postNextTime": moment().subtract(1, "month").toDate() } } });
         break;
       default:
         throw new ApiError("Invalid account operation");

@@ -18,7 +18,7 @@ export const AdminAccountHistoryPage = () => {
 
   const page = parseInt(qs.parse(location.search)?.page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search)?.size) || LARGE_PAGE_SIZE;
-  const log = parseInt(qs.parse(location.search)?.log);
+  const log = parseInt(qs.parse(location.search)?.log || "-1");
 
   const logs = useSelector(state => state.admin.logs)
   const logsCount = useSelector(state => state.admin.logsCount);

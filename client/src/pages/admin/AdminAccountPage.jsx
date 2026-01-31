@@ -15,7 +15,8 @@ import {
   updateAccountsStatusForAdmin,
   deleteAccountsForAdmin,
   loadChatTeamsForAdmin,
-  loadAgencyListForAdmin
+  loadAgencyListForAdmin,
+  retryAccountPostForAdmin
 } from "@/redux/admin/actions";
 import { PageMetaData } from "@/components/common";
 import {
@@ -32,7 +33,7 @@ export const AdminAccountPage = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [account, setAccount] = useState();
   const [settingOpen, setSettingOpen] = useState(false);
-  
+
   const navigate = useNavigate();
   const dispatch = useDispatch()
   const location = useLocation();
@@ -107,6 +108,10 @@ export const AdminAccountPage = () => {
     });
   }
 
+  const handleRetryPost = (account) => {
+    dispatch(retryAccountPostForAdmin(account));
+  }
+
   const handleDeleteBulkAccounts = () => {
     Modal.confirm({
       title: `Are you sure to delete ${selectedRowKeys.length} accounts?`,
@@ -178,6 +183,7 @@ export const AdminAccountPage = () => {
           onStatus: handleChangeStatus,
           onBulkDelete: handleDeleteBulkAccounts,
           onBulkStatus: handleChangeBulkAccountsStatus,
+          onRetryPost: handleRetryPost,
         }}
       />
       <AdminAccountDialog

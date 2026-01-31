@@ -53,7 +53,7 @@ const HistoryTable = ({
           >
             <Button key="clear" danger icon={<Trash />}>Clear History</Button>
           </Popconfirm>
-          <Button key="error" icon={<Trash2 />} onClick={() => onError && onError()}>Clear Error</Button>
+          <Button key="error" icon={<Trash2 size={8}/>} onClick={() => onError && onError()}>Clear Error</Button>
           <Button
             key="return"
             icon={<CornerDownLeft />}

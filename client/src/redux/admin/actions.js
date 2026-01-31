@@ -466,6 +466,15 @@ export const updateAccountStatusForAdmin = (account, status, callback) => async 
   });
 };
 
+export const retryAccountPostForAdmin = (account, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/account/${account.platform}/${account._id}`,
+    data: { action: "repost" },
+    inform: `Account (${account.alias}) is successfully reset to post`,
+    callback,
+  });
+};
+
 export const createAccountForAdmin = (platform, params, callback) => async (dispatch) => {
   await ApiRequest.postAction(dispatch, {
     path: `/v2/admin/account/${platform}`,
