@@ -32,7 +32,7 @@ export const AdminAccountPage = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [account, setAccount] = useState();
   const [settingOpen, setSettingOpen] = useState(false);
-
+  
   const navigate = useNavigate();
   const dispatch = useDispatch()
   const location = useLocation();
@@ -42,15 +42,16 @@ export const AdminAccountPage = () => {
   const pageSize = parseInt(qs.parse(location.search)?.size) || DEFAULT_PAGE_SIZE;
   const search = qs.parse(location.search)?.search || '';
   const agency = qs.parse(location.search)?.agency || '';
+  const status = qs.parse(location.search)?.status || '';
 
   const models = useSelector(state => state.admin.models);
   const accounts = useSelector(state => state.admin.accounts);
   const chatTeams = useSelector(state => state.admin.chatTeams);
   const agencyList = useSelector(state => state.admin.agencyList);
 
-  const loadAccountsCallback = useCallback((platform, agency, search) => {
+  const loadAccountsCallback = useCallback((platform, agency, search, status) => {
     setLoading(true);
-    dispatch(loadAccountsForAdmin(platform, agency, search, () => setLoading(false)));
+    dispatch(loadAccountsForAdmin(platform, { agency, search, status }, () => setLoading(false)));
   }, [dispatch]);
 
   useEffect(() => {
@@ -66,50 +67,50 @@ export const AdminAccountPage = () => {
   }, [loadAgencyListForAdmin]);
 
   useEffect(() => {
-    loadAccountsCallback(platform, agency, search);
-  }, [loadAccountsCallback, platform, agency, search])
+    loadAccountsCallback(platform, agency, search, status);
+  }, [loadAccountsCallback, platform, agency, search, status])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      loadAccountsCallback(platform, agency, search);
+      loadAccountsCallback(platform, agency, search, status);
     }, DEFAULT_REFRESH_TIMEOUT);
     return () => clearInterval(interval);
   });
 
-  const handleChangeStatus = (account, status) => {
-    dispatch(updateAccountStatusForAdmin(account, status, () => loadAccountsCallback(platform, agency, search)))
+  const handleChangeStatus = (account, enabled) => {
+    dispatch(updateAccountStatusForAdmin(account, enabled, () => loadAccountsCallback(platform, agency, search, status)))
   }
 
   const handleUpdateAccount = (account, params) => {
-    dispatch(changeAccountForAdmin(platform, account, params, () => { setEditOpen(false); loadAccountsCallback(platform, agency, search) }))
+    dispatch(changeAccountForAdmin(platform, account, params, () => { setEditOpen(false); loadAccountsCallback(platform, agency, search, status) }))
   }
 
   const handleCreateAccount = (params) => {
-    dispatch(createAccountForAdmin(platform, params, () => { setEditOpen(false); loadAccountsCallback(platform, agency, search) }));
+    dispatch(createAccountForAdmin(platform, params, () => { setEditOpen(false); loadAccountsCallback(platform, agency, search, status) }));
   }
 
   const handleDeleteAccount = (account) => {
     Modal.confirm({
       title: `Are you sure to delete the account(${account.alias})?`,
-      onOk: () => { dispatch(deleteAccountForAdmin(platform, account, () => loadAccountsCallback(platform, agency, search))); },
+      onOk: () => { dispatch(deleteAccountForAdmin(platform, account, () => loadAccountsCallback(platform, agency, search, status))); },
     });
   }
 
   const handleUpdateSetting = (account, params) => {
-    dispatch(updateAccountSettingsForAdmin(platform, account, params, () => { setSettingOpen(false); loadAccountsCallback(platform, agency, search); }));
+    dispatch(updateAccountSettingsForAdmin(platform, account, params, () => { setSettingOpen(false); loadAccountsCallback(platform, agency, search, status); }));
   }
 
   const handleChangeBulkAccountsStatus = (status) => {
     Modal.confirm({
       title: `Are you sure to ${status ? "enable" : "disable"} ${selectedRowKeys.length} accounts?`,
-      onOk: () => dispatch(updateAccountsStatusForAdmin(platform, selectedRowKeys, status, () => { setSelectedRowKeys([]); loadAccountsCallback(platform, agency, search) })),
+      onOk: () => dispatch(updateAccountsStatusForAdmin(platform, selectedRowKeys, status, () => { setSelectedRowKeys([]); loadAccountsCallback(platform, agency, search, status) })),
     });
   }
 
   const handleDeleteBulkAccounts = () => {
     Modal.confirm({
       title: `Are you sure to delete ${selectedRowKeys.length} accounts?`,
-      onOk: () => dispatch(deleteAccountsForAdmin(platform, selectedRowKeys, () => { setSelectedRowKeys([]); loadAccountsCallback(platform, agency, search) })),
+      onOk: () => dispatch(deleteAccountsForAdmin(platform, selectedRowKeys, () => { setSelectedRowKeys([]); loadAccountsCallback(platform, agency, search, status) })),
     });
   }
 
@@ -120,9 +121,10 @@ export const AdminAccountPage = () => {
     }, { replace: true });
   }
 
-  const handleChangePlatform = (plat) => {
+  const handleChangePlatform = (platform) => {
     navigate({
-      pathname: `/admin/account/${plat}`
+      pathname: `/admin/account/${platform}`,
+      search: createSearchParams({ search, agency, status, page: 1, size: pageSize }).toString()
     }, { replace: true });
   }
 
@@ -149,15 +151,22 @@ export const AdminAccountPage = () => {
           onSearchChange: value => {
             navigate({
               pathname: location.pathname,
-              search: createSearchParams({ search: value, agency, page: 1, size: pageSize }).toString()
+              search: createSearchParams({ search: value, agency, status, page: 1, size: pageSize }).toString()
             }, { replace: true });
           },
           onAgencyChange: value => {
             navigate({
               pathname: location.pathname,
-              search: createSearchParams({ search, agency: value, page: 1, size: pageSize }).toString()
+              search: createSearchParams({ search, agency: value, status, page: 1, size: pageSize }).toString()
             }, { replace: true });
           },
+          status,
+          onStatusChange: value => {
+            navigate({
+              pathname: location.pathname,
+              search: createSearchParams({ search, agency, status: value, page: 1, size: pageSize }).toString()
+            }, { replace: true });
+          }
         }}
         actions={{
           onPlatform: handleChangePlatform,

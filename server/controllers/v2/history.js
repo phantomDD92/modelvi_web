@@ -22,11 +22,11 @@ const handleLoadHistoryForAgency = async (req, res) => {
 const handleLoadHistoryForAdmin = async (req, res) => {
   try {
     const { accountId } = req.params;
-    const { failedOnly, page, pageSize } = req.query;
+    const { failedOnly, page, pageSize, log } = req.query;
     const account = await AccountService2.findAccountById(accountId);
     if (!account)
       throw new ApiError("Account does not exist");
-    const [logs, logsCount] = await LogService2.loadAccountLogs(accountId, { failedOnly, page, pageSize: pageSize || "20" })
+    const [logs, logsCount] = await LogService2.loadAccountLogs(accountId, { failedOnly, page, pageSize: pageSize || "20" , log})
     sendResult(res, { logs, logsCount, account });
   } catch (error) {
     sendError(res, error);

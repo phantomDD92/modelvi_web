@@ -18,6 +18,7 @@ export const AdminAccountHistoryPage = () => {
 
   const page = parseInt(qs.parse(location.search)?.page) || DEFAULT_CURRENT_PAGE;
   const pageSize = parseInt(qs.parse(location.search)?.size) || LARGE_PAGE_SIZE;
+  const log = parseInt(qs.parse(location.search)?.log);
 
   const logs = useSelector(state => state.admin.logs)
   const logsCount = useSelector(state => state.admin.logsCount);
@@ -25,8 +26,8 @@ export const AdminAccountHistoryPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    dispatch(loadAccountHistoryForAdmin(platform, accountId, { failedOnly, page, pageSize }, () => setLoading(false)))
-  }, [loadAccountHistoryForAdmin, platform, accountId, failedOnly, page])
+    dispatch(loadAccountHistoryForAdmin(platform, accountId, { failedOnly, page, pageSize, log }, () => setLoading(false)))
+  }, [loadAccountHistoryForAdmin, platform, accountId, failedOnly, page, log])
 
 
   const handleClearHistory = () => {
@@ -39,13 +40,13 @@ export const AdminAccountHistoryPage = () => {
 
   const handleReloadData = () => {
     setLoading(true);
-    dispatch(loadAccountHistoryForAdmin(platform, accountId, {failedOnly, page, pageSize }, () => setLoading(false)))
+    dispatch(loadAccountHistoryForAdmin(platform, accountId, { failedOnly, page, pageSize, log }, () => setLoading(false)))
   }
 
   const handleChangePagination = (pageValue, pageSizeValue) => {
     navigate({
       pathname: location.pathname,
-      search: createSearchParams({ page: pageValue, size: pageSizeValue }).toString()
+      search: createSearchParams({ page: pageValue, size: pageSizeValue, failedOnly, log }).toString()
     }, { replace: true });
   }
   return (
@@ -66,9 +67,16 @@ export const AdminAccountHistoryPage = () => {
           onFailed: value => setFailedOnly(value),
           onClear: handleClearHistory,
           onError: handleClearError,
-          onReturn: () => navigate(-1)
+          onReturn: () => navigate(-1),
+          logType: log,
+          onLogTypeChange: value => {
+            navigate({
+              pathname: location.pathname,
+              search: createSearchParams({ page, pageSize, failedOnly, log: value }).toString()
+            }, { replace: true });
+          }
         }}
-      /> 
+      />
       {/* <HistoryTable
         pagination={{
           current: page,

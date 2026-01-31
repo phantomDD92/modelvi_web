@@ -143,3 +143,7 @@ export function formatBytes(bytes) {
   } while (value >= 1024 && i < units.length - 1);
   return `${value.toFixed(2)} ${units[i]}`;
 }
+
+export function capitalize(str) {
+  return str ? str.charAt(0).toUpperCase() + str.slice(1) : str;
+}

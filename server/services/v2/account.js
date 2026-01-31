@@ -84,7 +84,7 @@ const syncBulkContents = (modelIds) =>
 const changeOwner = (modelId, agencyId) =>
   AccountModel.updateMany({ actor: modelId }, { $set: { owner: agencyId } });
 
-const loadAccounts = (platform, { agency, search }) => {
+const loadAccounts = (platform, { agency, search, status }) => {
   const agencyQuery = agency ? { owner: agency } : {};
   const searchQuery = search
     ? isNaN(Number(search))
@@ -96,11 +96,13 @@ const loadAccounts = (platform, { agency, search }) => {
         ]
       }
     : {}
+  const statusQuery = status == 'enabled' ? { status: true } : status == 'disabled' ? { status: false } : {};
   const query = {
     platform,
     deleted: false,
     ...agencyQuery,
     ...searchQuery,
+    ...statusQuery,
   }
 
   return AccountModel.find(query, "-params.contents")
@@ -137,7 +139,7 @@ const loadAgencyAccounts = (platform, agencyId, search) => {
 const findAccountByAlias = (platform, alias) =>
   AccountModel.findOne({ platform, alias });
 
-const findLiveAccountByAlias = (platform, alias) => 
+const findLiveAccountByAlias = (platform, alias) =>
   AccountModel.findOne({ platform, alias, deleted: false });
 
 const createAccount = (

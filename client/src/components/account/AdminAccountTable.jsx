@@ -37,6 +37,8 @@ const AdminAccountTable = ({
         agency,
         agencyList,
         onAgencyChange,
+        status,
+        onStatusChange,
     },
     actions: {
         onStatus,
@@ -198,33 +200,14 @@ const AdminAccountTable = ({
 
     return (
         <Card
-            title={
-                <Space align="center">
-                    <span className="mr-8">
-                        Account List
-                    </span>
-
-                    <Radio.Group onChange={(e) => onPlatform && onPlatform(e.target.value)} value={platform}>
-                        {[
-                            Platform.F2F,
-                            Platform.KNKY,
-                            Platform.FNC,
-                            Platform.FAN,
-                            Platform.LOYALFANS,
-                            Platform.MALOUM,
-                            Platform.FANVUE,
-                            Platform.FOURBASED,
-                            Platform.MYMFANS,
-                            Platform.FETLIFE,
-                            Platform.ONLYFANS,
-                            Platform.BESTFANS,
-                            // Platform.DFANXYZ,
-                        ].map(element => <Radio.Button key={element} value={element}>{getPlatformName(element)}</Radio.Button>)}
-                    </Radio.Group>
-                </Space>
-            }
+            title={<div className="mr-8">Account List</div>}
             extra={
                 <Flex gap="small">
+                    <Radio.Group onChange={(e) => onStatusChange && onStatusChange(e.target.value)} value={status}>
+                        <Radio.Button key="all" value="">All</Radio.Button>
+                        <Radio.Button key="enabled" value="enabled">Enabled</Radio.Button>
+                        <Radio.Button key="disabled" value="disabled">Disabled</Radio.Button>
+                    </Radio.Group>
                     <StyledSearch
                         className="w-[200px]"
                         defaultValue={search}
@@ -244,33 +227,55 @@ const AdminAccountTable = ({
                 </Flex>
             }
         >
-            <Space align='center' size="middle">
-                {rowSelection.selectedRowKeys && rowSelection.selectedRowKeys.length > 0 &&
-                    <>
-                        <h3>Bulk Actions : </h3>
-                        <Button
-                            key="enable"
-                            icon={<EyeOutlined />}
-                            onClick={() => onBulkStatus && onBulkStatus(true)}>
-                            {`Enable ${rowSelection.selectedRowKeys.length} accounts`}
-                        </Button>
-                        <Button
-                            key="disable"
-                            icon={<EyeInvisibleOutlined />}
-                            onClick={() => onBulkStatus && onBulkStatus(false)}>
-                            {`Disable ${rowSelection.selectedRowKeys.length} accounts`}
-                        </Button>
-                        <Button
-                            key="delete"
-                            icon={<DeleteOutlined />}
-                            danger
-                            onClick={() => onBulkDelete && onBulkDelete()}>
-                            {`Delete ${rowSelection.selectedRowKeys.length} accounts`}
-                        </Button>
-                    </>
-                }
-            </Space>
+            <Flex align="center" vertical gap="middle" className="w-full">
+                <Radio.Group onChange={(e) => onPlatform && onPlatform(e.target.value)} value={platform}>
+                    {[
+                        Platform.F2F,
+                        Platform.KNKY,
+                        Platform.FNC,
+                        Platform.FAN,
+                        Platform.LOYALFANS,
+                        Platform.MALOUM,
+                        Platform.FANVUE,
+                        Platform.FOURBASED,
+                        Platform.MYMFANS,
+                        Platform.FETLIFE,
+                        Platform.ONLYFANS,
+                        Platform.BESTFANS,
+                        // Platform.DFANXYZ,
+                    ].map(element => <Radio.Button key={element} value={element}>{getPlatformName(element)}</Radio.Button>)}
+                </Radio.Group>
+                <Flex align="center" gap="middle" className="w-full">
+                    {rowSelection.selectedRowKeys && rowSelection.selectedRowKeys.length > 0 &&
+                        <>
+                            <h3>Bulk Actions : </h3>
+                            <Button
+                                key="enable"
+                                icon={<EyeOutlined />}
+                                onClick={() => onBulkStatus && onBulkStatus(true)}>
+                                {`Enable ${rowSelection.selectedRowKeys.length} accounts`}
+                            </Button>
+                            <Button
+                                key="disable"
+                                icon={<EyeInvisibleOutlined />}
+                                onClick={() => onBulkStatus && onBulkStatus(false)}>
+                                {`Disable ${rowSelection.selectedRowKeys.length} accounts`}
+                            </Button>
+                            <Button
+                                key="delete"
+                                icon={<DeleteOutlined />}
+                                danger
+                                onClick={() => onBulkDelete && onBulkDelete()}>
+                                {`Delete ${rowSelection.selectedRowKeys.length} accounts`}
+                            </Button>
+                        </>
+                    }
+                </Flex>
+            </Flex>
+            {/* <Space align='center' size="middle"> */}
+            {/* </Space> */}
             <Table
+                className="mt-10"
                 pagination={{
                     ...pagination,
                     pageSizeOptions: [10, 20, 50, 100],

@@ -9,11 +9,13 @@ const createLog = (account, params) =>
         ...params
     });
 
-const loadAccountLogs = (accountId, { failedOnly, page, pageSize }) => {
+const loadAccountLogs = (accountId, { failedOnly, page, pageSize, log }) => {
     const resultQuery = failedOnly == "true" ? { success: false } : {}
+    const logQuery = (log == undefined || log == "-1" || log == "") ? {} : { action: parseInt(log) }
     const query = {
         account: accountId,
         ...resultQuery,
+        ...logQuery,
     }
     return Promise.all([
         LogModel

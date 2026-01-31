@@ -11,6 +11,8 @@ import {
 } from "antd";
 import { CornerDownLeft, Trash, Trash2 } from "lucide-react";
 import { getAccountName, getLogAction } from "@/utils/string";
+import LogSelect from "./LogSelect";
+import { ActionType } from "@/utils/const";
 
 
 const LogTable = ({
@@ -23,7 +25,9 @@ const LogTable = ({
     onReturn,
     onError,
     failedOnly,
-    onFailed
+    onFailed,
+    logType,
+    onLogTypeChange,
   }
 }) => {
 
@@ -56,9 +60,15 @@ const LogTable = ({
       extra={
 
         <Flex gap={"large"} align="center">
+
           <Checkbox checked={failedOnly} onChange={e => onFailed && onFailed(e.target.checked)}          >
             Failed-Only
           </Checkbox>
+          <LogSelect
+            all
+            dataSource={[ActionType.LOGIN, ActionType.POST, ActionType.SCHEDULE, ActionType.STORY]}
+            value={logType}
+            onChange={onLogTypeChange} />
           <Popconfirm
             title="Confirm"
             description="Are you sure to remove all history?"

@@ -23,8 +23,8 @@ const handleLoadAccountsForAgency = async (req, res) => {
 const handleLoadAccountsForAdmin = async (req, res) => {
   try {
     const { platform } = req.params;
-    const { agency, search } = req.query;
-    const accounts = await AccountService2.loadAccounts(platform, { agency, search });
+    const { agency, search, status } = req.query;
+    const accounts = await AccountService2.loadAccounts(platform, { agency, search, status });
     sendResult(res, { accounts });
   } catch (error) {
     console.error(error);

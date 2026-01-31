@@ -430,10 +430,10 @@ export const deleteModelContentForAdmin = (model, content, callback) => async (d
   })
 };
 
-export const loadAccountsForAdmin = (platform, agency, search, callback) => async (dispatch) => {
+export const loadAccountsForAdmin = (platform, { agency, search, status }, callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/v2/admin/account/${platform}`,
-    params: { agency, search },
+    params: { agency, search, status },
     action: ACTIONS.LOAD_ACCOUNTS,
     callback
   });
@@ -501,10 +501,10 @@ export const deleteAccountForAdmin = (platform, account, callback) => async (dis
   })
 };
 
-export const loadAccountHistoryForAdmin = (platform, accountId, { failedOnly, page, pageSize }, callback) => async (dispatch) => {
+export const loadAccountHistoryForAdmin = (platform, accountId, { failedOnly, page, pageSize, log }, callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/v2/admin/history/${platform}/${accountId}`,
-    params: { failedOnly, page, pageSize },
+    params: { failedOnly, page, pageSize, log },
     action: ACTIONS.LOAD_ACCOUNT_HISTORY,
     callback
   })
