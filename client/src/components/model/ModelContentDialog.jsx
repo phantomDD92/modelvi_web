@@ -196,6 +196,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                         { label: 'MymFans', value: Platform.MYMFANS },
                         { label: 'FetLife', value: Platform.FETLIFE },
                         { label: 'OnlyFans', value: Platform.ONLYFANS },
+                        { label: 'BestFans', value: Platform.BESTFANS },
                     ]} onChange={handlePlatformsChange} />
                 </Form.Item>
                 {isF2F() &&
