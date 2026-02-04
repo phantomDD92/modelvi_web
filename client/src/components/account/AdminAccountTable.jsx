@@ -10,15 +10,10 @@ import {
     Tag,
     Switch,
 } from "antd";
-import {
-    UserAddOutlined,
-    
-    
-} from "@ant-design/icons";
-import {LuBook, LuCirclePlay, LuCircleStop, LuEye, LuEyeOff, LuPause, LuPencilLine, LuPlay, LuPrinter,  LuSettings2, LuTrash, LuTrash2, LuUserPlus} from "react-icons/lu"
+import { LuBook, LuCirclePlay, LuCircleStop, LuEye, LuEyeOff, LuPause, LuPencilLine, LuPlay, LuPrinter, LuSettings2, LuTrash, LuTrash2, LuUserPlus } from "react-icons/lu"
 import { Platform } from "@/utils/const"
 import moment from "moment";
-import { getDate, getFiatAmount, getPlatformName } from "@/utils/string";
+import { getDateTime, getFiatAmount, getPlatformName } from "@/utils/string";
 import { StyledSearch } from "../common";
 import { AgencySelect } from "../agency";
 
@@ -134,6 +129,11 @@ const AdminAccountTable = ({
                 title: 'LastError',
                 width: 250,
                 dataIndex: 'lastError',
+                render: (value, record) =>
+                    <Space direction="vertical" size={1}>
+                        <h5>{record.accessedAt ? `[${getDateTime(record.accessedAt)}]`: '-'}</h5>
+                        <span>{`${value || "-"}`}</span>
+                    </Space>
             },
             {
                 key: 'status',
@@ -141,12 +141,15 @@ const AdminAccountTable = ({
                 dataIndex: 'status',
                 width: 120,
                 render: (value, record) => (
-                    <Switch
-                        checked={value}
-                        checkedChildren="Enabled"
-                        unCheckedChildren="Disabled"
-                        onChange={(status) => onStatus && onStatus(record, status)}
-                    />
+                    record.deleted
+                        ? <Tag color="error">Deleted</Tag>
+                        :
+                        <Switch
+                            checked={value}
+                            checkedChildren="Enabled"
+                            unCheckedChildren="Disabled"
+                            onChange={(status) => onStatus && onStatus(record, status)}
+                        />
                 )
             },
             {
@@ -213,6 +216,7 @@ const AdminAccountTable = ({
                         <Radio.Button key="all" value="">All</Radio.Button>
                         <Radio.Button key="enabled" value="enabled">Enabled</Radio.Button>
                         <Radio.Button key="disabled" value="disabled">Disabled</Radio.Button>
+                        <Radio.Button key="none" value="none">Deleted</Radio.Button>
                     </Radio.Group>
                     <StyledSearch
                         className="w-[200px]"

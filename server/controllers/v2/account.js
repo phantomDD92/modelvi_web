@@ -25,7 +25,7 @@ const handleLoadAccountsForAdmin = async (req, res) => {
   try {
     const { platform } = req.params;
     const { agency, search, status } = req.query;
-    const accounts = await AccountService2.loadAccounts(platform, { agency, search, status });
+    const accounts = await AccountService2.loadAccountsForAdmin(platform, { agency, search, status });
     sendResult(res, { accounts });
   } catch (error) {
     console.error(error);
@@ -113,12 +113,20 @@ const handleDeleteAccountForAdmin = async (req, res) => {
     const account = await AccountService2.findAccountById(accountId);
     if (!account)
       throw new ApiError("Account does not exist.");
-    await ModelService2.removeAccount(account.actor?._id, accountId);
-    await AccountService2.deleteAccount(accountId);
-    NotifyUtils.sendMessage(
-      `${req.manager.name} (Admin)`,
-      `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`,
-      `DELETE A ACCOUNT`);
+    if (account.deleted) {
+      await AccountService2.removeAccount(accountId);
+      NotifyUtils.sendMessage(
+        `${req.manager.name} (Admin)`,
+        `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`,
+        `REMOVE A ACCOUNT`);
+    } else {
+      await ModelService2.removeAccount(account.actor?._id, accountId);
+      await AccountService2.deleteAccount(accountId);
+      NotifyUtils.sendMessage(
+        `${req.manager.name} (Admin)`,
+        `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`,
+        `DELETE A ACCOUNT`);
+    }
     sendResult(res);
   } catch (error) {
     sendError(res, error)

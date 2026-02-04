@@ -1,5 +1,5 @@
-//export const API_PATH = "http://localhost:5000/api";
-//export const SERVER_PATH = "http://localhost:5000";
+// export const API_PATH = "http://localhost:5000/api";
+// export const SERVER_PATH = "http://localhost:5000";
 export const API_PATH = `${window.location.protocol}//${window.location.host}/api`;
 export const SERVER_PATH = `${window.location.protocol}//${window.location.host}`;
 

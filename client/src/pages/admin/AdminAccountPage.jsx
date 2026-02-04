@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { createSearchParams, useLocation, useNavigate, useParams } from "react-router-dom";
 import qs from 'query-string';
 import { Modal } from "antd";
-
 import {
   loadAccountsForAdmin,
   loadModelsForAdmin,
@@ -44,7 +43,7 @@ export const AdminAccountPage = () => {
   const search = qs.parse(location.search)?.search || '';
   const agency = qs.parse(location.search)?.agency || '';
   const status = qs.parse(location.search)?.status || '';
-
+  
   const models = useSelector(state => state.admin.models);
   const accounts = useSelector(state => state.admin.accounts);
   const chatTeams = useSelector(state => state.admin.chatTeams);
@@ -122,7 +121,7 @@ export const AdminAccountPage = () => {
   const handleChangePagination = (pageValue, pageSizeValue) => {
     navigate({
       pathname: location.pathname,
-      search: createSearchParams({ search, agency, page: pageValue, size: pageSizeValue }).toString()
+      search: createSearchParams({ search, agency, status, page: pageValue, size: pageSizeValue }).toString()
     }, { replace: true });
   }
 

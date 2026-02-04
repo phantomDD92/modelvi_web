@@ -112,6 +112,38 @@ const loadAccounts = (platform, { agency, search, status }) => {
     .populate("chatTeam", "name")
 }
 
+const loadAccountsForAdmin = (platform, { agency, search, status }) => {
+  const agencyQuery = agency ? { owner: agency } : {};
+  const searchQuery = search
+    ? isNaN(Number(search))
+      ? { alias: { $regex: search, $options: "i" } }
+      : {
+        $or: [
+          { alias: { $regex: search, $options: "i" } },
+          { number: Number(search) },
+        ]
+      }
+    : {}
+  const statusQuery =
+    status == 'enabled' ? { status: true, deleted: false, }
+      : status == 'disabled' ? { status: false, deleted: false, }
+        : status == 'none' ? {}
+          : { deleted: false, };
+
+  const query = {
+    platform,
+    ...agencyQuery,
+    ...searchQuery,
+    ...statusQuery,
+  }
+
+  return AccountModel.find(query, "-params.contents")
+    .sort({ owner: 1, number: 1 })
+    .populate("owner", "name")
+    .populate("actor", "name")
+    .populate("chatTeam", "name")
+}
+
 const loadAgencyAccounts = (platform, agencyId, search) => {
   const agencyQuery = { owner: agencyId, platform };
   const searchQuery = search
@@ -536,6 +568,9 @@ const getAgenciesRevenue = () => {
 const getAgencyProxyCount = (agencyId) =>
   AccountModel.countDocuments({ owner: agencyId, deleted: false });
 
+const removeAccount = (accountId) => 
+  AccountModel.findByIdAndDelete(accountId);
+
 const AccountService2 = {
   getAgencyAccounts,
   getAccountWithModel,
@@ -553,12 +588,14 @@ const AccountService2 = {
   syncBulkContents,
   changeOwner,
   loadAccounts,
+  loadAccountsForAdmin,
   loadAgencyAccounts,
   findAccountByAlias,
   findLiveAccountByAlias,
   findAccountById,
   createAccount,
   deleteAccount,
+  removeAccount,
   updateAccount,
   setStatus,
   clearError,
