@@ -32,7 +32,7 @@ const getEstimatedPrice = async (amount, currencyFrom) => {
         }
       }
     );
-    return resp.data?.estimated_amount;
+    return parseFloat(resp.data?.estimated_amount || 0);
   } catch (error) {
     throw new ApiError("NowPayment service failed");
   }
