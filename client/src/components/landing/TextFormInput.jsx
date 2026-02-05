@@ -1,6 +1,6 @@
 import { Controller } from "react-hook-form";
-import { AlertCircle } from "lucide-react";
 import { cn } from "@/utils";
+import { LuCircleAlert } from "react-icons/lu";
 
 const TextFormInput = ({
   control,
@@ -70,7 +70,7 @@ const TextFormInput = ({
                   endButton ? "end-20" : "end-4"
                 )}
               >
-                <AlertCircle size={20} className="text-red-500" />
+                <LuCircleAlert size={20} className="text-red-500" />
               </div>
             )}
           </div>

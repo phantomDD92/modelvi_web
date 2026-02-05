@@ -15,7 +15,7 @@ import moment from "moment";
 import { Platform, PostType, SERVER_PATH } from "@/utils/const";
 import StyledInput from "../common/StyledInput";
 import { getPlatformName } from "@/utils/string";
-import { Upload as UploadIcon } from "lucide-react";
+import { LuUpload } from "react-icons/lu";
 
 const beforeUpload = (file) => {
     // Accept specific mime types or extensions
@@ -159,35 +159,10 @@ const AgencyScheduleDialog = ({ open, data, modelList, onCancel, onUpdate }) => 
                         fileList={fileList}
                         onChange={handleMediaChange}
                     >
-                        <Button icon={<UploadIcon />}>Upload Media (Max : 6)</Button>
+                        <Button icon={<LuUpload />}>Upload Media (Max : 6)</Button>
                     </Upload>
                 </Form.Item>
 
-                {/* <Form.Item
-                    label="Preview"
-                    name="previews"
-                    valuePropName="fileList"
-                    getValueFromEvent={normFile}
-                >
-                    <Upload
-                        name="file"
-                        action={`${SERVER_PATH}/api/upload`}
-                        headers={{ authorization: 'authorization-text' }}
-                        showUploadList={false}
-                        maxCount={1}
-                        onChange={handlePreviewChange}
-                    >
-                        <Button icon={<UploadOutlined />}>Upload Preview</Button>
-                    </Upload>
-                </Form.Item>
-                <Form.Item>
-                    <Flex justify="center">
-                        <Media
-                            width={400}
-                            src={previewName}
-                            type={previewType} />
-                    </Flex>
-                </Form.Item> */}
                 <Form.Item name="title" label="Title" rules={[{ required: true }]}>
                     <StyledInput />
                 </Form.Item>

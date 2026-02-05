@@ -1,8 +1,8 @@
 import bgLine2Img from "@/assets/images/other/bg-lines-2.png";
 import bgLine2DarkImg from "@/assets/images/other/bg-lines-2-dark.png";
 import hero from "@/assets/images/landing/img-8.png";
-import { ArrowUpRight } from "lucide-react";
 import { useLayoutContext } from "@/contexts";
+import { LuArrowUpRight } from "react-icons/lu";
 
 const Hero = () => {
   const { themeMode } = useLayoutContext();
@@ -30,7 +30,7 @@ const Hero = () => {
                 className="inline-flex items-center justify-center gap-2 border border-primary/50 text-primary py-2 px-6 rounded-md bg-primary/10 hover:text-white hover:bg-primary transition-all duration-300"
               >
                 CONTACT SALES
-                <ArrowUpRight className="h-6 w-6" />
+                <LuArrowUpRight className="h-6 w-6" />
               </a>
             </div>
           </div>

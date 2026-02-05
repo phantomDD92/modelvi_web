@@ -3,12 +3,12 @@ import { Card, Row, Col, Avatar, Typography, Tag, Divider, Tabs } from "antd";
 
 import { useSelector } from "react-redux";
 import { AdminRole } from "@/utils/const";
-import { Receipt, User, Users, Wallet } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import BillingPaymentPage from "./BillingPaymentPage";
 import BillingTransactionPage from "./BillingTransactionPage";
 import PageMetaData from "@/components/common/PageMetaData";
 import { getFiatAmount } from "@/utils/string";
+import { LuReceipt, LuUser, LuUsers, LuWallet } from "react-icons/lu";
 
 const FeatureItem = ({ icon, label, value }) =>
   <div className="flex gap-2 justify-center items-center mx-4">
@@ -63,12 +63,12 @@ export const BillingPage = () => {
               {/* <Tag className="text-lg" color="warning">{`Available balance : $${profile?.balance || 0}`}</Tag> */}
               <div className="flex justify-center my-2">
                 <FeatureItem
-                  icon={<Wallet size={30} />}
+                  icon={<LuWallet size={30} />}
                   label="Balance"
                   value={getFiatAmount(profile.balance || 0, "$0")}
                 />
                 <FeatureItem
-                  icon={<Receipt size={30} />}
+                  icon={<LuReceipt size={30} />}
                   label="Monthly Estimate"
                   value={getFiatAmount(profile.monthlyFee, "$0")}
                 />
@@ -80,7 +80,7 @@ export const BillingPage = () => {
               </div>
               <div className="flex justify-center my-2">
                 <FeatureItem
-                  icon={<Users size={30} />}
+                  icon={<LuUsers size={30} />}
                   label="Models"
                   value={profile.modelCount || "-"}
                 />
@@ -90,7 +90,7 @@ export const BillingPage = () => {
                   value={profile.accountCount || "-"}
                 />
                 <FeatureItem
-                  icon={<User size={30} />}
+                  icon={<LuUser size={30} />}
                   label="Proxies"
                   value={profile.proxyCount || "-"}
                 />

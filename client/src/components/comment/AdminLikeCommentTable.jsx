@@ -1,5 +1,5 @@
 import { Card, Table, Button, Space } from "antd";
-import { Plus, Trash } from 'lucide-react';
+import { LuPlus, LuTrash } from "react-icons/lu";
 
 export const AdminLikeCommentTable = ({
   pagination,
@@ -24,7 +24,7 @@ export const AdminLikeCommentTable = ({
       width: 200,
       render: (_, record) =>
         <Button
-          icon={<Trash />}
+          icon={<LuTrash />}
           danger
           onClick={() => onDelete && onDelete(record)}>
           Delete
@@ -37,7 +37,7 @@ export const AdminLikeCommentTable = ({
       title="Comment List"
       extra={
         <Button
-          icon={<Plus />}
+          icon={<LuPlus />}
           onClick={() => onAppend && onAppend()}>
           Create
         </Button>}
@@ -48,7 +48,7 @@ export const AdminLikeCommentTable = ({
             <h3>Bulk Actions : </h3>
             <Button
               key="delete"
-              icon={<Trash />}
+              icon={<LuTrash />}
               danger
               onClick={onBulkDelete}>
               {`Delete ${rowSelection.selectedRowKeys.length} comments`}

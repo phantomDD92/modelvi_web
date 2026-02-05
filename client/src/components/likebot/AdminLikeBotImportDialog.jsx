@@ -1,8 +1,8 @@
 import { Modal, Form, Row, Col, Input, Upload, Button, Alert } from "antd";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Upload as UploadIcon } from "lucide-react";
 import Papa from 'papaparse';
+import { LuUpload } from "react-icons/lu";
 
 const AdminLikeBotImportDialog = ({
   open,
@@ -83,7 +83,7 @@ const AdminLikeBotImportDialog = ({
                 beforeUpload={handleBeforeUpload}
                 fileList={fileList}
               >
-                <Button icon={<UploadIcon />}>Select File</Button>
+                <Button icon={<LuUpload />}>Select File</Button>
               </Upload>
             </Form.Item>
           </Col>

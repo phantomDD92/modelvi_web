@@ -9,7 +9,7 @@ import {
   Tag,
   Checkbox
 } from "antd";
-import { CornerDownLeft, Trash, Trash2 } from "lucide-react";
+import { LuCornerDownLeft, LuTrash, LuTrash2 } from "react-icons/lu";
 import { getAccountName, getLogAction } from "@/utils/string";
 import LogSelect from "./LogSelect";
 import { ActionType } from "@/utils/const";
@@ -76,12 +76,12 @@ const LogTable = ({
             cancelText="No"
             onConfirm={() => onClear && onClear()}
           >
-            <Button key="clear" danger icon={<Trash />}>Clear History</Button>
+            <Button key="clear" danger icon={<LuTrash />}>Clear History</Button>
           </Popconfirm>
-          <Button key="error" icon={<Trash2 />} onClick={() => onError && onError()}>Clear Error</Button>
+          <Button key="error" icon={<LuTrash2 />} onClick={() => onError && onError()}>Clear Error</Button>
           <Button
             key="return"
-            icon={<CornerDownLeft />}
+            icon={<LuCornerDownLeft />}
             onClick={() => onReturn && onReturn()}>
             Return
           </Button>

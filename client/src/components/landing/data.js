@@ -1,4 +1,4 @@
-import { Component, Layers, LayoutGrid } from "lucide-react";
+import { LuComponent, LuLayers, LuLayoutGrid } from "react-icons/lu";
 
 const supportPlatforms = [
   "F2F",
@@ -50,37 +50,37 @@ const services = [
     title: "Hands-Free Growth",
     description:
       "Set it up once per model and let Modelvi handle the rest—posting consistently across platforms without extra effort.",
-    icon: Component,
+    icon: LuComponent,
   },
   {
     title: "Drive Targeted Traffic",
     description:
       "Fuel your growth with tools that attract the right audience to your models. Reach more fans through smart automation and platform-specific optimization.",
-    icon: Layers,
+    icon: LuLayers,
   },
   {
     title: "Multi-Platform Posting",
     description:
       "Support for FanCentro, F2F, Fansly, Fanvue, Knky, and Maloum—expand your audience effortlessly.",
-    icon: LayoutGrid,
+    icon: LuLayoutGrid,
   },
   {
     title: "Scalable Workflows",
     description:
       "Automate posting schedules across multiple accounts, allowing agencies to scale operations seamlessly.",
-    icon: LayoutGrid,
+    icon: LuLayoutGrid,
   },
   {
     title: "Reliable & Secure",
     description:
       "We prioritize data security and never operate as a content agency, ensuring full control remains in your hands.",
-    icon: LayoutGrid,
+    icon: LuLayoutGrid,
   },
   {
     title: "24/7 Support",
     description:
       "Need help? Our team is always ready to assist, with both Dutch & English representatives available.",
-    icon: LayoutGrid,
+    icon: LuLayoutGrid,
   },
 ];
 

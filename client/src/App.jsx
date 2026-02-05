@@ -1,12 +1,11 @@
 import "./style/App.css";
 import Router from "@/Router";
 import { ConfigProvider, FloatButton, theme } from "antd";
-import { SunOutlined, MoonOutlined } from "@ant-design/icons";
-
 import { useDispatch, useSelector } from "react-redux";
 import { AuthProvider, LayoutProvider } from "./contexts";
 import { HelmetProvider } from "react-helmet-async";
 import { changeTheme } from "./redux/v2/actions";
+import { LuMoon, LuSun } from "react-icons/lu";
 
 function App() {
   const currentTheme = useSelector(state => state.v2.theme);
@@ -26,7 +25,7 @@ function App() {
             <Router />
             <FloatButton
               tooltip={currentTheme == "dark" ? "Light Theme" : "Dark Theme"}
-              icon={currentTheme == "dark" ? <SunOutlined /> : <MoonOutlined />}
+              icon={currentTheme == "dark" ? <LuSun /> : <LuMoon />}
               onClick={handleChangeTheme} />
           </LayoutProvider>
         </AuthProvider>

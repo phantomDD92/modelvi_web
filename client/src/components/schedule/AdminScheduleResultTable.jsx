@@ -1,8 +1,8 @@
 import { Platform, PostType, ScheduleStatus } from "@/utils/const";
 import { formatBytes, getDateTime, getPlatformName } from "@/utils/string";
 import { Button, Card, Flex, Select, Table, Tooltip, Tag, Carousel } from "antd";
-import { Plus, RefreshCcw, Trash } from "lucide-react";
 import Media from "../common/Media";
+import { LuPlus, LuRefreshCcw, LuTrash } from "react-icons/lu";
 
 const AdminScheduleResultTable = ({
   limited,
@@ -143,11 +143,11 @@ const AdminScheduleResultTable = ({
       render: (_, record) => (
         <Flex gap="small">
           <Tooltip title="Delete content">
-            <Button icon={<Trash />} danger onClick={() => onDelete && onDelete(record)} />
+            <Button icon={<LuTrash />} danger onClick={() => onDelete && onDelete(record)} />
           </Tooltip>
           {record.status >= ScheduleStatus.FAILED &&
             <Tooltip title="Retry posting">
-              <Button icon={<RefreshCcw />} onClick={() => onRetry && onRetry(record)} />
+              <Button icon={<LuRefreshCcw />} onClick={() => onRetry && onRetry(record)} />
             </Tooltip>
           }
         </Flex>
@@ -228,7 +228,7 @@ const AdminScheduleResultTable = ({
             Fix Data
           </Button> */}
           <Button
-            icon={<Plus />}
+            icon={<LuPlus />}
             onClick={() => onCreate && onCreate()}>
             Create
           </Button>

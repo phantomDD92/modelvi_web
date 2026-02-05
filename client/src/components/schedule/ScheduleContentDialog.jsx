@@ -1,9 +1,9 @@
-import { Button, Upload, Modal, Form, Input, Checkbox, Flex, Select } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { Button, Upload, Modal, Form,  Checkbox, Flex } from "antd";
 import { useEffect, useState } from "react";
 import { Platform, SERVER_PATH } from "@/utils/const";
 import Media from "../common/Media";
 import StyledInput from "../common/StyledInput";
+import { LuUpload } from "react-icons/lu";
 
 const ScheduleContentDialog = ({ open, content, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
@@ -135,7 +135,7 @@ const ScheduleContentDialog = ({ open, content, onCancel, onUpdate }) => {
                         maxCount={1}
                         onChange={handleMediaChange}
                     >
-                        <Button icon={<UploadOutlined />}>Upload Media</Button>
+                        <Button icon={<LuUpload />}>Upload Media</Button>
                     </Upload>
                 </Form.Item>
 
@@ -161,7 +161,7 @@ const ScheduleContentDialog = ({ open, content, onCancel, onUpdate }) => {
                         maxCount={1}
                         onChange={handlePreviewChange}
                     >
-                        <Button icon={<UploadOutlined />}>Upload Preview</Button>
+                        <Button icon={<LuUpload />}>Upload Preview</Button>
                     </Upload>
                 </Form.Item>}
                 {isFanslyOnly() && <Form.Item>

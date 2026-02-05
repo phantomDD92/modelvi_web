@@ -1,9 +1,7 @@
-import { AdminRole, PricePlanMode } from '@/utils/const'
-import { Card, Table, Button, Flex, Switch, Avatar, Dropdown, Space, Typography, Radio } from "antd";
-import { DeleteOutlined, UserAddOutlined, EditOutlined, KeyOutlined, DatabaseOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-import { Globe, Trash, User, Wallet } from 'lucide-react';
+import { PricePlanMode } from '@/utils/const'
+import { Card, Table, Button, Flex, Switch, Avatar, Dropdown, Space, Radio } from "antd";
 import { closeDueDate, getBalanceAmount, getDueDate, getFiatAmount } from '@/utils/string';
-import moment from 'moment';
+import { LuDatabase, LuEye, LuEyeOff, LuGlobe, LuPenLine, LuTrash, LuUser, LuUserPlus, LuWallet } from 'react-icons/lu';
 
 export const AgencyTable = ({
     pagination,
@@ -111,22 +109,22 @@ export const AgencyTable = ({
                             {
                                 label: 'Add Balance',
                                 key: 'balance',
-                                icon: <Wallet />,
+                                icon: <LuWallet />,
                             },
                             {
                                 label: 'Change Price Plans',
                                 key: 'plan',
-                                icon: <Globe />,
+                                icon: <LuGlobe />,
                             },
                             {
                                 label: 'Change Referrer',
                                 key: 'referrer',
-                                icon: <User />,
+                                icon: <LuUser />,
                             },
                             {
                                 label: 'Delete Agency',
                                 key: 'delete',
-                                icon: <Trash />,
+                                icon: <LuTrash />,
                                 danger: true,
                             },
                         ],
@@ -149,7 +147,7 @@ export const AgencyTable = ({
                             }
                         }
                     }}>
-                    <EditOutlined /> Edit
+                    <LuPenLine /> Edit
                 </Dropdown.Button>
             )
         },
@@ -159,8 +157,8 @@ export const AgencyTable = ({
         <Card
             title="Agency List"
         // extra={[
-        //     <Button key="create" icon={<UserAddOutlined />} onClick={() => onCreate && onCreate()}>Create</Button>,
-        //     // <Button key="db" icon={<DatabaseOutlined />} onClick={() => onUpdateDB && onUpdateDB()}>UpdateDB</Button>
+        //     <Button key="create" icon={<LuUserPlus />} onClick={() => onCreate && onCreate()}>Create</Button>,
+        //     <Button key="db" icon={<LuDatabase />} onClick={() => onUpdateDB && onUpdateDB()}>UpdateDB</Button>
         // ]}
         >
             <Space align='center' size="middle">
@@ -169,19 +167,19 @@ export const AgencyTable = ({
                         <h3>Bulk Actions : </h3>
                         <Button
                             key="enable"
-                            icon={<EyeOutlined />}
+                            icon={<LuEye />}
                             onClick={() => onBulkStatus && onBulkStatus(true)}>
                             {`Enable ${rowSelection.selectedRowKeys.length} agencies`}
                         </Button>
                         <Button
                             key="disable"
-                            icon={<EyeInvisibleOutlined />}
+                            icon={<LuEyeOff />}
                             onClick={() => onBulkStatus && onBulkStatus(false)}>
                             {`Disable ${rowSelection.selectedRowKeys.length} agencies`}
                         </Button>
                         <Button
                             key="delete"
-                            icon={<DeleteOutlined />}
+                            icon={<LuTrash />}
                             danger
                             onClick={onBulkDelete}>
                             {`Delete ${rowSelection.selectedRowKeys.length} agencies`}

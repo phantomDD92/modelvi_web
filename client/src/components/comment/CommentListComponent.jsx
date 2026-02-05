@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Card, List } from "antd";
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import { StyledSearch } from "../common";
+import { LuPlus, LuTrash } from "react-icons/lu";
 
 const CommentListComponent = ({ comments, onAdd, onDelete }) => {
   const [comment, setComment] = useState('');
@@ -20,7 +20,7 @@ const CommentListComponent = ({ comments, onAdd, onDelete }) => {
         enterButton={
           <Button
             type="primary"
-            icon={<PlusOutlined />}>
+            icon={<LuPlus />}>
             Add
           </Button>}
       />
@@ -31,7 +31,7 @@ const CommentListComponent = ({ comments, onAdd, onDelete }) => {
           showTotal: total => `Total comments : ${total}`
         }}
         renderItem={({ _id, text }) => (
-          <List.Item key={`${_id}`} actions={[<Button danger icon={<DeleteOutlined></DeleteOutlined>} onClick={() => onDelete && onDelete(_id)} />]}>
+          <List.Item key={`${_id}`} actions={[<Button danger icon={<LuTrash />} onClick={() => onDelete && onDelete(_id)} />]}>
             {text}
           </List.Item>
         )}

@@ -3,7 +3,7 @@ import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import qs from 'query-string';
 import { Button, Card, Col, Result, Row, Select, Steps, Typography } from "antd";
-import { LoadingOutlined, ClockCircleOutlined, CheckCircleOutlined, SmileOutlined, SyncOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
 
 import { DepositAddress } from "@/components/settings";
 import CryptoSelect from "@/components/settings/CryptoSelect";
@@ -11,6 +11,7 @@ import PaymentTable from "@/components/settings/PaymentTable";
 import { cryptoCurrencies } from "@/data/crypto";
 import { cancelPayment, createPayment, getPayment, loadPayments } from "@/redux/v2/actions";
 import { DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE } from "@/utils/const";
+import { LuCircleCheck, LuCircleGauge, LuCircleX, LuSmile } from "react-icons/lu";
 
 const pricingPlans = [
   { key: "0", price: 50.00, earnings: "$0 ~ $1,000" },
@@ -46,15 +47,15 @@ const BillingPaymentPage = ({ }) => {
       case "waiting":
         return <LoadingOutlined />
       case "confirming":
-        return <SyncOutlined />
+        return <LuCircleGauge />
       case "confirmed":
-        return <CheckCircleOutlined />
+        return <LuCircleCheck />
       case "finished":
-        return <SmileOutlined />
+        return <LuSmile />
       case "failed":
-        return <CloseCircleOutlined />
+        return <LuCircleX />
       default:
-        return <ClockCircleOutlined />
+        return <LuCircleX />
     }
   }
 

@@ -2,11 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { toSentenceCase } from "@/helpers";
 import { cn } from "@/utils";
-import { ChevronDown, Menu, X, LogIn, UserPlus } from "lucide-react";
-
 import { landingPages } from "@/assets/data";
 import logoDark from "@/assets/images/logo-dark.png";
 import logoLight from "@/assets/images/logo-light.png";
+import { LuChevronDown, LuLogIn, LuMenu, LuUserPlus, LuX } from "react-icons/lu";
 
 
 const TopNavBar = ({ menuItems, position, referralCode }) => {
@@ -84,7 +83,7 @@ const TopNavBar = ({ menuItems, position, referralCode }) => {
                     className="hs-collapse-toggle inline-block lg:hidden"
                     data-hs-overlay="#mobile-menu"
                   >
-                    <Menu className="h-7 w-7 text-default-600 hover:text-default-900" />
+                    <LuMenu className="h-7 w-7 text-default-600 hover:text-default-900" />
                   </button>
                 </div>
               </div>
@@ -128,14 +127,14 @@ const TopNavBar = ({ menuItems, position, referralCode }) => {
                   to={referralCode ? `/sign-in?ref=${referralCode}` : "/sign-in"}
                   className="mr-4 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-1.5 text-base text-white transition-all hover:bg-primary-700"
                 >
-                  <LogIn className="h-4 w-4 fill-white/40" />
+                  <LuLogIn className="h-4 w-4 fill-white/40" />
                   <span className="hidden sm:block">Log In</span>
                 </Link>
                 <Link
                   to={referralCode ? `/sign-up?ref=${referralCode}` : "/sign-up"}
                   className="inline-flex items-center gap-2 rounded-full bg-purple-600 px-6 py-1.5 text-base text-white transition-all hover:bg-purple-700"
                 >
-                  <UserPlus className="h-4 w-4 fill-white/40" />
+                  <LuUserPlus className="h-4 w-4 fill-white/40" />
                   <span className="hidden sm:block">Register</span>
                 </Link>
               </div>
@@ -156,7 +155,7 @@ const TopNavBar = ({ menuItems, position, referralCode }) => {
             <img src={logoLight} alt="logo" className="hidden h-10 dark:flex" />
           </Link>
           <div data-hs-overlay="#mobile-menu" className="hs-collapse-toggle">
-            <X size={24} />
+            <LuX size={24} />
           </div>
         </div>
         <div className="h-[calc(100%-4rem)] overflow-y-auto">
@@ -184,7 +183,7 @@ const TopNavBar = ({ menuItems, position, referralCode }) => {
                   to=""
                 >
                   Landing
-                  <ChevronDown className="ms-auto size-5 transition-all hs-accordion-active:rotate-180" />
+                  <LuChevronDown className="ms-auto size-5 transition-all hs-accordion-active:rotate-180" />
                 </Link>
                 <div
                   id="landing-accordion"

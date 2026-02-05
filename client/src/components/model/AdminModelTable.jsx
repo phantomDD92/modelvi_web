@@ -4,23 +4,15 @@ import {
     Card,
     Dropdown,
     Flex,
-    Input,
     Space,
     Table,
     Tag,
 } from "antd";
-import {
-    DeleteOutlined,
-    EditOutlined,
-    ReadOutlined,
-    UserAddOutlined,
-    UploadOutlined,
-} from "@ant-design/icons";
 import { getFiatAmount, getPlatformName } from "@/utils/string";
 import { AgencySelect } from "../agency";
 import { StyledSearch } from "../common";
 import { Platform } from "@/utils/const";
-import moment from "moment";
+import { LuBook, LuPencilLine, LuTrash, LuUpload, LuUserPlus } from "react-icons/lu";
 
 export const AdminModelTable = ({
     filters: {
@@ -136,18 +128,18 @@ export const AdminModelTable = ({
                             {
                                 label: 'View Contents',
                                 key: 'content',
-                                icon: <ReadOutlined />,
+                                icon: <LuBook />,
                             },
                             record.updated &&
                             {
                                 label: 'Sync Contents',
                                 key: 'sync',
-                                icon: <UploadOutlined />,
+                                icon: <LuUpload />,
                             },
                             {
                                 label: 'Delete Model',
                                 key: 'delete',
-                                icon: <DeleteOutlined />,
+                                icon: <LuTrash />,
                                 danger: true,
                             },
                         ],
@@ -167,7 +159,7 @@ export const AdminModelTable = ({
                             }
                         }
                     }}>
-                    <EditOutlined /> Edit
+                    <LuPencilLine /> Edit
                 </Dropdown.Button>
 
         },
@@ -189,7 +181,7 @@ export const AdminModelTable = ({
                         onChange={value => onAgencyChange && onAgencyChange(value)}
                     />
                     <Button
-                        icon={<UserAddOutlined />}
+                        icon={<LuUserPlus />}
                         onClick={onCreate}>
                         Create
                     </Button>
@@ -202,13 +194,13 @@ export const AdminModelTable = ({
                         <h3>Bulk Actions : </h3>
                         <Button
                             key="disable"
-                            icon={<UploadOutlined />}
+                            icon={<LuUpload />}
                             onClick={onBulkSync}>
                             {`Sync ${rowSelection.selectedRowKeys.length} models`}
                         </Button>
                         <Button
                             key="delete"
-                            icon={<DeleteOutlined />}
+                            icon={<LuTrash />}
                             danger
                             onClick={onBulkDelete}>
                             {`Delete ${rowSelection.selectedRowKeys.length} models`}

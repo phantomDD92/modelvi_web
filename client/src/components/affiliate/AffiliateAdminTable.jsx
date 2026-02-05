@@ -1,6 +1,6 @@
 import { getFiatAmount } from "@/utils/string";
-import { Card, Table, Flex, Avatar, Dropdown, Button } from "antd";
-import { Pencil } from "lucide-react";
+import { Card, Table, Flex, Avatar, Button } from "antd";
+import { LuPenLine } from "react-icons/lu";
 
 export const AffiliateAgencyTable = ({
     pagination,
@@ -74,7 +74,7 @@ export const AffiliateAgencyTable = ({
             width: 200,
             render: (_, record) => (
                 <Button
-                    icon={<Pencil />}
+                    icon={<LuPenLine />}
                     onClick={() => onCommission && onCommission(record)}>
                     Edit
                 </Button>

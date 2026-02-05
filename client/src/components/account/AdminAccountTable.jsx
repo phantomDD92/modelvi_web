@@ -10,7 +10,7 @@ import {
     Tag,
     Switch,
 } from "antd";
-import { LuBook, LuCirclePlay, LuCircleStop, LuEye, LuEyeOff, LuPause, LuPencilLine, LuPlay, LuPrinter, LuSettings2, LuTrash, LuTrash2, LuUserPlus } from "react-icons/lu"
+import { LuBook, LuPause, LuPencilLine, LuPlay, LuPrinter, LuSettings2, LuTrash, LuTrash2, LuUserPlus } from "react-icons/lu"
 import { Platform } from "@/utils/const"
 import moment from "moment";
 import { getDateTime, getFiatAmount, getPlatformName } from "@/utils/string";

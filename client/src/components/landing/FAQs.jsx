@@ -1,10 +1,10 @@
 import { cn } from "@/utils";
 import { faqContents } from "./data";
-import { ChevronUp } from "lucide-react";
 
 import marketing9 from "@/assets/images/landing/img-10.jpg";
 // import marketing10 from "@/assets/images/landing/img-10.png";
 import { useState } from "react";
+import { LuChevronUp } from "react-icons/lu";
 
 const FAQs = () => {
   const [selected, setSelected] = useState(1);
@@ -51,7 +51,7 @@ const FAQs = () => {
                       <h5 className="text-base font-medium flex">
                         {faq.title}
                       </h5>
-                      <ChevronUp className="lucide lucide-chevron-up h-4 w-4 transition-all duration-300 hs-accordion-active:-rotate-180" />
+                      <LuChevronUp className="lucide lucide-chevron-up h-4 w-4 transition-all duration-300 hs-accordion-active:-rotate-180" />
                     </button>
                     <div
                       id="faq-accordion-1"

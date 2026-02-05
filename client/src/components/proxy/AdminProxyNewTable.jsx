@@ -1,21 +1,11 @@
 import {
     Button,
     Card,
-    Select,
     Space,
     Switch,
     Table,
-    Tag,
 } from "antd";
-import {
-    ClearOutlined,
-    EyeOutlined,
-    EyeInvisibleOutlined,
-    DeleteOutlined,
-} from "@ant-design/icons";
-import moment from "moment";
-import { Platform } from "@/utils/const";
-import { Brush, CornerDownLeft, Upload } from "lucide-react";
+import { LuBrush, LuEye, LuEyeOff, LuTrash, LuUpload } from "react-icons/lu";
 
 const AdminProxyNewTable = ({
     pagination,
@@ -60,7 +50,7 @@ const AdminProxyNewTable = ({
                 <Button
                     danger
                     onClick={() => onDelete(record)}>
-                    <DeleteOutlined /> Delete
+                    <LuTrash /> Delete
                 </Button>
             )
         },
@@ -74,13 +64,13 @@ const AdminProxyNewTable = ({
                     <Button
                         key="clear"
                         danger
-                        icon={<Brush />}
+                        icon={<LuBrush />}
                         onClick={onClear}>
                         Clear
                     </Button>
                     <Button
                         key="append"
-                        icon={<Upload />}
+                        icon={<LuUpload />}
                         onClick={onAppend}>
                         Append
                     </Button>
@@ -93,19 +83,19 @@ const AdminProxyNewTable = ({
                         <h3>Bulk Actions : </h3>
                         <Button
                             key="enable"
-                            icon={<EyeOutlined />}
+                            icon={<LuEye />}
                             onClick={() => onBulkStatus && onBulkStatus(true)}>
                             {`Enable ${rowSelection.selectedRowKeys.length} proxies`}
                         </Button>
                         <Button
                             key="disable"
-                            icon={<EyeInvisibleOutlined />}
+                            icon={<LuEyeOff />}
                             onClick={() => onBulkStatus && onBulkStatus(false)}>
                             {`Disable ${rowSelection.selectedRowKeys.length} proxies`}
                         </Button>
                         <Button
                             key="delete"
-                            icon={<DeleteOutlined />}
+                            icon={<LuTrash />}
                             danger
                             onClick={onBulkDelete}>
                             {`Delete ${rowSelection.selectedRowKeys.length} proxies`}

@@ -1,4 +1,4 @@
-import { Dot } from "lucide-react";
+import { LuDot } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
 const PricingCard = ({ pricingPlan }) => {
@@ -16,7 +16,7 @@ const PricingCard = ({ pricingPlan }) => {
         <ul role="list" className="mt-4 mb-5 -ms-3 text-sm text-default-white">
           {features.map((feature, idx) => (
             <li key={idx} className="flex items-center gap-2 py-1">
-              <Dot className="inline-block h-8 w-8 stroke-primary" />
+              <LuDot className="inline-block h-8 w-8 stroke-primary" />
               <span className="text-base text-default-950">{feature}</span>
             </li>
           ))}

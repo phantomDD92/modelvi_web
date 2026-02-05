@@ -12,19 +12,11 @@ import {
     Select,
 } from "antd";
 import {
-    DeleteOutlined,
-    EditOutlined,
-    UserAddOutlined,
-    ReadOutlined,
-    SolutionOutlined,
-    EyeOutlined,
-    EyeInvisibleOutlined,
-} from "@ant-design/icons";
-import {
     Platform
 } from "@/utils/const"
-import { getDate, getFiatAmount, getPlatformName } from "@/utils/string";
+import { getPlatformName } from "@/utils/string";
 import { StyledSearch } from "../common";
+import { LuBook, LuPause, LuPencilLine, LuPlay, LuSettings2, LuTrash, LuTrash2, LuUserPlus } from "react-icons/lu";
 
 const AgencyAccountTable = ({
     pagination,
@@ -146,17 +138,17 @@ const AgencyAccountTable = ({
                             {
                                 label: 'Edit Settings',
                                 key: 'settings',
-                                icon: <SolutionOutlined />,
+                                icon: <LuSettings2 />,
                             },
                             {
                                 label: 'View History',
                                 key: 'history',
-                                icon: <ReadOutlined />,
+                                icon: <LuBook />,
                             },
                             {
                                 label: 'Delete Account',
                                 key: 'delete',
-                                icon: <DeleteOutlined />,
+                                icon: <LuTrash />,
                                 danger: true,
                             },
                         ],
@@ -176,7 +168,7 @@ const AgencyAccountTable = ({
                             }
                         }
                     }}>
-                    <EditOutlined /> Edit
+                    <LuPencilLine /> Edit
                 </Dropdown.Button>)
 
         },
@@ -233,7 +225,7 @@ const AgencyAccountTable = ({
                         onSearch={value => onSearchChange && onSearchChange(value)}
                     />
                     <Button
-                        icon={<UserAddOutlined />}
+                        icon={<LuUserPlus />}
                         onClick={() => onCreate && onCreate()}>
                         Create
                     </Button>
@@ -246,19 +238,19 @@ const AgencyAccountTable = ({
                         <h3>Bulk Actions : </h3>
                         <Button
                             key="enable"
-                            icon={<EyeOutlined />}
+                            icon={<LuPlay />}
                             onClick={() => onBulkStatus && onBulkStatus(true)}>
-                            {`Enable ${rowSelection.selectedRowKeys.length} accounts`}
+                            {`Run ${rowSelection.selectedRowKeys.length} accounts`}
                         </Button>
                         <Button
                             key="disable"
-                            icon={<EyeInvisibleOutlined />}
+                            icon={<LuPause />}
                             onClick={() => onBulkStatus && onBulkStatus(false)}>
-                            {`Disable ${rowSelection.selectedRowKeys.length} accounts`}
+                            {`Stop ${rowSelection.selectedRowKeys.length} accounts`}
                         </Button>
                         <Button
                             key="delete"
-                            icon={<DeleteOutlined />}
+                            icon={<LuTrash2 />}
                             danger
                             onClick={() => onBulkDelete && onBulkDelete()}>
                             {`Delete ${rowSelection.selectedRowKeys.length} accounts`}

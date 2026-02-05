@@ -1,7 +1,7 @@
-import { Card, List, Button, Flex, Input } from "antd";
+import { Card, List, Button } from "antd";
 import React, { useState } from "react";
-import { PlusOutlined, DeleteOutlined} from "@ant-design/icons";
-import { StyledInput, StyledSearch } from "../common";
+import { StyledSearch } from "../common";
+import { LuPlus, LuTrash } from "react-icons/lu";
 
 const UserListComponent = ({ title, users = [], onAppend, onDelete }) => {
   const [alias, setAlias] = useState('');
@@ -20,7 +20,7 @@ const UserListComponent = ({ title, users = [], onAppend, onDelete }) => {
         enterButton={
           <Button
             type="primary"
-            icon={<PlusOutlined />}>
+            icon={<LuPlus />}>
             Add
           </Button>}
       />
@@ -32,7 +32,7 @@ const UserListComponent = ({ title, users = [], onAppend, onDelete }) => {
         }}
         renderItem={({ _id, alias }) => (
           <List.Item key={`${_id}`}
-            actions={[<Button danger icon={<DeleteOutlined></DeleteOutlined>} onClick={() => onDelete && onDelete(_id)} />]}>
+            actions={[<Button danger icon={<LuTrash />} onClick={() => onDelete && onDelete(_id)} />]}>
             {alias}
           </List.Item>
         )}

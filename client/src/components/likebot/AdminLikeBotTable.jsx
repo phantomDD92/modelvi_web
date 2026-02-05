@@ -9,11 +9,11 @@ import {
   Switch,
   Tag,
 } from "antd";
-import { Eye, EyeOff, Import, Settings, Trash, UserPlus } from "lucide-react";
 import { Platform } from "@/utils/const"
 import { getDateTime, getPlatformName } from "@/utils/string";
 import { StyledSearch } from "../common";
 import moment from "moment";
+import { LuImport, LuPause, LuPlay, LuSettings, LuTrash } from "react-icons/lu";
 
 const AdminLikeBotTable = ({
   pagination,
@@ -130,22 +130,7 @@ const AdminLikeBotTable = ({
             onClick={() => onDelete && onDelete(record)}
             menu={{
               items: [
-                // {
-                //     label: 'Edit Settings',
-                //     key: 'settings',
-                //     icon: <SolutionOutlined />,
-                // },
-                // {
-                //     label: 'View History',
-                //     key: 'history',
-                //     icon: <ReadOutlined />,
-                // },
-                // {
-                //     label: 'Delete Account',
-                //     key: 'delete',
-                //     icon: <DeleteOutlined />,
-                //     danger: true,
-                // },
+                
               ],
               onClick: (e) => {
                 switch (e.key) {
@@ -163,7 +148,7 @@ const AdminLikeBotTable = ({
                 }
               }
             }}>
-            <Trash /> Delete
+            <LuTrash /> Delete
           </Dropdown.Button>
       },
     ]
@@ -192,12 +177,12 @@ const AdminLikeBotTable = ({
             Create
           </Button> */}
           <Button
-            icon={<Import />}
+            icon={<LuImport />}
             onClick={() => onImport && onImport()}>
             Import
           </Button>
           <Button
-            icon={<Settings />}
+            icon={<LuSettings />}
             onClick={() => onSettings && onSettings()}>
             Settings
           </Button>
@@ -210,19 +195,19 @@ const AdminLikeBotTable = ({
             <h3>Bulk Actions : </h3>
             <Button
               key="enable"
-              icon={<Eye />}
+              icon={<LuPlay />}
               onClick={() => onBulkStatus && onBulkStatus(true)}>
-              {`Enable ${rowSelection.selectedRowKeys.length} accounts`}
+              {`Run ${rowSelection.selectedRowKeys.length} accounts`}
             </Button>
             <Button
               key="disable"
-              icon={<EyeOff />}
+              icon={<LuPause />}
               onClick={() => onBulkStatus && onBulkStatus(false)}>
-              {`Disable ${rowSelection.selectedRowKeys.length} accounts`}
+              {`Stop ${rowSelection.selectedRowKeys.length} accounts`}
             </Button>
             <Button
               key="delete"
-              icon={<Trash />}
+              icon={<LuTrash />}
               danger
               onClick={() => onBulkDelete && onBulkDelete()}>
               {`Delete ${rowSelection.selectedRowKeys.length} accounts`}

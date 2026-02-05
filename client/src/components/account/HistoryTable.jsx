@@ -7,8 +7,8 @@ import {
   Table,
   Popconfirm
 } from "antd";
-import { CornerDownLeft, Trash, Trash2 } from "lucide-react";
 import { getAccountName } from "@/utils/string";
+import { LuCornerDownLeft, LuTrash, LuTrash2 } from "react-icons/lu";
 
 const HistoryTable = ({
   pagination,
@@ -51,12 +51,12 @@ const HistoryTable = ({
             cancelText="No"
             onConfirm={() => onClear && onClear()}
           >
-            <Button key="clear" danger icon={<Trash />}>Clear History</Button>
+            <Button key="clear" danger icon={<LuTrash />}>Clear History</Button>
           </Popconfirm>
-          <Button key="error" icon={<Trash2 size={8}/>} onClick={() => onError && onError()}>Clear Error</Button>
+          <Button key="error" icon={<LuTrash2 size={8}/>} onClick={() => onError && onError()}>Clear Error</Button>
           <Button
             key="return"
-            icon={<CornerDownLeft />}
+            icon={<LuCornerDownLeft />}
             onClick={() => onReturn && onReturn()}>
             Return
           </Button>

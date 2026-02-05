@@ -1,6 +1,6 @@
-import { Button, Card, Statistic } from "antd";
+import { Card, Statistic } from "antd";
 import { useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { LuCheck, LuCopy } from "react-icons/lu";
 
 const AffiliateLink = ({ referralCode }) => {
 
@@ -29,9 +29,9 @@ const AffiliateLink = ({ referralCode }) => {
               disabled={copied}
             >
               {copied ? (
-                <Check className="text-base text-green-500" />
+                <LuCheck className="text-base text-green-500" />
               ) : (
-                <Copy className="text-base text-gray-600 hover:text-gray-900" />
+                <LuCopy className="text-base text-gray-600 hover:text-gray-900" />
               )}
             </button>
           </div>}

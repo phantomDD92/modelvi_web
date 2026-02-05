@@ -77,22 +77,6 @@ export const AdminAccountHistoryPage = () => {
           }
         }}
       />
-      {/* <HistoryTable
-        pagination={{
-          current: page,
-          pageSize: pageSize,
-          total: historyCount,
-          onChange: handleChangePagination
-        }}
-        dataSource={history}
-        loading={loading}
-        account={historyAccount}
-        actions={{
-          onClear: handleClearHistory,
-          onError: handleClearError,
-          onReturn: () => navigate(-1)
-        }}
-      /> */}
     </>
   );
 };

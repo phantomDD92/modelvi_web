@@ -8,17 +8,10 @@ import {
     Table,
     Tag,
 } from "antd";
-import {
-    DeleteOutlined,
-    EditOutlined,
-    ReadOutlined,
-    UserAddOutlined,
-    UploadOutlined,
-} from "@ant-design/icons";
 import { getPlatformName } from "@/utils/string";
 import { StyledSearch } from "../common";
-import { Import } from "lucide-react";
 import { Link } from "react-router-dom";
+import { LuBook, LuImport, LuPenLine, LuTrash, LuUpload, LuUserPlus } from "react-icons/lu";
 
 export const AgencyModelTable = ({
     filters: {
@@ -89,18 +82,18 @@ export const AgencyModelTable = ({
                             {
                                 label: 'View Contents',
                                 key: 'content',
-                                icon: <ReadOutlined />,
+                                icon: <LuBook />,
                             },
                             record.updated &&
                             {
                                 label: 'Sync Contents',
                                 key: 'sync',
-                                icon: <UploadOutlined />,
+                                icon: <LuUpload />,
                             },
                             {
                                 label: 'Delete Model',
                                 key: 'delete',
-                                icon: <DeleteOutlined />,
+                                icon: <LuTrash />,
                                 danger: true,
                             },
                         ],
@@ -120,7 +113,7 @@ export const AgencyModelTable = ({
                             }
                         }
                     }}>
-                    <EditOutlined /> Edit
+                    <LuPenLine /> Edit
                 </Dropdown.Button>
             )
         },
@@ -133,13 +126,13 @@ export const AgencyModelTable = ({
                 <Flex gap={16}>
                     <StyledSearch defaultValue={search} onSearch={value => onSearchChange && onSearchChange(value)} />
                     <Button
-                        icon={<UserAddOutlined />}
+                        icon={<LuUserPlus />}
                         onClick={onCreate}>
                         Create
                     </Button>
                     <Link to="/import">
                         <Button
-                            icon={<Import />}>
+                            icon={<LuImport />}>
                             Import Contents
                         </Button>
                     </Link>
@@ -152,13 +145,13 @@ export const AgencyModelTable = ({
                         <h3>Bulk Actions : </h3>
                         <Button
                             key="disable"
-                            icon={<UploadOutlined />}
+                            icon={<LuUpload />}
                             onClick={onBulkSync}>
                             {`Sync ${rowSelection.selectedRowKeys.length} models`}
                         </Button>
                         <Button
                             key="delete"
-                            icon={<DeleteOutlined />}
+                            icon={<LuTrash />}
                             danger
                             onClick={onBulkDelete}>
                             {`Delete ${rowSelection.selectedRowKeys.length} models`}

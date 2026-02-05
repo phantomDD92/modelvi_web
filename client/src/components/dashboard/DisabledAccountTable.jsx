@@ -1,7 +1,7 @@
 import { Card, Table, Button, Flex, Switch, Tag, Avatar, Space } from "antd";
-import { ReadOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { getPlatformName, isBotRunning } from "@/utils/string";
+import { LuBook } from "react-icons/lu";
 
 const DisabledAccountTable = ({ accounts, loading, onHistory, onStatusChange }) => {
     const columns = [
@@ -81,7 +81,7 @@ const DisabledAccountTable = ({ accounts, loading, onHistory, onStatusChange }) 
 
                 <Button
                     onClick={() => onHistory(record)}>
-                    <ReadOutlined /> History
+                    <LuBook /> History
                 </Button>
 
 

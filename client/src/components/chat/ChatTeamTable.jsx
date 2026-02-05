@@ -6,11 +6,7 @@ import {
     Table,
     Tooltip,
 } from "antd";
-import {
-    DeleteOutlined,
-    EditOutlined,
-    PlusOutlined,
-} from "@ant-design/icons";
+import { LuPenLine, LuPlus, LuTrash } from "react-icons/lu";
 
 export const ChatTeamTable = ({
     pagination,
@@ -71,12 +67,12 @@ export const ChatTeamTable = ({
                 <Flex gap="small">
                     <Tooltip title="Edit">
                         <Button
-                            icon={<EditOutlined />}
+                            icon={<LuPenLine />}
                             onClick={() => onEdit && onEdit(record)} />
                     </Tooltip>
                     <Tooltip title="Delete">
                         <Button
-                            icon={<DeleteOutlined />}
+                            icon={<LuTrash />}
                             danger
                             onClick={() => onDelete && onDelete(record)} />
                     </Tooltip>
@@ -91,7 +87,7 @@ export const ChatTeamTable = ({
             extra={
                 <Space align="center">
                     <Button
-                        icon={<PlusOutlined />}
+                        icon={<LuPlus />}
                         onClick={onCreate}>
                         Create
                     </Button>
@@ -103,7 +99,7 @@ export const ChatTeamTable = ({
                         <h3>Bulk Actions : </h3>
                         <Button
                             key="delete"
-                            icon={<DeleteOutlined />}
+                            icon={<LuTrash />}
                             danger
                             onClick={onBulkDelete}>
                             {`Delete ${rowSelection.selectedRowKeys.length} chat teams`}

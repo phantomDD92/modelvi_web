@@ -3,12 +3,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { Send } from "lucide-react";
 import { LoadingOutlined } from "@ant-design/icons";
 
 import TextFormInput from "./TextFormInput";
 import TextAreaFormInput from "./TextAreaFormInput";
 import { sendContact } from "@/redux/v2/actions";
+import { LuSend } from "react-icons/lu";
 
 const ContactUs = () => {
   const [waiting, setWaiting] = useState(false);
@@ -105,7 +105,7 @@ const ContactUs = () => {
                 Send Messages
                 {waiting
                   ? <LoadingOutlined className="ms-2 size-5" />
-                  : <Send className="ms-2 size-5 rotate-45" />}
+                  : <LuSend className="ms-2 size-5 rotate-45" />}
               </button>
             </form>
           </div>

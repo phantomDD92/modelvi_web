@@ -1,22 +1,12 @@
 import {
     Button,
     Card,
-    Select,
     Space,
     Switch,
     Table,
-    Tag,
 } from "antd";
-import {
-    ClearOutlined,
-    EyeOutlined,
-    EyeInvisibleOutlined,
-    DeleteOutlined,
-    UploadOutlined,
-} from "@ant-design/icons";
-import moment from "moment";
 import { Platform } from "@/utils/const";
-import { Brush, CornerDownLeft, Upload } from "lucide-react";
+import { LuBrush, LuCornerDownLeft, LuEye, LuEyeOff, LuTrash, LuUpload } from "react-icons/lu";
 
 const AgencyProxyTable = ({
     agency,
@@ -72,7 +62,7 @@ const AgencyProxyTable = ({
             title: 'F2F',
             width: 100,
             dataIndex: 'usage',
-            render: (value, record) => value?.F2F ? <Space><span>{value?.F2F}</span><ClearOutlined onClick={() => onReset && onReset(record, Platform.F2F)} /></Space> : <span>-</span>
+            render: (value, record) => value?.F2F ? <Space><span>{value?.F2F}</span><LuBrush onClick={() => onReset && onReset(record, Platform.F2F)} /></Space> : <span>-</span>
         },
         {
             key: 'fnc',
@@ -86,21 +76,21 @@ const AgencyProxyTable = ({
             title: 'Fansly',
             width: 100,
             dataIndex: 'usage',
-            render: (value, record) => value?.FAN ? <Space><span>{value?.FAN}</span><ClearOutlined onClick={() => onReset && onReset(record, Platform.FAN)} /></Space> : <span>-</span>
+            render: (value, record) => value?.FAN ? <Space><span>{value?.FAN}</span><LuBrush onClick={() => onReset && onReset(record, Platform.FAN)} /></Space> : <span>-</span>
         },
         {
             key: 'knky',
             title: 'Knky',
             width: 100,
             dataIndex: 'usage',
-            render: (value, record) => value?.KNKY ? <Space><span>{value?.KNKY}</span><ClearOutlined onClick={() => onReset && onReset(record, Platform.KNKY)} /></Space> : <span>-</span>
+            render: (value, record) => value?.KNKY ? <Space><span>{value?.KNKY}</span><LuBrush onClick={() => onReset && onReset(record, Platform.KNKY)} /></Space> : <span>-</span>
         },
         {
             key: 'maloum',
             title: 'Maloum',
             width: 100,
             dataIndex: 'usage',
-            render: (value, record) => value?.MALOUM ? <Space><span>{value?.MALOUM}</span><ClearOutlined onClick={() => onReset && onReset(record, Platform.MALOUM)} /></Space> : <span>-</span>
+            render: (value, record) => value?.MALOUM ? <Space><span>{value?.MALOUM}</span><LuBrush onClick={() => onReset && onReset(record, Platform.MALOUM)} /></Space> : <span>-</span>
         },
         {
             key: 'status',
@@ -124,7 +114,7 @@ const AgencyProxyTable = ({
                 <Button
                     danger
                     onClick={() => onDelete(record)}>
-                    <DeleteOutlined /> Delete
+                    <LuTrash /> Delete
                 </Button>
             )
         },
@@ -146,19 +136,19 @@ const AgencyProxyTable = ({
                     <Button
                         key="clear"
                         danger
-                        icon={<Brush />}
+                        icon={<LuBrush />}
                         onClick={onClear}>
                         Clear
                     </Button>
                     <Button
                         key="append"
-                        icon={<Upload />}
+                        icon={<LuUpload />}
                         onClick={onAppend}>
                         Append
                     </Button>
                     <Button
                         key="back"
-                        icon={<CornerDownLeft />}
+                        icon={<LuCornerDownLeft />}
                         onClick={onBack}>
                         Back
                     </Button>
@@ -171,19 +161,19 @@ const AgencyProxyTable = ({
                         <h3>Bulk Actions : </h3>
                         <Button
                             key="enable"
-                            icon={<EyeOutlined />}
+                            icon={<LuEye />}
                             onClick={() => onBulkStatus && onBulkStatus(true)}>
                             {`Enable ${rowSelection.selectedRowKeys.length} proxies`}
                         </Button>
                         <Button
                             key="disable"
-                            icon={<EyeInvisibleOutlined />}
+                            icon={<LuEyeOff />}
                             onClick={() => onBulkStatus && onBulkStatus(false)}>
                             {`Disable ${rowSelection.selectedRowKeys.length} proxies`}
                         </Button>
                         <Button
                             key="delete"
-                            icon={<DeleteOutlined />}
+                            icon={<LuTrash />}
                             danger
                             onClick={onBulkDelete}>
                             {`Delete ${rowSelection.selectedRowKeys.length} proxies`}

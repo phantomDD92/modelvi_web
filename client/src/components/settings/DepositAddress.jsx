@@ -1,7 +1,7 @@
 import { cryptoNetworkColors } from '@/data/crypto';
 import { getCryptoAmount, getFiatAmount } from '@/utils/string';
 import { Button, QRCode } from 'antd';
-import { Copy } from 'lucide-react';
+import { LuCopy } from 'react-icons/lu';
 
 const DepositAddress = ({ address, currency, payAmount, priceAmount }) => {
 
@@ -31,7 +31,7 @@ const DepositAddress = ({ address, currency, payAmount, priceAmount }) => {
         </div>
         <div className='flex gap-2 items-center'>
           <span className='font-medium'>{address}</span>
-          <Button icon={<Copy />} type='text' onClick={handleCopyAddress} />
+          <Button icon={<LuCopy />} type='text' onClick={handleCopyAddress} />
         </div>
         <div>
           {`Minimum amount: ${getCryptoAmount(payAmount || 0, currency?.ticker)} (${getFiatAmount(priceAmount)})`}

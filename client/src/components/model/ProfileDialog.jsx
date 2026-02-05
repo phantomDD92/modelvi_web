@@ -1,8 +1,8 @@
 import { Card, Flex, Modal, Form, Input, InputNumber, Image, Button, Row, Col, Upload, Switch } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
 import { SERVER_PATH } from "@/utils/const";
 import { useEffect, useState } from "react";
 import StyledInput from "../common/StyledInput";
+import { LuUpload } from "react-icons/lu";
 
 const ProfileDialog = ({ model, open, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
@@ -86,7 +86,7 @@ const ProfileDialog = ({ model, open, onCancel, onUpdate }) => {
                                 maxCount={1}
                                 onChange={handleAvatarChange}
                             >
-                                <Button icon={<UploadOutlined />}>Upload Avatar</Button>
+                                <Button icon={<LuUpload />}>Upload Avatar</Button>
                             </Upload>
                         </Form.Item>
                     </Col>
@@ -106,7 +106,7 @@ const ProfileDialog = ({ model, open, onCancel, onUpdate }) => {
                                 maxCount={1}
                                 onChange={handleBannerChange}
                             >
-                                <Button icon={<UploadOutlined />}>Upload Banner</Button>
+                                <Button icon={<LuUpload />}>Upload Banner</Button>
                             </Upload>
                         </Form.Item>
                     </Col>

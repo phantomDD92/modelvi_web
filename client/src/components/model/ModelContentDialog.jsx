@@ -10,10 +10,10 @@ import {
     Radio,
     Upload,
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
 import { F2FStoryType, KnkyStoryType, Platform, SERVER_PATH, StoryType } from "@/utils/const";
 import Media from "../common/Media";
 import StyledInput from "../common/StyledInput";
+import { LuUpload } from "react-icons/lu";
 
 const beforeUpload = (file) => {
     // Accept specific mime types or extensions
@@ -261,7 +261,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                         maxCount={1}
                         onChange={handleMediaChange}
                     >
-                        <Button icon={<UploadOutlined />}>Upload Media</Button>
+                        <Button icon={<LuUpload />}>Upload Media</Button>
                     </Upload>
                 </Form.Item>
 
@@ -287,7 +287,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                         maxCount={1}
                         onChange={handlePreviewChange}
                     >
-                        <Button icon={<UploadOutlined />}>Upload Preview</Button>
+                        <Button icon={<LuUpload />}>Upload Preview</Button>
                     </Upload>
                 </Form.Item>}
                 {isFanslyOnly() && <Form.Item>
