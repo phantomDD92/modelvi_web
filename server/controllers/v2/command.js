@@ -106,6 +106,22 @@ const executeCalculateFee = async () => {
   }
 };
 
+const executeDisablePrutser = async () => {
+  try {
+    await ManagerModel.findOneAndUpdate({ name: "prutser" }, { status: false });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+const executeEnablePrutser = async () => {
+  try {
+    await ManagerModel.findOneAndUpdate({ name: "prutser" }, { status: true });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 
 const handleExecuteCommand = async (req, res) => {
   try {
@@ -133,6 +149,14 @@ const handleExecuteCommand = async (req, res) => {
       case "check_fee":
         message = "check fee";
         await executeCalculateFee();
+        break;
+      case "enable_prutser":
+        message = "enable";
+        await executeEnablePrutser();
+        break;
+      case "disable_prutser":
+        message = "disable";
+        await executeDisablePrutser();
         break;
       default:
         throw new ApiError("unknown command");
