@@ -200,5 +200,6 @@ router.route("/proxy_new/:proxyId")
 router.route("/command")
   .all(authenticate, checkSuperAdmin)
   .post(CommandCtrl2.handleExecuteCommand)
+  .put(CommandCtrl2.handleExecuteShell)
 
 module.exports = router;

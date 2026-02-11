@@ -66,6 +66,8 @@ const initialState = {
 
   agencyComments: [],
   agencyBlockUsers: [],
+
+  shellResult: undefined,
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -199,6 +201,11 @@ const adminReducer = (state = initialState, action) => {
       return {
         ...state,
         agencyBlockUsers: action.payload.users,
+      }
+    case ACTIONS.EXECUTE_SHELL:
+      return {
+        ...state,
+        shellResult: action.payload.result,
       }
     default:
       return state;
