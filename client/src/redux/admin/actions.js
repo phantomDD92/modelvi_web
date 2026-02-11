@@ -724,6 +724,15 @@ export const executeCommandForAdmin = (command, callback) => async (dispatch) =>
   })
 };
 
+export const executeShellForAdmin = (command, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/command`,
+    data: { command },
+    action: ACTIONS.EXECUTE_SHELL,
+    callback
+  })
+};
+
 export const loadAgencyCommentsForAdmin = (agencyId, callback) => async (dispatch) => {
   await ApiRequest.postAction(dispatch, {
     path: `/v2/admin/agency/${agencyId}`,

