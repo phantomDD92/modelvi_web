@@ -38,7 +38,7 @@ const AgencyBalanceDialog = ({
                     name="balance"
                     label="Balance"
                     rules={[{ required: true }]}>
-                    <InputNumber min={1} />
+                    <InputNumber />
                 </Form.Item>
             </Form>
         </Modal>

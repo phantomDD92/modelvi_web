@@ -53,10 +53,17 @@ const handleUpdateAgencyForAdmin = async (req, res) => {
         const agency = await AgencyService2.updateBalance(agencyId, balance);
         const from = agency.balance || 0;
         const to = from + balance;
-        await TransactionService2.createChargeTransaction(agencyId, TransactionType.CHARGE_INVOICE, balance, from, to, "Modelvi payment");
-        NotifyUtils.sendPaymentMessage(agency, "Payment By Manager",
-          `Manager:${req.manager?.name}\nCharge: $${balance}\nBalance:$${from} => $${to}`
-        )
+        if (balance > 0) {
+          await TransactionService2.createChargeTransaction(agencyId, TransactionType.CHARGE_INVOICE, balance, from, to, "Modelvi payment");
+          NotifyUtils.sendPaymentMessage(agency, "Payment By Manager",
+            `Manager:${req.manager?.name}\nCharge: $${balance}\nBalance:$${from} => $${to}`
+          )
+        } else {
+          NotifyUtils.sendPaymentMessage(agency, "Payment By Manager",
+            `Manager:${req.manager?.name}\nDecharge: $${balance}\nBalance:$${from} => $${to}`
+          )
+        }
+
         break;
       case "status":
         const { status } = params;
