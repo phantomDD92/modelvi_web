@@ -13,8 +13,7 @@ const AgencyBalanceDialog = ({
         form.validateFields()
             .then(() => {
                 const { balance } = form.getFieldsValue();
-                if (balance > 0)
-                    onAppend && onAppend(balance);
+                onAppend && onAppend(balance);
             })
             .catch(() => { });
     }
