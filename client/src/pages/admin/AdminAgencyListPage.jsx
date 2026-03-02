@@ -14,6 +14,7 @@ import PageMetaData from "@/components/common/PageMetaData";
 import {
   appendAgencyBalanceForAdmin,
   changeAgenciesStatusForAdmin,
+  changeAgencyDueDateForAdmin,
   changeAgencyPricePlanModeForAdmin,
   changeAgencyPricePlansForAdmin,
   changeAgencyReferrerForAdmin,
@@ -22,6 +23,7 @@ import {
   deleteAgencyForAdmin,
   loadAgenciesForAdmin
 } from "@/redux/admin/actions";
+import AgencyDueDateDialog from "@/components/agency/AgencyDueDateDialog";
 
 export const AdminAgencyListPage = () => {
 
@@ -30,6 +32,7 @@ export const AdminAgencyListPage = () => {
   const [balanceOpen, setBalanceOpen] = useState(false);
   const [planOpen, setPlanOpen] = useState(false);
   const [referrerOpen, setReferrerOpen] = useState(false);
+  const [duedateOpen, setDuedateOpen] = useState(false);
   const [agency, setAgency] = useState();
 
   const dispatch = useDispatch()
@@ -99,12 +102,17 @@ export const AdminAgencyListPage = () => {
 
   const handleUpdatePricePlans = (plans) => {
     if (agency)
-      dispatch(changeAgencyPricePlansForAdmin(agency, plans, () => { setPlanOpen(false); loadAgenciesCallback()  }))
+      dispatch(changeAgencyPricePlansForAdmin(agency, plans, () => { setPlanOpen(false); loadAgenciesCallback() }))
   }
 
   const handleChangeReferrer = (referrer) => {
     if (agency)
       dispatch(changeAgencyReferrerForAdmin(agency, referrer, () => { setReferrerOpen(false); loadAgenciesCallback() }))
+  }
+
+  const handleUpdateDueDate = (duedate) => {
+    if (agency)
+      dispatch(changeAgencyDueDateForAdmin(agency, duedate, () => { setDuedateOpen(false); loadAgenciesCallback() }))
   }
 
   return (
@@ -131,6 +139,7 @@ export const AdminAgencyListPage = () => {
           onPricePlans: (agency) => { setAgency(agency); setPlanOpen(true) },
           onReferrer: (agency) => { setAgency(agency); setReferrerOpen(true) },
           onPricePlanMode: handleChangePricePlanMode,
+          onDueDate: (agency) => { setAgency(agency); setDuedateOpen(true); },
         }} />
       {/* <AgencyDialog
         agency={agency}
@@ -157,6 +166,12 @@ export const AdminAgencyListPage = () => {
         agencies={agencies}
         onUpdate={handleChangeReferrer}
         onCancel={() => setReferrerOpen(false)}
+      />
+      <AgencyDueDateDialog
+        open={duedateOpen}
+        agency={agency}
+        onUpdate={handleUpdateDueDate}
+        onCancel={() => setDuedateOpen(false)}
       />
       {/* <PasswordDialog
         agency={agency}

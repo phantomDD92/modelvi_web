@@ -65,6 +65,9 @@ const changePricePlanMode = (agencyId, mode) =>
 const changeReferrer = (agencyId, referrer) =>
   ManagerModel.findByIdAndUpdate(agencyId, { $set: { referrer } });
 
+const changeDueDate = (agencyId, dueDate) =>
+  ManagerModel.findByIdAndUpdate(agencyId, { $set: { dueDate } });
+
 const changeCommission = (agencyId, commission) =>
   ManagerModel.findByIdAndUpdate(agencyId, { $set: { commission } });
 
@@ -106,6 +109,7 @@ const AgencyService2 = {
   getAgencyList,
   changePassword,
   changePricePlanMode,
+  changeDueDate,
   bulkWrite,
   updateFee,
 }

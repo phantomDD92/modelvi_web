@@ -83,6 +83,10 @@ const handleUpdateAgencyForAdmin = async (req, res) => {
         const { referrer } = params;
         await AgencyService2.changeReferrer(agencyId, referrer);
         break;
+      case "duedate":
+        const { duedate } = params;
+        await AgencyService2.changeDueDate(agencyId, duedate);
+        break;
       case "commission":
         const { commission } = params;
         await AgencyService2.changeCommission(agencyId, commission);
