@@ -1,7 +1,7 @@
 import { PricePlanMode } from '@/utils/const'
 import { Card, Table, Button, Flex, Switch, Avatar, Dropdown, Space, Radio } from "antd";
 import { closeDueDate, getBalanceAmount, getDueDate, getFiatAmount } from '@/utils/string';
-import { LuDatabase, LuEye, LuEyeOff, LuGlobe, LuPenLine, LuTrash, LuUser, LuUserPlus, LuWallet } from 'react-icons/lu';
+import { LuDatabase, LuEye, LuEyeOff, LuGlobe, LuPenLine, LuTrash, LuUser, LuUserPlus, LuWallet, LuWalletCards } from 'react-icons/lu';
 
 export const AgencyTable = ({
     pagination,
@@ -17,6 +17,7 @@ export const AgencyTable = ({
         onPricePlans,
         onReferrer,
         onPricePlanMode,
+        onDueDate,
     },
 }) => {
     const columns = [
@@ -117,6 +118,11 @@ export const AgencyTable = ({
                                 icon: <LuGlobe />,
                             },
                             {
+                                label: 'Change Due Date',
+                                key: 'duedate',
+                                icon: <LuWalletCards />,
+                            },
+                            {
                                 label: 'Change Referrer',
                                 key: 'referrer',
                                 icon: <LuUser />,
@@ -135,6 +141,9 @@ export const AgencyTable = ({
                                     break;
                                 case "plan":
                                     onPricePlans && onPricePlans(record)
+                                    break;
+                                case "duedate":
+                                    onDueDate && onDueDate(record)
                                     break;
                                 case "referrer":
                                     onReferrer && onReferrer(record)

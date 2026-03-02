@@ -242,6 +242,15 @@ export const changeAgencyPricePlansForAdmin = (agency, pricePlans, callback) => 
   })
 };
 
+export const changeAgencyDueDateForAdmin = (agency, duedate, callback) => async (dispatch) => {
+  await ApiRequest.putAction(dispatch, {
+    path: `/v2/admin/agency/${agency._id}`,
+    data: { duedate, action: 'duedate' },
+    inform: `Agency(${agency.name})'s due date is successfully updated`,
+    callback
+  })
+};
+
 export const changeAgencyReferrerForAdmin = (agency, referrer, callback) => async (dispatch) => {
   await ApiRequest.putAction(dispatch, {
     path: `/v2/admin/agency/${agency._id}`,
