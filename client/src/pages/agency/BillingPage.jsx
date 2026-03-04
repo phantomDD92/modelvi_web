@@ -85,7 +85,7 @@ export const BillingPage = () => {
                   value={profile.modelCount || "-"}
                 />
                 <FeatureItem
-                  icon={<User size={30} />}
+                  icon={<LuUser size={30} />}
                   label="Accounts"
                   value={profile.accountCount || "-"}
                 />
