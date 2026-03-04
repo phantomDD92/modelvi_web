@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const stripe = require("stripe")("sk_test_51T7E3qKCantw8sNkcYtOFBuJF0z3Pk8qvJTJ1t5lmJRJs3eNb8DhqZXrrKXG3oFZRcOvzI1N8SThJmjWUiufJ8f700jiCKd3Ab");
 const { PaymentStatus, TransactionType } = require("../../config/const");
 const AgencyService2 = require("../../services/v2/agency");
 const CounterService = require("../../services/v2/counter");
@@ -6,7 +7,7 @@ const PaymentService2 = require("../../services/v2/payment");
 const TransactionService2 = require("../../services/v2/transaction");
 const NotifyUtils = require("../../utils/notifiy");
 const PaymentUtils = require("../../utils/payment");
-const { sendError, sendResult } = require("../../utils/resp");
+const { sendError, sendResult, ApiError } = require("../../utils/resp");
 
 const handleCreatePayment = async (req, res) => {
   try {
@@ -119,6 +120,55 @@ const handleProcess = async (req, res) => {
 }
 
 
+const handleProcessStripePayment = async (req, res) => {
+  const sig = req.headers["stripe-signature"];
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  switch (event.type) {
+    case "payment_intent.succeeded":
+      const paymentIntent = event.data.object;
+      console.log("✅ Payment succeeded:", paymentIntent.id);
+      // TODO: Update your DB, send email, etc.
+      break;
+
+    case "payment_intent.payment_failed":
+      console.log("❌ Payment failed:", event.data.object.id);
+      break;
+  }
+  res.json({ received: true });
+}
+
+
+const handleCreateStripePayment = async (req, res) => {
+  try {
+    const { amount, currency = "usd", metadata = {} } = req.body;
+
+    if (!amount || amount <= 0)
+      throw new ApiError("invalid amount");
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // Convert to cents
+      currency,
+      metadata,
+      automatic_payment_methods: { enabled: true },
+    });
+
+    sendResult(res, { clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
+
 const PaymentCtrl2 = {
   handleCreatePayment,
   handleGetPayment,
@@ -126,6 +176,9 @@ const PaymentCtrl2 = {
   handleCancelPayment,
   handleProcessPayment,
   handleLoadPaymentsForAdmin,
+
+  handleCreateStripePayment,
+  handleProcessStripePayment,
 };
 
 module.exports = PaymentCtrl2
