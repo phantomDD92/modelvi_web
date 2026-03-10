@@ -377,7 +377,7 @@ const clearContents = (accountId) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { "params.contents": [] } })
 
 const setContents = (accountId, contents) => {
-  const newContents = contents.map(({ _id, platforms, postTypes, ...params }) => ({ ...params }));
+  const newContents = contents.map(({ _id, platforms, ...params }) => ({ ...params }));
   return AccountModel.findByIdAndUpdate(accountId, {
     $push: { "params.contents": { $each: newContents } },
     $set: { "params.recent": true, "params.uploaded": false, "contentsLength": newContents.length }

@@ -32,6 +32,21 @@ const beforeUpload = (file) => {
     return true;
 }
 
+const PLATFORM_OPTIONS = [
+    { label: 'F2F', value: Platform.F2F },
+    { label: 'Knky', value: Platform.KNKY },
+    { label: 'Fancentro', value: Platform.FNC },
+    { label: 'Fansly', value: Platform.FAN },
+    { label: 'Loyalfans', value: Platform.LOYALFANS },
+    { label: 'Maloum', value: Platform.MALOUM },
+    { label: 'Fanvue', value: Platform.FANVUE },
+    { label: '4Based', value: Platform.FOURBASED },
+    { label: 'MymFans', value: Platform.MYMFANS },
+    { label: 'FetLife', value: Platform.FETLIFE },
+    { label: 'OnlyFans', value: Platform.ONLYFANS },
+    { label: 'BestFans', value: Platform.BESTFANS },
+];
+
 const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
     const [form] = Form.useForm();
     const [mediaName, setMediaName] = useState();
@@ -41,6 +56,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
     const [previewName, setPreviewName] = useState();
     const [previewType, setPreviewType] = useState();
     const [platforms, setPlatforms] = useState([]);
+    const [postTypes, setPostTypes] = useState({});
     const [knkyStoryType, setKnkyStoryType] = useState();
 
     const handleMediaChange = ({ file }) => {
@@ -87,7 +103,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
             else if (mediaType.includes("video"))
                 mode = "video";
 
-            onUpdate({ media, preview, postTags, platforms, mode, ...params });
+            onUpdate({ media, preview, postTags, platforms, mode, postTypes, price: form.getFieldValue("price"), ...params });
         } catch (e) {
             console.error(e);
         }
@@ -95,8 +111,18 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
 
     useEffect(() => {
         if (open && content) {
-            const { image, platforms, media, preview, postTags, knkyStoryType, f2fStoryType, ...params } = content;
-            setPlatforms(platforms);
+            const { image, platforms, media, preview, postTags, knkyStoryType, f2fStoryType, postTypes: savedPostTypes, postType: savedPostType, price: savedPrice, ...params } = content;
+            // Load per-platform postTypes (support old single postType format)
+            if (savedPostTypes && typeof savedPostTypes === 'object' && Object.keys(savedPostTypes).length > 0) {
+                setPostTypes(savedPostTypes);
+            } else if (savedPostType && platforms) {
+                const converted = {};
+                platforms.forEach(p => converted[p] = savedPostType);
+                setPostTypes(converted);
+            } else {
+                setPostTypes({});
+            }
+            setPlatforms(platforms || []);
             let medias = [];
             let previews = [];
             if (media && media.length > 0) {
@@ -121,6 +147,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                 medias,
                 previews,
                 platforms,
+                price: savedPrice,
                 knkyStoryType: knkyStoryType || KnkyStoryType.NONE,
                 f2fStoryType: f2fStoryType || F2FStoryType.NONE,
                 tags: (postTags || []).map(tag => `#${tag}`).join(" "),
@@ -131,6 +158,7 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
             setMediaName();
             setMediaType();
             setPlatforms([]);
+            setPostTypes({});
             setPreviewName();
             setPreviewType();
             setKnkyStoryType(StoryType.NONE)
@@ -149,10 +177,6 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
         return platforms.length == 1 && platforms[0] == Platform.FAN;
     }
 
-    const isFancentro = () => {
-        return platforms.includes(Platform.FNC);
-    }
-
     const isF2F = () => {
         return platforms.includes(Platform.F2F);
     }
@@ -162,6 +186,10 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
 
     const handlePlatformsChange = (value) => {
         setPlatforms(value);
+        // Initialize postType for newly selected platforms, clean deselected
+        const updated = {};
+        value.forEach(p => { updated[p] = postTypes[p] || "FREE"; });
+        setPostTypes(updated);
     }
 
     return (
@@ -184,21 +212,37 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                     knkyStoryPrice: 5,
                 }}>
                 <Form.Item name="platforms" label="Platforms" rules={[{ required: true }]}>
-                    <Checkbox.Group options={[
-                        { label: 'F2F', value: Platform.F2F },
-                        { label: 'Knky', value: Platform.KNKY },
-                        { label: 'Fancentro', value: Platform.FNC },
-                        { label: 'Fansly', value: Platform.FAN },
-                        { label: 'Loyalfans', value: Platform.LOYALFANS },
-                        { label: 'Maloum', value: Platform.MALOUM },
-                        { label: 'Fanvue', value: Platform.FANVUE },
-                        { label: '4Based', value: Platform.FOURBASED },
-                        { label: 'MymFans', value: Platform.MYMFANS },
-                        { label: 'FetLife', value: Platform.FETLIFE },
-                        { label: 'OnlyFans', value: Platform.ONLYFANS },
-                        { label: 'BestFans', value: Platform.BESTFANS },
-                    ]} onChange={handlePlatformsChange} />
+                    <Checkbox.Group options={PLATFORM_OPTIONS} onChange={handlePlatformsChange} />
                 </Form.Item>
+                {platforms.length > 0 && (
+                    <Form.Item label="Post Type">
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                            {platforms.map(p => {
+                                const label = PLATFORM_OPTIONS.find(o => o.value === p)?.label || p;
+                                return (
+                                    <div key={p} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <span style={{ width: 80, fontSize: 13, fontWeight: 500 }}>{label}</span>
+                                        <Radio.Group
+                                            size="small"
+                                            buttonStyle="solid"
+                                            optionType="button"
+                                            value={postTypes[p] || "FREE"}
+                                            onChange={(e) => setPostTypes({ ...postTypes, [p]: e.target.value })}>
+                                            <Radio.Button value="FREE">Free</Radio.Button>
+                                            <Radio.Button value="FANS">Fans</Radio.Button>
+                                            <Radio.Button value="PAID">Paid</Radio.Button>
+                                        </Radio.Group>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </Form.Item>
+                )}
+                {Object.values(postTypes).includes('PAID') && (
+                    <Form.Item name="price" label="Price" rules={[{ required: true }]}>
+                        <InputNumber min={1} max={500} addonAfter="$" />
+                    </Form.Item>
+                )}
                 {isF2F() &&
                     <Form.Item name="f2fStoryType" label="F2F Story">
                         <Radio.Group
@@ -212,19 +256,6 @@ const ModelContentDialog = ({ open, content, onCancel, onUpdate }) => {
                             ]} />
                     </Form.Item>
                 }
-                {/* {isFancentro() &&
-                    <Form.Item name="story" label="Fancentro Story">
-                        <Radio.Group
-                            buttonStyle="solid"
-                            optionType="button"
-                            options={[
-                                { label: 'None', value: StoryType.NONE },
-                                { label: 'Public', value: StoryType.PUBLIC },
-                                { label: 'Followers', value: StoryType.FOLLOWER },
-                                { label: 'Subscribers', value: StoryType.SUBSCRIBER },
-                            ]} />
-                    </Form.Item>
-                } */}
                 {isKnky() &&
                     <Form.Item name="knkyStoryType" label="Knky Story">
                         <Radio.Group
