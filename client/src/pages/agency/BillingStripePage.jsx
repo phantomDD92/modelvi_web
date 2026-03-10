@@ -8,7 +8,7 @@ import {
   ThunderboltOutlined,
 } from "@ant-design/icons";
 import { CheckoutForm, PricePlansView } from "@/components/finance";
-import { createStripePayment } from "@/redux/v2/actions";
+import { createStripePayment, getProfile } from "@/redux/v2/actions";
 import { STRIPE_PUBLIC_KEY } from "@/utils/const";
 import { useDispatch } from "react-redux";
 
@@ -196,6 +196,11 @@ export default function PaymentPage() {
   const [step, setStep] = useState(0);
   const [paymentData, setPaymentData] = useState(null);
   const [paymentIntent, setPaymentIntent] = useState(null);
+  const dispatch = useDispatch();
+
+  const reloadProfile = () => {
+    dispatch(getProfile());
+  }
 
   return (
     <Card>
@@ -226,7 +231,7 @@ export default function PaymentPage() {
             <CheckoutStep
               amount={paymentData.amount}
               clientSecret={paymentData.clientSecret}
-              onSuccess={(intent) => { setPaymentIntent(intent); setStep(2); }}
+              onSuccess={(intent) => { setPaymentIntent(intent); setStep(2); reloadProfile(); }}
               onBack={() => setStep(0)}
             />
           )}
@@ -238,7 +243,7 @@ export default function PaymentPage() {
             />
           )}
         </Col>
-        </Row>
+      </Row>
     </Card>
   );
 }

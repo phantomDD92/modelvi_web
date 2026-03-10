@@ -14,7 +14,7 @@ const findAgencyByReferralCode = (referralCode) =>
   ManagerModel.findOne({ referralCode });
 
 const getAgency = (agencyId) =>
-  ManagerModel.findById(agencyId, "name email telegram role balance referralCode status vip verified");
+  ManagerModel.findById(agencyId, "_id name email telegram role balance referralCode status vip verified");
 
 const createAgency = ({ name, email, telegram, password }, referrer = undefined) =>
   ManagerModel.create({

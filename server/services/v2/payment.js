@@ -1,5 +1,6 @@
 const { PaymentStatus } = require("../../config/const");
 const PaymentModel = require("../../models/payment");
+const StripeModel = require("../../models/stripe");
 
 const createPayment = (id, agency, data) =>
   PaymentModel.create({
@@ -65,6 +66,22 @@ const loadPaymentsWithPage = ({ status, agency }, page) => {
   ])
 }
 
+const createStripePayment = (id, data) =>
+  StripeModel.create({
+    _id: id,
+    agency: data.metadata?.agency,
+    paymentId: data["id"],
+    amount: data["amount_received"],
+    clientSecret: data["client_secret"],
+    currency: data["currency"],
+    status: data["status"],
+    extra: data,
+  });
+
+const loadStripePayments = (agency) =>
+  StripeModel.find({ agency: agency._id })
+    .sort("-createdAt");
+
 const PaymentService2 = {
   createPayment,
   getPaymentById,
@@ -74,6 +91,8 @@ const PaymentService2 = {
   getPayment,
   setChargeAmount,
   loadPaymentsWithPage,
+  createStripePayment,
+  loadStripePayments,
 };
 
 module.exports = PaymentService2;

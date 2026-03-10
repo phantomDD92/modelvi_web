@@ -73,6 +73,7 @@ const TransactionType = {
     CHARGE_NOWPAYMENT: 1,
     EXPENSE: 2,
     CHARGE_INVOICE: 3,
+    CHARGE_STRIPE: 4,
 }
 
 const ScheduleStatus = {

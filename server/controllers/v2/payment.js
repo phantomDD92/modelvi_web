@@ -84,7 +84,7 @@ const handleProcessPayment = async (req, res) => {
     }
     await PaymentService2.updatePayment(payment._id, data);
     if (data["payment_status"] == PaymentStatus.FINISHED) {
-      NotifyUtils.sendMessage("NOWPayment", "payment callback", "Finish payment");
+      // NotifyUtils.sendMessage("NOWPayment", "payment callback", "Finish payment");
       const amount = await PaymentUtils.getEstimatedPrice(data["outcome_amount"], data["outcome_currency"])
       await PaymentService2.setChargeAmount(payment._id, amount);
       const agency = await AgencyService2.updateBalance(payment.agency, amount);
@@ -131,38 +131,46 @@ const handleProcessStripePayment = async (req, res) => {
       sig,
       process.env.STRIPE_WEBHOOK_SECRET
     );
+    const id = await CounterService.getNextSequence("stripe");
+    switch (event.type) {
+      case "payment_intent.succeeded":
+        const paymentIntent = event.data.object;
+        await PaymentService2.createStripePayment(id, paymentIntent);
+        const agencyId = paymentIntent.metadata?.agency;
+        const amount = (paymentIntent.amount_received || 0) / 100;
+        if (!agencyId)
+          throw new Error("agency id is absent");
+        const agency = await AgencyService2.updateBalance(agencyId, amount);
+        const from = agency.balance || 0;
+        const to = from + amount;
+        await TransactionService2.createChargeTransaction(agencyId, TransactionType.CHARGE_STRIPE, amount, from, to, "Payment by Stripe");
+        NotifyUtils.sendPaymentMessage(agency, "Payment By Stripe",
+          `Currency: ${paymentIntent.currency}\nAmount: ${paymentIntent.amount / 100}\nCharge: $${amount}\nBalance:$${from} => $${to}`
+        );
+        break;
+      case "payment_intent.payment_failed":
+        await PaymentService2.createStripePayment(id, event.data.object);
+        break;
+      default:
+        await PaymentService2.createStripePayment(id, event.data.object);
+        break;
+    }
+    res.json({ received: true });
   } catch (err) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
-
-  switch (event.type) {
-    case "payment_intent.succeeded":
-      // const paymentIntent = event.data.object;
-      NotifyUtils.sendDebugMessage("Stripe Webhook", "Payment Succeeded", JSON.stringify(event.data.object));
-      // TODO: Update your DB, send email, etc.
-      break;
-
-    case "payment_intent.payment_failed":
-      NotifyUtils.sendDebugMessage("Stripe Webhook", "Payment Failed", JSON.stringify(event.data.object));
-      break;
-    default:
-      NotifyUtils.sendDebugMessage("Stripe Webhook", "Other", JSON.stringify(event.data.object));
-      break;
-  }
-  res.json({ received: true });
 }
 
 
 const handleCreateStripePayment = async (req, res) => {
   try {
-    const { amount, currency = "usd", metadata = {} } = req.body;
-
+    const { amount, currency = "usd" } = req.body;
     if (!amount || amount <= 0)
       throw new ApiError("invalid amount");
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Convert to cents
       currency,
-      metadata,
+      metadata: { agency: req.manager._id.toString() },
       automatic_payment_methods: { enabled: true },
     });
 
