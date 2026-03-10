@@ -3,26 +3,37 @@ import { ImportContentTable } from "@/components/model";
 import { importModelContents, loadModelList } from "@/redux/v2/actions";
 import { Platform, SERVER_PATH, StoryType } from "@/utils/const";
 import { getPlatformName, shuffleArray } from "@/utils/string";
-import { Button, Card, Form, Row, Col, Upload, Space, Checkbox, Radio, message, Input, Select } from "antd";
+import { Button, Card, Form, Row, Col, Upload, Space, Checkbox, Radio, message, Input, InputNumber, Select } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { LuCommand, LuStepBack, LuStepForward, LuUpload } from "react-icons/lu";
 
+const PLATFORM_OPTIONS = [
+  { label: 'F2F', value: Platform.F2F },
+  { label: 'Knky', value: Platform.KNKY },
+  { label: 'Fancentro', value: Platform.FNC },
+  { label: 'Fansly', value: Platform.FAN },
+  { label: 'Loyalfans', value: Platform.LOYALFANS },
+  { label: 'Maloum', value: Platform.MALOUM },
+  { label: 'Fanvue', value: Platform.FANVUE },
+  { label: '4Based', value: Platform.FOURBASED },
+  { label: 'MymFans', value: Platform.MYMFANS },
+  { label: 'FetLife', value: Platform.FETLIFE },
+  { label: 'OnlyFans', value: Platform.ONLYFANS },
+];
+
 const beforeUpload = (file) => {
-  // Accept specific mime types or extensions
   const isAllowed = /\.(jpe?g|png|mp4|webm|avi)$/i.test(file.name);
   if (!isAllowed) {
     message.error(`${file.name} has an unsupported file type.`);
-    return Upload.LIST_IGNORE; // prevents upload
+    return Upload.LIST_IGNORE;
   }
-  // Optional: further filter by extension
   const ext = file.name.split('.').pop().toLowerCase();
   if (ext === 'mov' || ext === 'heic') {
     message.error(`${file.name} is not allowed.`);
     return Upload.LIST_IGNORE;
   }
-  // If you want to allow, return true (or just omit)
   return true;
 }
 
@@ -34,10 +45,11 @@ const AgencyImportContentPage = () => {
   const [captionStr, setCaptionStr] = useState('');
   const [folder, setFolder] = useState('');
   const [platforms, setPlatforms] = useState([]);
+  const [postTypes, setPostTypes] = useState({});
+  const [price, setPrice] = useState();
   const [f2fStoryType, setF2fStoryType] = useState(StoryType.NONE);
   const [knkyStoryType, setKnkyStoryType] = useState(StoryType.NONE);
   const [contents, setContents] = useState([]);
-  // const { modelId } = useParams();
   const [model, setModel] = useState();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -50,15 +62,20 @@ const AgencyImportContentPage = () => {
 
   useEffect(() => {
     dispatch(loadModelList());
-    // dispatch(getModelContents(modelId));
   }, []);
+
+  const handlePlatformsChange = (value) => {
+    setPlatforms(value);
+    const updated = {};
+    value.forEach(p => { updated[p] = postTypes[p] || "FREE"; });
+    setPostTypes(updated);
+  }
 
   const handleNextClick = () => {
     if (!model) {
       message.warning("Please select a model");
       return;
     }
-    // check elements
     if (platforms.length == 0) {
       message.warning("Please select platforms");
       return;
@@ -79,6 +96,10 @@ const AgencyImportContentPage = () => {
       message.warning("Please wait to upload all images");
       return;
     }
+    if (Object.values(postTypes).includes('PAID') && (!price || price <= 0)) {
+      message.warning("Please set a price for paid posts");
+      return;
+    }
 
     const captions = captionStr.split("\n").filter(line => line.trim() != "");
     if (captions.length == 0) {
@@ -87,7 +108,6 @@ const AgencyImportContentPage = () => {
     }
     const mediaList = shuffleArray(fileList.filter(fileInfo => fileInfo.response?.file).map(fileInfo => ({ name: fileInfo.response?.file, mode: fileInfo.type, size: fileInfo.size })));
     setStep(ImportStep.IMPORT);
-    // prepare contents
     let importContents = [];
     let id = 0;
     const captionsLen = captions.length;
@@ -104,6 +124,8 @@ const AgencyImportContentPage = () => {
         media,
         mode: (media.mode || "image").split("/")[0],
         folder: folder,
+        postTypes: postTypes,
+        price: Object.values(postTypes).includes('PAID') ? price : undefined,
       });
     }
     setContents(importContents);
@@ -167,23 +189,38 @@ const AgencyImportContentPage = () => {
                 <Form.Item label="Platforms :" >
                   <Checkbox.Group
                     value={platforms}
-                    options={[
-                      Platform.F2F,
-                      Platform.KNKY,
-                      Platform.FNC,
-                      Platform.FAN,
-                      Platform.LOYALFANS,
-                      Platform.MALOUM,
-                      Platform.FANVUE,
-                      Platform.FOURBASED,
-                      Platform.MYMFANS,
-                      Platform.FETLIFE,
-                      Platform.ONLYFANS,
-                      // Platform.PORNHUB,
-                      // Platform.DFANXYZ,
-                    ].map(item => ({ label: getPlatformName(item), value: item }))}
-                    onChange={value => setPlatforms(value)} />
+                    options={PLATFORM_OPTIONS.map(item => ({ label: item.label, value: item.value }))}
+                    onChange={handlePlatformsChange} />
                 </Form.Item>
+                {platforms.length > 0 && (
+                  <Form.Item label="Post Type :">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      {platforms.map(p => {
+                        const label = PLATFORM_OPTIONS.find(o => o.value === p)?.label || p;
+                        return (
+                          <div key={p} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span style={{ width: 80, fontSize: 13, fontWeight: 500 }}>{label}</span>
+                            <Radio.Group
+                              size="small"
+                              buttonStyle="solid"
+                              optionType="button"
+                              value={postTypes[p] || "FREE"}
+                              onChange={(e) => setPostTypes({ ...postTypes, [p]: e.target.value })}>
+                              <Radio.Button value="FREE">Free</Radio.Button>
+                              <Radio.Button value="FANS">Fans</Radio.Button>
+                              <Radio.Button value="PAID">Paid</Radio.Button>
+                            </Radio.Group>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </Form.Item>
+                )}
+                {Object.values(postTypes).includes('PAID') && (
+                  <Form.Item label="Price :">
+                    <InputNumber min={1} max={500} addonAfter="$" value={price} onChange={setPrice} />
+                  </Form.Item>
+                )}
                 <Row>
                   {platforms.includes(Platform.F2F) &&
                     <Col span={12}>
@@ -254,7 +291,6 @@ const AgencyImportContentPage = () => {
                     value={captionStr}
                     onChange={e => setCaptionStr(e.target.value)}
                     rows={10}
-                  // maxLength={30}
                   />
                 </Form.Item>
               </Col>

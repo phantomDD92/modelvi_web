@@ -143,7 +143,7 @@ const handleUpdateContents = async (req, res) => {
     if (!actor)
       throw new ApiError("unknown model");
     const actorJson = actor.toJSON();
-    const contents = actorJson.contents.filter(content => content.platforms.includes(account.platform) && content.media.length > 0 && content.media[0].name);
+    const contents = actorJson.contents.filter(content => content.platforms.includes(account.platform) && content.media.length > 0 && content.media[0].name).map(content => ({...content, postType: (content.postTypes && content.postTypes[account.platform]) || content.postType || "FREE"}));
     await NotifyUtils.sendDebugMessage(`${account.platform} - ${account.alias}`, "Update contents", `update ${contents.length} contents from ${actorJson.contents?.length} contents`)
     await AccountService2.clearContents(req.bot.id);
     await AccountService2.setContents(req.bot.id, contents);

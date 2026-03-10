@@ -24,6 +24,8 @@ const ActorSchema = new Schema({
     knkyStoryType: Number,
     knkyStoryPrice: Number,
     f2fStoryType: Number,
+    postTypes: { type: Schema.Types.Mixed, default: {} },
+    price: { type: Number },
   }],
   updated: { type: Boolean, default: false },
   deleted: { type: Boolean, default: false },
