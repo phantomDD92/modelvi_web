@@ -595,7 +595,7 @@ const handleTestBalance = async (req, res) => {
     // calculate price
     const price = getPricePlan(agency, account.platform, revenue);
     const commission = price * (agency.referrer?.commission || 0) / 100;
-    NotifyUtils.sendDebugMessage(agency.name, "Test Price Plans", `Monthly Revenue: ${revenue}\nPrice: ${price}\nCommission Rate:$${agency.referrer?.commission || 0}\nCommission:${commission}\n`)
+    // NotifyUtils.sendDebugMessage(agency.name, "Test Price Plans", `Monthly Revenue: ${revenue}\nPrice: ${price}\nCommission Rate:$${agency.referrer?.commission || 0}\nCommission:${commission}\n`)
     // } else {
     sendResult(res);
   } catch (error) {

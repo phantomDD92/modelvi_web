@@ -74,6 +74,18 @@ export const getPayment = (paymentID, callback) => async (dispatch) => {
   })
 }
 
+export const createStripePayment = ({ amount, currency }, callback) => async (dispatch) => {
+  try {
+    const payload = await ApiRequest.postAction(dispatch, {
+      path: `/v2/agency/stripe`,
+      data: { amount, currency },
+    })
+    callback && callback(payload.clientSecret);
+  } catch (error) {
+    callback && callback();
+  }
+}
+
 export const loadTransactions = (callback) => async (dispatch) => {
   await ApiRequest.getAction(dispatch, {
     path: `/v2/agency/transaction`,

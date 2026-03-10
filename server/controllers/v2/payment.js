@@ -1,5 +1,6 @@
+require('dotenv').config()
 const crypto = require('crypto');
-const stripe = require("stripe")("sk_test_51T7E3qKCantw8sNkcYtOFBuJF0z3Pk8qvJTJ1t5lmJRJs3eNb8DhqZXrrKXG3oFZRcOvzI1N8SThJmjWUiufJ8f700jiCKd3Ab");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const { PaymentStatus, TransactionType } = require("../../config/const");
 const AgencyService2 = require("../../services/v2/agency");
 const CounterService = require("../../services/v2/counter");
@@ -136,13 +137,16 @@ const handleProcessStripePayment = async (req, res) => {
 
   switch (event.type) {
     case "payment_intent.succeeded":
-      const paymentIntent = event.data.object;
-      console.log("✅ Payment succeeded:", paymentIntent.id);
+      // const paymentIntent = event.data.object;
+      NotifyUtils.sendDebugMessage("Stripe Webhook", "Payment Succeeded", JSON.stringify(event.data.object));
       // TODO: Update your DB, send email, etc.
       break;
 
     case "payment_intent.payment_failed":
-      console.log("❌ Payment failed:", event.data.object.id);
+      NotifyUtils.sendDebugMessage("Stripe Webhook", "Payment Failed", JSON.stringify(event.data.object));
+      break;
+    default:
+      NotifyUtils.sendDebugMessage("Stripe Webhook", "Other", JSON.stringify(event.data.object));
       break;
   }
   res.json({ received: true });

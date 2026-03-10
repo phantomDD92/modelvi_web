@@ -19,7 +19,7 @@ router.route("/version")
 
 router.route("/stripe")
   .all(authenticate)
-  // .post(PaymentCtrl2.handleCreateStripePayment)
+  .post(PaymentCtrl2.handleCreateStripePayment)
 
 router.route("/stripe_callback")
   .post(express.raw({ type: "application/json" }), PaymentCtrl2.handleProcessStripePayment);

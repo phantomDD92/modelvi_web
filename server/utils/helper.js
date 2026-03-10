@@ -256,7 +256,7 @@ function getWarningEmailTemplate(agency, title, dueDate, serviceFee, proxyFee) {
         <p>To keep your automation running smoothly and avoid service interruption, please top up your funds as soon as possible.</p>
         
         <div>
-            <a href="https://modelvi.com/billing/payments" class="button">👉 Top Up Now</a>
+            <a href="https://modelvi.com/billing/stripe" class="button">👉 Top Up Now</a>
         </div>
         
         <div class="divider"></div>
@@ -335,7 +335,7 @@ function getErrorEmailTemplate(agency, dueDate, fee) {
         <p>To restart your service, please top up your funds.</p>
         
         <div>
-            <a href="https://modelvi.com/billing/payments" class="button">👉 Top Up Now</a>
+            <a href="https://modelvi.com/billing/stripe" class="button">👉 Top Up Now</a>
         </div>
         
         <div class="divider"></div>
