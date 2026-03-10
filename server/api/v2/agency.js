@@ -17,6 +17,13 @@ const router = express.Router();
 router.route("/version")
   .get((req, res) => { res.json({ success: true, version: "agency api version 2.0" }) });
 
+router.route("/stripe")
+  .all(authenticate)
+  .post(PaymentCtrl2.handleCreateStripePayment)
+
+router.route("/stripe_callback")
+  .post(express.raw({ type: "application/json" }), PaymentCtrl2.handleProcessStripePayment);
+
 router.route("/payment")
   .all(authenticate)
   .get(PaymentCtrl2.handleLoadPayments)

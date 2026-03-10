@@ -3,6 +3,8 @@
 export const API_PATH = `${window.location.protocol}//${window.location.host}/api`;
 export const SERVER_PATH = `${window.location.protocol}//${window.location.host}`;
 
+export const STRIPE_PUBLIC_KEY="pk_test_51T7E3qKCantw8sNkmRHZdAcQoHY2ftX3WeUSi3e95Mar0WAi9Mq6T6PJmftL1cqBPR2TN7rETZKhRh5McQY3eV5f0039BluVL9"
+
 export const DEFAULT_REFRESH_TIMEOUT = 180000;
 export const DEFAULT_PAGE_SIZE = 20;
 export const LARGE_PAGE_SIZE = 100;

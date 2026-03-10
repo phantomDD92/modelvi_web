@@ -2,36 +2,6 @@ import { AdminRole } from "@/utils/const";
 import { LuArchive, LuArrowLeftToLine, LuArrowRightFromLine, LuBook, LuChrome, LuHouse, LuMessageCircle, LuMessageSquare, LuMessageSquareDashed, LuNetwork, LuSatellite, LuSquareUser, LuThumbsUp, LuTrophy, LuUser, LuUsers, LuWallet } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
-// export const agencyMenus = [
-//   { key: "dashboard", icon: <LuHome />, label: "Dashboard", path: "/" },
-//   { key: "model", icon: <LuUser />, label: "Model", path: "/model" },
-//   { key: "account", icon: <LuUserSquare />, label: "Account", path: "/account/F2F" },
-//   { key: "schedule", icon: <LuSatellite />, label: "Schedule", path: "/schedule" },
-//   { key: "chat", icon: <LuMessagesSquare />, label: "Chat Team", path: "/chat" },
-//   { key: "comment", icon: <LuMessageCircle />, label: "Comment", path: "/comment" },
-//   { key: "billing", icon: <LuWallet />, label: "Billing", path: "/billing/payments" },
-//   { key: "affiliate", icon: <LuTrophy />, label: "Affiliate", path: "/affiliate" },
-//   { key: "to_admin", icon: <LuArrowRightFromLine />, label: "To Admin", path: "/admin/dashboard", visible: role => role == AdminRole.MANAGER },
-// ]
-
-
-// export const adminMenus = [
-//   { key: "admin_dashboard", icon: <LuHome />, label: "Dashboard", path: "/admin" },
-//   { key: "admin_agency", icon: <LuUsers />, label: "Agency", path: "/admin/agency" },
-//   { key: "admin_model", icon: <LuUser />, label: "Model", path: "/admin/model" },
-//   { key: "admin_account", icon: <LuUserSquare />, label: "Account", path: "/admin/account/F2F" },
-//   { key: "admin_proxy", icon: <LuNetwork />, label: "Proxy", path: "/admin/proxy" },
-//   { key: "admin_proxy_new", icon: <LuNetwork />, label: "Proxy(LikeBot)", path: "/admin/proxy_new" },
-//   { key: "admin_schedule", icon: <LuSatellite />, label: "Schedule", path: "/admin/schedule" },
-//   { key: "admin_chat", icon: <LuMessagesSquare />, label: "Chat Team", path: "/admin/chat" },
-//   { key: "admin_comment", icon: <LuMessageCircle />, label: "Comment", path: "/admin/comment" },
-//   // {key: "admin_like", icon: "LuThumbsUp", label: "Like Bot, "}
-//   { key: "admin_like", icon: <LuThumbsUp />, label: "Like Bot", path: "/admin/like/FANLIKE" },
-//   { key: "admin_like_comment", icon: <LuMessageSquareDashed />, label: "Comment(Like Bot)", path: "/admin/like_comment" },
-//   { key: "admin_finance", icon: <LuWallet />, label: "Finance", path: "/admin/finance/payments" },
-//   { key: "admin_affiliate", icon: <LuTrophy />, label: "Affiliate", path: "/admin/affiliate" },
-//   { key: "to_agency", icon: <LuArrowLeftToLine />, label: "To Agency", path: "/dashboard" },
-// ]
 
 export const agencyMenus = [
   { key: "dashboard", icon: <LuHouse size={24} />, label: <Link to="/">Dashboard</Link> },
@@ -41,7 +11,7 @@ export const agencyMenus = [
   { key: "schedule", icon: <LuSatellite size={24} />, label: <Link to="/schedule">Schedule</Link> },
   { key: "chat", icon: <LuMessageSquareDashed size={24} />, label: <Link to="/chat">Chat Team</Link> },
   { key: "comment", icon: <LuMessageCircle size={24} />, label: <Link to="/comment">Comment</Link> },
-  { key: "billing", icon: <LuWallet size={24} />, label: <Link to="/billing/payments">Billing</Link> },
+  { key: "billing", icon: <LuWallet size={24} />, label: <Link to="/billing/nowpayment">Billing</Link> },
   { key: "affiliate", icon: <LuTrophy size={24} />, label: <Link to="/affiliate">Affiliate</Link> },
   { key: "to_admin", icon: <LuArrowRightFromLine size={24} />, label: <Link to="/admin/dashboard">To Admin</Link>, visible: role => role == AdminRole.MANAGER },
 ]

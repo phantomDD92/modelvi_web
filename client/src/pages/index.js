@@ -7,7 +7,7 @@ export * from "@/pages/agency/AgencyProxyPage";
 export * from "@/pages/agency/CommentListPage";
 export * from "@/pages/agency/BillingPage";
 export * from "@/pages/agency/BillingOverviewPage";
-export * from "@/pages/agency/BillingPaymentPage";
+export * from "@/pages/agency/BillingNowpaymentPage";
 export * from "@/pages/agency/BillingTransactionPage";
 export * from "@/pages/agency/AffiliatePage";
 export * from "@/pages/agency/AgencySchedulePage";

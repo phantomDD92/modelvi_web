@@ -4,11 +4,13 @@ import { Card, Row, Col, Avatar, Typography, Tag, Divider, Tabs } from "antd";
 import { useSelector } from "react-redux";
 import { AdminRole } from "@/utils/const";
 import { useNavigate, useParams } from "react-router-dom";
-import BillingPaymentPage from "./BillingPaymentPage";
+import BillingNowpaymentPage from "./BillingNowpaymentPage";
 import BillingTransactionPage from "./BillingTransactionPage";
 import PageMetaData from "@/components/common/PageMetaData";
 import { getFiatAmount } from "@/utils/string";
 import { LuReceipt, LuUser, LuUsers, LuWallet } from "react-icons/lu";
+import BillingStripePage from "./BillingStripePage";
+import { useAuth } from "@/contexts";
 
 const FeatureItem = ({ icon, label, value }) =>
   <div className="flex gap-2 justify-center items-center mx-4">
@@ -25,8 +27,14 @@ const DetailItem = ({ label, value }) =>
     <span>{value}</span>
   </div>
 
+const profileTabsNew = [
+  { key: "stripe", label: "Payments By Stripe" },
+  { key: "nowpayment", label: "Payments By NowPayment" },
+  { key: "transactions", label: "Transactions" },
+]
+
 const profileTabs = [
-  { key: "payments", label: "Payments" },
+  { key: "nowpayment", label: "Payments By NowPayment" },
   { key: "transactions", label: "Transactions" },
 ]
 
@@ -34,7 +42,8 @@ export const BillingPage = () => {
   const params = useParams();
   const navigate = useNavigate();
   const profile = useSelector(state => state.v2.profile);
-  const key = params?.key || "payments";
+  const key = params?.key || "nowpayment";
+  const { session } = useAuth();
 
   const handleTabChange = (item) => {
     navigate(`/billing/${item}`);
@@ -111,17 +120,17 @@ export const BillingPage = () => {
             <Tabs
               type="card"
               activeKey={key}
-              items={profileTabs}
+              items={session.name == "Eric" ? profileTabsNew: profileTabs}
               onChange={handleTabChange}
             />
             {
-              key == "payments"
-                ? <BillingPaymentPage />
+              key == "nowpayment"
+                ? <BillingNowpaymentPage />
                 : key == "transactions"
                   ? <BillingTransactionPage />
-                  // : key == "overview"
-                  //   ? <SettingsOverview />
-                  : <></>
+                  : key == "stripe" && session.name == "Eric"
+                    ? <BillingStripePage />
+                    : <></>
             }
           </div>
         </Col>

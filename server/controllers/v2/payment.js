@@ -1,4 +1,6 @@
+require('dotenv').config()
 const crypto = require('crypto');
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const { PaymentStatus, TransactionType } = require("../../config/const");
 const AgencyService2 = require("../../services/v2/agency");
 const CounterService = require("../../services/v2/counter");
@@ -6,7 +8,7 @@ const PaymentService2 = require("../../services/v2/payment");
 const TransactionService2 = require("../../services/v2/transaction");
 const NotifyUtils = require("../../utils/notifiy");
 const PaymentUtils = require("../../utils/payment");
-const { sendError, sendResult } = require("../../utils/resp");
+const { sendError, sendResult, ApiError } = require("../../utils/resp");
 
 const handleCreatePayment = async (req, res) => {
   try {
@@ -119,6 +121,58 @@ const handleProcess = async (req, res) => {
 }
 
 
+const handleProcessStripePayment = async (req, res) => {
+  const sig = req.headers["stripe-signature"];
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  switch (event.type) {
+    case "payment_intent.succeeded":
+      // const paymentIntent = event.data.object;
+      NotifyUtils.sendDebugMessage("Stripe Webhook", "Payment Succeeded", JSON.stringify(event.data.object));
+      // TODO: Update your DB, send email, etc.
+      break;
+
+    case "payment_intent.payment_failed":
+      NotifyUtils.sendDebugMessage("Stripe Webhook", "Payment Failed", JSON.stringify(event.data.object));
+      break;
+    default:
+      NotifyUtils.sendDebugMessage("Stripe Webhook", "Other", JSON.stringify(event.data.object));
+      break;
+  }
+  res.json({ received: true });
+}
+
+
+const handleCreateStripePayment = async (req, res) => {
+  try {
+    const { amount, currency = "usd", metadata = {} } = req.body;
+
+    if (!amount || amount <= 0)
+      throw new ApiError("invalid amount");
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // Convert to cents
+      currency,
+      metadata,
+      automatic_payment_methods: { enabled: true },
+    });
+
+    sendResult(res, { clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
+
 const PaymentCtrl2 = {
   handleCreatePayment,
   handleGetPayment,
@@ -126,6 +180,9 @@ const PaymentCtrl2 = {
   handleCancelPayment,
   handleProcessPayment,
   handleLoadPaymentsForAdmin,
+
+  handleCreateStripePayment,
+  handleProcessStripePayment,
 };
 
 module.exports = PaymentCtrl2
