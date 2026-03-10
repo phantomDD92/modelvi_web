@@ -27,23 +27,17 @@ const DetailItem = ({ label, value }) =>
     <span>{value}</span>
   </div>
 
-const profileTabsNew = [
+const profileTabs = [
   { key: "stripe", label: "Payments By Stripe" },
   { key: "nowpayment", label: "Payments By NowPayment" },
   { key: "transactions", label: "Transactions" },
-]
-
-const profileTabs = [
-  { key: "nowpayment", label: "Payments By NowPayment" },
-  { key: "transactions", label: "Transactions" },
-]
+];
 
 export const BillingPage = () => {
   const params = useParams();
   const navigate = useNavigate();
   const profile = useSelector(state => state.v2.profile);
   const key = params?.key || "nowpayment";
-  const { session } = useAuth();
 
   const handleTabChange = (item) => {
     navigate(`/billing/${item}`);
@@ -120,7 +114,7 @@ export const BillingPage = () => {
             <Tabs
               type="card"
               activeKey={key}
-              items={session.name == "Eric" ? profileTabsNew: profileTabs}
+              items={profileTabs}
               onChange={handleTabChange}
             />
             {
@@ -128,7 +122,7 @@ export const BillingPage = () => {
                 ? <BillingNowpaymentPage />
                 : key == "transactions"
                   ? <BillingTransactionPage />
-                  : key == "stripe" && session.name == "Eric"
+                  : key == "stripe"
                     ? <BillingStripePage />
                     : <></>
             }
