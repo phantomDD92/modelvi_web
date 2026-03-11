@@ -33,6 +33,7 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
     const [postMode, setPostMode] = useState(PostMode.INTERVAL);
     const [storyMode, setStoryMode] = useState(PostMode.INTERVAL);
 
+    const [autoDelete, setAutoDelete] = useState(true);
     const [storyEnabled, setStoryEnabled] = useState(false);
     const [commentEnabled, setCommentEnabled] = useState(false);
 
@@ -60,6 +61,7 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
                     storyMaxCount: account.params?.storyMaxCount || DEFAULT_STORY_COUNT,
                     storyReplaceCount: account.params?.storyReplaceCount || DEFAULT_STORY_REPLACE,
                 });
+                setAutoDelete(account.params?.autoDelete !== false);
                 setStoryEnabled(account.params?.storyEnabled || false);
                 setCommentEnabled(account.params?.commentEnabled || false);
                 setPostMode(account.platform == Platform.F2F ? PostMode.LIMITED : (account.params?.postMode || PostMode.INTERVAL));
@@ -104,6 +106,7 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
             onUpdate(account,
                 {
                     ...params,
+                    autoDelete,
                     postOffsets: postOffsetsValue,
                     storyEnabled,
                     storyOffsets: storyOffsetsValue,
@@ -193,11 +196,21 @@ const AccountParamDialog = ({ open, account, onCancel, onUpdate }) => {
                         <InputNumber addonAfter="posts" min={1} max={10} />
                     </Form.Item>
                 }
+                <div className="flex items-center mb-6 ml-3">
+                    <span className="font-medium text-lg mr-3">Auto-Delete Posts</span>
+                    <Switch
+                        checked={autoDelete}
+                        onChange={value => setAutoDelete(value)}
+                        checkedChildren="Aan"
+                        unCheckedChildren="Uit"
+                    />
+                </div>
                 <Form.Item
                     name="postCount"
-                    label="Live Posts"
-                    rules={[{ required: true }]}>
-                    <InputNumber addonAfter="posts" min={1} max={10} />
+                    label="Max Live Posts"
+                    rules={[{ required: autoDelete }]}
+                    tooltip={!autoDelete ? "Auto-delete is uitgeschakeld" : undefined}>
+                    <InputNumber addonAfter="posts" min={1} max={10} disabled={!autoDelete} />
                 </Form.Item>
                 {hasCommentSupport(account?.platform) &&
                     <>
