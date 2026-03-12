@@ -80,8 +80,8 @@ const findModelByNumber = (agencyId, number) =>
 const findModelById = (modelId) =>
   ActorModel.findById(modelId, "-contents").populate("owner", "name")
 
-const getModel = (modelId) =>
-  ActorModel.findById(modelId, "-contents");
+// const getModel = (modelId) =>
+//   ActorModel.findById(modelId, "-contents");
 
 const getModelWithContents = (modelId) =>
   ActorModel.findById(modelId).populate("owner", "name");
@@ -210,8 +210,7 @@ const ModelService2 = {
   changeOwner,
   findModelsByIds,
   createModel,
-  getModel,
-
+  
   appendContent,
   deleteContent,
   deleteContents,

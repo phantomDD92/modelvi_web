@@ -2,7 +2,8 @@ const ScheduleResultModel = require("../../models/scheduleResult");
 const AccountService2 = require("../../services/v2/account");
 const ModelService2 = require("../../services/v2/model");
 const ScheduleService2 = require("../../services/v2/schedule");
-const { isModelOwner } = require("../../utils/helper");
+const { isModelOwner, getAgencyName, getModelName, getPlatformName, getAccountName } = require("../../utils/helper");
+const NotifyUtils = require("../../utils/notifiy");
 const { sendError, sendResult, ApiError } = require("../../utils/resp");
 
 const handleLoadSchedulesForAgency = async (req, res) => {
@@ -18,7 +19,7 @@ const handleLoadSchedulesForAgency = async (req, res) => {
 const handleCreateScheduleForAgency = async (req, res) => {
   try {
     const { model: modelId, platforms, medias, ...params } = req.body;
-    const model = await ModelService2.getModel(modelId);
+    const model = await ModelService2.findModelById(modelId);
     if (!model)
       throw new ApiError("Model does not exist");
     if (!isModelOwner(model, req.manager))
@@ -31,6 +32,7 @@ const handleCreateScheduleForAgency = async (req, res) => {
       throw new ApiError("Scheduled post has no valid media files");
     const schedule = await ScheduleService2.createSchedule(req.manager._id, modelId, { medias: validMedias, ...params });
     const result = await ScheduleService2.createScheduleResults(schedule._id, accounts, { agencyId: req.manager._id, modelId: model._id, scheduledAt: params.scheduledAt });
+    NotifyUtils.sendMessage(getAgencyName(req.manager), getModelName(model) + "\t\t\t" + platforms.map(platform => getPlatformName(platform)).join(","), `CREATE A SCHEDULE`)
     await ScheduleService2.setScheduleResults(schedule._id, Object.values(result.insertedIds));
     sendResult(res)
   } catch (error) {
@@ -42,6 +44,7 @@ const handleUpdateScheduleForAgency = async (req, res) => {
   try {
     const { scheduleId } = req.params;
     const { action, model: modelId, platforms, ...params } = req.body;
+    const model = await ModelService2.findModelById(modelId);
     const schedule = await ScheduleService2.getSchedule(scheduleId);
     if (!schedule)
       throw new ApiError("Scheduled post does not exist");
@@ -52,6 +55,7 @@ const handleUpdateScheduleForAgency = async (req, res) => {
         const accounts = await AccountService2.getModelAccounts(modelId, platforms);
         const result = await ScheduleService2.createScheduleResults(schedule._id, accounts.map(account => account._id));
         await ScheduleService2.setScheduleResults(schedule._id, Object.values(result.insertedIds));
+        NotifyUtils.sendMessage(getAgencyName(req.manager), getModelName(model) + "\t\t\t" + platforms.map(platform => getPlatformName(platform)).join(","), `CHANGE A SCHEDULE`)
         break
       default:
         throw new ApiError("Invalid schedule operation")
@@ -66,12 +70,14 @@ const handleDeleteScheduleForAgency = async (req, res) => {
   try {
     const { scheduleId } = req.params;
     const schedule = await ScheduleService2.getSchedule(scheduleId);
+    const model = await ModelService2.findModelById(schedule.actor);
     if (!schedule)
       throw new ApiError("Scheduled post does not exist");
     if (!isModelOwner(schedule, req.manager))
       throw new ApiError("Schedule post can be accessed by model owner");
     await ScheduleService2.deleteSchedule(scheduleId);
     await ScheduleService2.deleteScheduleResults(scheduleId);
+    NotifyUtils.sendMessage(getAgencyName(req.manager), getModelName(model), `DELETE A SCHEDULE`)
     sendResult(res)
   } catch (error) {
     sendError(res, error)
@@ -91,7 +97,7 @@ const handleLoadSchedulesForAdmin = async (req, res) => {
 const handleCreateScheduleForAdmin = async (req, res) => {
   try {
     const { model: modelId, platforms, medias, ...params } = req.body;
-    const model = await ModelService2.getModel(modelId);
+    const model = await ModelService2.findModelById(modelId);
     if (!model)
       throw new ApiError("Model does not exist");
     const accounts = await AccountService2.getModelAccounts(modelId, platforms);
@@ -100,9 +106,10 @@ const handleCreateScheduleForAdmin = async (req, res) => {
     validMedias = medias.filter(media => media.name);
     if (validMedias.length == 0)
       throw new ApiError("Scheduled post has no media files")
-    const schedule = await ScheduleService2.createSchedule(model.owner, modelId, { medias: validMedias, ...params });
-    const result = await ScheduleService2.createScheduleResults(schedule._id, accounts.map(account => account._id), { agencyId: model.owner, modelId, scheduledAt: params.scheduledAt });
+    const schedule = await ScheduleService2.createSchedule(model.owner._id, modelId, { medias: validMedias, ...params });
+    const result = await ScheduleService2.createScheduleResults(schedule._id, accounts.map(account => account._id), { agencyId: model.owner._id, modelId, scheduledAt: params.scheduledAt });
     await ScheduleService2.setScheduleResults(schedule._id, Object.values(result.insertedIds));
+    NotifyUtils.sendMessage(getAgencyName(req.manager, true), getModelName(model) + "\t\t\t" + platforms.map(platform => getPlatformName(platform)).join(","), `CREATE A SCHEDULE`)
     sendResult(res)
   } catch (error) {
     sendError(res, error)
@@ -114,6 +121,7 @@ const handleUpdateScheduleForAdmin = async (req, res) => {
     const { scheduleId } = req.params;
     const { action, model: modelId, platforms, ...params } = req.body;
     const schedule = await ScheduleService2.getSchedule(scheduleId);
+    const model = await ModelService2.findModelById(modelId);
     if (!schedule)
       throw new ApiError("Scheduled post does not exist");
     switch (action) {
@@ -123,6 +131,7 @@ const handleUpdateScheduleForAdmin = async (req, res) => {
         const accounts = await AccountService2.getModelAccounts(modelId, platforms);
         const result = await ScheduleService2.createScheduleResults(schedule._id, accounts);
         await ScheduleService2.setScheduleResults(schedule._id, Object.values(result.insertedIds));
+        NotifyUtils.sendMessage(getAgencyName(req.manager, true), getModelName(model) + "\t\t\t" + platforms.map(platform => getPlatformName(platform)).join(","), `CHANGE A SCHEDULE`)
         break
       default:
         throw new ApiError("Invalid schedule operation")
@@ -137,10 +146,12 @@ const handleDeleteScheduleForAdmin = async (req, res) => {
   try {
     const { scheduleId } = req.params;
     const schedule = await ScheduleService2.getSchedule(scheduleId);
+    const model = await ModelService2.findModelById(schedule.actor);
     if (!schedule)
       throw new ApiError("Scheduled post does not exist");
     await ScheduleService2.deleteSchedule(scheduleId);
     await ScheduleService2.deleteScheduleResults(scheduleId);
+    NotifyUtils.sendMessage(getAgencyName(req.manager, true), getModelName(model), `DELETE A SCHEDULE`)
     sendResult(res)
   } catch (error) {
     sendError(res, error)
@@ -156,6 +167,7 @@ const handleDeleteScheduleResultForAdmin = async (req, res) => {
       throw new ApiError("Scheduled post does not exist");
     await ScheduleService2.deleteScheduleResult(resultId);
     await ScheduleService2.removeScheduleResult(scheduleResult.schedule, resultId);
+    NotifyUtils.sendMessage(getAgencyName(req.manager, true), getAccountName(scheduleResult.account, scheduleResult.actor, scheduleResult.owner), `DELETE A SCHEDULE`)
     sendResult(res)
   } catch (error) {
     sendError(res, error)
@@ -183,6 +195,7 @@ const handleUpdateScheduleResultForAdmin = async (req, res) => {
       case "reset":
         const { scheduledAt } = params;
         await ScheduleService2.resetScheduleResult(resultId, new Date(scheduledAt));
+        NotifyUtils.sendMessage(getAgencyName(req.manager, true), getAccountName(scheduleResult.account, scheduleResult.actor, scheduleResult.owner), `RESET A SCHEDULE`)
         break
       default:
         throw new ApiError("Invalid schedule operation")
@@ -203,6 +216,7 @@ const handleDeleteScheduleResultForAgency = async (req, res) => {
       throw new ApiError("Schedule post can be accessed by model owner");
     await ScheduleService2.deleteScheduleResult(resultId);
     await ScheduleService2.removeScheduleResult(scheduleResult.schedule, resultId);
+    NotifyUtils.sendMessage(getAgencyName(req.manager), getAccountName(scheduleResult.account, scheduleResult.actor, scheduleResult.owner), `DELETE A SCHEDULE`)
     sendResult(res)
   } catch (error) {
     sendError(res, error)
@@ -232,6 +246,7 @@ const handleUpdateScheduleResultForAgency = async (req, res) => {
       case "reset":
         const { scheduledAt } = params;
         await ScheduleService2.resetScheduleResult(resultId, new Date(scheduledAt));
+        NotifyUtils.sendMessage(getAgencyName(req.manager), getAccountName(scheduleResult.account, scheduleResult.actor, scheduleResult.owner), `RESET A SCHEDULE`)
         break
       default:
         throw new ApiError("Invalid schedule operation")

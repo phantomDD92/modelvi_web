@@ -5,10 +5,9 @@ const moment = require('moment');
 const { ApiError, sendError, sendResult } = require("../../utils/resp");
 const { DEFAULT_COMMENT_INTERVAL, DEFAULT_STORY_INTERVAL, DEFAULT_STORY_OFFSETS, DEFAULT_POST_OFFSETS, DEFAULT_CHAT_INTERVAL, DEFAULT_POST_INTERVAL } = require('../../utils/const');
 const { PostMode, PostResultType } = require('../../config/const');
-const { getPricePlan,  getAccountName } = require('../../utils/helper');
+const { getPricePlan } = require('../../utils/helper');
 const AccountService2 = require('../../services/v2/account');
 const AgencyService2 = require('../../services/v2/agency');
-const TransactionService2 = require('../../services/v2/transaction');
 const NotifyUtils = require('../../utils/notifiy');
 const ScheduleService2 = require('../../services/v2/schedule');
 const ProxyNewService2 = require('../../services/v2/proxyNew');
@@ -45,7 +44,7 @@ const handleLoginAccount = async (req, res) => {
 const handleLoadAccounts = async (req, res) => {
   try {
     const { platform } = req.params;
-    const accounts = await AccountService2.getLivingAccountsForPlatform(platform)
+    const accounts = await AccountService2.getIdentifiers(platform)
     sendResult(res, { accounts })
   } catch (error) {
     sendError(res, error)
@@ -204,7 +203,6 @@ const updateScheduleResult = async (req, res) => {
     const account = await AccountService2.getAccount(req.bot.id);
     if (!account)
       throw new ApiError("Invalid account");
-    NotifyUtils.sendDebugMessage(getAccountName(account), "Update Schedule Result", JSON.stringify(result))
     await ScheduleService2.updateScheduleResult(result);
     sendResult(res);
   } catch (error) {
@@ -219,7 +217,6 @@ const handleUpdateScheduleResults = async (req, res) => {
     const account = await AccountService2.getAccount(req.bot.id);
     if (!account)
       throw new ApiError("Invalid account");
-    NotifyUtils.sendDebugMessage(getAccountName(account), "Update Schedule Results", JSON.stringify(results))
     await ScheduleService2.updateScheduleResults(results);
     sendResult(res);
   } catch (error) {
@@ -541,7 +538,6 @@ const handleCheckBalance = async (req, res) => {
     if (agency.balance <= 0) {
       available = false;
       await AccountService2.disableAccount(account._id, "no balance");
-      NotifyUtils.sendDebugMessage(getAccountName(account, agency), "Bot Closed With No Balance", `Monthly Revenue: ${revenue}\nBalance:$${agency.balance?.toFixed(2)}\n`)
     }
     // // get valid dates
     // const dateDelta = getDateDelta(account.expiredAt);
@@ -565,7 +561,6 @@ const handleCheckBalance = async (req, res) => {
     //     available = false;
     //     const expiringAccounts = await AccountService2.getExpiringAccounts(agency._id);
     //     await AccountService2.disableAccount(account._id, "no balance");
-    //     NotifyUtils.sendDebugMessage(getAccountName(account, agency), "Bot Closed With No Balance", `Monthly Revenue: ${account.revenue}\nPrice: ${fee}\nBalance:$${agency.balance?.toFixed(2)}\n`)
     //     await NotifyUtils.sendMail(agency.email, `🚫 Bot Paused – Insufficient Funds in Your ModelVI Account`, getNoBalanceEmailTemplate(agency, expiringAccounts));
     //   }
     // } else if (dateDelta == 7) {
@@ -584,7 +579,6 @@ const handleCheckBalance = async (req, res) => {
 const handleTestBalance = async (req, res) => {
   try {
     const { revenue } = req.body;
-
     // first check if account and agency is valid
     const account = await AccountService2.getAccountWithModel(req.bot.id);
     if (!account)

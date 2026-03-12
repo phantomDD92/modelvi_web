@@ -9,6 +9,7 @@ const TransactionService2 = require("../../services/v2/transaction");
 const NotifyUtils = require("../../utils/notifiy");
 const PaymentUtils = require("../../utils/payment");
 const { sendError, sendResult, ApiError } = require("../../utils/resp");
+const { getAgencyName } = require('../../utils/helper');
 
 const handleCreatePayment = async (req, res) => {
   try {
@@ -18,6 +19,9 @@ const handleCreatePayment = async (req, res) => {
     const { min_amount: minAmount, fiat_equivalent: minFiat } = await PaymentUtils.getMinimumPaymentAmount(currency);
     const data = await PaymentUtils.createPayment(req.manager, id, currency, minAmount, minFiat);
     const payment = await PaymentService2.createPayment(id, req.manager, data);
+    NotifyUtils.sendMessage(getAgencyName(req.manager),
+      `Currency: ${currency}`,
+      "START PAYMENT BY NOWPAYMENT");
     sendResult(res, { payment });
   } catch (error) {
     console.error(error);
@@ -64,27 +68,22 @@ function sortObject(obj) {
   )
 }
 
-
 const handleProcessPayment = async (req, res) => {
   try {
     const data = req.body;
     const sig = req.header("x-nowpayments-sig");
-    NotifyUtils.sendMessage("NOWPayment", "payment callback", JSON.stringify(sortObject(data)));
     const hmac = crypto.createHmac('sha512', process.env.NOWPAYMENT_IPN_KEY);
     hmac.update(JSON.stringify(sortObject(data)));
     const signature = hmac.digest('hex');
     if (sig != signature) {
-      NotifyUtils.sendMessage("NOWPayment", "payment callback", "Signature checking failed");
-      throw new BotError("Signature checking failed");
+      throw new ApiError("Signature checking failed");
     }
     const payment = await PaymentService2.getPayment(data["payment_id"]);
     if (!payment) {
-      NotifyUtils.sendMessage("NOWPayment", "payment callback", "Invalid payment id");
-      throw new BotError("Invalid payment id");
+      throw new ApiError("Invalid payment id");
     }
     await PaymentService2.updatePayment(payment._id, data);
     if (data["payment_status"] == PaymentStatus.FINISHED) {
-      // NotifyUtils.sendMessage("NOWPayment", "payment callback", "Finish payment");
       const amount = await PaymentUtils.getEstimatedPrice(data["outcome_amount"], data["outcome_currency"])
       await PaymentService2.setChargeAmount(payment._id, amount);
       const agency = await AgencyService2.updateBalance(payment.agency, amount);
@@ -94,10 +93,12 @@ const handleProcessPayment = async (req, res) => {
       NotifyUtils.sendPaymentMessage(agency, "Payment By NOWPayment",
         `Currency: ${data["pay_currency"]}\nAmount: ${data["actually_paid"]}\nCharge: $${amount}\nBalance:$${from} => $${to}`
       )
+      NotifyUtils.sendMessage(getAgencyName(agency),
+        `Currency: ${data["pay_currency"]}\n\tAmount: ${data["actually_paid"]}\n\tCharge: $${amount}\n\tBalance:$${from} => $${to}`,
+        "FINISH PAYMENT BY NOWPAYMENT");
     }
     sendResult(res);
   } catch (error) {
-    NotifyUtils.sendMessage("NOWPayment", "payment callback error", error.message);
     sendError(res, error);
   }
 }
@@ -147,6 +148,9 @@ const handleProcessStripePayment = async (req, res) => {
         NotifyUtils.sendPaymentMessage(agency, "Payment By Stripe",
           `Currency: ${paymentIntent.currency}\nAmount: ${paymentIntent.amount / 100}\nCharge: $${amount}\nBalance:$${from} => $${to}`
         );
+        NotifyUtils.sendMessage(getAgencyName(agency),
+          `Currency: ${paymentIntent.currency}\n\tAmount: ${paymentIntent.amount / 100}\n\tCharge: $${amount}\n\tBalance:$${from} => $${to}`,
+          "FINISH PAYMENT BY STRIPE");
         break;
       case "payment_intent.payment_failed":
         await PaymentService2.createStripePayment(id, event.data.object);
@@ -173,7 +177,9 @@ const handleCreateStripePayment = async (req, res) => {
       metadata: { agency: req.manager._id.toString() },
       automatic_payment_methods: { enabled: true },
     });
-
+    NotifyUtils.sendMessage(getAgencyName(req.manager),
+      `Currency: ${currency}\n\tAmount: ${amount}`,
+      "START PAYMENT BY STRIPE");
     sendResult(res, { clientSecret: paymentIntent.client_secret });
   } catch (error) {
     sendError(res, error);
