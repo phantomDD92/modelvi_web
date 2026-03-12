@@ -112,61 +112,109 @@ const loadAccounts = (platform, { agency, search, status }) => {
     .populate("chatTeam", "name")
 }
 
-const loadAccountsForAdmin = (platform, { agency, search, status }) => {
-  const agencyQuery = agency ? { owner: agency } : {};
-  const searchQuery = search
-    ? isNaN(Number(search))
-      ? { alias: { $regex: search, $options: "i" } }
-      : {
-        $or: [
-          { alias: { $regex: search, $options: "i" } },
-          { number: Number(search) },
-        ]
-      }
-    : {}
-  const statusQuery =
-    status == 'enabled' ? { status: true, deleted: false, }
-      : status == 'disabled' ? { status: false, deleted: false, }
-        : status == 'none' ? {}
-          : { deleted: false, };
 
+const loadAccountsForAdmin = ({ platform, agency, search, status }) => {
   const query = {
-    platform,
-    ...agencyQuery,
-    ...searchQuery,
-    ...statusQuery,
-  }
+    ...(platform && { platform }),
+    ...(agency && { owner: new mongoose.Types.ObjectId(agency) }),
+    ...(search && (
+      !isNaN(Number(search))
+        ? { $or: [{ alias: { $regex: search, $options: "i" } }, { number: Number(search) }] }
+        : { alias: { $regex: search, $options: "i" } }
+    )),
+    ...({
+      enabled: { status: true, deleted: false },
+      disabled: { status: false, deleted: false },
+      none: {},
+    }[status] ?? { deleted: false }),
+  };
 
-  return AccountModel.find(query, "-params.contents")
-    .sort({ owner: 1, number: 1 })
-    .populate("owner", "name")
-    .populate("actor", "name")
-    .populate("chatTeam", "name")
-}
+  return AccountModel.aggregate([
+    { $match: query },
+    { $sort: { owner: 1, number: 1 } },
+    {
+      $lookup: {
+        from: "managers",
+        localField: "owner",
+        foreignField: "_id",
+        as: "owner",
+        pipeline: [{ $project: { name: 1 } }],
+      },
+    },
+    { $unwind: { path: "$owner", preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: "actors",
+        localField: "actor",
+        foreignField: "_id",
+        as: "actor",
+        pipeline: [{ $project: { name: 1 } }],
+      },
+    },
+    { $unwind: { path: "$actor", preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: "chatteams",
+        localField: "chatTeam",
+        foreignField: "_id",
+        as: "chatTeam",
+        pipeline: [{ $project: { name: 1 } }],
+      },
+    },
+    { $unwind: { path: "$chatTeam", preserveNullAndEmptyArrays: true } },
+    {
+      $project: { "params.contents": 0 },
+    },
+  ]);
+};
 
-const loadAgencyAccounts = (platform, agencyId, search) => {
-  const agencyQuery = { owner: agencyId, platform };
-  const searchQuery = search
-    ? isNaN(Number(search))
-      ? { alias: { $regex: search, $options: "i" } }
-      : {
-        $or: [
-          { alias: { $regex: search, $options: "i" } },
-          { number: Number(search) },
-        ]
-      }
-    : {}
+const loadAgencyAccounts = (agencyId, { platform, search }) => {
   const query = {
     deleted: false,
-    ...agencyQuery,
-    ...searchQuery,
-  }
-  return AccountModel.find(query, "-params.contents")
-    .sort({ owner: 1, number: 1 })
-    .populate("owner", "name")
-    .populate("actor", "name")
-    .populate("chatTeam", "name")
-}
+    owner: new mongoose.Types.ObjectId(agencyId),
+    ...(platform && { platform }),
+    ...(search && (
+      !isNaN(Number(search))
+        ? { $or: [{ alias: { $regex: search, $options: "i" } }, { number: Number(search) }] }
+        : { alias: { $regex: search, $options: "i" } }
+    )),
+  };
+  return AccountModel.aggregate([
+    { $match: query },
+    { $sort: { owner: 1, number: 1 } },
+    {
+      $lookup: {
+        from: "managers",
+        localField: "owner",
+        foreignField: "_id",
+        as: "owner",
+        pipeline: [{ $project: { name: 1 } }],
+      },
+    },
+    { $unwind: { path: "$owner", preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: "actors",
+        localField: "actor",
+        foreignField: "_id",
+        as: "actor",
+        pipeline: [{ $project: { name: 1 } }],
+      },
+    },
+    { $unwind: { path: "$actor", preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: "chatteams",
+        localField: "chatTeam",
+        foreignField: "_id",
+        as: "chatTeam",
+        pipeline: [{ $project: { name: 1 } }],
+      },
+    },
+    { $unwind: { path: "$chatTeam", preserveNullAndEmptyArrays: true } },
+    { $project: { "params.contents": 0 } },
+  ]);
+};
 
 const findAccountByAlias = (platform, alias) =>
   AccountModel.findOne({ platform, alias });
@@ -183,7 +231,7 @@ const createAccount = (
     platform,
     actor: model._id,
     number: model.number,
-    owner: model.owner,
+    owner: model.owner._id || model.owner,
     alias,
     email: email || "-",
     password: password || "-",
@@ -212,7 +260,7 @@ const updateAccount = (
     $set: {
       actor: model._id,
       number: model.number,
-      owner: model.owner,
+      owner: model.owner._id || model.owner,
       alias,
       email: email || "-",
       device,
@@ -358,9 +406,6 @@ const getExpiringAccounts = (agencyId) =>
 
 const updateIdentifier = (accountId, { alias, identifier }) =>
   AccountModel.findByIdAndUpdate(accountId, { $set: { alias, identifier } });
-
-const getLivingAccountsForPlatform = (platform) =>
-  AccountModel.find({ platform, status: true, deleted: false }, "alias");
 
 const getIdentifiers = (platform) =>
   AccountModel.find({ platform, status: true, deleted: false }, "alias identifier")
@@ -568,7 +613,7 @@ const getAgenciesRevenue = () => {
 const getAgencyProxyCount = (agencyId) =>
   AccountModel.countDocuments({ owner: agencyId, deleted: false });
 
-const removeAccount = (accountId) => 
+const removeAccount = (accountId) =>
   AccountModel.findByIdAndDelete(accountId);
 
 const AccountService2 = {
@@ -612,7 +657,6 @@ const AccountService2 = {
   getDisabledAccounts,
   getExpiringAccounts,
   updateIdentifier,
-  getLivingAccountsForPlatform,
   getIdentifiers,
   getAccount,
   changeProxy,

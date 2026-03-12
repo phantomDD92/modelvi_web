@@ -6,10 +6,10 @@ const { getAccountName } = require('./helper');
 dotenv.config();
 
 const sendMessage = (who, what, message) => {
-  if (process.env.DISCORD_AGENCIES_WEBHOOK) {
-    axios.post(process.env.DISCORD_AGENCIES_WEBHOOK, {
+  if (process.env.DISCORD_WEBHOOK_ACTIVITY) {
+    axios.post(process.env.DISCORD_WEBHOOK_ACTIVITY, {
       username: `${who}`,
-      content: `[ ${moment().format("YYYY-MM-DD HH:mm:ss")} ]\n**${message}**\n${what}`
+      content: `[ ${moment().format("YYYY-MM-DD HH:mm:ss")} ]\n**${message}**\n\t${what}`
     })
       .then(() => { })
       .catch(() => { })

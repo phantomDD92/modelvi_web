@@ -1,7 +1,7 @@
 const AccountService2 = require("../../services/v2/account");
 const AgencyService2 = require("../../services/v2/agency");
 const ModelService2 = require("../../services/v2/model");
-const { isModelOwner, getModelPricePlan } = require("../../utils/helper");
+const { isModelOwner, getModelPricePlan, getAgencyName, getModelName } = require("../../utils/helper");
 const NotifyUtils = require("../../utils/notifiy");
 const { sendError, sendResult, ApiError } = require("../../utils/resp");
 
@@ -41,10 +41,7 @@ const handleCreateModelForAdmin = async (req, res) => {
     // create model
     model = await ModelService2.createModel({ number, name, owner: agencyId });
     // send notification to discord
-    NotifyUtils.sendMessage(
-      `${req.manager?.name} (Admin)`,
-      `${agency.name} - ${number}. ${name}`,
-      `CREATE MODEL`);
+    NotifyUtils.sendMessage(getAgencyName(req.manager, true), getModelName(model, agency), `CREATE A MODEL`);
     sendResult(res);
   } catch (error) {
     console.error(error)
@@ -64,10 +61,7 @@ const handleDeleteModelForAdmin = async (req, res) => {
         `Model(${model.get("number")}, ${model.get("name")}) still have some accounts.`
       );
     await ModelService2.deleteModel(modelId);
-    NotifyUtils.sendMessage(
-      `${req.manager?.name} (Admin)`,
-      `${model.owner.name} - ${model.number}. ${model.name}`,
-      `DELETE A MODEL`);
+    NotifyUtils.sendMessage(getAgencyName(req.manager, true), getModelName(model), `DELETE A MODEL`);
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -80,10 +74,7 @@ const handleDeleteModelsForAdmin = async (req, res) => {
     const models = await ModelService2.findEmptyModels(modelIds)
     const emptyModelIds = models.map(model => model._id);
     await ModelService2.deleteModels(emptyModelIds);
-    NotifyUtils.sendMessage(
-      `${req.manager?.name} (Admin)`,
-      `${models.map(model => `${model.owner?.name} - ${model.number}. ${model.name}`).join("\n")}`,
-      `DELETE ${models.length} MODELS`);
+    NotifyUtils.sendMessage(getAgencyName(req.manager, true), `${models.map(model => getModelName(model)).join("\n\t")}`, `DELETE ${models.length} MODELS`);
     sendResult(res);
   } catch (error) {
     console.error(error);
@@ -124,10 +115,7 @@ const handleCreateModelForAgency = async (req, res) => {
     // create model
     model = await ModelService2.createModel({ number, name, owner: req.manager._id });
     // send notification to discord
-    NotifyUtils.sendMessage(
-      `${req.manager?.name}`,
-      `${req.manager?.name} - ${number}. ${name}`,
-      `CREATE MODEL`);
+    NotifyUtils.sendMessage(getAgencyName(req.manager), getModelName(model, agency), `CREATE A MODEL`);
     sendResult(res);
   } catch (error) {
     console.error(error)
@@ -149,10 +137,7 @@ const handleDeleteModelForAgency = async (req, res) => {
         `Model(${model.get("number")}, ${model.get("name")}) still have some accounts.`
       );
     await ModelService2.deleteModel(modelId);
-    NotifyUtils.sendMessage(
-      `${req.manager?.name}`,
-      `${model.owner?.name} - ${model.number}. ${model.name}`,
-      `DELETE A MODEL`);
+    NotifyUtils.sendMessage(getAgencyName(req.manager), getModelName(model), `DELETE A MODEL`);
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -165,10 +150,7 @@ const handleDeleteModelsForAgency = async (req, res) => {
     const models = await ModelService2.findEmptyModels(modelIds, req.manager._id)
     const emptyModelIds = models.map(model => model._id);
     await ModelService2.deleteModels(emptyModelIds);
-    NotifyUtils.sendMessage(
-      `${req.manager?.name}`,
-      `${models.map(model => `${model.owner?.name} - ${model.number}. ${model.name}`).join("\n")}`,
-      `DELETE ${models.length} MODELS`);
+    NotifyUtils.sendMessage(getAgencyName(req.manager), `${models.map(model => getModelName(model)).join("\n\t")}`, `DELETE ${models.length} MODELS`);
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -195,14 +177,12 @@ const handleUpdateModelForAgency = async (req, res) => {
           throw new ApiError(`Model number(${name}) already exists.`);
         await ModelService2.changeModel(modelId, { number, name });
         await AccountService2.changeModelNumber(modelId, number);
+        NotifyUtils.sendMessage(getAgencyName(req.manager), getModelName(model), `CHANGE A MODEL`);
         break;
       case "sync":
         await AccountService2.syncContents(modelId);
         await ModelService2.syncContents(modelId);
-        NotifyUtils.sendMessage(
-          `${req.manager?.name}`,
-          `${model.owner?.name} - ${model.number}. ${model.name}`,
-          `UPDATE A MODEL'S CONTENT`);
+        NotifyUtils.sendMessage(getAgencyName(req.manager), getModelName(model), `SYNC A MODEL'S CONTENTS`);
         break;
       default:
         throw new ApiError("Invalid model operation");
@@ -233,14 +213,12 @@ const handleUpdateModelForAdmin = async (req, res) => {
         await AccountService2.changeModelNumber(modelId, number);
         await ModelService2.changeOwner(modelId, agencyId)
         await AccountService2.changeOwner(modelId, agencyId);
+        NotifyUtils.sendMessage(getAgencyName(req.manager, true), getModelName(model), `CHANGE A MODEL`);
         break;
       case "sync":
         await AccountService2.syncContents(modelId);
         await ModelService2.syncContents(modelId);
-        NotifyUtils.sendMessage(
-          `${req.manager?.name} (Admin)`,
-          `${model.owner?.name} - ${model.number}. ${model.name}`,
-          `UPDATE A MODEL'S CONTENT`);
+        NotifyUtils.sendMessage(getAgencyName(req.manager, true), getModelName(model), `SYNC A MODEL'S CONTENTS`);
         break;
       default:
         throw new ApiError("Invalid model admin operation");
@@ -259,10 +237,7 @@ const handleUpdateModelsForAdmin = async (req, res) => {
         const models = await ModelService2.findModelsByIds(modelIds);
         await ModelService2.syncBulkContents(modelIds);
         await AccountService2.syncBulkContents(modelIds)
-        NotifyUtils.sendMessage(
-          `${req.manager?.name} (Admin)`,
-          `${models.map(model => `${model.owner?.name} - ${model.number}. ${model.name}`).join("\n")}`,
-          `UPDATE ${models.length} MODELS' CONTENTS`);
+        NotifyUtils.sendMessage(getAgencyName(req.manager, true), `${models.map(model => getModelName(model)).join("\n\t")}`, `SYNC ${models.length} MODELS' CONTENTS`);
         break;
       default:
         throw new ApiError("Invalid model admin operation");
@@ -282,10 +257,7 @@ const handleUpdateModelsForAgency = async (req, res) => {
         const realModelIds = models.map(model => model._id);
         await ModelService2.syncBulkContents(realModelIds);
         await AccountService2.syncBulkContents(realModelIds);
-        NotifyUtils.sendMessage(
-          `${req.manager?.name}`,
-          `${models.map(model => `${model.owner?.name} - ${model.number}. ${model.name}`).join("\n")}`,
-          `UPDATE ${models.length} MODELS' CONTENTS`);
+        NotifyUtils.sendMessage(getAgencyName(req.manager), `${models.map(model => getModelName(model)).join("\n\t")}`, `SYNC ${models.length} MODELS' CONTENTS`);
         break;
       default:
         throw new ApiError("Invalid model operation");
@@ -326,7 +298,7 @@ const handleAppendContentForAdmin = async (req, res) => {
   try {
     const { modelId } = req.params;
     const params = req.body;
-    let model = await ModelService2.getModel(modelId);
+    let model = await ModelService2.findModelById(modelId);
     if (!model)
       throw new ApiError(`The model does not exist.`);
     await ModelService2.appendContent(modelId, params);
@@ -341,12 +313,13 @@ const handleAppendContentForAgency = async (req, res) => {
   try {
     const { modelId } = req.params;
     const params = req.body;
-    let model = await ModelService2.getModel(modelId);
+    let model = await ModelService2.findModelById(modelId);
     if (!model)
       throw new ApiError(`The model does not exist.`);
     if (!isModelOwner(model, req.manager))
       throw new ApiError(`Model contents can be accessible by owner`);
     await ModelService2.appendContent(modelId, params);
+    NotifyUtils.sendMessage(getAgencyName(req.manager), getModelName(model), `APPEND A CONTENT`);
     model = await ModelService2.getModelWithContents(modelId);
     sendResult(res, { model });
   } catch (error) {
@@ -358,7 +331,7 @@ const handleUpdateContentForAgency = async (req, res) => {
   try {
     const { modelId, contentId } = req.params;
     const { action, ...params } = req.body;
-    let model = await ModelService2.getModel(modelId);
+    let model = await ModelService2.findModelById(modelId);
     if (!model)
       throw new ApiError(`Model does not exist.`);
     if (!isModelOwner(model, req.manager))
@@ -366,6 +339,7 @@ const handleUpdateContentForAgency = async (req, res) => {
     switch (action) {
       case "change":
         await ModelService2.updateContent(modelId, contentId, params);
+        NotifyUtils.sendMessage(getAgencyName(req.manager), getModelName(model), `UPDATE A CONTENT`);
         break;
       default:
         throw new ApiError("Invalid content operations")
@@ -381,12 +355,13 @@ const handleUpdateContentForAdmin = async (req, res) => {
   try {
     const { modelId, contentId } = req.params;
     const { action, ...params } = req.body;
-    let model = await ModelService2.getModel(modelId);
+    let model = await ModelService2.findModelById(modelId);
     if (!model)
       throw new ApiError(`Model does not exist.`);
     switch (action) {
       case "change":
         await ModelService2.updateContent(modelId, contentId, params);
+        NotifyUtils.sendMessage(getAgencyName(req.manager, true), getModelName(model), `UPDATE A CONTENT`);
         break;
       default:
         throw new ApiError("Invalid content operations")
@@ -401,12 +376,13 @@ const handleUpdateContentForAdmin = async (req, res) => {
 const handleDeleteContentForAgency = async (req, res) => {
   try {
     const { modelId, contentId } = req.params;
-    let model = await ModelService2.getModel(modelId);
+    let model = await ModelService2.findModelById(modelId);
     if (!model)
       throw new ApiError(`Model does not exist.`);
     if (!isModelOwner(model, req.manager))
       throw new ApiError(`Model contents can be accessible by owner`);
     await ModelService2.deleteContent(modelId, contentId);
+    NotifyUtils.sendMessage(getAgencyName(req.manager), getModelName(model), `DELETE A CONTENT`);
     model = await ModelService2.getModelWithContents(modelId);
     sendResult(res, { model });
   } catch (error) {
@@ -417,10 +393,11 @@ const handleDeleteContentForAgency = async (req, res) => {
 const handleDeleteContentForAdmin = async (req, res) => {
   try {
     const { modelId, contentId } = req.params;
-    let model = await ModelService2.getModel(modelId);
+    let model = await ModelService2.findModelById(modelId);
     if (!model)
       throw new ApiError(`Model does not exist.`);
     await ModelService2.deleteContent(modelId, contentId);
+    NotifyUtils.sendMessage(getAgencyName(req.manager, true), getModelName(model), `DELETE A CONTENT`);
     model = await ModelService2.getModelWithContents(modelId);
     sendResult(res, { model });
   } catch (error) {
@@ -431,13 +408,14 @@ const handleDeleteContentForAdmin = async (req, res) => {
 const handleDeleteContentsForAgency = async (req, res) => {
   try {
     const { modelId } = req.params;
-    let model = await ModelService2.getModel(modelId);
+    let model = await ModelService2.findModelById(modelId);
     if (!model)
       throw new ApiError(`Model does not exist.`);
     if (!isModelOwner(model, req.manager))
       throw new ApiError(`Model contents can be accessible by owner`);
     const { contentIds } = req.body;
     await ModelService2.deleteContents(modelId, contentIds);
+    NotifyUtils.sendMessage(getAgencyName(req.manager), getModelName(model), `DELETE ${contentIds.length} CONTENTS`);
     model = await ModelService2.getModelWithContents(modelId);
     sendResult(res, { model });
   } catch (error) {
@@ -448,11 +426,12 @@ const handleDeleteContentsForAgency = async (req, res) => {
 const handleDeleteContentsForAdmin = async (req, res) => {
   try {
     const { modelId } = req.params;
-    let model = await ModelService2.getModel(modelId);
+    let model = await ModelService2.findModelById(modelId);
     if (!model)
       throw new ApiError(`Model does not exist.`);
     const { contentIds } = req.body;
     await ModelService2.deleteContents(modelId, contentIds);
+    NotifyUtils.sendMessage(getAgencyName(req.manager, true), getModelName(model), `DELETE ${contentIds.length} CONTENTS`);
     model = await ModelService2.getModelWithContents(modelId);
     sendResult(res, { model });
   } catch (error) {
@@ -463,7 +442,7 @@ const handleDeleteContentsForAdmin = async (req, res) => {
 const handleUpdateContentsForAgency = async (req, res) => {
   try {
     const { modelId } = req.params;
-    let model = await ModelService2.getModel(modelId);
+    let model = await ModelService2.findModelById(modelId);
     if (!model)
       throw new ApiError(`Model does not exist.`);
     if (!isModelOwner(model, req.manager))
@@ -472,13 +451,16 @@ const handleUpdateContentsForAgency = async (req, res) => {
     switch (action) {
       case "platform":
         await ModelService2.updateContentsPlatform(modelId, contentIds, params);
+        NotifyUtils.sendMessage(getAgencyName(req.manager), getModelName(model), `UPDATE ${contentIds.length} CONTENTS' PLATFORM`);
         break;
       case "clear":
         await ModelService2.clearContents(modelId);
+        NotifyUtils.sendMessage(getAgencyName(req.manager), getModelName(model), `CLEAR ALL CONTENTS`);
         break;
       case "import":
         const { contents } = params;
         await ModelService2.importContents(modelId, contents);
+        NotifyUtils.sendMessage(getAgencyName(req.manager), getModelName(model), `IMPORT ${contents.length} CONTENTS`);
         break;
       default:
         throw new ApiError("Invalid content operation");
@@ -493,16 +475,18 @@ const handleUpdateContentsForAgency = async (req, res) => {
 const handleUpdateContentsForAdmin = async (req, res) => {
   try {
     const { modelId } = req.params;
-    let model = await ModelService2.getModel(modelId);
+    let model = await ModelService2.findModelById(modelId);
     if (!model)
       throw new ApiError(`Model does not exist.`);
     const { action, contentIds, ...params } = req.body;
     switch (action) {
       case "platform":
         await ModelService2.updateContentsPlatform(modelId, contentIds, params);
+        NotifyUtils.sendMessage(getAgencyName(req.manager, true), getModelName(model), `UPDATE ${contentIds.length} CONTENTS' PLATFORM`);
         break;
       case "clear":
         await ModelService2.clearContents(modelId);
+        NotifyUtils.sendMessage(getAgencyName(req.manager, true), getModelName(model), `CLEAR ALL CONTENTS`);
         break;
       default:
         throw new ApiError("Invalid content operation");

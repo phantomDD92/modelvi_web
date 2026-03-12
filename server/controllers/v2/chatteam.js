@@ -1,6 +1,7 @@
 const AccountService2 = require("../../services/v2/account");
 const ChatTeamService2 = require("../../services/v2/chatteam");
-const { isModelOwner } = require("../../utils/helper");
+const { isModelOwner, getAgencyName } = require("../../utils/helper");
+const NotifyUtils = require("../../utils/notifiy");
 const { sendResult, sendError, ApiError } = require("../../utils/resp");
 
 const handleLoadChatTeamsForAdmin = async (req, res) => {
@@ -19,6 +20,7 @@ const handleCreateChatTeamForAdmin = async (req, res) => {
     const dup = await ChatTeamService2.findTeamByDiscord(discord);
     if (dup) throw new ApiError("Chat team already existed");
     await ChatTeamService2.createTeam({ name, discord });
+    NotifyUtils.sendMessage(getAgencyName(req.manager, true), name, `CREATE A CHAT TEAM`)
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -39,6 +41,7 @@ const handleUpdateChatTeamForAdmin = async (req, res) => {
         if (dup && dup._id != id)
           throw new ApiError("Chat team discord already existed");
         await ChatTeamService2.changeTeam(id, { name, discord });
+        NotifyUtils.sendMessage(getAgencyName(req.manager, true), name, `CHANGE A CHAT TEAM`)
         break;
       default:
         throw new ApiError("Invalid chat team operation");
@@ -57,6 +60,7 @@ const handleDeleteChatTeamForAdmin = async (req, res) => {
       throw new ApiError("Chat team does not exist.");
     await AccountService2.removeChatTeam(teamId);
     await ChatTeamService2.deleteTeam(teamId);
+    NotifyUtils.sendMessage(getAgencyName(req.manager, true), team.name, `DELETE A CHAT TEAM`)
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -66,8 +70,10 @@ const handleDeleteChatTeamForAdmin = async (req, res) => {
 const handleDeleteChatTeamsForAdmin = async (req, res) => {
   try {
     const { teamIds } = req.body;
+    const teams = await ChatTeamService2.findTeams(teamIds);
     await AccountService2.removeChatTeams(teamIds);
     await ChatTeamService2.deleteTeams(teamIds);
+    NotifyUtils.sendMessage(getAgencyName(req.manager, true), teams.map(team => team.name).join("\n\t"), `DELETE ${teams.length} CHAT TEAMS`)
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -90,6 +96,7 @@ const handleCreateChatTeamForAgency = async (req, res) => {
     const dup = await ChatTeamService2.findTeamByAgencyDiscord(req.manager._id, discord);
     if (dup) throw new ApiError("Chat team already existed");
     await ChatTeamService2.createAgencyTeam(req.manager._id, { name, discord });
+    NotifyUtils.sendMessage(getAgencyName(req.manager), name, `CREATE A CHAT TEAM`)
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -99,7 +106,9 @@ const handleCreateChatTeamForAgency = async (req, res) => {
 const handleDeleteChatTeamsForAgency = async (req, res) => {
   try {
     const { teamIds } = req.body;
+    const teams = await ChatTeamService2.findTeams(teamIds);
     await ChatTeamService2.deleteAgencyTeams(req.manager._id, teamIds);
+    NotifyUtils.sendMessage(getAgencyName(req.manager), teams.map(team => team.name).join("\n\t"), `DELETE ${teams.length} CHAT TEAMS`)
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -116,6 +125,7 @@ const handleDeleteChatTeamForAgency = async (req, res) => {
       throw new ApiError(`Chat team can be deleted by owner.`);
     await AccountService2.removeChatTeam(teamId);
     await ChatTeamService2.deleteTeam(teamId);
+    NotifyUtils.sendMessage(getAgencyName(req.manager), team.name, `DELETE A CHAT TEAM`)
     sendResult(res);
   } catch (error) {
     sendError(res, error);
@@ -139,6 +149,7 @@ const handleUpdateChatTeamForAgency = async (req, res) => {
         if (dup && dup._id != teamId)
           throw new ApiError("Chat team discord already existed");
         await ChatTeamService2.changeTeam(teamId, { name, discord });
+        NotifyUtils.sendMessage(getAgencyName(req.manager), name, `CHANGE A CHAT TEAM`)
         break;
       default:
         throw new ApiError("Invalid chat team operation");

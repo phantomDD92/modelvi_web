@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const { DEFAULT_PRICE_PLANS, REVENUE_THRESHOLDS, MODEL_REVENUE_THRESHOLDS, MODEL_PRICE_PLANS, DEFAULT_DUE_DATE } = require("./const");
 const nodemailer = require('nodemailer');
 const dotenv = require("dotenv");
+const { Platform } = require("../config/const");
 dotenv.config();
 
 const ModelVI_DOMAIN = process.env.ModelVI_DOMAIN ?? 'https://modelvi.com'
@@ -80,14 +81,65 @@ function getClientIp(req) {
     req.connection?.socket?.remoteAddress;
 }
 
-function getAccountName(account, agency) {
-  let name = ""
-  if (agency?.name)
-    name += `${agency.name} - `;
-  if (account.actor?.number && account.actor?.name)
-    name += `[${account.actor.number}] ${account.actor.name} - `
-  name += `[${account.platform}] ${account.alias}`;
-  return name;
+function getPlatformName(platform) {
+  switch (platform) {
+    case Platform.F2F:
+      return "F2F"
+    case Platform.FNC:
+      return "Fancentro";
+    case Platform.FAN:
+    case Platform.FANLIKE:
+      return "Fansly";
+    case Platform.FANVUE:
+      return "Fanvue";
+    case Platform.KNKY:
+      return "Knky";
+    case Platform.MALOUM:
+      return "Maloum";
+    case Platform.ONLYFANS:
+      return "OnlyFans";
+    case Platform.MYMFANS:
+      return "MymFans";
+    case Platform.FOURBASED:
+      return "4Based";
+    case Platform.DFANXYZ:
+      return "DFanXyz";
+    case Platform.FETLIFELIKE:
+    case Platform.FETLIFE:
+      return "FetLife";
+    case Platform.LOYALFANS:
+      return "LoyalFans";
+    case Platform.MYCLUB:
+      return "MyClub";
+    case Platform.MANYVIDS:
+      return "ManyVids";
+    case Platform.PORNHUB:
+      return "PornHub";
+    case Platform.BESTFANS:
+      return "BestFans";
+    default:
+      break;
+  }
+  return "???";
+}
+function getAgencyName(agency, isAdmin = false) {
+  return `${agency.name}${isAdmin ? ' (ADMIN)' : ''}`
+}
+
+function getAccountName(account, model, agency) {
+  const agencyName = account.owner?.name || model?.owner?.name || agency?.name || "???";
+  const actorNumber = account.actor?.number || model?.number || "-";
+  const actorName = account.actor?.name || model?.name || "???";
+  const accountPlatform = account.platform;
+  const accountAlias = account.alias;
+  return `[ **${agencyName}** ] ${actorNumber}. ${actorName}\t\t\t[ **${getPlatformName(accountPlatform)}** ] ${accountAlias}`;
+}
+
+function getModelName(model, agency) {
+  const agencyName = model.owner?.name || agency?.name || "???";
+  const modelNumber = model.number || "-";
+  const modelName = model.name || "???";
+  return `[ **${agencyName}** ] ${modelNumber}. ${modelName}`;
 }
 
 function getVerifyEmailTemplate(verifyLink) {
@@ -375,7 +427,12 @@ module.exports = {
   getVerifyEmailTemplate,
   getWarningEmailTemplate,
   getErrorEmailTemplate,
+ 
+  getAgencyName,
   getAccountName,
+  getModelName, 
+  getPlatformName,
+
   getFiatAmount,
   isModelOwner,
   generateRandomPassword,

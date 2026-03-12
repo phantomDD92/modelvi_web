@@ -208,7 +208,7 @@ const deleteScheduleResult = (resultId) =>
   ScheduleResultModel.findByIdAndDelete(resultId);
 
 const getScheduleResult = (resultId) =>
-  ScheduleResultModel.findById(resultId);
+  ScheduleResultModel.findById(resultId).populate("owner", "name").populate("actor", "number name").populate("account", "platform alias");
 
 const resetScheduleResult = (resultId, scheduledAt) =>
   ScheduleResultModel.findByIdAndUpdate(resultId, { $set: { status: ScheduleStatus.WAITING, scheduledAt } });

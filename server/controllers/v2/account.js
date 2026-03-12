@@ -1,18 +1,19 @@
+const moment = require('moment');
+
 const AccountService2 = require("../../services/v2/account");
 const ModelService2 = require("../../services/v2/model");
 const ProxyNewService2 = require("../../services/v2/proxyNew");
+const AgencyService2 = require("../../services/v2/agency");
 
 const NotifyUtils = require("../../utils/notifiy");
-const { isModelOwner } = require("../../utils/helper");
+const { isModelOwner, getAgencyName, getAccountName } = require("../../utils/helper");
 const { sendResult, sendError, ApiError } = require("../../utils/resp");
-const AgencyService2 = require("../../services/v2/agency");
-const moment = require('moment');
 
 const handleLoadAccountsForAgency = async (req, res) => {
   try {
     const { platform } = req.params;
     const { search } = req.query;
-    const accounts = await AccountService2.loadAgencyAccounts(platform, req.manager._id, search);
+    const accounts = await AccountService2.loadAgencyAccounts(req.manager._id, { platform, search });
     sendResult(res, { accounts });
   } catch (error) {
     console.error(error);
@@ -25,7 +26,7 @@ const handleLoadAccountsForAdmin = async (req, res) => {
   try {
     const { platform } = req.params;
     const { agency, search, status } = req.query;
-    const accounts = await AccountService2.loadAccountsForAdmin(platform, { agency, search, status });
+    const accounts = await AccountService2.loadAccountsForAdmin({ platform, agency, search, status });
     sendResult(res, { accounts });
   } catch (error) {
     console.error(error);
@@ -37,23 +38,25 @@ const handleCreateAccountForAgency = async (req, res) => {
   try {
     const { platform } = req.params;
     const { actor: modelId, chatTeam, ...params } = req.body;
-    let model = await ModelService2.getModel(modelId);
+    // check model
+    let model = await ModelService2.findModelById(modelId);
     if (!model)
       throw new ApiError(`Model does not exist.`);
+    // check model ownership
     if (!isModelOwner(model, req.manager))
       throw new ApiError(`Account can be accessible by owner.`);
-    // check duplication
+    // check account duplication
     const { alias } = params;
     const dupAccount = await AccountService2.findAccountByAlias(platform, alias);
     if (dupAccount && !dupAccount.deleted)
       throw new ApiError(`Account alias(${alias}) already exists.`);
+    // pick up proxy
     const proxy = await ProxyNewService2.pickupProxy();
+    // create account
     const account = await AccountService2.createAccount(platform, model, { ...params, chatTeam, creator: req.manager._id, proxy });
     await ModelService2.appendAccount(modelId, account._id)
-    NotifyUtils.sendMessage(
-      `${req.manager.name}`,
-      `${model.number}. ${model.name} - ${platform} ${alias}`,
-      `CREATE A ACCOUNT`);
+    // create discord message
+    NotifyUtils.sendMessage(getAgencyName(req.manager), getAccountName(account, model, req.manager), `CREATE A ACCOUNT`);
     sendResult(res);
   } catch (error) {
     console.error(error);
@@ -65,7 +68,8 @@ const handleCreateAccountForAdmin = async (req, res) => {
   try {
     const { platform } = req.params;
     const { actor: modelId, chatTeam, ...params } = req.body;
-    let model = await ModelService2.getModel(modelId);
+    // check model
+    let model = await ModelService2.findModelById(modelId);
     if (!model)
       throw new ApiError(`Model does not exist.`);
     // check duplication
@@ -73,13 +77,12 @@ const handleCreateAccountForAdmin = async (req, res) => {
     const dupAccount = await AccountService2.findAccountByAlias(platform, alias);
     if (dupAccount)
       throw new ApiError(`Account alias(${alias}) already exists.`);
+    // pick up proxy
     const proxy = await ProxyNewService2.pickupProxy();
+    // create account
     const account = await AccountService2.createAccount(platform, model, { ...params, chatTeam, creator: req.manager._id, proxy });
     await ModelService2.appendAccount(modelId, account._id)
-    NotifyUtils.sendMessage(
-      `${req.manager.name} (Admin)`,
-      `${model.number}. ${model.name} - [${platform}] ${alias}`,
-      `CREATE A ACCOUNT`);
+    NotifyUtils.sendMessage(getAgencyName(req.manager, true), getAccountName(account, model), `CREATE A ACCOUNT`);
     sendResult(res);
   } catch (error) {
     console.error(error);
@@ -91,16 +94,16 @@ const handleDeleteAccountForAgency = async (req, res) => {
   try {
     const { accountId } = req.params;
     const account = await AccountService2.findAccountById(accountId);
+    // check account
     if (!account)
       throw new ApiError("Account does not exist.");
+    // check ownership
     if (!isModelOwner(account, req.manager))
       throw new ApiError(`Account can be accessible by owner.`)
+    // remove account
     await ModelService2.removeAccount(account.actor?._id, accountId);
     await AccountService2.deleteAccount(accountId);
-    NotifyUtils.sendMessage(
-      `${req.manager.name}`,
-      `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`,
-      `DELETE A ACCOUNT`);
+    NotifyUtils.sendMessage(getAgencyName(req.manager), getAccountName(account), `DELETE A ACCOUNT`);
     sendResult(res);
   } catch (error) {
     sendError(res, error)
@@ -111,21 +114,16 @@ const handleDeleteAccountForAdmin = async (req, res) => {
   try {
     const { accountId } = req.params;
     const account = await AccountService2.findAccountById(accountId);
+    // check account
     if (!account)
       throw new ApiError("Account does not exist.");
     if (account.deleted) {
       await AccountService2.removeAccount(accountId);
-      NotifyUtils.sendMessage(
-        `${req.manager.name} (Admin)`,
-        `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`,
-        `REMOVE A ACCOUNT`);
+      NotifyUtils.sendMessage(getAgencyName(req.manager, true), getAccountName(account), `REMOVE A ACCOUNT`);
     } else {
       await ModelService2.removeAccount(account.actor?._id, accountId);
       await AccountService2.deleteAccount(accountId);
-      NotifyUtils.sendMessage(
-        `${req.manager.name} (Admin)`,
-        `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`,
-        `DELETE A ACCOUNT`);
+      NotifyUtils.sendMessage(getAgencyName(req.manager, true), getAccountName(account), `DELETE A ACCOUNT`);
     }
     sendResult(res);
   } catch (error) {
@@ -145,24 +143,23 @@ const handleUpdateAccountForAgency = async (req, res) => {
     switch (action) {
       case "change":
         const { actor, ...others } = params;
-        const model = await ModelService2.getModel(actor);
+        const model = await ModelService2.findModelById(actor);
         if (!model)
           throw new ApiError("Model does not exist.");
         await AccountService2.updateAccount(accountId, model, { ...others });
+        NotifyUtils.sendMessage(getAgencyName(req.manager), getAccountName(account), `CHANGE A ACCOUNT`);
         break;
       case "status":
         const { status } = params;
         await AccountService2.setStatus(accountId, status);
         const agency = await AgencyService2.findAgencyById(req.manager._id)
-        if ((agency.balance || 0) < agency.fee)
+        if ((agency.balance || 0) <= 0)
           throw new ApiError("Agency has insufficient funds to start bot.");
-        NotifyUtils.sendMessage(
-          `${req.manager.name}`,
-          `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`,
-          `${status ? 'ENABLE' : 'DISABLE'} A BOT`);
+        NotifyUtils.sendMessage(getAgencyName(req.manager), getAccountName(account), `${status ? 'START' : 'STOP'} A ACCOUNT`);
         break;
       case "setting":
         await AccountService2.updateParameters(accountId, { $set: { params: { ...account.params, ...params } } });
+        NotifyUtils.sendMessage(getAgencyName(req.manager), getAccountName(account), `UPDATE A ACCOUNT'S SETTINGS`);
         break;
       default:
         throw new ApiError("Invalid account operation");
@@ -183,24 +180,23 @@ const handleUpdateAccountForAdmin = async (req, res) => {
     switch (action) {
       case "change":
         const { actor, chatTeam, ...others } = params;
-        const model = await ModelService2.getModel(actor);
+        const model = await ModelService2.findModelById(actor);
         if (!model)
           throw new ApiError("Model does not exist.");
         await AccountService2.updateAccount(accountId, model, { chatTeam, ...others });
+        NotifyUtils.sendMessage(getAgencyName(req.manager, true), getAccountName(account), `CHANGE A ACCOUNT`);
         break;
       case "status":
         const { status } = params;
         const agency = await AgencyService2.findAgencyById(account.owner);
-        if ((agency.balance || 0) < agency.fee)
+        if ((agency.balance || 0) <= 0)
           throw new ApiError("Agency has insufficient funds to start bot.");
         await AccountService2.setStatus(accountId, status);
-        NotifyUtils.sendMessage(
-          `${req.manager.name} (Admin)`,
-          `${account.owner?.name} ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`,
-          `${status ? 'ENABLE' : 'DISABLE'} A BOT`);
+        NotifyUtils.sendMessage(getAgencyName(req.manager, true), getAccountName(account), `${status ? 'START' : 'STOP'} A ACCOUNT`);
         break;
       case "setting":
         await AccountService2.updateParameters(accountId, { $set: { params: { ...account.params, ...params } } });
+        NotifyUtils.sendMessage(getAgencyName(req.manager, true), getAccountName(account), `UPDATE A ACCOUNT'S SETTINGS`);
         break;
       case "repost":
         await AccountService2.updateParameters(accountId, { $set: { params: { ...account.params, "postNextTime": moment().subtract(1, "month").toDate() } } });
@@ -221,15 +217,15 @@ const handleUpdateAccountsForAgency = async (req, res) => {
     switch (action) {
       case "status":
         const agency = await AgencyService2.findAgencyById(req.manager._id)
-        if ((agency.balance || 0) < agency.fee)
+        if ((agency.balance || 0) <= 0)
           throw new ApiError("Agency has insufficient funds to start bots.");
         const accounts = await AccountService2.getAccounts(accountIds, req.manager._id);
         const agencyAccountIds = accounts.map(account => account._id);
         await AccountService2.updateAccountsStatus(agencyAccountIds, status);
         NotifyUtils.sendMessage(
-          `${req.manager.name}`,
-          `${accounts.map(account => `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`).join("\n")}`,
-          `${status ? 'ENABLE' : 'DISABLE'} ${accounts.length} BOTS`);
+          getAgencyName(req.manager),
+          `${accounts.map(account => getAccountName(account)).join("\n\t")}`,
+          `${status ? 'START' : 'STOP'} ${accounts.length} ACCOUNTS`);
         break;
       default:
         throw new ApiError("Invalid account operation");
@@ -247,11 +243,12 @@ const handleUpdateAccountsForAdmin = async (req, res) => {
     switch (action) {
       case "status":
         const accounts = await AccountService2.getAccounts(accountIds);
-        await AccountService2.updateAccountsStatus(accountIds, status);
+        const realAccountIds = accounts.map(account => account._id);
+        await AccountService2.updateAccountsStatus(realAccountIds, status);
         NotifyUtils.sendMessage(
-          `${req.manager.name} (Admin)`,
-          `${accounts.map(account => `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`).join("\n")}`,
-          `${status ? 'ENABLE' : 'DISABLE'} ${accounts.length} BOTS`);
+          getAgencyName(req.manager, true),
+          `${accounts.map(account => getAccountName(account)).join("\n\t")}`,
+          `${status ? 'START' : 'STOP'} ${accounts.length} ACCOUNTS`);
         break;
       default:
         throw new ApiError("Invalid account admin operation");
@@ -272,8 +269,8 @@ const handleDeleteAccountsForAgency = async (req, res) => {
     }
     await AccountService2.deleteAccounts(agencyAccountIds);
     NotifyUtils.sendMessage(
-      `${req.manager.name} (${req.manager.role == AdminRole.MANAGER ? "Admin" : "Agency"})`,
-      `${accounts.map(account => `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`).join("\n")}`,
+      getAgencyName(req.manager),
+      `${accounts.map(account => getAccountName(account)).join("\n\t")}`,
       `DELETE ${accounts.length} ACCOUNTS`);
     sendResult(res);
   } catch (error) {
@@ -290,8 +287,8 @@ const handleDeleteAccountsForAdmin = async (req, res) => {
     }
     await AccountService2.deleteAccounts(accountIds);
     NotifyUtils.sendMessage(
-      `${req.manager.name} (Admin)`,
-      `${accounts.map(account => `${account.owner?.name} - ${account.actor?.number}. ${account.actor?.name} - [${account.platform}] ${account.alias}`).join("\n")}`,
+      getAgencyName(req.manager, true),
+      `${accounts.map(account => getAccountName(account)).join("\n\t")}`,
       `DELETE ${accounts.length} ACCOUNTS`);
     sendResult(res);
   } catch (error) {
@@ -311,7 +308,7 @@ const handleLoadAccountList = async (req, res) => {
 const handleLoadAccountsForBot = async (req, res) => {
   try {
     const { platform } = req.params;
-    const accounts = await AccountService2.getLivingAccountsForPlatform(platform);
+    const accounts = await AccountService2.getIdentifiers(platform);
     sendResult(res, { accounts })
   } catch (error) {
     sendError(res, error)
