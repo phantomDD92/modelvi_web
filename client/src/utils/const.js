@@ -3,7 +3,7 @@
 export const API_PATH = `${window.location.protocol}//${window.location.host}/api`;
 export const SERVER_PATH = `${window.location.protocol}//${window.location.host}`;
 
-export const STRIPE_PUBLIC_KEY="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"
+export const STRIPE_PUBLIC_KEY="pk_live_51SyW2DHqrEQjHXo5Vtj4U9IUwlEePhgRVGLOxM6WOu36QQnr5GNJ7feMV8XHNhc4HLA04LFGycBBKbYR8TPskjl700eoxIAjC4"
 
 export const DEFAULT_REFRESH_TIMEOUT = 180000;
 export const DEFAULT_PAGE_SIZE = 20;
