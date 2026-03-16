@@ -115,6 +115,11 @@ const handleLoadAgenciesForAdmin = async (req, res) => {
         modelCount: modelStat?.count || 0,
         proxyFee: accountStat.reduce((sum, item) => sum += item.count, 0) * DEFAULT_PROXY_FEE,
       })
+    }).sort((a, b) => {
+      if (b.proxyFee !== a.proxyFee) {
+        return b.proxyFee - a.proxyFee;
+      }
+      return b.modelCount - a.modelCount;
     });
 
     sendResult(res, { agencies: agencyInfos })

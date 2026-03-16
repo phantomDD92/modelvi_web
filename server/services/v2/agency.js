@@ -41,7 +41,6 @@ const loadAgenciesForAffiliate = () =>
 
 const loadAgencies = () =>
   ManagerModel.find({})
-    .sort({ order: -1 })
     .populate("referrer", "name")
 
 const deleteAgency = (agencyId) =>
