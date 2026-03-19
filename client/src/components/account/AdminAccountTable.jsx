@@ -249,9 +249,9 @@ const AdminAccountTable = ({
                         Platform.FANVUE,
                         Platform.FOURBASED,
                         Platform.MYMFANS,
-                        Platform.FETLIFE,
                         Platform.ONLYFANS,
                         Platform.BESTFANS,
+                        Platform.FETLIFE,
                         // Platform.DFANXYZ,
                     ].map(element => <Radio.Button key={element} value={element}>{getPlatformName(element)}</Radio.Button>)}
                 </Radio.Group>

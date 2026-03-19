@@ -49,6 +49,7 @@ const AgencyPricePlanDialog = ({
                 [Platform.FOURBASED]: pricePlans && pricePlans[Platform.FOURBASED] ? pricePlans[Platform.FOURBASED][index] : plan.price,
                 [Platform.MYMFANS]: pricePlans && pricePlans[Platform.MYMFANS] ? pricePlans[Platform.MYMFANS][index] : plan.price,
                 [Platform.ONLYFANS]: pricePlans && pricePlans[Platform.ONLYFANS] ? pricePlans[Platform.ONLYFANS][index] : plan.price,
+                [Platform.BESTFANS]: pricePlans && pricePlans[Platform.BESTFANS] ? pricePlans[Platform.BESTFANS][index] : plan.price,
                 [Platform.FETLIFE]: pricePlans && pricePlans[Platform.FETLIFE] ? pricePlans[Platform.FETLIFE][index] : plan.price,
             }))
         else
@@ -74,6 +75,7 @@ const AgencyPricePlanDialog = ({
                 [Platform.FOURBASED]: Array(8).fill(0),
                 [Platform.MYMFANS]: Array(8).fill(0),
                 [Platform.ONLYFANS]: Array(8).fill(0),
+                [Platform.BESTFANS]: Array(8).fill(0),
                 [Platform.FETLIFE]: Array(8).fill(0),
             }
             for (var i = 0; i < source.length; i++) {
@@ -87,6 +89,7 @@ const AgencyPricePlanDialog = ({
                 plans[Platform.FOURBASED][i] = source[i][Platform.FOURBASED]
                 plans[Platform.MYMFANS][i] = source[i][Platform.MYMFANS]
                 plans[Platform.ONLYFANS][i] = source[i][Platform.ONLYFANS]
+                plans[Platform.BESTFANS][i] = source[i][Platform.BESTFANS]
                 plans[Platform.FETLIFE][i] = source[i][Platform.FETLIFE]
             }
         } else {

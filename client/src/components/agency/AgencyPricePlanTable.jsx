@@ -176,6 +176,12 @@ const AgencyPricePlanTable = ({ dataSource, onChange }) => {
       width: 70,
       editable: true,
     },
+     {
+      title: "BestFans",
+      dataIndex: Platform.BESTFANS,
+      width: 70,
+      editable: true,
+    },
     {
       title: "Fetlife",
       dataIndex: Platform.FETLIFE,

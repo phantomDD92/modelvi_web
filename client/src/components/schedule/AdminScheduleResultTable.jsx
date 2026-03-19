@@ -201,8 +201,10 @@ const AdminScheduleResultTable = ({
               Platform.FANVUE,
               Platform.FOURBASED,
               Platform.MYMFANS,
+              Platform.ONLYFANS,
+              Platform.BESTFANS,
               Platform.FETLIFE,
-              Platform.ONLYFANS,]
+              ]
                 .map(platform => ({ value: platform, label: getPlatformName(platform) })))
             }
           />

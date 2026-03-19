@@ -9,7 +9,7 @@ import {
     Table,
     Tag,
     Switch,
-    Select,
+    Radio,
 } from "antd";
 import {
     Platform
@@ -40,7 +40,6 @@ const AgencyAccountTable = ({
         onBulkDelete,
     }
 }) => {
-
 
     const columns = [
         {
@@ -176,49 +175,11 @@ const AgencyAccountTable = ({
 
     return (
         <Card
-            title={
-                <Flex align="center">
-                    <span className="mr-8">
-                        Account List
-                    </span>
-                    <Select
-                        className="min-w-[150px]"
-                        value={platform}
-                        onChange={value => onPlatform && onPlatform(value)}
-                        options={[
-                            Platform.F2F,
-                            Platform.KNKY,
-                            Platform.FNC,
-                            Platform.FAN,
-                            Platform.LOYALFANS,
-                            Platform.MALOUM,
-                            Platform.FANVUE,
-                            Platform.FOURBASED,
-                            Platform.MYMFANS,
-                            Platform.FETLIFE,
-                            Platform.ONLYFANS,
-                        ].map(platform => ({ value: platform, label: getPlatformName(platform) }))
-                        }
-                    />
-                    {/* <Radio.Group onChange={(e) => onPlatform && onPlatform(e.target.value)} value={platform}>
-                        {[
-                            Platform.F2F,
-                            Platform.KNKY,
-                            Platform.FNC,
-                            Platform.FAN,
-                            Platform.LOYALFANS,
-                            Platform.MALOUM,
-                            Platform.FANVUE,
-                            Platform.FOURBASED,
-                            Platform.MYMFANS,
-                            Platform.FETLIFE,
-                            // Platform.ONLYFANS
-                        ].map(element => <Radio.Button key={element} value={element}>{getPlatformName(element)}</Radio.Button>)}
-                    </Radio.Group> */}
-                </Flex>
+            title={<span className="mr-8"> Account List </span>
             }
             extra={
                 <Flex gap="small">
+
                     <StyledSearch
                         defaultValue={search}
                         className="w-[200px]"
@@ -232,32 +193,51 @@ const AgencyAccountTable = ({
                 </Flex>
             }
         >
-            <Space align='center' size="middle">
-                {rowSelection.selectedRowKeys && rowSelection.selectedRowKeys.length > 0 &&
-                    <>
-                        <h3>Bulk Actions : </h3>
-                        <Button
-                            key="enable"
-                            icon={<LuPlay />}
-                            onClick={() => onBulkStatus && onBulkStatus(true)}>
-                            {`Run ${rowSelection.selectedRowKeys.length} accounts`}
-                        </Button>
-                        <Button
-                            key="disable"
-                            icon={<LuPause />}
-                            onClick={() => onBulkStatus && onBulkStatus(false)}>
-                            {`Stop ${rowSelection.selectedRowKeys.length} accounts`}
-                        </Button>
-                        <Button
-                            key="delete"
-                            icon={<LuTrash2 />}
-                            danger
-                            onClick={() => onBulkDelete && onBulkDelete()}>
-                            {`Delete ${rowSelection.selectedRowKeys.length} accounts`}
-                        </Button>
-                    </>
-                }
-            </Space>
+            <Flex align="center" vertical gap="middle" className="w-full mb-8">
+                <Radio.Group onChange={(e) => onPlatform && onPlatform(e.target.value)} value={platform}>
+                    {[
+                        Platform.F2F,
+                        Platform.KNKY,
+                        Platform.FNC,
+                        Platform.FAN,
+                        Platform.LOYALFANS,
+                        Platform.MALOUM,
+                        Platform.FANVUE,
+                        Platform.FOURBASED,
+                        Platform.MYMFANS,
+                        Platform.ONLYFANS,
+                        Platform.BESTFANS,
+                        // Platform.FETLIFE,
+                        // Platform.DFANXYZ,
+                    ].map(element => <Radio.Button key={element} value={element}>{getPlatformName(element)}</Radio.Button>)}
+                </Radio.Group>
+                <Flex align="center" gap="middle" className="w-full">
+                    {rowSelection.selectedRowKeys && rowSelection.selectedRowKeys.length > 0 &&
+                        <>
+                            <h3>Bulk Actions : </h3>
+                            <Button
+                                key="enable"
+                                icon={<LuPlay />}
+                                onClick={() => onBulkStatus && onBulkStatus(true)}>
+                                {`Run ${rowSelection.selectedRowKeys.length} accounts`}
+                            </Button>
+                            <Button
+                                key="disable"
+                                icon={<LuPause />}
+                                onClick={() => onBulkStatus && onBulkStatus(false)}>
+                                {`Stop ${rowSelection.selectedRowKeys.length} accounts`}
+                            </Button>
+                            <Button
+                                key="delete"
+                                icon={<LuTrash2 />}
+                                danger
+                                onClick={() => onBulkDelete && onBulkDelete()}>
+                                {`Delete ${rowSelection.selectedRowKeys.length} accounts`}
+                            </Button>
+                        </>
+                    }
+                </Flex>
+            </Flex>
             <Table
                 pagination={{
                     ...pagination,

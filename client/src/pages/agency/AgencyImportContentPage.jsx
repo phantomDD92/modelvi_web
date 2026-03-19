@@ -19,8 +19,9 @@ const PLATFORM_OPTIONS = [
   { label: 'Fanvue', value: Platform.FANVUE },
   { label: '4Based', value: Platform.FOURBASED },
   { label: 'MymFans', value: Platform.MYMFANS },
-  { label: 'FetLife', value: Platform.FETLIFE },
   { label: 'OnlyFans', value: Platform.ONLYFANS },
+  { label: 'BestFans', value: Platform.BESTFANS },
+  { label: 'FetLife', value: Platform.FETLIFE },
 ];
 
 const beforeUpload = (file) => {
